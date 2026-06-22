@@ -12,7 +12,12 @@
     <a href="{{ route('academy.home') }}" class="text-sm text-brand font-semibold">&larr; All courses</a>
 
     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 my-5">
-        <span class="inline-block text-xs font-semibold uppercase tracking-wide text-brand mb-1">Course</span>
+        <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs font-semibold uppercase tracking-wide text-brand">Course</span>
+            @if($course->audience_label)
+                <span class="text-[11px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full bg-blue-50 text-brand">For {{ $course->audience_label }}</span>
+            @endif
+        </div>
         <h1 class="text-2xl font-extrabold text-navy">{{ $course->title }}</h1>
         <p class="text-slate-500 mt-1 max-w-2xl">{{ $course->description }}</p>
         <div class="mt-4 flex items-center gap-3">

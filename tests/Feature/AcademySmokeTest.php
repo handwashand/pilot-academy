@@ -26,6 +26,16 @@ class AcademySmokeTest extends TestCase
             ->assertSee('Pilot Quick Start');
     }
 
+    public function test_course_audience_badge_is_shown(): void
+    {
+        $course = Course::first();
+        $course->update(['audience' => 'technical']);
+
+        $this->get('/')
+            ->assertStatus(200)
+            ->assertSee('For Technical');
+    }
+
     public function test_lesson_page_shows_video_and_quiz(): void
     {
         $course = Course::first();
