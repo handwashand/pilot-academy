@@ -90,8 +90,9 @@ class LessonForm
                         Repeater::make('questions')
                             ->relationship()
                             ->orderColumn('sort_order')
-                            ->itemLabel(fn (array $state): ?string => $state['prompt'] ?? null)
+                            ->itemLabel(fn (array $state): ?string => $state['prompt'] ?? 'New question')
                             ->collapsible()
+                            ->collapsed()
                             ->defaultItems(0)
                             ->addActionLabel('Add question')
                             ->schema([
@@ -100,23 +101,28 @@ class LessonForm
                                     ->required()
                                     ->rows(2),
 
-                                Repeater::make('options')
-                                    ->relationship()
-                                    ->orderColumn('sort_order')
-                                    ->defaultItems(2)
-                                    ->minItems(2)
-                                    ->addActionLabel('Add answer option')
-                                    ->columns(4)
+                                Section::make('Answer options')
+                                    ->description('Tick the correct answer(s).')
+                                    ->compact()
                                     ->schema([
-                                        TextInput::make('text')
-                                            ->label('Answer')
-                                            ->required()
-                                            ->columnSpan(3),
+                                        Repeater::make('options')
+                                            ->relationship()
+                                            ->orderColumn('sort_order')
+                                            ->defaultItems(2)
+                                            ->minItems(2)
+                                            ->addActionLabel('Add answer option')
+                                            ->columns(4)
+                                            ->schema([
+                                                TextInput::make('text')
+                                                    ->label('Answer')
+                                                    ->required()
+                                                    ->columnSpan(3),
 
-                                        Toggle::make('is_correct')
-                                            ->label('Correct')
-                                            ->inline(false)
-                                            ->columnSpan(1),
+                                                Toggle::make('is_correct')
+                                                    ->label('Correct')
+                                                    ->inline(false)
+                                                    ->columnSpan(1),
+                                            ]),
                                     ]),
                             ]),
                     ]),
