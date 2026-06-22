@@ -1,0 +1,72 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\Course;
+use App\Models\Lesson;
+use App\Models\User;
+use Database\Seeders\PilotQuickStartSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class AcademySmokeTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(PilotQuickStartSeeder::class);
+    }
+
+    public function test_home_lists_the_course(): void
+    {
+        $this->get('/')
+            ->assertStatus(200)
+            ->assertSee('Pilot Quick Start');
+    }
+
+    public function test_lesson_page_shows_video_and_quiz(): void
+    {
+        $course = Course::first();
+        $lesson = $course->lessons()->first();
+
+        $this->get(route('academy.lesson', [$course, $lesson]))
+            ->assertStatus(200)
+            ->assertSee('youtube.com/embed', false)
+            ->assertSee('Knowledge check');
+    }
+
+    public function test_correct_quiz_answers_complete_the_lesson(): void
+    {
+        $course = Course::first();
+        $lesson = $course->lessons()->with('questions.options')->first();
+
+        $answers = [];
+        foreach ($lesson->questions as $q) {
+            $answers[$q->id] = $q->options->firstWhere('is_correct', true)->id;
+        }
+
+        $this->post(route('academy.quiz', [$course, $lesson]), ['answers' => $answers])
+            ->assertRedirect(route('academy.lesson', [$course, $lesson]))
+            ->assertSessionHas('quiz_passed', true);
+    }
+
+    public function test_admin_can_open_lesson_edit_form_with_quiz_repeater(): void
+    {
+        $admin = User::firstOrCreate(['email' => 'admin@pilot.local'], [
+            'name' => 'Pilot Admin',
+            'password' => bcrypt('password'),
+        ]);
+
+        $lesson = Lesson::first();
+
+        $this->actingAs($admin)
+            ->get("/admin/lessons/{$lesson->id}/edit")
+            ->assertStatus(200);
+
+        $this->actingAs($admin)
+            ->get('/admin/courses')
+            ->assertStatus(200);
+    }
+}
