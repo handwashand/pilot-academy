@@ -12,6 +12,7 @@ class Course extends Model
         'slug',
         'description',
         'level',
+        'audience',
         'thumbnail',
         'duration_minutes',
         'is_published',
@@ -21,6 +22,19 @@ class Course extends Model
     protected $casts = [
         'is_published' => 'boolean',
     ];
+
+    /** Who the course is for (used for the audience badge). */
+    public const AUDIENCES = [
+        'all' => 'Everyone',
+        'sales' => 'Sales',
+        'technical' => 'Technical',
+        'support' => 'Support',
+    ];
+
+    public function getAudienceLabelAttribute(): ?string
+    {
+        return $this->audience ? (self::AUDIENCES[$this->audience] ?? $this->audience) : null;
+    }
 
     public function lessons(): HasMany
     {

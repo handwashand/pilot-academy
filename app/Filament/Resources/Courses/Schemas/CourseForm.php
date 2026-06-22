@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Courses\Schemas;
 
+use App\Models\Course;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -46,6 +47,12 @@ class CourseForm
                     ])
                     ->default('beginner')
                     ->required(),
+
+                Select::make('audience')
+                    ->label('Who it\'s for')
+                    ->options(Course::AUDIENCES)
+                    ->placeholder('Not specified')
+                    ->helperText('Shown as a badge on the course card.'),
 
                 TextInput::make('duration_minutes')
                     ->label('Duration (minutes)')
