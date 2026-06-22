@@ -35,10 +35,10 @@ class LessonsTable
                     ->counts('questions')
                     ->badge(),
 
-                IconColumn::make('youtube_url')
+                IconColumn::make('has_video')
                     ->label('Video')
                     ->boolean()
-                    ->state(fn ($record) => filled($record->youtube_url)),
+                    ->state(fn ($record) => filled($record->youtube_url) || filled($record->video_path)),
 
                 IconColumn::make('is_published')
                     ->label('Published')

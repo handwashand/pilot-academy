@@ -20,8 +20,15 @@
                 <p class="text-slate-500 mt-1">{{ $lesson->summary }}</p>
             @endif
 
-            {{-- Video --}}
-            @if($lesson->youtube_id)
+            {{-- Video: uploaded file takes priority, otherwise YouTube embed --}}
+            @if($lesson->video_url)
+                <div class="mt-6 rounded-2xl overflow-hidden border border-slate-200 shadow-sm aspect-video bg-black">
+                    <video class="w-full h-full" controls preload="metadata">
+                        <source src="{{ $lesson->video_url }}">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            @elseif($lesson->youtube_id)
                 <div class="mt-6 rounded-2xl overflow-hidden border border-slate-200 shadow-sm aspect-video bg-black">
                     <iframe class="w-full h-full"
                             src="https://www.youtube.com/embed/{{ $lesson->youtube_id }}"
