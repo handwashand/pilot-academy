@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Lessons\Schemas;
 
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -58,6 +59,16 @@ class LessonForm
                             ->url()
                             ->columnSpanFull()
                             ->helperText('Paste the full YouTube URL, e.g. https://www.youtube.com/watch?v=XXXXXXXXXXX'),
+
+                        FileUpload::make('video_path')
+                            ->label('Or upload a video file')
+                            ->disk('public')
+                            ->directory('lesson-videos')
+                            ->visibility('public')
+                            ->acceptedFileTypes(['video/mp4', 'video/webm', 'video/quicktime'])
+                            ->maxSize(204800) // 200 MB (server upload limits raised to match)
+                            ->columnSpanFull()
+                            ->helperText('MP4 up to 200 MB. If a file is uploaded it is used instead of the YouTube link.'),
 
                         TextInput::make('duration_minutes')
                             ->label('Duration (minutes)')

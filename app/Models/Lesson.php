@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class Lesson extends Model
 {
@@ -14,6 +15,7 @@ class Lesson extends Model
         'slug',
         'summary',
         'youtube_url',
+        'video_path',
         'content',
         'duration_minutes',
         'is_published',
@@ -32,6 +34,16 @@ class Lesson extends Model
     public function questions(): HasMany
     {
         return $this->hasMany(Question::class)->orderBy('sort_order');
+    }
+
+    /**
+     * Public URL of an uploaded video file, if one was uploaded.
+     */
+    public function getVideoUrlAttribute(): ?string
+    {
+        return $this->video_path
+            ? Storage::disk('public')->url($this->video_path)
+            : null;
     }
 
     /**

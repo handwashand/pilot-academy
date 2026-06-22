@@ -52,6 +52,22 @@ class AcademySmokeTest extends TestCase
             ->assertSessionHas('quiz_passed', true);
     }
 
+    public function test_uploaded_video_takes_priority_over_youtube(): void
+    {
+        $course = Course::first();
+        $lesson = $course->lessons()->first();
+        $lesson->update([
+            'video_path' => 'lesson-videos/sample.mp4',
+            'youtube_url' => 'https://www.youtube.com/watch?v=aqz-KE-bpKQ',
+        ]);
+
+        $this->get(route('academy.lesson', [$course, $lesson]))
+            ->assertStatus(200)
+            ->assertSee('<video', false)
+            ->assertSee('lesson-videos/sample.mp4', false)
+            ->assertDontSee('youtube.com/embed', false);
+    }
+
     public function test_admin_can_open_lesson_edit_form_with_quiz_repeater(): void
     {
         $admin = User::firstOrCreate(['email' => 'admin@pilot.local'], [
