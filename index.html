@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pilot Academy</title>
+<style>
+  :root{
+    --brand:#1463ff;
+    --brand-dark:#0a2540;
+    --brand-soft:#e9f1ff;
+    --ink:#0c1b33;
+    --muted:#5b6b86;
+    --line:#e4e9f2;
+    --bg:#f5f7fb;
+    --ok:#19a86b;
+    --okbg:#e6f7ef;
+    --err:#e0413a;
+    --errbg:#fdeceb;
+    --shadow:0 1px 2px rgba(16,40,80,.06),0 8px 24px rgba(16,40,80,.06);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);background:var(--bg);line-height:1.5;-webkit-font-smoothing:antialiased;
+  }
+  button{font-family:inherit;cursor:pointer}
+  a{color:var(--brand);text-decoration:none}
+  .hidden{display:none!important}
+
+  /* ---------- Top nav ---------- */
+  .nav{
+    position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);
+    display:flex;align-items:center;gap:16px;padding:0 28px;height:64px;
+  }
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;color:var(--brand-dark)}
+  .logo .mark{
+    width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--brand),#0a47cc);
+    display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px;
+  }
+  .logo .mark svg{width:18px;height:18px}
+  .nav-links{display:flex;gap:6px;margin-left:18px}
+  .nav-links a{padding:8px 12px;border-radius:8px;color:var(--muted);font-weight:500;font-size:14px}
+  .nav-links a.active,.nav-links a:hover{background:var(--brand-soft);color:var(--brand)}
+  .nav-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+  .avatar{
+    width:36px;height:36px;border-radius:50%;background:var(--brand-dark);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;
+  }
+  .btn-ghost{background:none;border:1px solid var(--line);border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;color:var(--muted)}
+  .btn-ghost:hover{border-color:var(--brand);color:var(--brand)}
+
+  .wrap{max-width:1080px;margin:0 auto;padding:34px 28px 80px}
+
+  .btn{
+    background:var(--brand);color:#fff;border:none;border-radius:10px;padding:12px 22px;
+    font-size:15px;font-weight:600;transition:filter .15s;
+  }
+  .btn:hover{filter:brightness(1.07)}
+  .btn:disabled{background:#b9c6dd;cursor:not-allowed;filter:none}
+  .btn-lg{padding:14px 28px;font-size:16px;width:100%}
+
+  /* ---------- Login ---------- */
+  .login-screen{
+    min-height:100vh;display:flex;align-items:stretch;
+  }
+  .login-left{
+    flex:1;background:linear-gradient(150deg,#0a2540,#1463ff);color:#fff;
+    display:none;flex-direction:column;justify-content:center;padding:64px;
+  }
+  .login-left h1{font-size:40px;line-height:1.15;margin:0 0 18px;font-weight:800}
+  .login-left p{font-size:18px;opacity:.9;max-width:420px}
+  .login-left .feats{margin-top:38px;display:flex;flex-direction:column;gap:16px}
+  .login-left .feat{display:flex;gap:12px;align-items:flex-start;font-size:15px;opacity:.95}
+  .login-left .feat .dot{width:22px;height:22px;border-radius:6px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;flex:0 0 auto;font-size:13px}
+  .login-right{flex:1;display:flex;align-items:center;justify-content:center;padding:32px;background:#fff}
+  .login-card{width:100%;max-width:380px}
+  .login-card .logo{font-size:22px;margin-bottom:8px}
+  .login-card h2{font-size:24px;margin:18px 0 4px}
+  .login-card .sub{color:var(--muted);margin:0 0 26px;font-size:15px}
+  .field{margin-bottom:16px}
+  .field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--ink)}
+  .field input{
+    width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;font-size:15px;outline:none;
+  }
+  .field input:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+  .login-hint{font-size:12.5px;color:var(--muted);text-align:center;margin-top:18px}
+  @media(min-width:880px){.login-left{display:flex}}
+
+  /* ---------- Home ---------- */
+  .page-head{margin-bottom:26px}
+  .breadcrumb{font-size:13px;color:var(--muted);margin-bottom:10px}
+  .breadcrumb a{color:var(--muted)}
+  .breadcrumb a:hover{color:var(--brand)}
+  .page-head h1{font-size:30px;margin:0 0 8px;font-weight:800}
+  .page-head p{margin:0;color:var(--muted);font-size:16px;max-width:640px}
+
+  .course-hero{
+    background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+    padding:26px;display:flex;gap:24px;align-items:center;margin-bottom:30px;flex-wrap:wrap;
+  }
+  .course-hero .thumb{
+    width:150px;height:96px;border-radius:12px;flex:0 0 auto;
+    background:linear-gradient(135deg,#1463ff,#0a2540);display:flex;align-items:center;justify-content:center;color:#fff;
+  }
+  .course-hero .thumb svg{width:40px;height:40px}
+  .course-hero .meta{flex:1;min-width:240px}
+  .course-hero .tags{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+  .course-hero h2{margin:0 0 6px;font-size:22px}
+  .course-hero .desc{color:var(--muted);font-size:14.5px;margin:0 0 14px}
+  .progress-wrap{display:flex;align-items:center;gap:12px;max-width:420px}
+  .bar{flex:1;height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+  .bar > span{display:block;height:100%;background:var(--ok);width:0;transition:width .4s ease}
+  .progress-label{font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap}
+
+  .tag{font-size:11.5px;font-weight:700;letter-spacing:.02em;padding:4px 9px;border-radius:6px;text-transform:uppercase}
+  .tag.product{background:var(--brand-soft);color:var(--brand)}
+  .tag.type{background:#f0eefe;color:#6b4ee6}
+  .tag.lvl-beginner{background:#e6f7ef;color:#19a86b}
+  .tag.lvl-intermediate{background:#fff3e0;color:#c77700}
+  .tag.lvl-advanced{background:#fdeceb;color:#e0413a}
+
+  .section-title{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:0 0 16px}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+  .card{
+    background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+    overflow:hidden;display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s;cursor:pointer;
+  }
+  .card:hover{transform:translateY(-3px);box-shadow:0 6px 14px rgba(16,40,80,.10),0 18px 40px rgba(16,40,80,.10)}
+  .card .ct{
+    height:128px;position:relative;display:flex;align-items:center;justify-content:center;color:#fff;
+  }
+  .card .ct svg{width:46px;height:46px;opacity:.95}
+  .card .num{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.22);backdrop-filter:blur(4px);
+    width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
+  .card .check{position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;
+    background:var(--ok);display:none;align-items:center;justify-content:center;color:#fff}
+  .card.done .check{display:flex}
+  .card .body{padding:16px 18px 20px;flex:1;display:flex;flex-direction:column}
+  .card .body .tags{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+  .card .body h3{margin:0 0 6px;font-size:16.5px}
+  .card .body p{margin:0 0 14px;color:var(--muted);font-size:13.5px;flex:1}
+  .card .body .foot{display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600;color:var(--brand)}
+  .card .body .foot .status{color:var(--muted)}
+  .card .body .foot .status.done{color:var(--ok)}
+
+  /* ---------- Lesson ---------- */
+  .lesson-head h1{font-size:28px;margin:6px 0 8px}
+  .lesson-head .tags{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  .lesson-head .desc{color:var(--muted);font-size:16px;margin:0 0 24px;max-width:680px}
+  .video-box{
+    background:#000;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:28px;
+    aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;
+  }
+  .video-box video{width:100%;height:100%;display:block;object-fit:cover}
+  .lesson-body{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:30px 34px;margin-bottom:28px}
+  .lesson-body h2{font-size:20px;margin:0 0 14px}
+  .lesson-body h3{font-size:16px;margin:24px 0 8px}
+  .lesson-body p{margin:0 0 14px;font-size:15.5px;color:#33425e}
+  .lesson-body ul{margin:0 0 14px;padding-left:20px;color:#33425e;font-size:15.5px}
+  .lesson-body li{margin-bottom:6px}
+
+  /* ---------- Quiz ---------- */
+  .quiz{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:30px 34px}
+  .quiz-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .quiz-head svg{width:22px;height:22px;color:var(--brand)}
+  .quiz-head h2{margin:0;font-size:20px}
+  .quiz .intro{color:var(--muted);font-size:14.5px;margin:0 0 22px}
+  .q{margin-bottom:24px;padding-bottom:4px}
+  .q .qt{font-weight:600;margin-bottom:12px;font-size:15.5px}
+  .q .qt .qn{color:var(--brand);margin-right:6px}
+  .opt{
+    display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:10px;
+    padding:12px 16px;margin-bottom:10px;cursor:pointer;transition:.12s;font-size:15px;
+  }
+  .opt:hover{border-color:var(--brand);background:var(--brand-soft)}
+  .opt input{accent-color:var(--brand);width:18px;height:18px}
+  .opt.correct{border-color:var(--ok);background:var(--okbg)}
+  .opt.wrong{border-color:var(--err);background:var(--errbg)}
+  .opt .mk{margin-left:auto;font-weight:700;font-size:13px}
+  .opt.correct .mk{color:var(--ok)}
+  .opt.wrong .mk{color:var(--err)}
+  .quiz-actions{display:flex;align-items:center;gap:16px;margin-top:8px;flex-wrap:wrap}
+  .result{font-weight:700;font-size:15px}
+  .result.pass{color:var(--ok)}
+  .result.fail{color:var(--err)}
+
+  .lesson-nav{display:flex;justify-content:space-between;margin-top:30px;gap:12px}
+  .back-link{display:inline-flex;align-items:center;gap:6px;background:none;border:none;color:var(--muted);font-weight:600;font-size:14px;padding:0}
+  .back-link:hover{color:var(--brand)}
+
+  /* completion banner */
+  .complete-banner{
+    background:linear-gradient(135deg,#19a86b,#0e7a4c);color:#fff;border-radius:var(--radius);
+    padding:26px 28px;margin-bottom:30px;display:flex;align-items:center;gap:18px;box-shadow:var(--shadow);
+  }
+  .complete-banner .ico{width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .complete-banner h2{margin:0 0 4px;font-size:20px}
+  .complete-banner p{margin:0;opacity:.92;font-size:14.5px}
+
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--brand-dark);color:#fff;padding:13px 22px;border-radius:10px;font-size:14.5px;font-weight:600;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);opacity:0;transition:.25s;pointer-events:none;z-index:50;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="view-login" class="login-screen">
+  <div class="login-left">
+    <div class="logo" style="color:#fff;margin-bottom:auto">
+      <span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg></span>
+      Pilot Academy
+    </div>
+    <h1>Learn Pilot.<br/>Faster.</h1>
+    <p>Short, focused lessons with hands-on videos and quizzes — so your team gets productive from day one.</p>
+    <div class="feats">
+      <div class="feat"><span class="dot">▶</span> Video walkthroughs for every core workflow</div>
+      <div class="feat"><span class="dot">✓</span> Quick quizzes to confirm understanding</div>
+      <div class="feat"><span class="dot">★</span> Track progress and complete courses</div>
+    </div>
+  </div>
+  <div class="login-right">
+    <div class="login-card">
+      <div class="logo">
+        <span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg></span>
+        Pilot Academy
+      </div>
+      <h2>Sign in</h2>
+      <p class="sub">Welcome back. Continue your training.</p>
+      <form id="login-form">
+        <div class="field">
+          <label for="login-name">Full name</label>
+          <input id="login-name" type="text" placeholder="Alex Morgan" autocomplete="name" required />
+        </div>
+        <div class="field">
+          <label for="login-email">Work email</label>
+          <input id="login-email" type="email" placeholder="you@pilot.com" autocomplete="email" />
+        </div>
+        <button type="submit" class="btn btn-lg">Sign in</button>
+      </form>
+      <p class="login-hint">Demo environment · any name works</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app" class="hidden">
+  <nav class="nav">
+    <div class="logo">
+      <span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg></span>
+      Pilot Academy
+    </div>
+    <div class="nav-links">
+      <a href="#" class="active" onclick="goHome();return false;">My Learning</a>
+      <a href="#" onclick="toast('Catalog coming soon');return false;">Catalog</a>
+      <a href="#" onclick="toast('Community coming soon');return false;">Community</a>
+    </div>
+    <div class="nav-right">
+      <button class="btn-ghost" onclick="logout()">Sign out</button>
+      <div class="avatar" id="nav-avatar">A</div>
+    </div>
+  </nav>
+
+  <div class="wrap" id="content"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ----------------------------------------------------------
+   DATA — single course, 5 lessons. Placeholder content.
+   Drop your own video into the same folder and set `video`
+   to the filename (e.g. "lesson1.mp4") to use real footage.
+---------------------------------------------------------- */
+var SAMPLE_VIDEO = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4";
+
+var COURSE = {
+  id:"pilot-quick-start",
+  title:"Pilot Quick Start",
+  subtitle:"Everything a new user needs to get going with Pilot in under an hour.",
+  level:"Beginner",
+  lessons:[
+    {
+      id:"l1", num:1, level:"Beginner", type:"Video", color:"linear-gradient(135deg,#1463ff,#0a47cc)",
+      icon:"rocket",
+      title:"Getting Started with Pilot",
+      desc:"Sign in, find your way around the dashboard, and understand the main areas of Pilot.",
+      video:SAMPLE_VIDEO,
+      body:`<h2>Your first login</h2>
+        <p>Pilot is a fleet management platform. After signing in, you land on the <strong>Dashboard</strong> — your home base that summarizes fleet activity, alerts, and key metrics at a glance.</p>
+        <p>The left navigation groups everything into clear areas: <strong>Assets</strong> (your vehicles and devices), <strong>Map</strong> (live tracking), <strong>Reports</strong>, <strong>Rules &amp; Notifications</strong>, and <strong>People</strong>.</p>
+        <h3>What you'll do in this lesson</h3>
+        <ul>
+          <li>Sign in and recognize the dashboard layout</li>
+          <li>Use the left navigation to move between areas</li>
+          <li>Customize which widgets appear on your dashboard</li>
+        </ul>
+        <p>Tip: anything you open frequently can be pinned to the dashboard, so the data you care about is one click away.</p>`,
+      quiz:[
+        {q:"What screen do you land on right after signing in to Pilot?", a:["The Dashboard","The billing page","A blank map","The settings menu"], correct:0},
+        {q:"Which area would you open to see your vehicles and devices?", a:["Reports","Assets","Community","Sign out"], correct:1},
+        {q:"How can you keep frequently used data one click away?", a:["Email it to yourself daily","Pin widgets to the dashboard","Print it","You can't"], correct:1}
+      ]
+    },
+    {
+      id:"l2", num:2, level:"Beginner", type:"Video", color:"linear-gradient(135deg,#19a86b,#0e7a4c)",
+      icon:"map",
+      title:"The Live Map & Assets",
+      desc:"Track vehicles in real time, read asset status, and play back trip history on the map.",
+      video:SAMPLE_VIDEO,
+      body:`<h2>Seeing your fleet live</h2>
+        <p>The <strong>Map</strong> shows every active asset in real time. Each marker reflects status — moving, idling, or stopped — using color, so you can read the whole fleet at a glance.</p>
+        <p>Click any asset to open its card: current speed, location, driver, and last update time. From there you can jump into <strong>trip history</strong> and replay where a vehicle has been over any time window.</p>
+        <h3>Key actions</h3>
+        <ul>
+          <li>Filter the map by group, status, or zone</li>
+          <li>Open an asset card for live detail</li>
+          <li>Replay historical trips with the timeline scrubber</li>
+        </ul>
+        <p>Trip replay is one of the most-used features for resolving customer or driver questions — "where was the vehicle at 3pm?" becomes a 10-second answer.</p>`,
+      quiz:[
+        {q:"What does the color of an asset marker on the map indicate?", a:["The vehicle brand","Its status (moving, idling, stopped)","The driver's mood","Fuel brand"], correct:1},
+        {q:"What do you click to see an asset's live speed and location?", a:["The asset card","The logout button","The invoice","Nothing — it's hidden"], correct:0},
+        {q:"Which feature answers 'where was this vehicle at 3pm?'", a:["Billing","Trip history / replay","Community forum","The quiz"], correct:1}
+      ]
+    },
+    {
+      id:"l3", num:3, level:"Intermediate", type:"Tutorial", color:"linear-gradient(135deg,#6b4ee6,#4a2fb8)",
+      icon:"report",
+      title:"Building Reports & Dashboards",
+      desc:"Run built-in reports, schedule them, and pin custom charts to your dashboard.",
+      video:SAMPLE_VIDEO,
+      body:`<h2>From raw data to insight</h2>
+        <p>Pilot ships with a large catalog of <strong>built-in reports</strong> — utilization, idling, speeding, fuel, maintenance and more. Pick a report, set the date range and groups, and run it.</p>
+        <p>Any report can be <strong>scheduled</strong> to email automatically — daily, weekly, or monthly — to a distribution list, so stakeholders get numbers without logging in.</p>
+        <h3>Custom dashboards</h3>
+        <ul>
+          <li>Choose a report and apply filters</li>
+          <li>Save the result as a dashboard chart</li>
+          <li>Schedule recurring delivery to your team</li>
+        </ul>
+        <p>Best practice: keep your dashboard to the 4–6 metrics that drive decisions. Everything else lives in scheduled reports.</p>`,
+      quiz:[
+        {q:"What can you do so stakeholders get reports without logging in?", a:["Nothing","Schedule reports by email","Call them","Disable reports"], correct:1},
+        {q:"How many metrics should a focused dashboard ideally show?", a:["All of them","Around 4–6 key metrics","Exactly 1","At least 50"], correct:1},
+        {q:"Which is an example of a built-in report?", a:["Idling report","Weather forecast","Stock prices","Recipe book"], correct:0}
+      ]
+    },
+    {
+      id:"l4", num:4, level:"Intermediate", type:"Tutorial", color:"linear-gradient(135deg,#c77700,#9a5b00)",
+      icon:"bell",
+      title:"Rules, Exceptions & Notifications",
+      desc:"Set thresholds once, then let Pilot surface only the exceptions that need attention.",
+      video:SAMPLE_VIDEO,
+      body:`<h2>Management by exception</h2>
+        <p>A <strong>rule</strong> defines an acceptable limit — for example, a speed threshold or an allowed working-hours window. Pilot monitors continuously and flags an <strong>exception</strong> only when the limit is crossed.</p>
+        <p>This is the core idea of <em>management by exception</em>: instead of watching everything, you watch the deviations. Less noise, more focus.</p>
+        <h3>Setting it up</h3>
+        <ul>
+          <li>Turn on a built-in rule or create a custom one</li>
+          <li>Set the threshold and which groups it applies to</li>
+          <li>Choose how you're notified: email, SMS, or distribution list</li>
+        </ul>
+        <p>Tip: if a rule generates more than 2–3 alerts a day per person, turn it into a daily digest report instead of instant alerts.</p>`,
+      quiz:[
+        {q:"What does a rule flag when its limit is crossed?", a:["An invoice","An exception","A new user","A map"], correct:1},
+        {q:"What is the core idea behind rules in Pilot?", a:["Watch everything constantly","Management by exception","Disable notifications","Manual checking only"], correct:1},
+        {q:"If a rule creates many alerts per day, what's the better setup?", a:["Ignore it","Turn it into a daily digest report","Delete all data","Send more alerts"], correct:1}
+      ]
+    },
+    {
+      id:"l5", num:5, level:"Intermediate", type:"Tutorial", color:"linear-gradient(135deg,#0a2540,#1463ff)",
+      icon:"users",
+      title:"Users, Roles & Permissions",
+      desc:"Add team members, assign roles, and control exactly what each person can see and do.",
+      video:SAMPLE_VIDEO,
+      body:`<h2>Giving people the right access</h2>
+        <p>Under <strong>People</strong> you add users and assign each a <strong>role</strong> (a set of permissions). Roles control which areas and actions a person can access — from full administrator down to view-only.</p>
+        <p>For finer control, Pilot supports <strong>custom permission sets</strong>, so you can grant exactly one capability (e.g. "view reports only") without opening up the rest of the system.</p>
+        <h3>Common tasks</h3>
+        <ul>
+          <li>Add a user and assign a role</li>
+          <li>Restrict a user to specific vehicle groups</li>
+          <li>Create a custom permission set for a special role</li>
+        </ul>
+        <p>Principle of least privilege: give each person the minimum access they need to do their job — it's safer and simpler to manage.</p>`,
+      quiz:[
+        {q:"Where do you add new team members?", a:["The Map","The People area","The invoice","Sign out"], correct:1},
+        {q:"What controls which areas a person can access?", a:["Their role / permissions","Their email provider","The weather","Random chance"], correct:0},
+        {q:"What does 'principle of least privilege' mean?", a:["Give everyone admin","Give the minimum access needed","Remove all users","Share one password"], correct:1}
+      ]
+    }
+  ]
+};
+
+/* SVG icons */
+var ICONS = {
+  rocket:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>',
+  map:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18-6 2V6l6-2 6 2 6-2v14l-6 2-6-2z"/><path d="M9 4v14"/><path d="M15 6v14"/></svg>',
+  report:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>',
+  bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>',
+  users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  play:'<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20"/></svg>',
+  quiz:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  trophy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>'
+};
+
+/* ---------- State (persisted) ---------- */
+var STORE_KEY = "pilotAcademy.v1";
+var state = loadState();
+
+function loadState(){
+  try{ var s = JSON.parse(localStorage.getItem(STORE_KEY)); if(s) return s; }catch(e){}
+  return { user:null, completed:{} };
+}
+function saveState(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){} }
+
+/* ---------- Helpers ---------- */
+function initials(name){
+  if(!name) return "A";
+  var p = name.trim().split(/\s+/);
+  return (p[0][0] + (p[1]?p[1][0]:"")).toUpperCase();
+}
+function completedCount(){ return COURSE.lessons.filter(function(l){return state.completed[l.id];}).length; }
+function lessonById(id){ return COURSE.lessons.filter(function(l){return l.id===id;})[0]; }
+
+var toastTimer;
+function toast(msg){
+  var t=document.getElementById("toast");
+  t.textContent=msg; t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){t.classList.remove("show");},2200);
+}
+
+/* ---------- Auth ---------- */
+document.getElementById("login-form").addEventListener("submit", function(e){
+  e.preventDefault();
+  var name=document.getElementById("login-name").value.trim() || "Alex Morgan";
+  state.user={name:name}; saveState();
+  enterApp();
+});
+function enterApp(){
+  document.getElementById("view-login").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+  document.getElementById("nav-avatar").textContent=initials(state.user.name);
+  goHome();
+}
+function logout(){
+  state.user=null; saveState();
+  document.getElementById("app").classList.add("hidden");
+  document.getElementById("view-login").classList.remove("hidden");
+  window.scrollTo(0,0);
+}
+
+/* ---------- Home ---------- */
+function goHome(){
+  window.scrollTo(0,0);
+  var done=completedCount(), total=COURSE.lessons.length;
+  var pct=Math.round(done/total*100);
+  var firstName=(state.user.name||"there").split(/\s+/)[0];
+
+  var banner = (done===total) ? `
+    <div class="complete-banner">
+      <div class="ico">${ICONS.trophy}</div>
+      <div><h2>Course complete — nice work!</h2><p>You've finished every lesson in Pilot Quick Start. You're ready to roll.</p></div>
+    </div>` : "";
+
+  var cards = COURSE.lessons.map(function(l){
+    var isDone = !!state.completed[l.id];
+    return `
+      <div class="card ${isDone?'done':''}" onclick="openLesson('${l.id}')">
+        <div class="ct" style="background:${l.color}">
+          <span class="num">${l.num}</span>
+          <span class="check">${ICONS.check}</span>
+          ${ICONS[l.icon]}
+        </div>
+        <div class="body">
+          <div class="tags">
+            <span class="tag type">${l.type}</span>
+            <span class="tag lvl-${l.level.toLowerCase()}">${l.level}</span>
+          </div>
+          <h3>${l.title}</h3>
+          <p>${l.desc}</p>
+          <div class="foot">
+            <span>${isDone?'Review':'Start lesson'} →</span>
+            <span class="status ${isDone?'done':''}">${isDone?'✓ Completed':'Not started'}</span>
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+
+  document.getElementById("content").innerHTML = `
+    <div class="page-head">
+      <h1>Welcome back, ${firstName} 👋</h1>
+      <p>Continue your training. Pick up where you left off.</p>
+    </div>
+    ${banner}
+    <div class="course-hero">
+      <div class="thumb">${ICONS.rocket}</div>
+      <div class="meta">
+        <div class="tags">
+          <span class="tag product">Pilot</span>
+          <span class="tag type">Course</span>
+          <span class="tag lvl-beginner">Beginner</span>
+        </div>
+        <h2>${COURSE.title}</h2>
+        <p class="desc">${COURSE.subtitle}</p>
+        <div class="progress-wrap">
+          <div class="bar"><span style="width:${pct}%"></span></div>
+          <span class="progress-label">${done}/${total} lessons · ${pct}%</span>
+        </div>
+      </div>
+    </div>
+    <p class="section-title">Lessons in this course</p>
+    <div class="grid">${cards}</div>
+  `;
+  setActiveNav(0);
+}
+function setActiveNav(i){
+  var links=document.querySelectorAll(".nav-links a");
+  links.forEach(function(a,idx){a.classList.toggle("active",idx===i);});
+}
+
+/* ---------- Lesson ---------- */
+function openLesson(id){
+  window.scrollTo(0,0);
+  var l=lessonById(id);
+  var idx=COURSE.lessons.indexOf(l);
+  var prev=COURSE.lessons[idx-1], next=COURSE.lessons[idx+1];
+
+  var quizHTML = l.quiz.map(function(qq,qi){
+    var opts=qq.a.map(function(opt,oi){
+      return `<label class="opt" data-q="${qi}" data-o="${oi}">
+        <input type="radio" name="q${qi}" value="${oi}" />
+        <span>${opt}</span><span class="mk"></span>
+      </label>`;
+    }).join("");
+    return `<div class="q" id="q${qi}">
+      <div class="qt"><span class="qn">Q${qi+1}.</span>${qq.q}</div>${opts}</div>`;
+  }).join("");
+
+  document.getElementById("content").innerHTML = `
+    <button class="back-link" onclick="goHome()">← Back to ${COURSE.title}</button>
+    <div class="lesson-head" style="margin-top:14px">
+      <div class="tags">
+        <span class="tag product">Pilot</span>
+        <span class="tag type">${l.type}</span>
+        <span class="tag lvl-${l.level.toLowerCase()}">${l.level}</span>
+        <span class="tag" style="background:#eef1f6;color:#5b6b86">Lesson ${l.num} of ${COURSE.lessons.length}</span>
+      </div>
+      <h1>${l.title}</h1>
+      <p class="desc">${l.desc}</p>
+    </div>
+
+    <div class="video-box">
+      <video controls preload="metadata" poster="">
+        <source src="${l.video}" type="video/mp4" />
+        Your browser does not support video playback.
+      </video>
+    </div>
+
+    <div class="lesson-body">${l.body}</div>
+
+    <div class="quiz">
+      <div class="quiz-head">${ICONS.quiz}<h2>Knowledge check</h2></div>
+      <p class="intro">Answer all ${l.quiz.length} questions. Score 100% to complete the lesson.</p>
+      <div id="quiz-questions">${quizHTML}</div>
+      <div class="quiz-actions">
+        <button class="btn" id="quiz-submit" onclick="gradeQuiz('${l.id}')">Submit answers</button>
+        <span class="result" id="quiz-result"></span>
+      </div>
+    </div>
+
+    <div class="lesson-nav">
+      <div>${prev?`<button class="btn-ghost" onclick="openLesson('${prev.id}')">← ${prev.title}</button>`:""}</div>
+      <div>${next?`<button class="btn-ghost" onclick="openLesson('${next.id}')">${next.title} →</button>`:`<button class="btn-ghost" onclick="goHome()">Finish course →</button>`}</div>
+    </div>
+  `;
+
+  // clicking a label selects its radio
+  document.querySelectorAll(".opt").forEach(function(lab){
+    lab.addEventListener("click",function(){
+      var inp=lab.querySelector("input"); inp.checked=true;
+    });
+  });
+}
+
+function gradeQuiz(lessonId){
+  var l=lessonById(lessonId);
+  var allAnswered=true, correctCount=0;
+
+  // clear previous marks
+  document.querySelectorAll(".opt").forEach(function(o){o.classList.remove("correct","wrong");o.querySelector(".mk").textContent="";});
+
+  l.quiz.forEach(function(qq,qi){
+    var chosen=document.querySelector('input[name="q'+qi+'"]:checked');
+    if(!chosen){allAnswered=false;return;}
+    var ci=parseInt(chosen.value,10);
+    var opts=document.querySelectorAll('#q'+qi+' .opt');
+    if(ci===qq.correct){
+      correctCount++;
+      opts[ci].classList.add("correct"); opts[ci].querySelector(".mk").textContent="✓ Correct";
+    }else{
+      opts[ci].classList.add("wrong"); opts[ci].querySelector(".mk").textContent="✗";
+      opts[qq.correct].classList.add("correct"); opts[qq.correct].querySelector(".mk").textContent="✓ Answer";
+    }
+  });
+
+  var resultEl=document.getElementById("quiz-result");
+  if(!allAnswered){
+    resultEl.className="result fail";
+    resultEl.textContent="Please answer every question first.";
+    return;
+  }
+
+  var total=l.quiz.length;
+  if(correctCount===total){
+    state.completed[lessonId]=true; saveState();
+    resultEl.className="result pass";
+    resultEl.textContent="Passed! "+correctCount+"/"+total+" — lesson complete ✓";
+    var idx=COURSE.lessons.indexOf(l), next=COURSE.lessons[idx+1];
+    if(completedCount()===COURSE.lessons.length){
+      toast("🏆 Course complete!");
+    }else{
+      toast("Lesson complete ✓");
+    }
+    // offer next
+    document.getElementById("quiz-submit").textContent = next? "Next lesson →" : "Back to course →";
+    document.getElementById("quiz-submit").setAttribute("onclick", next? "openLesson('"+next.id+"')" : "goHome()");
+  }else{
+    resultEl.className="result fail";
+    resultEl.textContent="You got "+correctCount+"/"+total+". Review the highlights and try again.";
+  }
+}
+
+/* ---------- Boot ---------- */
+if(state.user){ enterApp(); }
+</script>
+</body>
+</html>
