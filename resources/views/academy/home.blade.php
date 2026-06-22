@@ -3,7 +3,20 @@
 @section('title', 'Pilot Academy — My Learning')
 
 @section('content')
-    @if(! session('student_name'))
+    @auth
+        <div class="mb-8">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-navy">Welcome back, {{ auth()->user()->name }}</h1>
+            <p class="text-slate-500">Pick up where you left off — your progress is saved to your account.</p>
+        </div>
+    @elseif(session('student_name'))
+        <div class="mb-8">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-navy">Welcome back, {{ session('student_name') }}</h1>
+            <p class="text-slate-500">
+                Pick up where you left off.
+                <a href="{{ route('register') }}" class="text-brand font-semibold">Create an account</a> to save your progress.
+            </p>
+        </div>
+    @else
         <div class="mb-8 rounded-2xl bg-gradient-to-br from-brand to-navy text-white p-7 sm:p-9">
             <h1 class="text-2xl sm:text-3xl font-extrabold mb-1">Welcome to Pilot Academy</h1>
             <p class="text-white/80 mb-5">Short, focused lessons with videos and quizzes — get productive from day one.</p>
@@ -15,13 +28,12 @@
                     Start learning
                 </button>
             </form>
+            <p class="text-white/70 text-sm mt-3">
+                Have an account? <a href="{{ route('login') }}" class="underline font-semibold">Log in</a>
+                · <a href="{{ route('register') }}" class="underline font-semibold">Register</a>
+            </p>
         </div>
-    @else
-        <div class="mb-8">
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-navy">Welcome back, {{ session('student_name') }}</h1>
-            <p class="text-slate-500">Pick up where you left off.</p>
-        </div>
-    @endif
+    @endauth
 
     @forelse($courses as $course)
         @php

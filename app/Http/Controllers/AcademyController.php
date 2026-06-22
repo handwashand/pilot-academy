@@ -98,13 +98,29 @@ class AcademyController extends Controller
         return redirect()->route('academy.home');
     }
 
+    /**
+     * Completed lesson ids — from the user's account when logged in,
+     * otherwise from the session (open / anonymous mode).
+     */
     private function completedIds(Request $request): array
     {
+        if ($user = $request->user()) {
+            return $user->completedLessons()->pluck('lessons.id')->all();
+        }
+
         return $request->session()->get(self::SESSION_KEY, []);
     }
 
     private function markCompleted(Request $request, int $lessonId): void
     {
+        if ($user = $request->user()) {
+            $user->completedLessons()->syncWithoutDetaching([
+                $lessonId => ['completed_at' => now()],
+            ]);
+
+            return;
+        }
+
         $ids = $this->completedIds($request);
         if (! in_array($lessonId, $ids, true)) {
             $ids[] = $lessonId;
