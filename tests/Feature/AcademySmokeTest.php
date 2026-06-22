@@ -120,4 +120,59 @@ class AcademySmokeTest extends TestCase
 
         $this->actingAs($student)->get('/admin')->assertStatus(403);
     }
+
+    public function test_student_can_register_and_is_logged_in(): void
+    {
+        $this->post('/register', [
+            'name' => 'New Partner',
+            'email' => 'new@partner.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ])->assertRedirect(route('academy.home'));
+
+        $this->assertAuthenticated();
+        $this->assertDatabaseHas('users', ['email' => 'new@partner.com', 'is_admin' => false]);
+    }
+
+    public function test_student_can_log_in(): void
+    {
+        User::create([
+            'name' => 'Partner',
+            'email' => 'p@partner.com',
+            'password' => bcrypt('password123'),
+            'is_admin' => false,
+        ]);
+
+        $this->post('/login', ['email' => 'p@partner.com', 'password' => 'password123'])
+            ->assertRedirect(route('academy.home'));
+
+        $this->assertAuthenticated();
+    }
+
+    public function test_logged_in_quiz_completion_is_saved_to_account(): void
+    {
+        $user = User::create([
+            'name' => 'Learner',
+            'email' => 'learner@partner.com',
+            'password' => bcrypt('password123'),
+            'is_admin' => false,
+        ]);
+
+        $course = Course::first();
+        $lesson = $course->lessons()->with('questions.options')->first();
+
+        $answers = [];
+        foreach ($lesson->questions as $q) {
+            $answers[$q->id] = $q->options->firstWhere('is_correct', true)->id;
+        }
+
+        $this->actingAs($user)
+            ->post(route('academy.quiz', [$course, $lesson]), ['answers' => $answers])
+            ->assertSessionHas('quiz_passed', true);
+
+        $this->assertDatabaseHas('lesson_user', [
+            'user_id' => $user->id,
+            'lesson_id' => $lesson->id,
+        ]);
+    }
 }

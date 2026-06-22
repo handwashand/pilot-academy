@@ -41,13 +41,24 @@
                 <span class="font-extrabold text-navy text-lg">Pilot <span class="text-brand">Academy</span></span>
             </a>
             <div class="flex items-center gap-3">
-                @php($name = session('student_name'))
-                @if($name)
+                @auth
+                    @php($name = auth()->user()->name)
                     <span class="hidden sm:block text-sm text-slate-500">{{ $name }}</span>
                     <span class="w-9 h-9 rounded-full bg-navy text-white flex items-center justify-center font-bold text-sm">
                         {{ strtoupper(mb_substr($name, 0, 1)) }}
                     </span>
-                @endif
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button class="text-sm text-slate-500 hover:text-brand font-medium">Log out</button>
+                    </form>
+                @else
+                    @php($name = session('student_name'))
+                    @if($name)
+                        <span class="hidden sm:block text-sm text-slate-500">{{ $name }}</span>
+                    @endif
+                    <a href="{{ route('login') }}" class="text-sm text-slate-600 hover:text-brand font-medium">Log in</a>
+                    <a href="{{ route('register') }}" class="text-sm font-semibold rounded-lg bg-brand text-white px-3.5 py-1.5 hover:bg-blue-700">Register</a>
+                @endauth
             </div>
         </div>
     </header>
