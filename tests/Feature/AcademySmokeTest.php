@@ -83,6 +83,7 @@ class AcademySmokeTest extends TestCase
         $admin = User::firstOrCreate(['email' => 'admin@pilot.local'], [
             'name' => 'Pilot Admin',
             'password' => bcrypt('password'),
+            'is_admin' => true,
         ]);
 
         $lesson = Lesson::first();
@@ -94,5 +95,29 @@ class AcademySmokeTest extends TestCase
         $this->actingAs($admin)
             ->get('/admin/courses')
             ->assertStatus(200);
+    }
+
+    public function test_admin_can_manage_users_and_companies(): void
+    {
+        $admin = User::firstOrCreate(['email' => 'admin@pilot.local'], [
+            'name' => 'Pilot Admin',
+            'password' => bcrypt('password'),
+            'is_admin' => true,
+        ]);
+
+        $this->actingAs($admin)->get('/admin/users')->assertStatus(200);
+        $this->actingAs($admin)->get('/admin/companies')->assertStatus(200);
+    }
+
+    public function test_non_admin_cannot_access_admin_panel(): void
+    {
+        $student = User::create([
+            'name' => 'Partner User',
+            'email' => 'student@example.com',
+            'password' => bcrypt('secret'),
+            'is_admin' => false,
+        ]);
+
+        $this->actingAs($student)->get('/admin')->assertStatus(403);
     }
 }
