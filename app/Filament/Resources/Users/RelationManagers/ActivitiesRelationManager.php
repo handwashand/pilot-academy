@@ -29,9 +29,11 @@ class ActivitiesRelationManager extends RelationManager
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => ActivityEvent::TYPE_LABELS[$state] ?? $state)
                     ->color(fn (string $state): string => match ($state) {
-                        ActivityEvent::TYPE_LOGIN => 'success',
+                        ActivityEvent::TYPE_LOGIN => 'gray',
                         ActivityEvent::TYPE_COURSE_OPENED => 'info',
-                        ActivityEvent::TYPE_LESSON_OPENED => 'primary',
+                        ActivityEvent::TYPE_LESSON_OPENED => 'info',
+                        ActivityEvent::TYPE_LESSON_COMPLETED => 'success',
+                        ActivityEvent::TYPE_COURSE_COMPLETED => 'success',
                         default => 'gray',
                     }),
 

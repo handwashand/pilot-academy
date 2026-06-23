@@ -208,6 +208,30 @@ class AcademySmokeTest extends TestCase
         $this->get('/enter/not-a-real-token')->assertNotFound();
     }
 
+    public function test_logged_in_completion_is_recorded_for_admin_view(): void
+    {
+        $student = User::create([
+            'name' => 'Completer',
+            'email' => 'completer@example.com',
+            'password' => bcrypt('secret'),
+            'is_admin' => false,
+        ]);
+        $course = Course::first();
+        $lesson = $course->lessons()->with('questions.options')->first();
+
+        $answers = [];
+        foreach ($lesson->questions as $q) {
+            $answers[$q->id] = $q->options->firstWhere('is_correct', true)->id;
+        }
+
+        $this->actingAs($student)
+            ->post(route('academy.quiz', [$course, $lesson]), ['answers' => $answers])
+            ->assertSessionHas('quiz_passed', true);
+
+        $this->assertDatabaseHas('lesson_user', ['user_id' => $student->id, 'lesson_id' => $lesson->id]);
+        $this->assertDatabaseHas('activity_events', ['user_id' => $student->id, 'type' => 'lesson_completed']);
+    }
+
     public function test_non_admin_cannot_access_admin_panel(): void
     {
         $student = User::create([
