@@ -48,54 +48,131 @@
 
             {{-- Quiz --}}
             @if($lesson->questions->isNotEmpty())
+                @php
+                    $mode = $quiz['mode'] ?? 'open';
+                    $timeup = session('quiz_timeup');
+                    $showForm = in_array($mode, ['open', 'active'], true);
+                    $secondsRemaining = $quiz['secondsRemaining'] ?? null;
+                @endphp
                 <div class="mt-8 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-                    <div class="flex items-center gap-2 mb-1">
-                        <span class="text-violet-600 text-xl">❓</span>
-                        <h2 class="text-xl font-extrabold text-navy">Knowledge check</h2>
+                    <div class="flex items-center justify-between gap-2 mb-1 flex-wrap">
+                        <div class="flex items-center gap-2">
+                            <span class="text-violet-600 text-xl">❓</span>
+                            <h2 class="text-xl font-extrabold text-navy">Knowledge check</h2>
+                        </div>
+                        @if($mode === 'active' && $secondsRemaining !== null)
+                            <span id="quiz-timer" class="text-sm font-bold px-3 py-1.5 rounded-lg bg-slate-100 text-navy">
+                                ⏱ <span id="quiz-countdown">--:--</span>
+                            </span>
+                        @endif
                     </div>
                     <p class="text-slate-500 text-sm mb-5">Answer all questions correctly to complete this lesson.</p>
 
+                    {{-- Status banners --}}
                     @if($passed || $isDone)
                         <div class="rounded-xl bg-green-50 border border-green-200 text-green-800 px-5 py-4 mb-5 flex items-center gap-3">
-                            <span class="w-8 h-8 rounded-full bg-ok text-white flex items-center justify-center">✓</span>
+                            <span class="w-8 h-8 rounded-full bg-ok text-white flex items-center justify-center flex-none">✓</span>
                             <div>
                                 <div class="font-bold">Lesson complete!</div>
                                 <div class="text-sm text-green-700">Nice work. {{ $next ? 'Continue to the next lesson.' : 'You\'ve finished the course.' }}</div>
                             </div>
                         </div>
+                    @elseif($timeup)
+                        <div class="rounded-xl bg-red-50 border border-red-200 text-red-700 px-5 py-4 mb-5">
+                            ⏱ <strong>Time's up.</strong> This attempt was not counted as successful.
+                        </div>
                     @elseif($failed)
                         <div class="rounded-xl bg-amber-50 border border-amber-200 text-amber-800 px-5 py-4 mb-5">
-                            Some answers need another look — corrected items are marked below. Try again.
+                            Attempt unsuccessful
+                            @if(session('quiz_score'))
+                                (score {{ session('quiz_score') }})
+                            @endif
+                            —
+                            @if($mode === 'open')
+                                corrected items are marked below. Try again.
+                            @else
+                                review the lesson and try again.
+                            @endif
                         </div>
                     @endif
 
                     @unless($passed || $isDone)
-                        <form method="POST" action="{{ route('academy.quiz', [$course, $lesson]) }}" class="space-y-6">
-                            @csrf
-                            @foreach($lesson->questions as $qn => $question)
-                                @php($qResult = $results[$question->id] ?? null)
-                                <fieldset class="border border-slate-200 rounded-xl p-5">
-                                    <legend class="px-2 font-semibold text-navy">
-                                        {{ $qn + 1 }}. {{ $question->prompt }}
-                                        @if($qResult === true)<span class="text-ok">✓</span>@elseif($qResult === false)<span class="text-red-500">✗</span>@endif
-                                    </legend>
-                                    <div class="space-y-2 mt-2">
-                                        @foreach($question->options as $option)
-                                            <label class="flex items-center gap-3 px-3 py-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 active:bg-slate-100">
-                                                <input type="radio" name="answers[{{ $question->id }}]" value="{{ $option->id }}"
-                                                       class="text-brand w-4 h-4 flex-none"
-                                                       {{ (int) old("answers.{$question->id}") === $option->id ? 'checked' : '' }} required>
-                                                <span>{{ $option->text }}</span>
-                                            </label>
-                                        @endforeach
-                                    </div>
-                                </fieldset>
-                            @endforeach
+                        @if($mode === 'prestart')
+                            {{-- Pre-start: warn about time and attempts --}}
+                            <div class="rounded-xl bg-amber-50 border border-amber-200 text-amber-900 px-5 py-4 mb-5">
+                                <div class="font-semibold mb-1">Before you start</div>
+                                <ul class="text-sm space-y-1 list-disc pl-5">
+                                    @if($quiz['timeLimit'])
+                                        <li><strong>Time limit: {{ $quiz['timeLimit'] }} min.</strong> The countdown starts when you press Start and can't be paused.</li>
+                                    @endif
+                                    @if($quiz['attemptsRemaining'] !== null)
+                                        <li>You have <strong>{{ $quiz['attemptsRemaining'] }}</strong> attempt(s) left.</li>
+                                    @endif
+                                    <li>Make sure you have enough time to finish. If not, it's better to come back later.</li>
+                                </ul>
+                            </div>
+                            <form method="POST" action="{{ route('academy.quiz.start', [$course, $lesson]) }}">
+                                @csrf
+                                <button class="w-full sm:w-auto rounded-lg bg-brand text-white font-semibold px-6 py-3 hover:bg-blue-700">
+                                    Start quiz
+                                </button>
+                            </form>
+                        @elseif($mode === 'exhausted')
+                            <div class="rounded-xl bg-slate-100 border border-slate-200 text-slate-600 px-5 py-4">
+                                <strong>No attempts remaining.</strong> You've used all {{ $quiz['maxAttempts'] }} attempts for this quiz.
+                            </div>
+                        @endif
 
-                            <button class="w-full sm:w-auto rounded-lg bg-brand text-white font-semibold px-6 py-3 hover:bg-blue-700">
-                                Submit answers
-                            </button>
-                        </form>
+                        @if($showForm)
+                            <form method="POST" action="{{ route('academy.quiz', [$course, $lesson]) }}" id="quiz-form" class="space-y-6">
+                                @csrf
+                                @foreach($lesson->questions as $qn => $question)
+                                    @php
+                                        $qResult = $mode === 'open' ? ($results[$question->id] ?? null) : null;
+                                    @endphp
+                                    <fieldset class="border border-slate-200 rounded-xl p-5">
+                                        <legend class="px-2 font-semibold text-navy">
+                                            {{ $qn + 1 }}. {{ $question->prompt }}
+                                            @if($qResult === true)<span class="text-ok">✓</span>@elseif($qResult === false)<span class="text-red-500">✗</span>@endif
+                                        </legend>
+                                        <div class="space-y-2 mt-2">
+                                            @foreach($question->options as $option)
+                                                <label class="flex items-center gap-3 px-3 py-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 active:bg-slate-100">
+                                                    <input type="radio" name="answers[{{ $question->id }}]" value="{{ $option->id }}"
+                                                           class="text-brand w-4 h-4 flex-none"
+                                                           {{ $mode === 'open' && (int) old("answers.{$question->id}") === $option->id ? 'checked' : '' }} required>
+                                                    <span>{{ $option->text }}</span>
+                                                </label>
+                                            @endforeach
+                                        </div>
+                                    </fieldset>
+                                @endforeach
+
+                                <button class="w-full sm:w-auto rounded-lg bg-brand text-white font-semibold px-6 py-3 hover:bg-blue-700">
+                                    Submit answers
+                                </button>
+                            </form>
+
+                            @if($mode === 'active' && $secondsRemaining !== null)
+                                <script>
+                                    (function () {
+                                        var total = {{ (int) $secondsRemaining }};
+                                        var out = document.getElementById('quiz-countdown');
+                                        var badge = document.getElementById('quiz-timer');
+                                        var form = document.getElementById('quiz-form');
+                                        var done = false;
+                                        function fmt(s) { var m = Math.floor(s / 60), x = s % 60; return m + ':' + (x < 10 ? '0' : '') + x; }
+                                        function tick() {
+                                            if (out) out.textContent = fmt(Math.max(0, total));
+                                            if (badge && total <= 30) { badge.classList.remove('bg-slate-100', 'text-navy'); badge.classList.add('bg-red-100', 'text-red-700'); }
+                                            if (total <= 0) { if (!done && form) { done = true; form.submit(); } return; }
+                                            total--; setTimeout(tick, 1000);
+                                        }
+                                        tick();
+                                    })();
+                                </script>
+                            @endif
+                        @endif
                     @endunless
                 </div>
             @endif

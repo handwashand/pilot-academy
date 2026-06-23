@@ -48,6 +48,11 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(ActivityEvent::class)->latest();
     }
 
+    public function quizAttempts(): HasMany
+    {
+        return $this->hasMany(QuizAttempt::class)->latest();
+    }
+
     /** Stamp the last login time and log a login activity event. */
     public function recordLogin(): void
     {

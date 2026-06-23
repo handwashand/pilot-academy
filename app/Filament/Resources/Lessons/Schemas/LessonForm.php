@@ -99,6 +99,18 @@ class LessonForm
                 Section::make('Knowledge check (quiz)')
                     ->description('Add questions. Mark the correct option(s) with the toggle.')
                     ->schema([
+                        TextInput::make('quiz_time_limit_minutes')
+                            ->label('Time limit (minutes)')
+                            ->numeric()
+                            ->minValue(1)
+                            ->helperText('Optional. A countdown is shown; running out ends the attempt unsuccessfully. Applies to logged-in students.'),
+
+                        TextInput::make('quiz_max_attempts')
+                            ->label('Max attempts')
+                            ->numeric()
+                            ->minValue(1)
+                            ->helperText('Optional. How many tries a student gets. Leave empty for unlimited.'),
+
                         Repeater::make('questions')
                             ->relationship()
                             ->orderColumn('sort_order')

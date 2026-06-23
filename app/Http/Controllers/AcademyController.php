@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ActivityEvent;
 use App\Models\Course;
 use App\Models\Lesson;
+use App\Models\QuizAttempt;
 use Illuminate\Http\Request;
 
 class AcademyController extends Controller
@@ -58,7 +59,34 @@ class AcademyController extends Controller
             'next' => $next,
             'prev' => $prev,
             'completed' => $this->completedIds($request),
+            'quiz' => $this->quizState($request, $lesson),
         ]);
+    }
+
+    /**
+     * Begin a timed/limited quiz attempt (logged-in students only).
+     */
+    public function startQuiz(Request $request, Course $course, Lesson $lesson)
+    {
+        abort_unless($lesson->course_id === $course->id, 404);
+        $user = $request->user();
+        abort_unless($user && $lesson->hasQuizLimits(), 403);
+
+        $state = $this->quizState($request, $lesson);
+
+        // Only start when allowed: not passed, not exhausted, not already running.
+        if (! in_array($lesson->id, $this->completedIds($request), true)
+            && in_array($state['mode'], ['prestart'], true)
+        ) {
+            QuizAttempt::create([
+                'user_id' => $user->id,
+                'lesson_id' => $lesson->id,
+                'status' => QuizAttempt::STATUS_IN_PROGRESS,
+                'started_at' => now(),
+            ]);
+        }
+
+        return redirect()->route('academy.lesson', [$course, $lesson]);
     }
 
     public function submitQuiz(Request $request, Course $course, Lesson $lesson)
@@ -66,8 +94,67 @@ class AcademyController extends Controller
         abort_unless($lesson->course_id === $course->id, 404);
         $lesson->load('questions.options');
 
+        $user = $request->user();
+        $limited = $user && $lesson->hasQuizLimits();
+
+        [$allCorrect, $results, $score, $total] = $this->gradeAnswers($request, $lesson);
+
+        if ($limited) {
+            $attempt = QuizAttempt::where('user_id', $user->id)
+                ->where('lesson_id', $lesson->id)
+                ->where('status', QuizAttempt::STATUS_IN_PROGRESS)
+                ->latest()
+                ->first();
+
+            // No active attempt (e.g. already finalized) — send back to the start screen.
+            if (! $attempt) {
+                return redirect()->route('academy.lesson', [$course, $lesson]);
+            }
+
+            // Server-side time check (authoritative), with a small grace period.
+            $timedOut = $lesson->quiz_time_limit_minutes
+                && (int) $attempt->started_at->diffInSeconds(now()) > $lesson->quiz_time_limit_minutes * 60 + 3;
+
+            if ($timedOut) {
+                $attempt->update(['status' => QuizAttempt::STATUS_EXPIRED, 'submitted_at' => now(), 'score' => $score, 'total' => $total]);
+
+                return redirect()->route('academy.lesson', [$course, $lesson])->with('quiz_timeup', true);
+            }
+
+            if ($allCorrect) {
+                $attempt->update(['status' => QuizAttempt::STATUS_PASSED, 'submitted_at' => now(), 'score' => $score, 'total' => $total]);
+                $this->completeLesson($request, $course, $lesson);
+
+                return redirect()->route('academy.lesson', [$course, $lesson])->with('quiz_passed', true);
+            }
+
+            $attempt->update(['status' => QuizAttempt::STATUS_FAILED, 'submitted_at' => now(), 'score' => $score, 'total' => $total]);
+
+            return redirect()->route('academy.lesson', [$course, $lesson])
+                ->with('quiz_failed', true)
+                ->with('quiz_score', "{$score}/{$total}");
+        }
+
+        // Open mode (no limits, or anonymous): instant feedback, retry in place.
+        if ($allCorrect) {
+            $this->completeLesson($request, $course, $lesson);
+
+            return redirect()->route('academy.lesson', [$course, $lesson])->with('quiz_passed', true);
+        }
+
+        return redirect()->route('academy.lesson', [$course, $lesson])
+            ->withInput()
+            ->with('quiz_results', $results)
+            ->with('quiz_failed', true);
+    }
+
+    /** Grade submitted answers. Returns [allCorrect, perQuestionResults, score, total]. */
+    private function gradeAnswers(Request $request, Lesson $lesson): array
+    {
         $answers = $request->input('answers', []);
         $results = [];
+        $score = 0;
+        $total = $lesson->questions->count();
         $allCorrect = $lesson->questions->isNotEmpty();
 
         foreach ($lesson->questions as $question) {
@@ -75,45 +162,100 @@ class AcademyController extends Controller
             $correctOption = $question->options->firstWhere('is_correct', true);
             $isCorrect = $correctOption && $chosen === $correctOption->id;
             $results[$question->id] = $isCorrect;
-            if (! $isCorrect) {
+            if ($isCorrect) {
+                $score++;
+            } else {
                 $allCorrect = false;
             }
         }
 
-        if ($allCorrect) {
-            $user = $request->user();
-            $isNewCompletion = ! in_array($lesson->id, $this->completedIds($request), true);
+        return [$allCorrect, $results, $score, $total];
+    }
 
-            $this->markCompleted($request, $lesson->id);
+    /** Mark a lesson complete and log completion activity (lesson + course). */
+    private function completeLesson(Request $request, Course $course, Lesson $lesson): void
+    {
+        $user = $request->user();
+        $isNewCompletion = ! in_array($lesson->id, $this->completedIds($request), true);
 
-            if ($user && $isNewCompletion) {
-                ActivityEvent::record($user, ActivityEvent::TYPE_LESSON_COMPLETED, $lesson->title, $request->path());
+        $this->markCompleted($request, $lesson->id);
 
-                $remaining = array_diff(
-                    $course->publishedLessons()->pluck('lessons.id')->all(),
-                    $user->completedLessons()->pluck('lessons.id')->all(),
-                );
+        if ($user && $isNewCompletion) {
+            ActivityEvent::record($user, ActivityEvent::TYPE_LESSON_COMPLETED, $lesson->title, $request->path());
 
-                if (empty($remaining)
-                    && ! $user->activities()
-                        ->where('type', ActivityEvent::TYPE_COURSE_COMPLETED)
-                        ->where('label', $course->title)
-                        ->exists()
-                ) {
-                    ActivityEvent::record($user, ActivityEvent::TYPE_COURSE_COMPLETED, $course->title);
-                }
+            $remaining = array_diff(
+                $course->publishedLessons()->pluck('lessons.id')->all(),
+                $user->completedLessons()->pluck('lessons.id')->all(),
+            );
+
+            if (empty($remaining)
+                && ! $user->activities()
+                    ->where('type', ActivityEvent::TYPE_COURSE_COMPLETED)
+                    ->where('label', $course->title)
+                    ->exists()
+            ) {
+                ActivityEvent::record($user, ActivityEvent::TYPE_COURSE_COMPLETED, $course->title);
             }
+        }
+    }
 
-            return redirect()
-                ->route('academy.lesson', [$course, $lesson])
-                ->with('quiz_passed', true);
+    /**
+     * Quiz access state for the lesson view.
+     * mode: open (no limits / anonymous) | prestart | active | exhausted
+     */
+    private function quizState(Request $request, Lesson $lesson): array
+    {
+        $user = $request->user();
+
+        if (! $lesson->hasQuizLimits() || ! $user) {
+            return ['mode' => 'open'];
         }
 
-        return redirect()
-            ->route('academy.lesson', [$course, $lesson])
-            ->withInput()
-            ->with('quiz_results', $results)
-            ->with('quiz_failed', true);
+        $timeLimit = $lesson->quiz_time_limit_minutes;
+        $maxAttempts = $lesson->quiz_max_attempts;
+
+        $base = QuizAttempt::where('user_id', $user->id)->where('lesson_id', $lesson->id);
+        $used = (clone $base)->whereIn('status', [
+            QuizAttempt::STATUS_PASSED,
+            QuizAttempt::STATUS_FAILED,
+            QuizAttempt::STATUS_EXPIRED,
+        ])->count();
+        $inProgress = (clone $base)->where('status', QuizAttempt::STATUS_IN_PROGRESS)->latest()->first();
+        $attemptsRemaining = $maxAttempts ? max(0, $maxAttempts - $used) : null;
+
+        if ($inProgress) {
+            $secondsRemaining = null;
+            if ($timeLimit) {
+                $elapsed = (int) $inProgress->started_at->diffInSeconds(now());
+                $secondsRemaining = max(0, $timeLimit * 60 - $elapsed);
+            }
+
+            return [
+                'mode' => 'active',
+                'timeLimit' => $timeLimit,
+                'maxAttempts' => $maxAttempts,
+                'attemptsUsed' => $used,
+                'attemptsRemaining' => $attemptsRemaining,
+                'secondsRemaining' => $secondsRemaining,
+            ];
+        }
+
+        if ($maxAttempts && $used >= $maxAttempts) {
+            return [
+                'mode' => 'exhausted',
+                'maxAttempts' => $maxAttempts,
+                'attemptsUsed' => $used,
+                'attemptsRemaining' => 0,
+            ];
+        }
+
+        return [
+            'mode' => 'prestart',
+            'timeLimit' => $timeLimit,
+            'maxAttempts' => $maxAttempts,
+            'attemptsUsed' => $used,
+            'attemptsRemaining' => $attemptsRemaining,
+        ];
     }
 
     public function setName(Request $request)
