@@ -69,10 +69,14 @@
                     @php($isDone = in_array($lesson->id, $completed, true))
                     <a href="{{ route('academy.lesson', [$course, $lesson]) }}"
                        class="group bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition">
-                        <div class="h-28 bg-gradient-to-br from-brand to-navy flex items-center justify-center relative">
-                            <span class="text-white/90 text-4xl font-extrabold">{{ $i + 1 }}</span>
+                        <div class="h-28 relative flex items-center justify-center bg-gradient-to-br from-brand to-navy overflow-hidden">
+                            @if($lesson->image_url)
+                                <img src="{{ $lesson->image_url }}" alt="{{ $lesson->title }}" class="absolute inset-0 w-full h-full object-cover">
+                            @else
+                                <span class="text-white/90 text-4xl font-extrabold">{{ $i + 1 }}</span>
+                            @endif
                             @if($isDone)
-                                <span class="absolute top-3 right-3 w-7 h-7 rounded-full bg-ok text-white flex items-center justify-center text-sm">✓</span>
+                                <span class="absolute top-3 right-3 w-7 h-7 rounded-full bg-ok text-white flex items-center justify-center text-sm shadow">✓</span>
                             @endif
                         </div>
                         <div class="p-5">

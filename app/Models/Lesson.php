@@ -14,6 +14,7 @@ class Lesson extends Model
         'title',
         'slug',
         'summary',
+        'image_path',
         'youtube_url',
         'video_path',
         'content',
@@ -34,6 +35,16 @@ class Lesson extends Model
     public function questions(): HasMany
     {
         return $this->hasMany(Question::class)->orderBy('sort_order');
+    }
+
+    /**
+     * Public URL of the uploaded cover image, if one was uploaded.
+     */
+    public function getImageUrlAttribute(): ?string
+    {
+        return $this->image_path
+            ? Storage::disk('public')->url($this->image_path)
+            : null;
     }
 
     /**
