@@ -36,6 +36,17 @@ class AcademySmokeTest extends TestCase
             ->assertSee('For Technical');
     }
 
+    public function test_lesson_card_shows_uploaded_cover_image(): void
+    {
+        $course = Course::first();
+        $lesson = $course->lessons()->first();
+        $lesson->update(['image_path' => 'lesson-images/cover.jpg']);
+
+        $this->get('/')
+            ->assertStatus(200)
+            ->assertSee('lesson-images/cover.jpg', false);
+    }
+
     public function test_lesson_page_shows_video_and_quiz(): void
     {
         $course = Course::first();

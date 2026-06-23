@@ -54,6 +54,18 @@ class LessonForm
                             ->rows(2)
                             ->columnSpanFull(),
 
+                        FileUpload::make('image_path')
+                            ->label('Cover image')
+                            ->image()
+                            ->imageEditor()
+                            ->imageEditorAspectRatios(['16:9', '4:3', '1:1', null])
+                            ->disk('public')
+                            ->directory('lesson-images')
+                            ->visibility('public')
+                            ->maxSize(8192) // 8 MB
+                            ->columnSpanFull()
+                            ->helperText('Shown on the lesson card. Use the editor to crop/fit. Leave empty for a placeholder.'),
+
                         TextInput::make('youtube_url')
                             ->label('YouTube link')
                             ->url()
