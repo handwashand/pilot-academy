@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -41,6 +42,18 @@ class User extends Authenticatable implements FilamentUser
         return $this->belongsToMany(Lesson::class)->withPivot('completed_at')->withTimestamps();
     }
 
+    public function activities(): HasMany
+    {
+        return $this->hasMany(ActivityEvent::class)->latest();
+    }
+
+    /** Stamp the last login time and log a login activity event. */
+    public function recordLogin(): void
+    {
+        $this->forceFill(['last_login_at' => now()])->save();
+        ActivityEvent::record($this, ActivityEvent::TYPE_LOGIN);
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -52,6 +65,7 @@ class User extends Authenticatable implements FilamentUser
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_admin' => 'boolean',
+            'last_login_at' => 'datetime',
         ];
     }
 }

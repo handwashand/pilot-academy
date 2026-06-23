@@ -39,6 +39,13 @@ class UsersTable
                     ->color('success')
                     ->sortable(),
 
+                TextColumn::make('last_login_at')
+                    ->label('Last login')
+                    ->dateTime('d M Y, H:i')
+                    ->since()
+                    ->placeholder('never')
+                    ->sortable(),
+
                 IconColumn::make('is_admin')
                     ->label('Admin')
                     ->boolean(),

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityEvent;
 use App\Models\Course;
 use App\Models\Lesson;
 use Illuminate\Http\Request;
@@ -29,6 +30,8 @@ class AcademyController extends Controller
         abort_unless($course->is_published, 404);
         $course->load('publishedLessons');
 
+        ActivityEvent::record($request->user(), ActivityEvent::TYPE_COURSE_OPENED, $course->title, $request->path());
+
         return view('academy.course', [
             'course' => $course,
             'completed' => $this->completedIds($request),
@@ -45,6 +48,8 @@ class AcademyController extends Controller
         $currentIndex = $lessons->search(fn ($l) => $l->id === $lesson->id);
         $next = $currentIndex !== false ? $lessons->get($currentIndex + 1) : null;
         $prev = $currentIndex !== false && $currentIndex > 0 ? $lessons->get($currentIndex - 1) : null;
+
+        ActivityEvent::record($request->user(), ActivityEvent::TYPE_LESSON_OPENED, $lesson->title, $request->path());
 
         return view('academy.lesson', [
             'course' => $course,
