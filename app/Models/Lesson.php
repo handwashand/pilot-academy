@@ -18,6 +18,8 @@ class Lesson extends Model
         'youtube_url',
         'video_path',
         'content',
+        'quiz_time_limit_minutes',
+        'quiz_max_attempts',
         'duration_minutes',
         'is_published',
         'sort_order',
@@ -35,6 +37,12 @@ class Lesson extends Model
     public function questions(): HasMany
     {
         return $this->hasMany(Question::class)->orderBy('sort_order');
+    }
+
+    /** Does the quiz enforce a time limit and/or a limited number of attempts? */
+    public function hasQuizLimits(): bool
+    {
+        return ! empty($this->quiz_time_limit_minutes) || ! empty($this->quiz_max_attempts);
     }
 
     /**

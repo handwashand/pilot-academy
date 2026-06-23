@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Course;
 use App\Models\Lesson;
+use App\Models\QuizAttempt;
 use App\Models\User;
 use Database\Seeders\PilotQuickStartSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -230,6 +231,82 @@ class AcademySmokeTest extends TestCase
 
         $this->assertDatabaseHas('lesson_user', ['user_id' => $student->id, 'lesson_id' => $lesson->id]);
         $this->assertDatabaseHas('activity_events', ['user_id' => $student->id, 'type' => 'lesson_completed']);
+    }
+
+    public function test_timed_quiz_prestart_then_pass(): void
+    {
+        $student = User::create([
+            'name' => 'Timed', 'email' => 'timed@example.com', 'password' => bcrypt('x'), 'is_admin' => false,
+        ]);
+        $course = Course::first();
+        $lesson = $course->lessons()->with('questions.options')->first();
+        $lesson->update(['quiz_time_limit_minutes' => 10, 'quiz_max_attempts' => 2]);
+
+        // Pre-start screen is shown (not the questions yet).
+        $this->actingAs($student)->get(route('academy.lesson', [$course, $lesson]))
+            ->assertStatus(200)
+            ->assertSee('Start quiz');
+
+        // Starting creates an in-progress attempt.
+        $this->actingAs($student)->post(route('academy.quiz.start', [$course, $lesson]))->assertRedirect();
+        $this->assertDatabaseHas('quiz_attempts', [
+            'user_id' => $student->id, 'lesson_id' => $lesson->id, 'status' => 'in_progress',
+        ]);
+
+        // Correct submission passes and completes the lesson.
+        $answers = [];
+        foreach ($lesson->questions as $q) {
+            $answers[$q->id] = $q->options->firstWhere('is_correct', true)->id;
+        }
+        $this->actingAs($student)->post(route('academy.quiz', [$course, $lesson]), ['answers' => $answers])
+            ->assertSessionHas('quiz_passed', true);
+
+        $this->assertDatabaseHas('quiz_attempts', ['user_id' => $student->id, 'lesson_id' => $lesson->id, 'status' => 'passed']);
+        $this->assertDatabaseHas('lesson_user', ['user_id' => $student->id, 'lesson_id' => $lesson->id]);
+    }
+
+    public function test_quiz_time_expiry_marks_attempt_expired(): void
+    {
+        $student = User::create([
+            'name' => 'Slow', 'email' => 'slow@example.com', 'password' => bcrypt('x'), 'is_admin' => false,
+        ]);
+        $course = Course::first();
+        $lesson = $course->lessons()->with('questions.options')->first();
+        $lesson->update(['quiz_time_limit_minutes' => 1, 'quiz_max_attempts' => 3]);
+
+        $attempt = QuizAttempt::create([
+            'user_id' => $student->id, 'lesson_id' => $lesson->id,
+            'status' => 'in_progress', 'started_at' => now()->subMinutes(5),
+        ]);
+
+        $answers = [];
+        foreach ($lesson->questions as $q) {
+            $answers[$q->id] = $q->options->firstWhere('is_correct', true)->id;
+        }
+        $this->actingAs($student)->post(route('academy.quiz', [$course, $lesson]), ['answers' => $answers])
+            ->assertSessionHas('quiz_timeup', true);
+
+        $this->assertDatabaseHas('quiz_attempts', ['id' => $attempt->id, 'status' => 'expired']);
+        $this->assertDatabaseMissing('lesson_user', ['user_id' => $student->id, 'lesson_id' => $lesson->id]);
+    }
+
+    public function test_attempts_exhausted_blocks_the_quiz(): void
+    {
+        $student = User::create([
+            'name' => 'Done', 'email' => 'done@example.com', 'password' => bcrypt('x'), 'is_admin' => false,
+        ]);
+        $course = Course::first();
+        $lesson = $course->lessons()->first();
+        $lesson->update(['quiz_max_attempts' => 1]);
+
+        QuizAttempt::create([
+            'user_id' => $student->id, 'lesson_id' => $lesson->id,
+            'status' => 'failed', 'started_at' => now(), 'submitted_at' => now(),
+        ]);
+
+        $this->actingAs($student)->get(route('academy.lesson', [$course, $lesson]))
+            ->assertStatus(200)
+            ->assertSee('No attempts remaining');
     }
 
     public function test_non_admin_cannot_access_admin_panel(): void

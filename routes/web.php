@@ -22,4 +22,5 @@ Route::post('/logout', [StudentAuthController::class, 'logout'])->middleware('au
 
 Route::get('/courses/{course:slug}', [AcademyController::class, 'course'])->name('academy.course');
 Route::get('/courses/{course:slug}/lessons/{lesson:slug}', [AcademyController::class, 'lesson'])->name('academy.lesson');
+Route::post('/courses/{course:slug}/lessons/{lesson:slug}/quiz/start', [AcademyController::class, 'startQuiz'])->name('academy.quiz.start');
 Route::post('/courses/{course:slug}/lessons/{lesson:slug}/quiz', [AcademyController::class, 'submitQuiz'])->name('academy.quiz');
