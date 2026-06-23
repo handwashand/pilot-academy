@@ -5,8 +5,10 @@ Blade + Tailwind (CDN, no build step) public front end, **SQLite**.
 Requires **PHP 8.4**.
 
 Content model: `Course` → `Lesson` → `Question` → `Option`. Lessons carry a
-YouTube link or an uploaded video file; quizzes are checked server-side and
-lesson progress is kept in the session.
+YouTube link or an uploaded video file; quizzes are checked server-side.
+Lesson progress is saved per user account when logged in, or in the session
+for anonymous visitors. Students (partners) belong to a `Company`; the
+`is_admin` flag separates admins (Filament panel) from student accounts.
 
 ## Simplicity
 
@@ -39,6 +41,22 @@ Touch only files related to the task.
 No unrelated refactors.
 
 No mass formatting changes.
+
+## Mobile (student-facing frontend)
+
+Every student-facing page (home, course, lesson, login, register, and any
+future learner page) **must be mobile-optimized**. Phones are a first-class
+target, not an afterthought.
+
+- Design mobile-first; verify at a narrow viewport (~375px), not just desktop.
+- No horizontal overflow; comfortable padding on small screens.
+- Touch targets ~44px tall (buttons, quiz answer options).
+- Single column on mobile; multi-column only at `sm:`/`lg:` breakpoints.
+- Responsive media: video uses `aspect-video`; images in lesson content
+  must not overflow (`max-width: 100%`).
+- Header/nav must not overflow or hide key actions on narrow screens.
+
+The Filament `/admin` panel is desktop-first and exempt.
 
 ## Verification
 
