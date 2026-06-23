@@ -13,10 +13,16 @@ class ActivityEvent extends Model
 
     public const TYPE_LESSON_OPENED = 'lesson_opened';
 
+    public const TYPE_LESSON_COMPLETED = 'lesson_completed';
+
+    public const TYPE_COURSE_COMPLETED = 'course_completed';
+
     public const TYPE_LABELS = [
         self::TYPE_LOGIN => 'Logged in',
         self::TYPE_COURSE_OPENED => 'Opened course',
         self::TYPE_LESSON_OPENED => 'Opened lesson',
+        self::TYPE_LESSON_COMPLETED => 'Completed lesson',
+        self::TYPE_COURSE_COMPLETED => 'Completed course',
     ];
 
     protected $fillable = [

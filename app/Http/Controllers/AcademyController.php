@@ -81,7 +81,28 @@ class AcademyController extends Controller
         }
 
         if ($allCorrect) {
+            $user = $request->user();
+            $isNewCompletion = ! in_array($lesson->id, $this->completedIds($request), true);
+
             $this->markCompleted($request, $lesson->id);
+
+            if ($user && $isNewCompletion) {
+                ActivityEvent::record($user, ActivityEvent::TYPE_LESSON_COMPLETED, $lesson->title, $request->path());
+
+                $remaining = array_diff(
+                    $course->publishedLessons()->pluck('lessons.id')->all(),
+                    $user->completedLessons()->pluck('lessons.id')->all(),
+                );
+
+                if (empty($remaining)
+                    && ! $user->activities()
+                        ->where('type', ActivityEvent::TYPE_COURSE_COMPLETED)
+                        ->where('label', $course->title)
+                        ->exists()
+                ) {
+                    ActivityEvent::record($user, ActivityEvent::TYPE_COURSE_COMPLETED, $course->title);
+                }
+            }
 
             return redirect()
                 ->route('academy.lesson', [$course, $lesson])
