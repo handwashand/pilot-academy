@@ -31,6 +31,10 @@
         .prose-lesson p { margin: .6rem 0; line-height: 1.7; color: #334155; }
         .prose-lesson ul { list-style: disc; margin: .6rem 0 .6rem 1.4rem; color: #334155; line-height: 1.7; }
         .prose-lesson strong { color: #0a2540; }
+        /* Keep embedded lesson media from overflowing on small screens */
+        .prose-lesson img, .prose-lesson video { max-width: 100%; height: auto; border-radius: 8px; }
+        .prose-lesson iframe { max-width: 100%; }
+        .prose-lesson table { display: block; max-width: 100%; overflow-x: auto; }
     </style>
 </head>
 <body class="h-full bg-slate-50 text-slate-800">

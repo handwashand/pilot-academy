@@ -10,7 +10,7 @@
         $failed = session('quiz_failed');
     @endphp
 
-    <div class="grid lg:grid-cols-[1fr_280px] gap-8">
+    <div class="grid lg:grid-cols-[1fr_280px] gap-6 lg:gap-8">
         {{-- Main column --}}
         <div>
             <a href="{{ route('academy.course', $course) }}" class="text-sm text-brand font-semibold">&larr; {{ $course->title }}</a>
@@ -81,9 +81,9 @@
                                     </legend>
                                     <div class="space-y-2 mt-2">
                                         @foreach($question->options as $option)
-                                            <label class="flex items-center gap-3 px-3 py-2 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50">
+                                            <label class="flex items-center gap-3 px-3 py-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 active:bg-slate-100">
                                                 <input type="radio" name="answers[{{ $question->id }}]" value="{{ $option->id }}"
-                                                       class="text-brand"
+                                                       class="text-brand w-4 h-4 flex-none"
                                                        {{ (int) old("answers.{$question->id}") === $option->id ? 'checked' : '' }} required>
                                                 <span>{{ $option->text }}</span>
                                             </label>
@@ -92,7 +92,7 @@
                                 </fieldset>
                             @endforeach
 
-                            <button class="rounded-lg bg-brand text-white font-semibold px-6 py-3 hover:bg-blue-700">
+                            <button class="w-full sm:w-auto rounded-lg bg-brand text-white font-semibold px-6 py-3 hover:bg-blue-700">
                                 Submit answers
                             </button>
                         </form>
