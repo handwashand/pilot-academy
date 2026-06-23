@@ -120,6 +120,27 @@ class AcademySmokeTest extends TestCase
         $this->actingAs($admin)->get('/admin/companies')->assertStatus(200);
     }
 
+    public function test_admin_progress_report_renders(): void
+    {
+        $admin = User::firstOrCreate(['email' => 'admin@pilot.local'], [
+            'name' => 'Pilot Admin',
+            'password' => bcrypt('password'),
+            'is_admin' => true,
+        ]);
+
+        $student = User::create([
+            'name' => 'Progress Student',
+            'email' => 'progress@example.com',
+            'password' => bcrypt('secret'),
+            'is_admin' => false,
+        ]);
+        $student->completedLessons()->attach(Lesson::first()->id, ['completed_at' => now()]);
+
+        // Dashboard (with the stats widget) and the Users progress list both render.
+        $this->actingAs($admin)->get('/admin')->assertStatus(200);
+        $this->actingAs($admin)->get('/admin/users')->assertStatus(200);
+    }
+
     public function test_non_admin_cannot_access_admin_panel(): void
     {
         $student = User::create([
