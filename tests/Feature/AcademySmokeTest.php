@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Course;
 use App\Models\Lesson;
+use App\Models\MediaItem;
 use App\Models\QuizAttempt;
 use App\Models\User;
 use Database\Seeders\PilotQuickStartSeeder;
@@ -307,6 +308,29 @@ class AcademySmokeTest extends TestCase
         $this->actingAs($student)->get(route('academy.lesson', [$course, $lesson]))
             ->assertStatus(200)
             ->assertSee('No attempts remaining');
+    }
+
+    public function test_lesson_uses_media_library_image_on_card(): void
+    {
+        $course = Course::first();
+        $lesson = $course->lessons()->first();
+        $media = MediaItem::create(['name' => 'Shared cover', 'path' => 'media-library/shared.jpg']);
+        $lesson->update(['media_item_id' => $media->id]);
+
+        $this->get('/')
+            ->assertStatus(200)
+            ->assertSee('media-library/shared.jpg', false);
+    }
+
+    public function test_admin_can_open_media_library(): void
+    {
+        $admin = User::firstOrCreate(['email' => 'admin@pilot.local'], [
+            'name' => 'Pilot Admin',
+            'password' => bcrypt('password'),
+            'is_admin' => true,
+        ]);
+
+        $this->actingAs($admin)->get('/admin/media-items')->assertStatus(200);
     }
 
     public function test_non_admin_cannot_access_admin_panel(): void

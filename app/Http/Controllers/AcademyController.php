@@ -16,7 +16,7 @@ class AcademyController extends Controller
     {
         $courses = Course::where('is_published', true)
             ->withCount('publishedLessons')
-            ->with('publishedLessons')
+            ->with('publishedLessons.mediaItem')
             ->orderBy('sort_order')
             ->get();
 
@@ -29,7 +29,7 @@ class AcademyController extends Controller
     public function course(Request $request, Course $course)
     {
         abort_unless($course->is_published, 404);
-        $course->load('publishedLessons');
+        $course->load('publishedLessons.mediaItem');
 
         ActivityEvent::record($request->user(), ActivityEvent::TYPE_COURSE_OPENED, $course->title, $request->path());
 

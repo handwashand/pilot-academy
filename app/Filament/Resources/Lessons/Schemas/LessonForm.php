@@ -54,17 +54,29 @@ class LessonForm
                             ->rows(2)
                             ->columnSpanFull(),
 
-                        FileUpload::make('image_path')
+                        Select::make('media_item_id')
                             ->label('Cover image')
-                            ->image()
-                            ->imageEditor()
-                            ->imageEditorAspectRatios(['16:9', '4:3', '1:1', null])
-                            ->disk('public')
-                            ->directory('lesson-images')
-                            ->visibility('public')
-                            ->maxSize(8192) // 8 MB
+                            ->relationship('mediaItem', 'name')
+                            ->searchable()
+                            ->preload()
                             ->columnSpanFull()
-                            ->helperText('Shown on the lesson card. Use the editor to crop/fit. Leave empty for a placeholder.'),
+                            ->helperText('Pick an image from the library, or add a new one — uploaded images are reusable across lessons. Leave empty for a placeholder.')
+                            ->createOptionForm([
+                                TextInput::make('name')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->helperText('A label to find this image later.'),
+                                FileUpload::make('path')
+                                    ->label('Image')
+                                    ->image()
+                                    ->imageEditor()
+                                    ->imageEditorAspectRatios(['16:9', '4:3', '1:1', null])
+                                    ->disk('public')
+                                    ->directory('media-library')
+                                    ->visibility('public')
+                                    ->maxSize(8192)
+                                    ->required(),
+                            ]),
 
                         TextInput::make('youtube_url')
                             ->label('YouTube link')

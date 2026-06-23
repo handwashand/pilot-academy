@@ -17,10 +17,11 @@ class LessonsTable
         return $table
             ->defaultSort('sort_order')
             ->columns([
-                ImageColumn::make('image_path')
+                ImageColumn::make('cover')
                     ->label('Cover')
                     ->disk('public')
-                    ->height(36),
+                    ->height(36)
+                    ->state(fn ($record) => $record->media_item_id ? $record->mediaItem?->path : $record->image_path),
 
                 TextColumn::make('course.title')
                     ->label('Course')
