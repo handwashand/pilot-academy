@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 
 #[Fillable(['name', 'email', 'password', 'company_id', 'is_admin', 'login_token'])]
 #[Hidden(['password', 'remember_token'])]
@@ -52,6 +53,22 @@ class User extends Authenticatable implements FilamentUser
     {
         $this->forceFill(['last_login_at' => now()])->save();
         ActivityEvent::record($this, ActivityEvent::TYPE_LOGIN);
+    }
+
+    /** Ensure the user has a unique passwordless access token and return it. */
+    public function ensureLoginToken(): string
+    {
+        if (! $this->login_token) {
+            $this->forceFill(['login_token' => Str::random(48)])->save();
+        }
+
+        return $this->login_token;
+    }
+
+    /** Personal passwordless access (magic) link. */
+    public function accessUrl(): string
+    {
+        return route('academy.enter', $this->ensureLoginToken());
     }
 
     /**

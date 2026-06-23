@@ -183,6 +183,31 @@ class AcademySmokeTest extends TestCase
         $this->actingAs($admin)->get("/admin/users/{$student->id}/edit")->assertStatus(200);
     }
 
+    public function test_join_link_creates_account_and_signs_in(): void
+    {
+        $this->post('/join', ['name' => 'Invited Tester', 'email' => 'invited@example.com'])
+            ->assertRedirect(route('academy.home'));
+
+        $this->assertAuthenticated();
+        $this->assertDatabaseHas('users', ['email' => 'invited@example.com', 'is_admin' => false]);
+    }
+
+    public function test_personal_magic_link_signs_in(): void
+    {
+        $student = User::create([
+            'name' => 'Magic User',
+            'email' => 'magic@example.com',
+            'password' => bcrypt('secret'),
+            'is_admin' => false,
+        ]);
+        $token = $student->ensureLoginToken();
+
+        $this->get('/enter/'.$token)->assertRedirect(route('academy.home'));
+        $this->assertAuthenticatedAs($student->fresh());
+
+        $this->get('/enter/not-a-real-token')->assertNotFound();
+    }
+
     public function test_non_admin_cannot_access_admin_panel(): void
     {
         $student = User::create([

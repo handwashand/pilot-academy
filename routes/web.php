@@ -13,7 +13,11 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [StudentAuthController::class, 'login']);
     Route::get('/register', [StudentAuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [StudentAuthController::class, 'register']);
+    Route::get('/join', [StudentAuthController::class, 'showJoin'])->name('join');
+    Route::post('/join', [StudentAuthController::class, 'join']);
 });
+// Personal passwordless access link (magic link)
+Route::get('/enter/{token}', [StudentAuthController::class, 'enter'])->name('academy.enter');
 Route::post('/logout', [StudentAuthController::class, 'logout'])->middleware('auth')->name('logout');
 
 Route::get('/courses/{course:slug}', [AcademyController::class, 'course'])->name('academy.course');
