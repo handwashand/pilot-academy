@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class StudentAuthController extends Controller
@@ -55,6 +56,63 @@ class StudentAuthController extends Controller
         ]);
 
         Auth::login($user);
+        $request->session()->regenerate();
+        $user->recordLogin();
+
+        return redirect()->route('academy.home');
+    }
+
+    /**
+     * "Try" / invite link: ask for a name + email, then create (or resume)
+     * a passwordless student account and sign in.
+     */
+    public function showJoin()
+    {
+        return view('academy.auth.join');
+    }
+
+    public function join(Request $request)
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255'],
+        ]);
+
+        $user = User::where('email', $data['email'])->first();
+
+        if ($user && $user->is_admin) {
+            throw ValidationException::withMessages([
+                'email' => 'This email belongs to an admin account — please use Log in.',
+            ]);
+        }
+
+        if (! $user) {
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Str::random(40), // passwordless; access via link
+                'is_admin' => false,
+            ]);
+            $user->ensureLoginToken();
+        }
+
+        Auth::login($user, true);
+        $request->session()->regenerate();
+        $user->recordLogin();
+
+        return redirect()->route('academy.home');
+    }
+
+    /**
+     * Personal magic link: sign in by a per-user access token.
+     */
+    public function enter(Request $request, string $token)
+    {
+        $user = User::where('login_token', $token)->first();
+
+        abort_unless($user, 404);
+
+        Auth::login($user, true);
         $request->session()->regenerate();
         $user->recordLogin();
 

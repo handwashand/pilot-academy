@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Users\Tables;
 
+use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -66,6 +68,18 @@ class UsersTable
                     ->label('Admins only'),
             ])
             ->recordActions([
+                Action::make('accessLink')
+                    ->label('Access link')
+                    ->icon('heroicon-o-link')
+                    ->color('gray')
+                    ->visible(fn (User $record): bool => ! $record->is_admin)
+                    ->modalHeading('Personal access link')
+                    ->modalContent(fn (User $record) => view('filament.access-link', [
+                        'url' => $record->accessUrl(),
+                    ]))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close'),
+
                 EditAction::make(),
             ])
             ->toolbarActions([
