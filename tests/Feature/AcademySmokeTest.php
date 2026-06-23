@@ -141,6 +141,48 @@ class AcademySmokeTest extends TestCase
         $this->actingAs($admin)->get('/admin/users')->assertStatus(200);
     }
 
+    public function test_login_records_login_activity(): void
+    {
+        $student = User::create([
+            'name' => 'Login User',
+            'email' => 'loginuser@example.com',
+            'password' => bcrypt('password123'),
+            'is_admin' => false,
+        ]);
+
+        $this->post('/login', ['email' => 'loginuser@example.com', 'password' => 'password123'])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('activity_events', ['user_id' => $student->id, 'type' => 'login']);
+        $this->assertNotNull($student->fresh()->last_login_at);
+    }
+
+    public function test_course_and_lesson_opens_are_logged_and_admin_can_view(): void
+    {
+        $admin = User::firstOrCreate(['email' => 'admin@pilot.local'], [
+            'name' => 'Pilot Admin',
+            'password' => bcrypt('password'),
+            'is_admin' => true,
+        ]);
+        $student = User::create([
+            'name' => 'Activity User',
+            'email' => 'activity@example.com',
+            'password' => bcrypt('secret'),
+            'is_admin' => false,
+        ]);
+        $course = Course::first();
+        $lesson = $course->lessons()->first();
+
+        $this->actingAs($student)->get(route('academy.course', $course))->assertStatus(200);
+        $this->actingAs($student)->get(route('academy.lesson', [$course, $lesson]))->assertStatus(200);
+
+        $this->assertDatabaseHas('activity_events', ['user_id' => $student->id, 'type' => 'course_opened']);
+        $this->assertDatabaseHas('activity_events', ['user_id' => $student->id, 'type' => 'lesson_opened']);
+
+        // Admin edit page hosts the Activity relation manager.
+        $this->actingAs($admin)->get("/admin/users/{$student->id}/edit")->assertStatus(200);
+    }
+
     public function test_non_admin_cannot_access_admin_panel(): void
     {
         $student = User::create([

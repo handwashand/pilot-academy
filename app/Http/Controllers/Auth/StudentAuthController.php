@@ -29,6 +29,7 @@ class StudentAuthController extends Controller
         }
 
         $request->session()->regenerate();
+        $request->user()->recordLogin();
 
         return redirect()->intended(route('academy.home'));
     }
@@ -55,6 +56,7 @@ class StudentAuthController extends Controller
 
         Auth::login($user);
         $request->session()->regenerate();
+        $user->recordLogin();
 
         return redirect()->route('academy.home');
     }
