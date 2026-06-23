@@ -15,6 +15,7 @@ class Lesson extends Model
         'slug',
         'summary',
         'image_path',
+        'media_item_id',
         'youtube_url',
         'video_path',
         'content',
@@ -34,6 +35,11 @@ class Lesson extends Model
         return $this->belongsTo(Course::class);
     }
 
+    public function mediaItem(): BelongsTo
+    {
+        return $this->belongsTo(MediaItem::class);
+    }
+
     public function questions(): HasMany
     {
         return $this->hasMany(Question::class)->orderBy('sort_order');
@@ -46,10 +52,15 @@ class Lesson extends Model
     }
 
     /**
-     * Public URL of the uploaded cover image, if one was uploaded.
+     * Cover image URL — from the media library if selected, otherwise the
+     * legacy per-lesson uploaded file.
      */
     public function getImageUrlAttribute(): ?string
     {
+        if ($this->media_item_id && $this->mediaItem) {
+            return $this->mediaItem->url;
+        }
+
         return $this->image_path
             ? Storage::disk('public')->url($this->image_path)
             : null;
