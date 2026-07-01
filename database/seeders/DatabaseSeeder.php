@@ -19,6 +19,6 @@ class DatabaseSeeder extends Seeder
             ],
         );
 
-        $this->call(PilotQuickStartSeeder::class);
+        $this->call(PilotMonitoringCourseSeeder::class);
     }
 }
