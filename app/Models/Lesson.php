@@ -19,6 +19,7 @@ class Lesson extends Model
         'youtube_url',
         'video_path',
         'content',
+        'doc_links',
         'quiz_time_limit_minutes',
         'quiz_max_attempts',
         'duration_minutes',
@@ -28,6 +29,7 @@ class Lesson extends Model
 
     protected $casts = [
         'is_published' => 'boolean',
+        'doc_links' => 'array',
     ];
 
     public function course(): BelongsTo

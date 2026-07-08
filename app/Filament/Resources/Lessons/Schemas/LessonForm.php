@@ -108,6 +108,31 @@ class LessonForm
                             ->columnSpanFull(),
                     ]),
 
+                Section::make('Documentation links')
+                    ->description('Shown to students after the lesson text. Link titles are in English.')
+                    ->collapsible()
+                    ->schema([
+                        Repeater::make('doc_links')
+                            ->label('')
+                            ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'New link')
+                            ->defaultItems(0)
+                            ->addActionLabel('Add link')
+                            ->reorderable()
+                            ->columns(2)
+                            ->schema([
+                                TextInput::make('title')
+                                    ->label('Title (English)')
+                                    ->required()
+                                    ->maxLength(255),
+
+                                TextInput::make('url')
+                                    ->label('URL')
+                                    ->url()
+                                    ->required()
+                                    ->maxLength(2048),
+                            ]),
+                    ]),
+
                 Section::make('Knowledge check (quiz)')
                     ->description('Add questions. Mark the correct option(s) with the toggle.')
                     ->schema([
