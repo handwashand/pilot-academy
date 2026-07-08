@@ -46,6 +46,30 @@
                 </div>
             @endif
 
+            {{-- Documentation links --}}
+            @if(! empty($lesson->doc_links))
+                <div class="mt-6 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-brand text-xl">📖</span>
+                        <h2 class="text-xl font-extrabold text-navy">Documentation</h2>
+                    </div>
+                    <p class="text-slate-500 text-sm mb-4">Read more in the Pilot user guide.</p>
+                    <ul class="space-y-2">
+                        @foreach($lesson->doc_links as $link)
+                            @if(! empty($link['url']) && ! empty($link['title']))
+                                <li>
+                                    <a href="{{ $link['url'] }}" target="_blank" rel="noopener"
+                                       class="flex items-center gap-3 px-4 py-3 rounded-lg border border-slate-200 text-slate-700 font-medium hover:bg-slate-50 hover:border-brand/40 active:bg-slate-100">
+                                        <span class="text-slate-400 flex-none">↗</span>
+                                        <span class="min-w-0 break-words">{{ $link['title'] }}</span>
+                                    </a>
+                                </li>
+                            @endif
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             {{-- Quiz --}}
             @if($lesson->questions->isNotEmpty())
                 @php
