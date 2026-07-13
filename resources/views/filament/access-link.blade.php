@@ -1,26 +1,66 @@
-<div class="space-y-3" x-data="{ copied: false }">
-    <textarea readonly rows="2" x-ref="accessLink" onclick="this.select()"
-              class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 break-all resize-none">{{ $url }}</textarea>
+{{--
+    Filament's panel CSS is precompiled: arbitrary Tailwind utilities used in
+    custom views are NOT included, so classes like `w-full`/`bg-primary-600`
+    silently render unstyled (the old "Copy link" looked like plain text).
+    Stick to Filament blade components + inline styles here.
+--}}
+<div
+    x-data="{
+        copied: false,
+        timer: null,
+        copy() {
+            const el = $refs.accessLink;
+            el.select();
+            el.setSelectionRange(0, 99999);
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(el.value);
+                } else {
+                    document.execCommand('copy');
+                }
+                this.copied = true;
+                clearTimeout(this.timer);
+                this.timer = setTimeout(() => this.copied = false, 2000);
+            } catch (e) {}
+        },
+    }"
+    style="display: flex; flex-direction: column; gap: 0.75rem;"
+>
+    <style>[x-cloak] { display: none !important; }</style>
 
-    <button type="button"
-            x-on:click="
-                $refs.accessLink.select();
-                $refs.accessLink.setSelectionRange(0, 99999);
-                try {
-                    if (navigator.clipboard && window.isSecureContext) {
-                        navigator.clipboard.writeText($refs.accessLink.value);
-                    } else {
-                        document.execCommand('copy');
-                    }
-                    copied = true;
-                    setTimeout(() => copied = false, 1500);
-                } catch (e) {}
-            "
-            class="inline-flex items-center gap-2 rounded-lg bg-primary-600 hover:bg-primary-500 px-4 py-2 text-sm font-semibold text-white">
-        <span x-text="copied ? 'Copied!' : 'Copy link'"></span>
-    </button>
+    <x-filament::input.wrapper>
+        <x-filament::input
+            type="text"
+            readonly
+            :value="$url"
+            x-ref="accessLink"
+            onclick="this.select()"
+        />
+    </x-filament::input.wrapper>
 
-    <p class="text-sm text-gray-500 dark:text-gray-400">
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <x-filament::button
+            type="button"
+            icon="heroicon-m-clipboard"
+            x-show="! copied"
+            x-on:click="copy"
+        >
+            Copy link
+        </x-filament::button>
+
+        <x-filament::button
+            type="button"
+            color="success"
+            icon="heroicon-m-check"
+            x-cloak
+            x-show="copied"
+            x-transition.scale.90.duration.200ms
+        >
+            Copied!
+        </x-filament::button>
+    </div>
+
+    <p style="font-size: 0.875rem; opacity: 0.7;">
         Send this link to the user. Opening it signs them in without a password, and their progress is saved to this account.
     </p>
 </div>
