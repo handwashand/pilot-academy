@@ -266,6 +266,18 @@ class AcademyController extends Controller
         return redirect()->route('academy.home');
     }
 
+    public function sitemap()
+    {
+        $courses = Course::where('is_published', true)
+            ->with(['publishedLessons' => fn ($query) => $query->orderBy('sort_order')])
+            ->orderBy('sort_order')
+            ->get();
+
+        return response()
+            ->view('sitemap', ['courses' => $courses])
+            ->header('Content-Type', 'application/xml');
+    }
+
     /**
      * Completed lesson ids — from the user's account when logged in,
      * otherwise from the session (open / anonymous mode).

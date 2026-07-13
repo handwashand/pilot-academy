@@ -373,6 +373,30 @@ class AcademySmokeTest extends TestCase
         $this->assertAuthenticated();
     }
 
+    public function test_sitemap_lists_published_course_and_lessons(): void
+    {
+        $course = Course::first();
+        $lesson = $course->lessons()->first();
+
+        $this->get('/sitemap.xml')
+            ->assertStatus(200)
+            ->assertHeader('Content-Type', 'application/xml')
+            ->assertSee(route('academy.home'), false)
+            ->assertSee(route('academy.course', $course), false)
+            ->assertSee(route('academy.lesson', [$course, $lesson]), false);
+    }
+
+    public function test_sitemap_excludes_unpublished_lessons(): void
+    {
+        $course = Course::first();
+        $lesson = $course->lessons()->first();
+        $lesson->update(['is_published' => false]);
+
+        $this->get('/sitemap.xml')
+            ->assertStatus(200)
+            ->assertDontSee(route('academy.lesson', [$course, $lesson]), false);
+    }
+
     public function test_logged_in_quiz_completion_is_saved_to_account(): void
     {
         $user = User::create([

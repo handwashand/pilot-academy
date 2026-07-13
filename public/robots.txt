@@ -1,2 +1,4 @@
 User-agent: *
 Disallow:
+
+Sitemap: https://academy.pilot-gps.com/sitemap.xml
