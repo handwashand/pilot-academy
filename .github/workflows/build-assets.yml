@@ -1,0 +1,64 @@
+name: Build assets
+
+# Compiles the Vite/Tailwind bundle and commits it back to the branch.
+#
+# Why commit build output: the server deploys by `git pull` (+ migrate +
+# optimize) with NO Node/npm build step, and no developer here has npm on
+# their machine. So CI is the only place the CSS gets compiled — it builds
+# on every push and commits public/build/ so the deploy just pulls it.
+#
+# Loop-safe: pushes made with the default GITHUB_TOKEN do not trigger further
+# workflow runs, and identical source yields identical hashed output (empty
+# diff -> no commit).
+
+on:
+  push:
+    branches:
+      - laravel
+      - 'feature/**'
+    paths:
+      # Only rebuild when something that affects the bundle changed.
+      - 'resources/**'
+      - 'vite.config.*'
+      - 'package.json'
+      - '.github/workflows/build-assets.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-assets-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        # `npm install`, not `npm ci` — the repo has no package-lock.json
+        # (no developer runs npm locally).
+        run: npm install --no-audit --no-fund
+
+      - name: Build
+        run: npm run build
+
+      - name: Commit compiled assets
+        run: |
+          if [ -n "$(git status --porcelain public/build)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add public/build
+            git commit -m "chore(assets): rebuild Vite bundle [skip ci]"
+            git push
+            echo "Committed rebuilt assets."
+          else
+            echo "No asset changes to commit."
+          fi
