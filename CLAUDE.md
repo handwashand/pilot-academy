@@ -1,8 +1,15 @@
 # Pilot Academy
 
 Internal training LMS. **Laravel 13 + Filament 5** admin panel at `/admin`,
-Blade + Tailwind (CDN, no build step) public front end, **SQLite**.
-Requires **PHP 8.4**.
+Blade + Tailwind public front end, **SQLite**. Requires **PHP 8.4**.
+
+Tailwind is compiled by **Vite** into `public/build/` (entry
+`resources/css/app.css`, brand palette in its `@theme`). Nobody here runs
+npm locally, so the bundle is built in CI (`.github/workflows/build-assets.yml`)
+and **committed** to the branch — the `git pull` deploy has no build step. If
+the compiled bundle is missing (fresh checkout, no build), the academy layout
+falls back to the Tailwind CDN for local dev only; production always serves the
+committed static CSS.
 
 Content model: `Course` → `Lesson` → `Question` → `Option`. Lessons carry a
 YouTube link or an uploaded video file; quizzes are checked server-side.

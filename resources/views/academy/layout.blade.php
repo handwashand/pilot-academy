@@ -5,23 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Pilot Academy')</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: '#1463ff',
-                        navy: '#0a2540',
-                        ok: '#19a86b',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+    {{-- Compiled Tailwind via Vite. In production public/build/manifest.json is
+         committed (built in CI), so this serves one static, minified CSS file.
+         The CDN below is ONLY a dev fallback for a checkout without a build
+         (e.g. no local Node) — it never loads in production. --}}
+    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+        @vite('resources/css/app.css')
+    @else
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            brand: '#1463ff',
+                            navy: '#0a2540',
+                            ok: '#19a86b',
+                        },
+                        fontFamily: {
+                            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                        },
                     },
                 },
-            },
-        };
-    </script>
+            };
+        </script>
+    @endif
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
