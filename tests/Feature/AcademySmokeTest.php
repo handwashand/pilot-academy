@@ -71,7 +71,7 @@ class AcademySmokeTest extends TestCase
         }
 
         $this->post(route('academy.quiz', [$course, $lesson]), ['answers' => $answers])
-            ->assertRedirect(route('academy.lesson', [$course, $lesson]))
+            ->assertRedirect(route('academy.lesson', [$course, $lesson]).'#quiz')
             ->assertSessionHas('quiz_passed', true);
     }
 

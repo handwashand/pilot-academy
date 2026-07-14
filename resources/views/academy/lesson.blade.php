@@ -78,7 +78,7 @@
                     $showForm = in_array($mode, ['open', 'active'], true);
                     $secondsRemaining = $quiz['secondsRemaining'] ?? null;
                 @endphp
-                <div class="mt-8 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                <div id="quiz" class="mt-8 scroll-mt-20 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
                     <div class="flex items-center justify-between gap-2 mb-1 flex-wrap">
                         <div class="flex items-center gap-2">
                             <span class="text-violet-600 text-xl">❓</span>
