@@ -86,7 +86,7 @@ class AcademyController extends Controller
             ]);
         }
 
-        return redirect()->route('academy.lesson', [$course, $lesson]);
+        return redirect()->route('academy.lesson', [$course, $lesson])->withFragment('quiz');
     }
 
     public function submitQuiz(Request $request, Course $course, Lesson $lesson)
@@ -108,7 +108,7 @@ class AcademyController extends Controller
 
             // No active attempt (e.g. already finalized) — send back to the start screen.
             if (! $attempt) {
-                return redirect()->route('academy.lesson', [$course, $lesson]);
+                return redirect()->route('academy.lesson', [$course, $lesson])->withFragment('quiz');
             }
 
             // Server-side time check (authoritative), with a small grace period.
@@ -118,34 +118,36 @@ class AcademyController extends Controller
             if ($timedOut) {
                 $attempt->update(['status' => QuizAttempt::STATUS_EXPIRED, 'submitted_at' => now(), 'score' => $score, 'total' => $total]);
 
-                return redirect()->route('academy.lesson', [$course, $lesson])->with('quiz_timeup', true);
+                return redirect()->route('academy.lesson', [$course, $lesson])->with('quiz_timeup', true)->withFragment('quiz');
             }
 
             if ($allCorrect) {
                 $attempt->update(['status' => QuizAttempt::STATUS_PASSED, 'submitted_at' => now(), 'score' => $score, 'total' => $total]);
                 $this->completeLesson($request, $course, $lesson);
 
-                return redirect()->route('academy.lesson', [$course, $lesson])->with('quiz_passed', true);
+                return redirect()->route('academy.lesson', [$course, $lesson])->with('quiz_passed', true)->withFragment('quiz');
             }
 
             $attempt->update(['status' => QuizAttempt::STATUS_FAILED, 'submitted_at' => now(), 'score' => $score, 'total' => $total]);
 
             return redirect()->route('academy.lesson', [$course, $lesson])
                 ->with('quiz_failed', true)
-                ->with('quiz_score', "{$score}/{$total}");
+                ->with('quiz_score', "{$score}/{$total}")
+                ->withFragment('quiz');
         }
 
         // Open mode (no limits, or anonymous): instant feedback, retry in place.
         if ($allCorrect) {
             $this->completeLesson($request, $course, $lesson);
 
-            return redirect()->route('academy.lesson', [$course, $lesson])->with('quiz_passed', true);
+            return redirect()->route('academy.lesson', [$course, $lesson])->with('quiz_passed', true)->withFragment('quiz');
         }
 
         return redirect()->route('academy.lesson', [$course, $lesson])
             ->withInput()
             ->with('quiz_results', $results)
-            ->with('quiz_failed', true);
+            ->with('quiz_failed', true)
+            ->withFragment('quiz');
     }
 
     /** Grade submitted answers. Returns [allCorrect, perQuestionResults, score, total]. */
