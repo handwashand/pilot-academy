@@ -2,6 +2,10 @@
 
 @section('title', 'Register — Pilot Academy')
 
+@php
+    $metaDescription = 'Регистрация в Pilot Academy — создайте аккаунт, чтобы проходить обучение Pilot, сохранять прогресс и получать сертификаты.';
+@endphp
+
 @section('content')
     <div class="max-w-md mx-auto bg-white rounded-2xl border border-slate-200 shadow-sm p-7 mt-6">
         <h1 class="text-2xl font-extrabold text-navy mb-1">Create your account</h1>

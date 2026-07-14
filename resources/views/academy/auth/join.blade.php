@@ -2,6 +2,10 @@
 
 @section('title', 'Join — Pilot Academy')
 
+@php
+    $metaDescription = 'Начните обучение в Pilot Academy — введите имя и приступайте к урокам по системе мониторинга транспорта Pilot. Прогресс сохраняется.';
+@endphp
+
 @section('content')
     <div class="max-w-md mx-auto bg-white rounded-2xl border border-slate-200 shadow-sm p-7 mt-6">
         <h1 class="text-2xl font-extrabold text-navy mb-1">Start learning</h1>
