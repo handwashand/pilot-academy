@@ -2,6 +2,11 @@
 
 @section('title', $lesson->title . ' — Pilot Academy')
 
+@php
+    $metaDescription = \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags($lesson->summary ?: $lesson->content))), 155)
+        ?: $lesson->title.' — урок курса «'.$course->title.'» в Pilot Academy.';
+@endphp
+
 @section('content')
     @php
         $isDone = in_array($lesson->id, $completed, true);

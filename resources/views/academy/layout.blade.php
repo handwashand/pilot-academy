@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Pilot Academy')</title>
+    @isset($metaDescription)
+        <meta name="description" content="{{ $metaDescription }}">
+    @endisset
     {{-- Compiled Tailwind via Vite. In production public/build/manifest.json is
          committed (built in CI), so this serves one static, minified CSS file.
          The CDN below is ONLY a dev fallback for a checkout without a build

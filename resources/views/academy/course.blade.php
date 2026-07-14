@@ -2,6 +2,11 @@
 
 @section('title', $course->title . ' — Pilot Academy')
 
+@php
+    $metaDescription = \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags($course->description))), 155)
+        ?: 'Курс «'.$course->title.'» в Pilot Academy: короткие уроки с видео и тестами по работе с системой мониторинга транспорта Pilot.';
+@endphp
+
 @section('content')
     @php
         $total = $course->publishedLessons->count();
