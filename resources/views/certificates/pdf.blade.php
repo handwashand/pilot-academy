@@ -24,8 +24,6 @@
                  font-size: 12pt; color: #64748b; }
         .course { position: absolute; top: 103mm; left: 30mm; width: 237mm; text-align: center;
                   font-size: 22pt; font-weight: bold; color: #1463ff; }
-        .score { position: absolute; top: 122mm; left: 30mm; width: 237mm; text-align: center;
-                 font-size: 13pt; color: #334155; }
 
         .qr { position: absolute; top: 150mm; left: 243mm; width: 34mm; height: 34mm; }
         .qr-caption { position: absolute; top: 185mm; left: 243mm; width: 34mm; text-align: center;
@@ -50,7 +48,6 @@
         <div class="name">{{ $certificate->name }}</div>
         <div class="lead2">has successfully completed the course</div>
         <div class="course">{{ $certificate->course->title }}</div>
-        <div class="score">with a passing score of {{ $certificate->score_percent }}%</div>
 
         <img class="qr" src="data:image/svg+xml;base64,{{ $qr }}">
         <div class="qr-caption">Scan to verify</div>
