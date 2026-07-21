@@ -16,7 +16,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 
-#[Fillable(['name', 'email', 'password', 'company_id', 'is_admin', 'login_token'])]
+#[Fillable(['name', 'certificate_name', 'email', 'password', 'company_id', 'is_admin', 'login_token'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements FilamentUser
 {
@@ -51,6 +51,11 @@ class User extends Authenticatable implements FilamentUser
     public function quizAttempts(): HasMany
     {
         return $this->hasMany(QuizAttempt::class)->latest();
+    }
+
+    public function certificates(): HasMany
+    {
+        return $this->hasMany(Certificate::class)->latest('issued_at');
     }
 
     /** Stamp the last login time and log a login activity event. */

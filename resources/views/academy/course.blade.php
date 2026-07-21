@@ -50,4 +50,50 @@
             </a>
         @endforeach
     </div>
+
+    {{-- Final quiz --}}
+    @if($course->final_quiz_enabled)
+        <div class="mt-6 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+            <div class="flex items-start gap-4">
+                <span class="w-11 h-11 flex-none rounded-xl bg-gradient-to-br from-brand to-navy text-white flex items-center justify-center text-xl">🎓</span>
+                <div class="min-w-0 flex-1">
+                    <h2 class="text-xl font-extrabold text-navy">Final quiz &amp; certificate</h2>
+
+                    @auth
+                        @if($certificate)
+                            <p class="text-slate-500 text-sm mt-1">You passed with {{ $certificate->score_percent }}%. Your certificate is ready.</p>
+                            <div class="mt-4 flex flex-col sm:flex-row gap-3">
+                                <a href="{{ route('certificates.download', $certificate) }}"
+                                   class="inline-flex justify-center rounded-lg bg-ok text-white font-semibold px-6 py-3 hover:bg-green-700">
+                                    Download certificate
+                                </a>
+                                <a href="{{ route('certificates.index') }}"
+                                   class="inline-flex justify-center rounded-lg border border-slate-300 text-slate-600 font-semibold px-6 py-3 hover:bg-slate-50">
+                                    My certificates
+                                </a>
+                            </div>
+                        @elseif($finalUnlocked)
+                            <p class="text-slate-500 text-sm mt-1">You've completed every lesson. Pass the final quiz to earn your certificate.</p>
+                            <a href="{{ route('academy.final.show', $course) }}"
+                               class="mt-4 inline-flex w-full sm:w-auto justify-center rounded-lg bg-brand text-white font-semibold px-6 py-3 hover:bg-blue-700">
+                                Go to final quiz &rarr;
+                            </a>
+                        @else
+                            <p class="text-slate-500 text-sm mt-1">Complete all lessons to unlock the final quiz.</p>
+                            <button type="button" disabled
+                                    class="mt-4 inline-flex w-full sm:w-auto justify-center rounded-lg bg-slate-200 text-slate-400 font-semibold px-6 py-3 cursor-not-allowed">
+                                🔒 Locked
+                            </button>
+                        @endif
+                    @else
+                        <p class="text-slate-500 text-sm mt-1">Log in to take the final quiz and earn a certificate for this course.</p>
+                        <a href="{{ route('login') }}"
+                           class="mt-4 inline-flex w-full sm:w-auto justify-center rounded-lg bg-brand text-white font-semibold px-6 py-3 hover:bg-blue-700">
+                            Log in to continue
+                        </a>
+                    @endauth
+                </div>
+            </div>
+        </div>
+    @endif
 @endsection

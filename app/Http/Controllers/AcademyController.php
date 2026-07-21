@@ -33,9 +33,15 @@ class AcademyController extends Controller
 
         ActivityEvent::record($request->user(), ActivityEvent::TYPE_COURSE_OPENED, $course->title, $request->path());
 
+        $user = $request->user();
+
         return view('academy.course', [
             'course' => $course,
             'completed' => $this->completedIds($request),
+            'finalUnlocked' => $course->isCompletedBy($user),
+            'certificate' => $user
+                ? $course->certificates()->where('user_id', $user->id)->whereNull('revoked_at')->latest('issued_at')->first()
+                : null,
         ]);
     }
 
@@ -160,9 +166,9 @@ class AcademyController extends Controller
         $allCorrect = $lesson->questions->isNotEmpty();
 
         foreach ($lesson->questions as $question) {
-            $chosen = (int) ($answers[$question->id] ?? 0);
-            $correctOption = $question->options->firstWhere('is_correct', true);
-            $isCorrect = $correctOption && $chosen === $correctOption->id;
+            $raw = $answers[$question->id] ?? [];
+            $chosen = is_array($raw) ? $raw : [$raw];
+            $isCorrect = $question->isAnsweredCorrectly($chosen);
             $results[$question->id] = $isCorrect;
             if ($isCorrect) {
                 $score++;
@@ -185,12 +191,7 @@ class AcademyController extends Controller
         if ($user && $isNewCompletion) {
             ActivityEvent::record($user, ActivityEvent::TYPE_LESSON_COMPLETED, $lesson->title, $request->path());
 
-            $remaining = array_diff(
-                $course->publishedLessons()->pluck('lessons.id')->all(),
-                $user->completedLessons()->pluck('lessons.id')->all(),
-            );
-
-            if (empty($remaining)
+            if ($course->isCompletedBy($user)
                 && ! $user->activities()
                     ->where('type', ActivityEvent::TYPE_COURSE_COMPLETED)
                     ->where('label', $course->title)

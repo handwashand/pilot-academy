@@ -25,6 +25,8 @@ class QuizAttempt extends Model
     protected $fillable = [
         'user_id',
         'lesson_id',
+        'course_id',
+        'question_ids',
         'status',
         'started_at',
         'submitted_at',
@@ -35,6 +37,7 @@ class QuizAttempt extends Model
     protected $casts = [
         'started_at' => 'datetime',
         'submitted_at' => 'datetime',
+        'question_ids' => 'array',
     ];
 
     public function user(): BelongsTo
@@ -45,5 +48,20 @@ class QuizAttempt extends Model
     public function lesson(): BelongsTo
     {
         return $this->belongsTo(Lesson::class);
+    }
+
+    public function course(): BelongsTo
+    {
+        return $this->belongsTo(Course::class);
+    }
+
+    /** Percentage score (0-100), or null if not yet graded. */
+    public function scorePercent(): ?int
+    {
+        if (! $this->total) {
+            return null;
+        }
+
+        return (int) round($this->score / $this->total * 100);
     }
 }
