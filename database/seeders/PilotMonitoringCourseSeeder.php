@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Course;
+use App\Models\Question;
 use Illuminate\Database\Seeder;
 
 class PilotMonitoringCourseSeeder extends Seeder
@@ -54,6 +55,12 @@ class PilotMonitoringCourseSeeder extends Seeder
                 }
             }
         }
+
+        // Compose a ready-to-use final quiz: enabled, 80% pass mark, and every
+        // lesson question in the bank (admins can curate it later).
+        $course->update(['final_quiz_enabled' => true, 'pass_percent' => 80]);
+        $questionIds = Question::whereIn('lesson_id', $course->lessons()->pluck('id'))->pluck('id');
+        $course->finalQuestions()->sync($questionIds->all());
     }
 
     private function lessons(): array

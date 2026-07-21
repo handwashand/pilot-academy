@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AcademyController;
 use App\Http\Controllers\Auth\StudentAuthController;
+use App\Http\Controllers\CertificateController;
+use App\Http\Controllers\FinalQuizController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AcademyController::class, 'home'])->name('academy.home');
@@ -25,3 +27,16 @@ Route::get('/courses/{course:slug}', [AcademyController::class, 'course'])->name
 Route::get('/courses/{course:slug}/lessons/{lesson:slug}', [AcademyController::class, 'lesson'])->name('academy.lesson');
 Route::post('/courses/{course:slug}/lessons/{lesson:slug}/quiz/start', [AcademyController::class, 'startQuiz'])->name('academy.quiz.start');
 Route::post('/courses/{course:slug}/lessons/{lesson:slug}/quiz', [AcademyController::class, 'submitQuiz'])->name('academy.quiz');
+
+// Final quiz + student certificates (logged-in students only)
+Route::middleware('auth')->group(function () {
+    Route::get('/courses/{course:slug}/final-quiz', [FinalQuizController::class, 'show'])->name('academy.final.show');
+    Route::post('/courses/{course:slug}/final-quiz/start', [FinalQuizController::class, 'start'])->name('academy.final.start');
+    Route::post('/courses/{course:slug}/final-quiz', [FinalQuizController::class, 'submit'])->name('academy.final.submit');
+
+    Route::get('/my/certificates', [CertificateController::class, 'index'])->name('certificates.index');
+    Route::get('/my/certificates/{certificate}/download', [CertificateController::class, 'download'])->name('certificates.download');
+});
+
+// Public certificate verification
+Route::get('/certificates/{number}', [CertificateController::class, 'verify'])->name('certificates.verify');

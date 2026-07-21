@@ -159,17 +159,28 @@
                                     @php
                                         $qResult = $mode === 'open' ? ($results[$question->id] ?? null) : null;
                                     @endphp
+                                    @php($multiple = $question->type === \App\Models\Question::TYPE_MULTIPLE)
                                     <fieldset class="border border-slate-200 rounded-xl p-5">
                                         <legend class="px-2 font-semibold text-navy">
                                             {{ $qn + 1 }}. {{ $question->prompt }}
                                             @if($qResult === true)<span class="text-ok">✓</span>@elseif($qResult === false)<span class="text-red-500">✗</span>@endif
                                         </legend>
+                                        @if($multiple)
+                                            <p class="px-2 text-xs text-slate-400 mb-1">Select all that apply.</p>
+                                        @endif
                                         <div class="space-y-2 mt-2">
                                             @foreach($question->options as $option)
+                                                @php($oldAnswer = (array) old("answers.{$question->id}", []))
                                                 <label class="flex items-center gap-3 px-3 py-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 active:bg-slate-100">
-                                                    <input type="radio" name="answers[{{ $question->id }}]" value="{{ $option->id }}"
-                                                           class="text-brand w-4 h-4 flex-none"
-                                                           {{ $mode === 'open' && (int) old("answers.{$question->id}") === $option->id ? 'checked' : '' }} required>
+                                                    @if($multiple)
+                                                        <input type="checkbox" name="answers[{{ $question->id }}][]" value="{{ $option->id }}"
+                                                               class="text-brand w-4 h-4 flex-none rounded"
+                                                               {{ $mode === 'open' && in_array((string) $option->id, $oldAnswer, true) ? 'checked' : '' }}>
+                                                    @else
+                                                        <input type="radio" name="answers[{{ $question->id }}]" value="{{ $option->id }}"
+                                                               class="text-brand w-4 h-4 flex-none"
+                                                               {{ $mode === 'open' && (int) old("answers.{$question->id}") === $option->id ? 'checked' : '' }} required>
+                                                    @endif
                                                     <span>{{ $option->text }}</span>
                                                 </label>
                                             @endforeach

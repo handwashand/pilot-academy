@@ -58,6 +58,7 @@
             <div class="flex items-center gap-3">
                 @auth
                     @php($name = auth()->user()->name)
+                    <a href="{{ route('certificates.index') }}" class="hidden sm:block text-sm text-slate-600 hover:text-brand font-medium">Certificates</a>
                     <span class="hidden sm:block text-sm text-slate-500">{{ $name }}</span>
                     <span class="w-9 h-9 rounded-full bg-navy text-white flex items-center justify-center font-bold text-sm">
                         {{ strtoupper(mb_substr($name, 0, 1)) }}
