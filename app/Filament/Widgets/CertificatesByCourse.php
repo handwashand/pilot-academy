@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Filament\Widgets;
+
+use App\Models\Course;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Filament\Widgets\TableWidget;
+use Illuminate\Database\Eloquent\Builder;
+
+class CertificatesByCourse extends TableWidget
+{
+    protected static ?int $sort = 3;
+
+    protected int|string|array $columnSpan = 'full';
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->heading('Certificates issued by course')
+            ->query(
+                Course::query()
+                    ->where('final_quiz_enabled', true)
+                    ->withCount([
+                        'certificates as issued_count' => fn (Builder $q) => $q->whereNull('revoked_at'),
+                    ])
+            )
+            ->defaultSort('issued_count', 'desc')
+            ->columns([
+                TextColumn::make('title')
+                    ->label('Course')
+                    ->weight('bold'),
+
+                TextColumn::make('issued_count')
+                    ->label('Certificates issued')
+                    ->badge()
+                    ->color('success'),
+            ])
+            ->paginated([5, 10, 25]);
+    }
+}
