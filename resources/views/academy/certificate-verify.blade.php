@@ -42,10 +42,6 @@
                         <dd class="font-semibold text-navy text-right">{{ $certificate->course->title }}</dd>
                     </div>
                     <div class="flex justify-between gap-4 px-6 py-4">
-                        <dt class="text-slate-500">Score</dt>
-                        <dd class="font-semibold text-navy text-right">{{ $certificate->score_percent }}%</dd>
-                    </div>
-                    <div class="flex justify-between gap-4 px-6 py-4">
                         <dt class="text-slate-500">Issued on</dt>
                         <dd class="font-semibold text-navy text-right">{{ $certificate->issued_at->format('F j, Y') }}</dd>
                     </div>

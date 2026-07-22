@@ -65,13 +65,27 @@ target, not an afterthought.
 
 The Filament `/admin` panel is desktop-first and exempt.
 
-## Docs
+## Docs & changelog
 
-The admin/manager guide lives in `docs/admin-guide.md` and is shown inside the
-panel under **Guide** (`app/Filament/Pages/AdminGuide.php`, rendered at
-`/admin/admin-guide`). **Whenever you change any admin-facing behaviour for
-courses, the final quiz, or certificates, update `docs/admin-guide.md` in the
-same change** so the panel guide stays correct.
+Two Markdown files under `docs/` are rendered live inside the panel and must be
+kept current:
+
+- `docs/admin-guide.md` — the manager guide, shown under **Guide**
+  (`app/Filament/Pages/AdminGuide.php`, `/admin/admin-guide`).
+- `docs/CHANGELOG.md` — a plain-language change log, shown under **Changelog**
+  (`app/Filament/Pages/Changelog.php`, `/admin/changelog`).
+
+Both render through `resources/views/filament/pages/partials/doc.blade.php`.
+
+**Whenever you change academy behaviour visible to admins or students (courses,
+lessons, the final quiz, certificates), in the same change:**
+
+1. Update `docs/admin-guide.md` if the instructions change.
+2. Add a dated entry to `docs/CHANGELOG.md` (newest first, plain language).
+
+A styled copy of the guide (with screen mockups, for print/PDF) is also
+maintained as a Claude Artifact by the team lead — keep it in sync when it is
+being updated.
 
 ## Verification
 

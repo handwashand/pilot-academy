@@ -209,12 +209,14 @@ class FinalQuizCertificateTest extends TestCase
             'issued_at' => now(),
         ]);
 
-        // Valid
+        // Valid — pass/fail only, the score is never shown publicly.
         $this->get(route('certificates.verify', $certificate->number))
             ->assertStatus(200)
             ->assertSee('Valid certificate')
             ->assertSee('Verify Me')
-            ->assertSee($course->title);
+            ->assertSee($course->title)
+            ->assertDontSee('Score')
+            ->assertDontSee('90%');
 
         // Revoked
         $certificate->update(['revoked_at' => now()]);
