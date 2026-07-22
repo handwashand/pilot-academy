@@ -234,10 +234,22 @@
                             Next lesson &rarr;
                         </a>
                     @elseif(! $next && ($passed || $isDone))
-                        <a href="{{ route('academy.home') }}"
-                           class="inline-block rounded-lg bg-ok text-white px-5 py-2.5 font-semibold">
-                            Finish course ✓
-                        </a>
+                        @if($course->final_quiz_enabled && $certificate)
+                            <a href="{{ route('certificates.index') }}"
+                               class="inline-block rounded-lg bg-ok text-white px-5 py-2.5 font-semibold hover:bg-green-700">
+                                View certificate ✓
+                            </a>
+                        @elseif($course->final_quiz_enabled && $finalUnlocked)
+                            <a href="{{ route('academy.final.show', $course) }}"
+                               class="inline-block rounded-lg bg-brand text-white px-5 py-2.5 font-semibold hover:bg-blue-700">
+                                Take the final quiz &rarr;
+                            </a>
+                        @else
+                            <a href="{{ route('academy.home') }}"
+                               class="inline-block rounded-lg bg-ok text-white px-5 py-2.5 font-semibold">
+                                Finish course ✓
+                            </a>
+                        @endif
                     @endif
                 </div>
             </div>
@@ -261,6 +273,39 @@
                         </li>
                     @endforeach
                 </ol>
+
+                {{-- Final quiz entry --}}
+                @if($course->final_quiz_enabled)
+                    @php($remaining = $lessons->whereNotIn('id', $completed)->count())
+                    <div class="mt-2 pt-2 border-t border-slate-100">
+                        @auth
+                            @if($certificate)
+                                <a href="{{ route('certificates.index') }}"
+                                   class="flex items-center gap-3 px-2 py-2.5 rounded-lg text-sm text-ok font-semibold hover:bg-green-50">
+                                    <span class="w-6 h-6 flex-none rounded-full bg-ok text-white flex items-center justify-center text-xs">🎓</span>
+                                    <span class="truncate">Certificate ready</span>
+                                </a>
+                            @elseif($finalUnlocked)
+                                <a href="{{ route('academy.final.show', $course) }}"
+                                   class="flex items-center gap-3 px-2 py-2.5 rounded-lg text-sm text-brand font-semibold bg-blue-50 hover:bg-blue-100">
+                                    <span class="w-6 h-6 flex-none rounded-full bg-brand text-white flex items-center justify-center text-xs">★</span>
+                                    <span class="truncate">Final quiz — start</span>
+                                </a>
+                            @else
+                                <div class="flex items-center gap-3 px-2 py-2.5 rounded-lg text-sm text-slate-400">
+                                    <span class="w-6 h-6 flex-none rounded-full bg-slate-100 flex items-center justify-center text-xs">🔒</span>
+                                    <span class="min-w-0">Final quiz · <span class="text-slate-500 font-medium">{{ $remaining }} lesson{{ $remaining === 1 ? '' : 's' }} left</span></span>
+                                </div>
+                            @endif
+                        @else
+                            <a href="{{ route('login') }}"
+                               class="flex items-center gap-3 px-2 py-2.5 rounded-lg text-sm text-slate-500 hover:bg-slate-50">
+                                <span class="w-6 h-6 flex-none rounded-full bg-slate-100 flex items-center justify-center text-xs">🔒</span>
+                                <span class="truncate">Final quiz · log in to take it</span>
+                            </a>
+                        @endauth
+                    </div>
+                @endif
             </div>
         </aside>
     </div>

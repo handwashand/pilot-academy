@@ -58,6 +58,8 @@ class AcademyController extends Controller
 
         ActivityEvent::record($request->user(), ActivityEvent::TYPE_LESSON_OPENED, $lesson->title, $request->path());
 
+        $user = $request->user();
+
         return view('academy.lesson', [
             'course' => $course,
             'lesson' => $lesson,
@@ -66,6 +68,10 @@ class AcademyController extends Controller
             'prev' => $prev,
             'completed' => $this->completedIds($request),
             'quiz' => $this->quizState($request, $lesson),
+            'finalUnlocked' => $course->isCompletedBy($user),
+            'certificate' => $user
+                ? $course->certificates()->where('user_id', $user->id)->whereNull('revoked_at')->latest('issued_at')->first()
+                : null,
         ]);
     }
 
