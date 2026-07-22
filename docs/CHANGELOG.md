@@ -5,6 +5,12 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ## July 2026
 
+### Certificate check no longer shows a score
+The public verification page now shows only what matters to whoever is
+checking: who it was issued to, the course, the date, and whether it is
+**Valid** or **Revoked**. Passing is pass/fail, so the percentage is gone.
+The score is still kept and visible to you in **Certificates**.
+
 ### Admins can preview the final quiz
 Admins can now open and take any course's final quiz without finishing the
 lessons first — useful for checking questions and the certificate. It issues a
