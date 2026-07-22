@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Companies\Tables;
 
+use App\Models\Company;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -31,6 +32,19 @@ class CompaniesTable
                     ->label('Members')
                     ->counts('students')
                     ->badge(),
+
+                TextColumn::make('certified')
+                    ->label('Certified')
+                    ->badge()
+                    ->color('success')
+                    ->tooltip('Students with at least one valid certificate, out of total members.')
+                    ->getStateUsing(function (Company $record): string {
+                        $certified = $record->students()
+                            ->whereHas('certificates', fn ($q) => $q->whereNull('revoked_at'))
+                            ->count();
+
+                        return $certified.' / '.$record->students()->count();
+                    }),
             ])
             ->recordActions([
                 EditAction::make(),

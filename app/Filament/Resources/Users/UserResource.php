@@ -41,6 +41,7 @@ class UserResource extends Resource
         return [
             RelationManagers\CompletedLessonsRelationManager::class,
             RelationManagers\QuizAttemptsRelationManager::class,
+            RelationManagers\CertificatesRelationManager::class,
             RelationManagers\ActivitiesRelationManager::class,
         ];
     }
