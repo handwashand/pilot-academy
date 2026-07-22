@@ -5,6 +5,12 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ## July 2026
 
+### Admins can preview the final quiz
+Admins can now open and take any course's final quiz without finishing the
+lessons first — useful for checking questions and the certificate. It issues a
+real certificate to the admin account (revoke it afterwards under **Certificates**
+if it was only a test). Students still have to finish every lesson.
+
 ### Final quiz link inside lessons
 Students can now open the final quiz straight from the **Lessons** panel while
 inside a lesson — no need to go back to the course page. If some lessons are
