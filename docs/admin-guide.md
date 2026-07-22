@@ -26,7 +26,9 @@ Each item in the left menu has one job.
 | **Companies** | Partner companies. Group students and see how many are certified. |
 | **Certificates** | Every certificate that was issued. Download, resend, or revoke them. |
 | **Media items** | A shared image library you can reuse as lesson covers. |
-| **Dashboard** | The home screen: overall numbers and certificates by course. |
+| **Guide** | This guide, always available inside the panel. |
+| **Changelog** | What's new in the academy — every update, newest first. |
+| **Dashboard** | The home screen: a **What's new** block with the latest updates, overall numbers, and certificates by course. |
 
 ---
 
