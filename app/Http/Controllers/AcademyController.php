@@ -38,7 +38,7 @@ class AcademyController extends Controller
         return view('academy.course', [
             'course' => $course,
             'completed' => $this->completedIds($request),
-            'finalUnlocked' => $course->isCompletedBy($user),
+            'finalUnlocked' => $course->finalQuizUnlockedFor($user),
             'certificate' => $user
                 ? $course->certificates()->where('user_id', $user->id)->whereNull('revoked_at')->latest('issued_at')->first()
                 : null,
@@ -68,7 +68,7 @@ class AcademyController extends Controller
             'prev' => $prev,
             'completed' => $this->completedIds($request),
             'quiz' => $this->quizState($request, $lesson),
-            'finalUnlocked' => $course->isCompletedBy($user),
+            'finalUnlocked' => $course->finalQuizUnlockedFor($user),
             'certificate' => $user
                 ? $course->certificates()->where('user_id', $user->id)->whereNull('revoked_at')->latest('issued_at')->first()
                 : null,

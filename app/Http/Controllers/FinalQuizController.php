@@ -136,7 +136,7 @@ class FinalQuizController extends Controller
             return ['mode' => 'passed', 'certificate' => $certificate];
         }
 
-        if (! $course->isCompletedBy($user)) {
+        if (! $course->finalQuizUnlockedFor($user)) {
             return ['mode' => 'locked'];
         }
 

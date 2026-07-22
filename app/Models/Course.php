@@ -87,4 +87,17 @@ class Course extends Model
 
         return empty(array_diff($publishedIds, $completedIds));
     }
+
+    /**
+     * May this user open the final quiz? Students must finish every published
+     * lesson; admins can always open it (to preview or test the certificate).
+     */
+    public function finalQuizUnlockedFor(?User $user): bool
+    {
+        if (! $user) {
+            return false;
+        }
+
+        return $user->is_admin || $this->isCompletedBy($user);
+    }
 }

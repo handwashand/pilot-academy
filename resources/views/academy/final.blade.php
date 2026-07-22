@@ -121,6 +121,14 @@
                     </ul>
                 </div>
 
+                @auth
+                    @if(auth()->user()->is_admin)
+                        <div class="rounded-xl bg-violet-50 border border-violet-200 text-violet-800 px-5 py-3 mb-4 text-sm">
+                            <strong>Admin preview.</strong> As an admin you can take this final quiz without finishing the lessons. A real certificate will be issued to your account.
+                        </div>
+                    @endif
+                @endauth
+
                 <form method="POST" action="{{ route('academy.final.start', $course) }}" class="space-y-4">
                     @csrf
                     <div>

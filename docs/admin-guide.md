@@ -180,6 +180,9 @@ Yes — per course, in the **Final quiz & certificate** section.
 **How many certificates can one student get for a course?**
 One valid certificate per course.
 
+**Can I test the final quiz without finishing all the lessons?**
+Yes. Admins can open and take any course's final quiz straight away (from the course page or the lesson sidebar), even without completing the lessons — handy for checking your questions and certificate. It issues a real certificate to your admin account, which you can revoke afterwards under **Certificates** if it was only a test. Students still have to finish every lesson first.
+
 ---
 
 ## 8. Words used here
