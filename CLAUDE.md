@@ -65,6 +65,14 @@ target, not an afterthought.
 
 The Filament `/admin` panel is desktop-first and exempt.
 
+## Docs
+
+The admin/manager guide lives in `docs/admin-guide.md` and is shown inside the
+panel under **Guide** (`app/Filament/Pages/AdminGuide.php`, rendered at
+`/admin/admin-guide`). **Whenever you change any admin-facing behaviour for
+courses, the final quiz, or certificates, update `docs/admin-guide.md` in the
+same change** so the panel guide stays correct.
+
 ## Verification
 
 Before completion:
