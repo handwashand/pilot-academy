@@ -5,6 +5,11 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ## July 2026
 
+### "What's new" block on the dashboard
+The admin home page now opens with a **What's new** block showing the latest
+updates to the academy, with a link to the full **Changelog**. Everything
+written in the changelog appears there automatically.
+
 ### Certificate check no longer shows a score
 The public verification page now shows only what matters to whoever is
 checking: who it was issued to, the course, the date, and whether it is

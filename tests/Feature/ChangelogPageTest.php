@@ -38,4 +38,23 @@ class ChangelogPageTest extends TestCase
             ->get('/admin/changelog')
             ->assertStatus(403);
     }
+
+    public function test_dashboard_shows_the_whats_new_block(): void
+    {
+        $admin = User::create([
+            'name' => 'Pilot Admin',
+            'email' => 'admin@pilot.local',
+            'password' => bcrypt('password'),
+            'is_admin' => true,
+        ]);
+
+        // One of the newest changelog entries, shown in the block.
+        $recentEntry = 'Certificate check no longer shows a score';
+
+        $this->actingAs($admin)
+            ->get('/admin')
+            ->assertStatus(200)
+            ->assertSee($recentEntry)
+            ->assertSee('See all updates', false);
+    }
 }
