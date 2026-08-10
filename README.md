@@ -1,58 +1,139 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Pilot Academy
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**Pilot Academy is a certification engine for Pilot's partner ecosystem.** Pilot is a white-label fleet and telematics SaaS sold through partners, so the quality of every end-customer experience depends on how capable the partner's team is.
 
-## About Laravel
+The Academy trains and certifies partner staff, then certified partners train their own fleet-owner customers. Partner staff are the **multiplier** and certification is the **quality gate** that protects every customer downstream.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Overview
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Pilot Academy is built as a Laravel 13 application with a public student site and a Filament-powered admin panel.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Public student features:
 
-## Learning Laravel
+- course catalog and lesson browsing
+- video lessons, written content, and knowledge-check quizzes
+- timed/attempt-limited lesson quizzes when configured
+- final course assessment and certificate issuance
+- certificate download and public verification by certificate number
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Admin features:
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- manage courses, lessons, questions, and final quiz banks
+- configure pass thresholds, attempt limits, and certificate templates
+- issue, revoke, resend, and regenerate certificates
+- manage partner companies and student accounts
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Built with
 
-## Agentic Development
+- Laravel 13
+- Filament admin panel
+- SQLite by default for local development
+- Tailwind CSS and Vite
+- DOMPDF for generating certificate PDFs
+- simple-qrcode for QR codes on certificates
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Getting started
+
+### Requirements
+
+- PHP 8.4
+- Composer
+- Node.js and npm
+- SQLite (local development)
+- Docker is optional but supported via `docker-compose.yml`
+
+### Install locally
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --force
+npm install --ignore-scripts
+npm run build
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### Run the app locally
 
-## Contributing
+```bash
+php artisan serve
+npm run dev
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Open the public site at `http://127.0.0.1:8000`.
 
-## Code of Conduct
+### Run with Docker
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+A `Dockerfile` and `docker-compose.yml` are included, so PHP 8.4 and the
+extensions are not needed on the host.
 
-## Security Vulnerabilities
+```bash
+docker compose up --build
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Open the public site at `http://localhost:8000` and the admin panel at
+`http://localhost:8000/admin`. On first boot the container writes its `.env`,
+generates the app key, migrates, and seeds the demo course plus an admin login
+(`admin@pilot.local` / `password`).
+
+No npm step is needed: the Vite bundle committed in `public/build/` is served
+as-is. The SQLite database and uploaded media live in named volumes, so they
+survive `docker compose down` — add `-v` to start from a clean slate.
+
+## App structure
+
+- `app/Http/Controllers/AcademyController.php` — public student flows, course and lesson pages, lesson quiz flow, completion tracking
+- `app/Http/Controllers/FinalQuizController.php` — final course assessment and certificate issuance
+- `app/Http/Controllers/CertificateController.php` — certificate listing, download, and public verification
+- `app/Http/Controllers/Auth/StudentAuthController.php` — student login, registration, join flow, passwordless magic-link access
+- `app/Models/Course.php` — course configuration, published lesson access, final quiz unlock rules
+- `app/Models/Lesson.php` — lesson content, video/image URL helpers, quiz limit helpers
+- `app/Models/Certificate.php` — certificate validity, PDF path, verification URL
+- `app/Models/User.php` — student/admin accounts, login token access links, completed lessons, certificates, activity logging
+
+## Student user flow
+
+1. Register or join from the public site
+2. Browse published courses
+3. Open a lesson, watch video content, and complete the knowledge check quiz
+4. Finish every lesson in a course to unlock the final assessment
+5. Start the final quiz, pass, and receive a certificate
+6. Download the certificate PDF from the student account
+
+## Admin flow
+
+1. Log in to the Filament admin panel at `/admin`
+2. Create courses and publish them when ready
+3. Add lessons, media, and quiz questions for each course
+4. Enable the final quiz and configure pass percent, attempt limits, and certificate template
+5. Add partner companies and student users as needed
+6. Review issued certificates, revoke or regenerate them, and verify certificate numbers
+
+## Testing
+
+Run the Laravel test suite locally:
+
+```bash
+composer test
+```
+
+Or run the tests inside Docker:
+
+```bash
+docker compose run --rm app php artisan test
+```
+
+## Docs
+
+- Admin guide: `docs/admin-guide.md`
+- Change log: `docs/CHANGELOG.md`
+
+## Notes
+
+- Final quiz access is unlocked once a student completes all published lessons in a course.
+- Admin users can preview the final quiz without completing the course.
+- Certificates are permanent until revoked; public verification is available at `/certificates/{number}`.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+MIT

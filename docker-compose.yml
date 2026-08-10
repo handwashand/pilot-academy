@@ -1,0 +1,18 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      # Filament loads many assets at once; a single-worker built-in server stalls.
+      # App config lives in the image's .env — see the note in the Dockerfile.
+      PHP_CLI_SERVER_WORKERS: "4"
+    volumes:
+      - database:/data
+      - uploads:/var/www/html/storage/app
+
+volumes:
+  database:
+  uploads:
