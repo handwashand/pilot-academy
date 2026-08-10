@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasPublishStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Course extends Model
 {
+    use HasPublishStatus;
+
     protected $fillable = [
         'title',
         'slug',
@@ -16,7 +19,7 @@ class Course extends Model
         'audience',
         'thumbnail',
         'duration_minutes',
-        'is_published',
+        'status',
         'sort_order',
         'final_quiz_enabled',
         'pass_percent',
@@ -26,8 +29,12 @@ class Course extends Model
     ];
 
     protected $casts = [
-        'is_published' => 'boolean',
         'final_quiz_enabled' => 'boolean',
+    ];
+
+    /** A course is only ever visible once someone publishes it deliberately. */
+    protected $attributes = [
+        'status' => self::STATUS_DRAFT,
     ];
 
     /** Who the course is for (used for the audience badge). */
@@ -43,6 +50,12 @@ class Course extends Model
         return $this->audience ? (self::AUDIENCES[$this->audience] ?? $this->audience) : null;
     }
 
+    /** A course with no published lesson would open empty, so it cannot go live. */
+    public function canBePublished(): bool
+    {
+        return $this->publishedLessons()->exists();
+    }
+
     public function lessons(): HasMany
     {
         return $this->hasMany(Lesson::class)->orderBy('sort_order');
@@ -50,7 +63,7 @@ class Course extends Model
 
     public function publishedLessons(): HasMany
     {
-        return $this->lessons()->where('is_published', true);
+        return $this->lessons()->published();
     }
 
     /** Questions that make up this course's final quiz bank. */

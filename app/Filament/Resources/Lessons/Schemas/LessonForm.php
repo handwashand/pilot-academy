@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Lessons\Schemas;
 
+use App\Models\Lesson;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
@@ -99,9 +100,12 @@ class LessonForm
                             ->numeric()
                             ->minValue(0),
 
-                        Toggle::make('is_published')
-                            ->label('Published')
-                            ->default(true),
+                        Select::make('status')
+                            ->label('Status')
+                            ->options(Lesson::STATUS_LABELS)
+                            ->default(Lesson::STATUS_PUBLISHED)
+                            ->required()
+                            ->helperText('Students see a lesson only once its course is published too. Set it to draft to keep this one lesson back.'),
 
                         RichEditor::make('content')
                             ->label('Lesson text')

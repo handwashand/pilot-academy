@@ -3,6 +3,35 @@
 A short log of changes to the academy, newest first, in plain language.
 Add a new entry here whenever something visible to admins or students changes.
 
+## August 2026
+
+### Courses are published on purpose, not by accident
+Creating a course no longer puts it in front of students. Every new course
+starts as a **Draft** that only admins can see, so you can build it — lessons,
+quizzes and all — in peace, and open it to students when you are ready.
+
+- **Courses** and **Lessons** now both have a **Status** column: **Draft**,
+  **Published** or **Archived**, with **Publish** / **Unpublish** on each row.
+- The **course** is the gate. New lessons stay **Published** as before, since
+  nobody can see them until their course is published — so there is no extra
+  step when you build a course. Use a lesson's **Unpublish** when you want to
+  hold just that one back from a live course.
+- Ready to go live? Click **Publish** on the course's row. A course needs at
+  least one published lesson first, so students never open an empty course.
+- Need it offline again? Click **Unpublish** — it returns to Draft and vanishes
+  from the student site. **Nothing is deleted**: lessons, questions, student
+  progress and issued certificates all stay exactly as they were.
+- Retiring something for good? Open **Edit** and set **Status** to **Archived**.
+  Also hidden from students, with its content and certificates kept.
+- Drafts and archived items are hidden everywhere students could reach them —
+  the course list, the lesson list inside a course, search engines' sitemap,
+  quizzes and direct links — not just on the home page. As an admin you can
+  still open a draft on the public site to preview it; a yellow bar reminds you
+  students cannot see it.
+
+Nothing changed for your existing courses and lessons: everything students could
+see before this update is still **Published**.
+
 ## July 2026
 
 ### Certificate check no longer shows a score

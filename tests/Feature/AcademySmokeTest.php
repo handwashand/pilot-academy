@@ -390,7 +390,7 @@ class AcademySmokeTest extends TestCase
     {
         $course = Course::first();
         $lesson = $course->lessons()->first();
-        $lesson->update(['is_published' => false]);
+        $lesson->unpublish();
 
         $this->get('/sitemap.xml')
             ->assertStatus(200)

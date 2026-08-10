@@ -21,7 +21,7 @@ class PilotQuickStartSeeder extends Seeder
                 'level' => 'beginner',
                 'audience' => 'all',
                 'duration_minutes' => 45,
-                'is_published' => true,
+                'status' => Course::STATUS_PUBLISHED,
                 'sort_order' => 1,
             ],
         );
@@ -125,7 +125,7 @@ class PilotQuickStartSeeder extends Seeder
                 'content' => $data['content'],
                 'youtube_url' => $sampleVideo,
                 'duration_minutes' => 8,
-                'is_published' => true,
+                'status' => Lesson::STATUS_PUBLISHED,
                 'sort_order' => $i + 1,
             ]);
 

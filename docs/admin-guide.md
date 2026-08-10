@@ -32,7 +32,7 @@ Each item in the left menu has one job.
 
 ## 3. Quick start: from empty course to certificate
 
-The path is always the same: **make a course → fill it with lessons → turn on the final quiz → the student passes → they get a certificate.**
+The path is always the same: **make a course → fill it with lessons → turn on the final quiz → publish it → the student passes → they get a certificate.**
 
 ### Step 1 · Create a course
 
@@ -42,8 +42,9 @@ The path is always the same: **make a course → fill it with lessons → turn o
    - **Course title** — the name, e.g. "Pilot Basics".
    - **Short description** — one or two sentences. Students see this on the course card.
    - The other fields (level, duration) are optional.
-4. Turn on **Published** so students can see the course.
-5. Click **Create**.
+4. Click **Create**.
+
+> New courses are saved as a **Draft**. Students cannot see a draft — you publish it yourself in Step 4, once the lessons are in place.
 
 > Leave the **Final quiz & certificate** box off for now. We come back to it in Step 3, once the course has lessons.
 
@@ -54,8 +55,18 @@ The path is always the same: **make a course → fill it with lessons → turn o
 3. Add a video: paste a link into **YouTube link**, or use **Or upload a video file**.
 4. Write the lesson content in **Lesson text**.
 5. Scroll to **Knowledge check (quiz)**. Click **Add question**, type the question, add answer options, and turn on **Correct** for the right one. Add as many questions as you want.
-6. Turn on **Published** and click **Create**.
+6. Leave **Status** on **Published** and click **Create**.
 7. Repeat for every lesson in the course.
+
+> New lessons are **Published** straight away — and that is safe, because
+> students still see nothing until the *course* is published in Step 4. So there
+> is no second step to remember.
+>
+> The **Lessons** list has the same **Status** column and **Publish** /
+> **Unpublish** actions as Courses, for when you want to hold one lesson back
+> while the rest of the course is live, or retire an old one with **Archived**.
+> Unpublishing never deletes anything — the text, video, questions and student
+> progress all stay.
 
 **Screen — Knowledge check (quiz):**
 
@@ -97,11 +108,43 @@ The path is always the same: **make a course → fill it with lessons → turn o
 
 > You can remove any question you don't want with **Remove from bank**, or write a new one with **New final question** (a final question can have one *or several* correct answers).
 
-### Step 4 · Try it as a student
+### Step 4 · Publish the course
+
+Until now the course has been a **Draft** — you can see it, students cannot.
+
+1. Go to **Courses**. The **Status** column shows where each course stands:
+   **Draft**, **Published** or **Archived**.
+2. On your course's row, click **Publish** and confirm.
+
+The course is live for students straight away. Two things to know:
+
+- A course needs at least one **published lesson** before it can be published —
+  otherwise students would open an empty course. If **Publish** says *"Add a
+  lesson first"*, go to **Lessons** and publish one.
+- Changed your mind? Click **Unpublish**. The course goes back to Draft and
+  disappears from the student site. Nothing is deleted — lessons, questions,
+  progress and certificates all stay exactly as they were.
+
+**Screen — Courses:**
+
+| Course | Status | Actions |
+|---|---|---|
+| Pilot Quick Start | Published | Unpublish · Edit |
+| Introduction to Leadership | Draft | Publish · Edit |
+| Old Onboarding 2024 | Archived | Edit |
+
+> Want to retire a course for good? Open **Edit** and set **Status** to
+> **Archived**. Like a draft, it disappears from the student site, but its
+> certificates and history stay intact.
+
+### Step 5 · Try it as a student
 
 Open the public site (your address *without* `/admin`), go to the course, and finish the lessons. When every lesson is done, the **Final quiz** button unlocks. Pass it to see the whole flow for yourself.
 
-### Step 5 · The certificate
+> As an admin you can also open a **draft** course on the public site to preview
+> it — a yellow bar reminds you students cannot see it yet.
+
+### Step 6 · The certificate
 
 When a student passes, the certificate is made **automatically**: a PDF with their name, the course, the date, a unique number, and a QR code. The student gets it by email and in their account. You can find every certificate under **Certificates**.
 
@@ -157,6 +200,9 @@ Open your site address + `/certificates/` + the certificate number (or scan the 
 | The PDF is empty or won't download | **Certificates** → **Regenerate PDF**, then **Download** again. |
 | You need a list for a report | **Certificates** → **Export CSV** (open in Excel or Google Sheets). |
 | A student ran out of attempts | Open the course → **Final quiz & certificate** → raise **Max attempts**, or clear it for unlimited. |
+| Students can't find a course | Check the **Status** column in **Courses**. Only **Published** courses appear on the student site — click **Publish** on the row. |
+| One lesson is missing from a live course | **Lessons** → check its **Status** → **Publish**. A lesson shows up only if both it *and* its course are published. |
+| You need to take a course or lesson offline | The row → **Unpublish**. Nothing is lost; publish it again whenever you like. |
 
 ---
 
@@ -196,7 +242,9 @@ Yes. Admins can open and take any course's final quiz straight away (from the co
 | Certificate | The PDF proof that a student passed a course. |
 | Revoke | Cancel a certificate so it shows as invalid. |
 | Partner | A company that your students belong to. |
-| Published | A switch that makes a course or lesson visible to students. |
+| Draft | A course or lesson you are still working on. Only admins can see it. |
+| Published | Live on the student site. Courses and lessons both get there via the **Publish** action in their list. |
+| Archived | Retired. Hidden from students, but its content, progress and certificates stay. |
 
 ---
 

@@ -14,7 +14,7 @@ class FinalQuizController extends Controller
     /** Final quiz landing / active attempt / result screen. */
     public function show(Request $request, Course $course)
     {
-        abort_unless($course->is_published && $course->final_quiz_enabled, 404);
+        abort_unless($course->isVisibleTo($request->user()) && $course->final_quiz_enabled, 404);
 
         $user = $request->user();
         $state = $this->state($request, $course, $user);
@@ -28,7 +28,7 @@ class FinalQuizController extends Controller
     /** Begin an attempt: confirm the certificate name and draw a fresh question set. */
     public function start(Request $request, Course $course)
     {
-        abort_unless($course->is_published && $course->final_quiz_enabled, 404);
+        abort_unless($course->isVisibleTo($request->user()) && $course->final_quiz_enabled, 404);
 
         $user = $request->user();
         $state = $this->state($request, $course, $user);
@@ -64,7 +64,7 @@ class FinalQuizController extends Controller
     /** Grade an in-progress attempt and, on pass, issue the certificate. */
     public function submit(Request $request, Course $course, IssueCertificate $issue)
     {
-        abort_unless($course->is_published && $course->final_quiz_enabled, 404);
+        abort_unless($course->isVisibleTo($request->user()) && $course->final_quiz_enabled, 404);
 
         $user = $request->user();
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasPublishStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,6 +10,8 @@ use Illuminate\Support\Facades\Storage;
 
 class Lesson extends Model
 {
+    use HasPublishStatus;
+
     protected $fillable = [
         'course_id',
         'title',
@@ -23,13 +26,20 @@ class Lesson extends Model
         'quiz_time_limit_minutes',
         'quiz_max_attempts',
         'duration_minutes',
-        'is_published',
+        'status',
         'sort_order',
     ];
 
     protected $casts = [
-        'is_published' => 'boolean',
         'doc_links' => 'array',
+    ];
+
+    /**
+     * Lessons are published as they are written — the course they belong to is
+     * the gate that decides when students see any of it.
+     */
+    protected $attributes = [
+        'status' => self::STATUS_PUBLISHED,
     ];
 
     public function course(): BelongsTo
