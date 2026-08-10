@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\Users\Schemas;
 
+use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 
 class UserForm
@@ -43,10 +43,23 @@ class UserForm
                     ])
                     ->helperText('Partner company this user belongs to (leave empty for admins).'),
 
-                Toggle::make('is_admin')
-                    ->label('Administrator')
-                    ->helperText('Admins can access the /admin panel. Leave off for partner (student) accounts.')
-                    ->default(false),
+                Select::make('role')
+                    ->label('Role')
+                    ->options(User::ROLE_LABELS)
+                    ->default(User::ROLE_LEARNER)
+                    ->required()
+                    ->live()
+                    ->helperText('Admins run the platform. Creators manage the training for their own products only. Learners take courses.'),
+
+                Select::make('products')
+                    ->label('Products / modules')
+                    ->relationship('products', 'name')
+                    ->multiple()
+                    ->preload()
+                    ->searchable()
+                    ->columnSpanFull()
+                    ->visible(fn ($get): bool => $get('role') === User::ROLE_CREATOR)
+                    ->helperText('The products this creator owns the training for. They cannot see any other product\'s courses.'),
             ]);
     }
 }

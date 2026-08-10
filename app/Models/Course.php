@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\HasPublishStatus;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -12,6 +13,7 @@ class Course extends Model
     use HasPublishStatus;
 
     protected $fillable = [
+        'product_id',
         'title',
         'slug',
         'description',
@@ -54,6 +56,22 @@ class Course extends Model
     public function canBePublished(): bool
     {
         return $this->publishedLessons()->exists();
+    }
+
+    /**
+     * May this visitor open the course pages? Students only ever get published
+     * courses; whoever manages the course — an admin, or the creator who owns
+     * its product — can preview it before it goes live.
+     */
+    public function isVisibleTo(?User $user): bool
+    {
+        return $this->isPublished() || (bool) $user?->canManageCourse($this);
+    }
+
+    /** The product this course teaches (GARM, PTM, …). */
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class);
     }
 
     public function lessons(): HasMany
@@ -111,6 +129,6 @@ class Course extends Model
             return false;
         }
 
-        return $user->is_admin || $this->isCompletedBy($user);
+        return $user->canManageCourse($this) || $this->isCompletedBy($user);
     }
 }

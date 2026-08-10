@@ -22,7 +22,8 @@ Each item in the left menu has one job.
 |---|---|
 | **Courses** | Create courses and turn on the final quiz and certificate. |
 | **Lessons** | Add lessons to a course: a video, text, and quiz questions. |
-| **Users** | Your students (and other admins). See each person's progress and certificates. |
+| **Products** | The products/modules your training is about (GARM, PTM, …) and who owns each one. |
+| **Users** | Everyone with an account, and their role. See each student's progress and certificates. |
 | **Companies** | Partner companies. Group students and see how many are certified. |
 | **Certificates** | Every certificate that was issued. Download, resend, or revoke them. |
 | **Media items** | A shared image library you can reuse as lesson covers. |
@@ -162,6 +163,45 @@ Open the course → **Final questions** tab. Here you can **Attach lesson questi
 
 Open the course → **Final quiz & certificate** → **Certificate background**. Upload a full-page image (A4, landscape). The name, course, date, number, and QR code are placed on top automatically. Leave it empty to use the built-in framed design.
 
+### Let a product owner write their own training
+
+Product managers can maintain the training for their own product without you
+handing over the whole platform. They get the **Creator** role.
+
+There are three roles:
+
+| Role | What they can do |
+|---|---|
+| **Admin** | Everything: all courses, users, partners, certificates and settings. |
+| **Creator** | Courses and lessons **for their assigned products only**. Nothing else. |
+| **Learner** | Takes courses on the student site. No panel access at all. |
+
+To set one up:
+
+1. **Products** → **New product**. Name it after the product, e.g. `GARM`.
+2. **Users** → open the person → set **Role** to **Creator**.
+3. A **Products / modules** box appears. Tick the products they own — one or
+   several — and save.
+
+That is it. When they sign in to `/admin` they see **Courses**, **Lessons** and
+**Media items**, holding only their own products' content. They can build
+courses and lessons and publish them, exactly as you would.
+
+What a Creator **cannot** do:
+
+- See or edit any other product's courses or lessons — the rows are not in
+  their list, and a direct link does not work either.
+- Open **Users**, **Companies**, **Products** or **Certificates**.
+- See the dashboard's student numbers or certificate report.
+- Delete anything in bulk, reorder the course list, or delete shared media.
+
+> Assigning a course to a product is what hands it over. A course with no
+> product stays admin-only, which is where every course you already have
+> starts — set the **Product / module** field on a course to pass it on.
+
+> Need to take the rights away? Set their **Role** back to **Learner**, or
+> untick the product. Their courses and lessons stay exactly as they are.
+
 ### Add a partner company and a student
 
 1. Go to **Companies** → **New company** → enter the name → **Create**.
@@ -172,6 +212,18 @@ Students can also sign up themselves on the site.
 ---
 
 ## 5. How to check things
+
+### Find people by role
+
+**Users** opens on tabs across the top: **All users**, **Admins**, **Creators**
+and **Learners**, each with a count. Click one to see only those accounts. There
+are also **Role** and **Product / module** filters if you want to combine them
+with a company.
+
+> **Learners** is the tab that matters for reporting: every number on the
+> dashboard, and the **Certified** column under Companies, counts learners only.
+> Admin and creator accounts are never included — not their lesson completions,
+> and not the certificates they pick up while previewing a final quiz.
 
 ### Who finished a course
 
@@ -202,6 +254,7 @@ Open your site address + `/certificates/` + the certificate number (or scan the 
 | A student ran out of attempts | Open the course → **Final quiz & certificate** → raise **Max attempts**, or clear it for unlimited. |
 | Students can't find a course | Check the **Status** column in **Courses**. Only **Published** courses appear on the student site — click **Publish** on the row. |
 | One lesson is missing from a live course | **Lessons** → check its **Status** → **Publish**. A lesson shows up only if both it *and* its course are published. |
+| A creator says their course is missing | Check the course's **Product / module** field. A creator only sees courses filed under a product assigned to them in **Users**. |
 | You need to take a course or lesson offline | The row → **Unpublish**. Nothing is lost; publish it again whenever you like. |
 
 ---
@@ -242,6 +295,10 @@ Yes. Admins can open and take any course's final quiz straight away (from the co
 | Certificate | The PDF proof that a student passed a course. |
 | Revoke | Cancel a certificate so it shows as invalid. |
 | Partner | A company that your students belong to. |
+| Admin | Runs the whole platform. |
+| Creator | A product owner who writes the training for their own product(s) only. |
+| Learner | A student who takes courses. |
+| Product / module | A thing your training is about (GARM, PTM, …). A course belongs to one, and that is what decides which Creator owns it. |
 | Draft | A course or lesson you are still working on. Only admins can see it. |
 | Published | Live on the student site. Courses and lessons both get there via the **Publish** action in their list. |
 | Archived | Retired. Hidden from students, but its content, progress and certificates stay. |

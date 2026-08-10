@@ -96,7 +96,7 @@ class AcademySmokeTest extends TestCase
         $admin = User::firstOrCreate(['email' => 'admin@pilot.local'], [
             'name' => 'Pilot Admin',
             'password' => bcrypt('password'),
-            'is_admin' => true,
+            'role' => 'admin',
         ]);
 
         $lesson = Lesson::first();
@@ -115,7 +115,7 @@ class AcademySmokeTest extends TestCase
         $admin = User::firstOrCreate(['email' => 'admin@pilot.local'], [
             'name' => 'Pilot Admin',
             'password' => bcrypt('password'),
-            'is_admin' => true,
+            'role' => 'admin',
         ]);
 
         $this->actingAs($admin)->get('/admin/users')->assertStatus(200);
@@ -127,14 +127,14 @@ class AcademySmokeTest extends TestCase
         $admin = User::firstOrCreate(['email' => 'admin@pilot.local'], [
             'name' => 'Pilot Admin',
             'password' => bcrypt('password'),
-            'is_admin' => true,
+            'role' => 'admin',
         ]);
 
         $student = User::create([
             'name' => 'Progress Student',
             'email' => 'progress@example.com',
             'password' => bcrypt('secret'),
-            'is_admin' => false,
+            'role' => 'learner',
         ]);
         $student->completedLessons()->attach(Lesson::first()->id, ['completed_at' => now()]);
 
@@ -149,7 +149,7 @@ class AcademySmokeTest extends TestCase
             'name' => 'Login User',
             'email' => 'loginuser@example.com',
             'password' => bcrypt('password123'),
-            'is_admin' => false,
+            'role' => 'learner',
         ]);
 
         $this->post('/login', ['email' => 'loginuser@example.com', 'password' => 'password123'])
@@ -164,13 +164,13 @@ class AcademySmokeTest extends TestCase
         $admin = User::firstOrCreate(['email' => 'admin@pilot.local'], [
             'name' => 'Pilot Admin',
             'password' => bcrypt('password'),
-            'is_admin' => true,
+            'role' => 'admin',
         ]);
         $student = User::create([
             'name' => 'Activity User',
             'email' => 'activity@example.com',
             'password' => bcrypt('secret'),
-            'is_admin' => false,
+            'role' => 'learner',
         ]);
         $course = Course::first();
         $lesson = $course->lessons()->first();
@@ -191,7 +191,7 @@ class AcademySmokeTest extends TestCase
             ->assertRedirect(route('academy.home'));
 
         $this->assertAuthenticated();
-        $this->assertDatabaseHas('users', ['email' => 'invited@example.com', 'is_admin' => false]);
+        $this->assertDatabaseHas('users', ['email' => 'invited@example.com', 'role' => 'learner']);
     }
 
     public function test_personal_magic_link_signs_in(): void
@@ -200,7 +200,7 @@ class AcademySmokeTest extends TestCase
             'name' => 'Magic User',
             'email' => 'magic@example.com',
             'password' => bcrypt('secret'),
-            'is_admin' => false,
+            'role' => 'learner',
         ]);
         $token = $student->ensureLoginToken();
 
@@ -216,7 +216,7 @@ class AcademySmokeTest extends TestCase
             'name' => 'Completer',
             'email' => 'completer@example.com',
             'password' => bcrypt('secret'),
-            'is_admin' => false,
+            'role' => 'learner',
         ]);
         $course = Course::first();
         $lesson = $course->lessons()->with('questions.options')->first();
@@ -237,7 +237,7 @@ class AcademySmokeTest extends TestCase
     public function test_timed_quiz_prestart_then_pass(): void
     {
         $student = User::create([
-            'name' => 'Timed', 'email' => 'timed@example.com', 'password' => bcrypt('x'), 'is_admin' => false,
+            'name' => 'Timed', 'email' => 'timed@example.com', 'password' => bcrypt('x'), 'role' => 'learner',
         ]);
         $course = Course::first();
         $lesson = $course->lessons()->with('questions.options')->first();
@@ -269,7 +269,7 @@ class AcademySmokeTest extends TestCase
     public function test_quiz_time_expiry_marks_attempt_expired(): void
     {
         $student = User::create([
-            'name' => 'Slow', 'email' => 'slow@example.com', 'password' => bcrypt('x'), 'is_admin' => false,
+            'name' => 'Slow', 'email' => 'slow@example.com', 'password' => bcrypt('x'), 'role' => 'learner',
         ]);
         $course = Course::first();
         $lesson = $course->lessons()->with('questions.options')->first();
@@ -294,7 +294,7 @@ class AcademySmokeTest extends TestCase
     public function test_attempts_exhausted_blocks_the_quiz(): void
     {
         $student = User::create([
-            'name' => 'Done', 'email' => 'done@example.com', 'password' => bcrypt('x'), 'is_admin' => false,
+            'name' => 'Done', 'email' => 'done@example.com', 'password' => bcrypt('x'), 'role' => 'learner',
         ]);
         $course = Course::first();
         $lesson = $course->lessons()->first();
@@ -327,7 +327,7 @@ class AcademySmokeTest extends TestCase
         $admin = User::firstOrCreate(['email' => 'admin@pilot.local'], [
             'name' => 'Pilot Admin',
             'password' => bcrypt('password'),
-            'is_admin' => true,
+            'role' => 'admin',
         ]);
 
         $this->actingAs($admin)->get('/admin/media-items')->assertStatus(200);
@@ -339,7 +339,7 @@ class AcademySmokeTest extends TestCase
             'name' => 'Partner User',
             'email' => 'student@example.com',
             'password' => bcrypt('secret'),
-            'is_admin' => false,
+            'role' => 'learner',
         ]);
 
         $this->actingAs($student)->get('/admin')->assertStatus(403);
@@ -355,7 +355,7 @@ class AcademySmokeTest extends TestCase
         ])->assertRedirect(route('academy.home'));
 
         $this->assertAuthenticated();
-        $this->assertDatabaseHas('users', ['email' => 'new@partner.com', 'is_admin' => false]);
+        $this->assertDatabaseHas('users', ['email' => 'new@partner.com', 'role' => 'learner']);
     }
 
     public function test_student_can_log_in(): void
@@ -364,7 +364,7 @@ class AcademySmokeTest extends TestCase
             'name' => 'Partner',
             'email' => 'p@partner.com',
             'password' => bcrypt('password123'),
-            'is_admin' => false,
+            'role' => 'learner',
         ]);
 
         $this->post('/login', ['email' => 'p@partner.com', 'password' => 'password123'])
@@ -403,7 +403,7 @@ class AcademySmokeTest extends TestCase
             'name' => 'Learner',
             'email' => 'learner@partner.com',
             'password' => bcrypt('password123'),
-            'is_admin' => false,
+            'role' => 'learner',
         ]);
 
         $course = Course::first();

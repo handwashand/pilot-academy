@@ -25,6 +25,13 @@ class CoursesTable
                     ->sortable()
                     ->weight('bold'),
 
+                TextColumn::make('product.name')
+                    ->label('Product')
+                    ->badge()
+                    ->color('info')
+                    ->placeholder('—')
+                    ->sortable(),
+
                 TextColumn::make('level')
                     ->badge()
                     ->colors([
@@ -63,6 +70,11 @@ class CoursesTable
             ->filters([
                 SelectFilter::make('status')
                     ->options(Course::STATUS_LABELS),
+
+                SelectFilter::make('product')
+                    ->relationship('product', 'name')
+                    ->searchable()
+                    ->preload(),
             ])
             ->recordActions([
                 Action::make('publish')
@@ -73,6 +85,7 @@ class CoursesTable
                     ->modalHeading('Publish course')
                     ->modalDescription(fn (Course $record): string => "\"{$record->title}\" becomes visible to students straight away.")
                     ->visible(fn (Course $record): bool => $record->status === Course::STATUS_DRAFT)
+                    ->authorize(fn (Course $record): bool => auth()->user()->canManageCourse($record))
                     ->action(function (Course $record): void {
                         if (! $record->canBePublished()) {
                             Notification::make()
@@ -97,6 +110,7 @@ class CoursesTable
                     ->modalHeading('Unpublish course')
                     ->modalDescription('The course goes back to draft and disappears from the student site. Nothing is deleted — lessons, questions and certificates all stay.')
                     ->visible(fn (Course $record): bool => $record->isPublished())
+                    ->authorize(fn (Course $record): bool => auth()->user()->canManageCourse($record))
                     ->action(function (Course $record): void {
                         $record->unpublish();
 

@@ -2,7 +2,6 @@
 
 namespace App\Models\Concerns;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -42,16 +41,6 @@ trait HasPublishStatus
     public function statusLabel(): string
     {
         return self::STATUS_LABELS[$this->status] ?? $this->status;
-    }
-
-    /**
-     * May this visitor open the pages for this record? Students only ever get
-     * published ones; admins can preview drafts before they go live (the same
-     * allowance they already have for the final quiz).
-     */
-    public function isVisibleTo(?User $user): bool
-    {
-        return $this->isPublished() || (bool) $user?->is_admin;
     }
 
     /** Overridden where publishing has prerequisites (see Course). */

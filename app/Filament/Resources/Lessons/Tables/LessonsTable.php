@@ -66,7 +66,13 @@ class LessonsTable
                     ->options(Lesson::STATUS_LABELS),
 
                 SelectFilter::make('course')
-                    ->relationship('course', 'title')
+                    ->relationship('course', 'title', function ($query) {
+                        $user = auth()->user();
+
+                        return $user?->isCreator()
+                            ? $query->whereIn('product_id', $user->products()->pluck('products.id'))
+                            : $query;
+                    })
                     ->searchable()
                     ->preload(),
             ])
@@ -79,6 +85,7 @@ class LessonsTable
                     ->modalHeading('Publish lesson')
                     ->modalDescription(fn (Lesson $record): string => "\"{$record->title}\" becomes visible to students in a published course straight away.")
                     ->visible(fn (Lesson $record): bool => $record->status === Lesson::STATUS_DRAFT)
+                    ->authorize(fn (Lesson $record): bool => auth()->user()->canManageCourse($record->course))
                     ->action(function (Lesson $record): void {
                         $record->publish();
 
@@ -93,6 +100,7 @@ class LessonsTable
                     ->modalHeading('Unpublish lesson')
                     ->modalDescription('The lesson goes back to draft and disappears from the student site. Nothing is deleted — its text, video, questions and student progress all stay.')
                     ->visible(fn (Lesson $record): bool => $record->isPublished())
+                    ->authorize(fn (Lesson $record): bool => auth()->user()->canManageCourse($record->course))
                     ->action(function (Lesson $record): void {
                         $record->unpublish();
 

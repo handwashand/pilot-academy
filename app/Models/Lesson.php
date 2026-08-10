@@ -47,6 +47,15 @@ class Lesson extends Model
         return $this->belongsTo(Course::class);
     }
 
+    /**
+     * Students only ever get published lessons; whoever manages the parent
+     * course can preview a draft one.
+     */
+    public function isVisibleTo(?User $user): bool
+    {
+        return $this->isPublished() || (bool) $user?->canManageCourse($this->course);
+    }
+
     public function mediaItem(): BelongsTo
     {
         return $this->belongsTo(MediaItem::class);

@@ -7,10 +7,8 @@ use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
 class UsersTable
@@ -35,6 +33,22 @@ class UsersTable
                     ->placeholder('—')
                     ->sortable(),
 
+                TextColumn::make('role')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => User::ROLE_LABELS[$state] ?? $state)
+                    ->color(fn (string $state): string => match ($state) {
+                        User::ROLE_ADMIN => 'danger',
+                        User::ROLE_CREATOR => 'warning',
+                        default => 'gray',
+                    })
+                    ->sortable(),
+
+                TextColumn::make('products.name')
+                    ->label('Products')
+                    ->badge()
+                    ->color('info')
+                    ->placeholder('—'),
+
                 TextColumn::make('completed_lessons_count')
                     ->label('Lessons done')
                     ->badge()
@@ -48,10 +62,6 @@ class UsersTable
                     ->placeholder('never')
                     ->sortable(),
 
-                IconColumn::make('is_admin')
-                    ->label('Admin')
-                    ->boolean(),
-
                 TextColumn::make('created_at')
                     ->label('Added')
                     ->since()
@@ -64,15 +74,22 @@ class UsersTable
                     ->searchable()
                     ->preload(),
 
-                TernaryFilter::make('is_admin')
-                    ->label('Admins only'),
+                SelectFilter::make('role')
+                    ->label('Role')
+                    ->options(User::ROLE_LABELS),
+
+                SelectFilter::make('products')
+                    ->label('Product / module')
+                    ->relationship('products', 'name')
+                    ->searchable()
+                    ->preload(),
             ])
             ->recordActions([
                 Action::make('accessLink')
                     ->label('Access link')
                     ->icon('heroicon-o-link')
                     ->color('gray')
-                    ->visible(fn (User $record): bool => ! $record->is_admin)
+                    ->visible(fn (User $record): bool => $record->isLearner())
                     ->modalHeading('Personal access link')
                     ->modalContent(fn (User $record) => view('filament.access-link', [
                         'url' => $record->accessUrl(),

@@ -122,9 +122,9 @@
                 </div>
 
                 @auth
-                    @if(auth()->user()->is_admin)
+                    @if(auth()->user()->canManageCourse($course))
                         <div class="rounded-xl bg-violet-50 border border-violet-200 text-violet-800 px-5 py-3 mb-4 text-sm">
-                            <strong>Admin preview.</strong> As an admin you can take this final quiz without finishing the lessons. A real certificate will be issued to your account.
+                            <strong>Staff preview.</strong> Because you manage this course you can take its final quiz without finishing the lessons. A real certificate will be issued to your account.
                         </div>
                     @endif
                 @endauth

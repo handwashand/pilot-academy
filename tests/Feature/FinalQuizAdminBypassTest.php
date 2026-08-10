@@ -32,7 +32,7 @@ class FinalQuizAdminBypassTest extends TestCase
     {
         return User::create([
             'name' => 'Pilot Admin', 'email' => 'admin@pilot.local',
-            'password' => bcrypt('x'), 'is_admin' => true,
+            'password' => bcrypt('x'), 'role' => 'admin',
         ]);
     }
 
@@ -40,7 +40,7 @@ class FinalQuizAdminBypassTest extends TestCase
     {
         return User::create([
             'name' => 'Regular Student', 'email' => 'student@example.com',
-            'password' => bcrypt('x'), 'is_admin' => false,
+            'password' => bcrypt('x'), 'role' => 'learner',
         ]);
     }
 
@@ -52,7 +52,7 @@ class FinalQuizAdminBypassTest extends TestCase
             ->get(route('academy.final.show', $course))
             ->assertStatus(200)
             ->assertSee('Full name for your certificate')
-            ->assertSee('Admin preview')
+            ->assertSee('Staff preview')
             ->assertDontSee('Complete all lessons');
     }
 
