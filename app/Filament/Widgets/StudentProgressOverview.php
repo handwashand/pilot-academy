@@ -23,7 +23,12 @@ class StudentProgressOverview extends StatsOverviewWidget
         $active = User::learners()
             ->whereHas('completedLessons')
             ->count();
-        $completions = DB::table('lesson_user')->count();
+        // Staff complete lessons too (previewing, testing) — those completions
+        // are not learner progress and must not inflate the total.
+        $completions = DB::table('lesson_user')
+            ->join('users', 'users.id', '=', 'lesson_user.user_id')
+            ->where('users.role', User::ROLE_LEARNER)
+            ->count();
         $publishedLessons = Lesson::published()->count();
 
         $engagement = $students > 0 ? round($active / $students * 100) : 0;

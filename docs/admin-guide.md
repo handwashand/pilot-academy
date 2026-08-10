@@ -213,6 +213,18 @@ Students can also sign up themselves on the site.
 
 ## 5. How to check things
 
+### Find people by role
+
+**Users** opens on tabs across the top: **All users**, **Admins**, **Creators**
+and **Learners**, each with a count. Click one to see only those accounts. There
+are also **Role** and **Product / module** filters if you want to combine them
+with a company.
+
+> **Learners** is the tab that matters for reporting: every number on the
+> dashboard, and the **Certified** column under Companies, counts learners only.
+> Admin and creator accounts are never included — not their lesson completions,
+> and not the certificates they pick up while previewing a final quiz.
+
 ### Who finished a course
 
 Go to **Users** and open a student. The **Completed lessons** tab lists every lesson they finished. The **Dashboard** shows overall activity across all students.

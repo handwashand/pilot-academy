@@ -28,7 +28,11 @@ class CertificatesByCourse extends TableWidget
                 Course::query()
                     ->where('final_quiz_enabled', true)
                     ->withCount([
-                        'certificates as issued_count' => fn (Builder $q) => $q->whereNull('revoked_at'),
+                        // Admins get a real certificate when they preview a final
+                        // quiz; those are not learner results, so they are left out.
+                        'certificates as issued_count' => fn (Builder $q) => $q
+                            ->whereNull('revoked_at')
+                            ->whereHas('user', fn (Builder $user) => $user->learners()),
                     ])
             )
             ->defaultSort('issued_count', 'desc')

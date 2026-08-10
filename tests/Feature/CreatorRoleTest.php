@@ -4,14 +4,17 @@ namespace Tests\Feature;
 
 use App\Filament\Resources\Courses\Pages\ListCourses;
 use App\Filament\Resources\Lessons\Pages\ListLessons;
+use App\Filament\Resources\Users\Pages\ListUsers;
 use App\Filament\Widgets\CertificatesByCourse;
 use App\Filament\Widgets\StudentProgressOverview;
+use App\Models\Certificate;
 use App\Models\Company;
 use App\Models\Course;
 use App\Models\Product;
 use App\Models\User;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -319,6 +322,94 @@ class CreatorRoleTest extends TestCase
 
         $this->assertSame(3, $company->users()->count());
         $this->assertSame(1, $company->students()->count());
+    }
+
+    public function test_user_management_has_a_tab_per_role(): void
+    {
+        $learner = $this->learner();
+        $creator = $this->garmCreator();
+        $admin = $this->admin();
+
+        $list = Livewire::actingAs($admin)->test(ListUsers::class);
+
+        $list->set('activeTab', 'all')
+            ->assertCanSeeTableRecords([$admin, $creator, $learner]);
+
+        $list->set('activeTab', 'admins')
+            ->assertCanSeeTableRecords([$admin])
+            ->assertCanNotSeeTableRecords([$creator, $learner]);
+
+        $list->set('activeTab', 'creators')
+            ->assertCanSeeTableRecords([$creator])
+            ->assertCanNotSeeTableRecords([$admin, $learner]);
+
+        $list->set('activeTab', 'learners')
+            ->assertCanSeeTableRecords([$learner])
+            ->assertCanNotSeeTableRecords([$admin, $creator]);
+    }
+
+    public function test_staff_lesson_completions_do_not_count_as_learner_progress(): void
+    {
+        $lesson = $this->garmCourse->lessons()->first();
+
+        $this->learner()->completedLessons()->attach($lesson->id, ['completed_at' => now()]);
+        $this->garmCreator()->completedLessons()->attach($lesson->id, ['completed_at' => now()]);
+        $this->admin()->completedLessons()->attach($lesson->id, ['completed_at' => now()]);
+
+        // Three rows in the pivot, but only one of them is learner progress.
+        $this->assertSame(3, DB::table('lesson_user')->count());
+
+        $stats = $this->progressStats();
+
+        $this->assertSame(1, $stats['Students']);
+        $this->assertSame(1, $stats['Active students']);
+        $this->assertSame(1, $stats['Lesson completions']);
+    }
+
+    public function test_staff_certificates_are_left_out_of_the_certificate_report(): void
+    {
+        $this->garmCourse->update(['final_quiz_enabled' => true]);
+
+        $this->certificateFor($this->learner(), 'PA-LEARNER');
+        $this->certificateFor($this->admin(), 'PA-ADMIN');
+
+        $this->assertSame(2, Certificate::count());
+
+        $counted = Course::query()
+            ->withCount([
+                'certificates as issued_count' => fn ($q) => $q
+                    ->whereNull('revoked_at')
+                    ->whereHas('user', fn ($u) => $u->learners()),
+            ])
+            ->find($this->garmCourse->id)
+            ->issued_count;
+
+        $this->assertSame(1, $counted);
+    }
+
+    private function certificateFor(User $user, string $number): Certificate
+    {
+        return Certificate::create([
+            'user_id' => $user->id,
+            'course_id' => $this->garmCourse->id,
+            'number' => $number,
+            'name' => $user->name,
+            'score_percent' => 100,
+            'issued_at' => now(),
+        ]);
+    }
+
+    /** The progress widget's numbers as [label => value]; getStats() is protected. */
+    private function progressStats(): array
+    {
+        $widget = new StudentProgressOverview;
+        $stats = [];
+
+        foreach ((fn (): array => $this->getStats())->call($widget) as $stat) {
+            $stats[$stat->getLabel()] = (int) $stat->getValue();
+        }
+
+        return $stats;
     }
 
     public function test_learner_data_widgets_are_hidden_from_creators(): void

@@ -26,8 +26,16 @@ or the certificate report on the dashboard. Reports and the partner "Certified"
 counts still measure **learners only**, so nobody is counted as a student just
 because they have an account.
 
-**Users** now shows a **Role** column and a **Products** column, and can be
-filtered by either.
+**Users** now opens on tabs — **All users**, **Admins**, **Creators**,
+**Learners** — each with a count, so staff and students are no longer mixed
+together in one list. There are **Role** and **Products** columns and filters
+to match.
+
+Reports count **learners only**, everywhere. Two places used to include staff
+and no longer do: the dashboard's **Lesson completions** total (admins and
+creators complete lessons while checking a course) and **Certificates issued by
+course** (previewing a final quiz issues the admin a real certificate). Neither
+counts towards student numbers now.
 
 Nothing changed for your existing accounts: everyone who was an admin is still
 an admin, everyone else is a learner. Existing courses have no product yet, so
