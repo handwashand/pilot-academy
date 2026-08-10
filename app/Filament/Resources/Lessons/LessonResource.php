@@ -13,12 +13,28 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class LessonResource extends Resource
 {
     protected static ?string $model = Lesson::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    /** Creators only ever see lessons inside their own products' courses. */
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+        $user = auth()->user();
+
+        if ($user && $user->isCreator()) {
+            $productIds = $user->products()->pluck('products.id');
+
+            $query->whereHas('course', fn (Builder $course) => $course->whereIn('product_id', $productIds));
+        }
+
+        return $query;
+    }
 
     public static function form(Schema $schema): Schema
     {

@@ -13,12 +13,30 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class CourseResource extends Resource
 {
     protected static ?string $model = Course::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    /**
+     * Creators only ever see their own products' courses — enforced here, on
+     * the query, so it holds for the list, the edit page and every action
+     * rather than only for what the table happens to render.
+     */
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+        $user = auth()->user();
+
+        if ($user && $user->isCreator()) {
+            $query->whereIn('product_id', $user->products()->pluck('products.id'));
+        }
+
+        return $query;
+    }
 
     public static function form(Schema $schema): Schema
     {

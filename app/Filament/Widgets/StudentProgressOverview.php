@@ -10,10 +10,17 @@ use Illuminate\Support\Facades\DB;
 
 class StudentProgressOverview extends StatsOverviewWidget
 {
+    /** Learner data — creators have no business seeing it. */
+    public static function canView(): bool
+    {
+        return (bool) auth()->user()?->isAdmin();
+    }
+
     protected function getStats(): array
     {
-        $students = User::where('is_admin', false)->count();
-        $active = User::where('is_admin', false)
+        // Reports are about learners: admins and creators never count.
+        $students = User::learners()->count();
+        $active = User::learners()
             ->whereHas('completedLessons')
             ->count();
         $completions = DB::table('lesson_user')->count();

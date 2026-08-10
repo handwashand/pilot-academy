@@ -19,10 +19,10 @@ class Company extends Model
         return $this->hasMany(User::class);
     }
 
-    /** Partner staff in this company (non-admin users). */
+    /** Partner staff in this company — learners only, never admins or creators. */
     public function students(): HasMany
     {
-        return $this->users()->where('is_admin', false);
+        return $this->users()->learners();
     }
 
     /** Certificates earned by this company's students. */

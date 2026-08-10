@@ -19,6 +19,31 @@ class CourseForm
     {
         return $schema
             ->components([
+                Select::make('product_id')
+                    ->label('Product / module')
+                    ->relationship('product', 'name', function ($query) {
+                        $user = auth()->user();
+
+                        // A creator may only file a course under a product they own.
+                        return $user?->isCreator()
+                            ? $query->whereIn('products.id', $user->products()->pluck('products.id'))
+                            : $query;
+                    })
+                    ->searchable()
+                    ->preload()
+                    ->required(fn (): bool => (bool) auth()->user()?->isCreator())
+                    ->default(fn () => auth()->user()?->isCreator() ? auth()->user()->products()->value('products.id') : null)
+                    ->helperText('Which product this course teaches. Creators can only see and manage their own products\' courses.')
+                    ->rules([
+                        fn (): Closure => function (string $attribute, $value, Closure $fail): void {
+                            $user = auth()->user();
+
+                            if ($user && $user->isCreator() && ! $user->products()->whereKey($value)->exists()) {
+                                $fail('You can only manage courses for a product assigned to you.');
+                            }
+                        },
+                    ]),
+
                 TextInput::make('title')
                     ->label('Course title')
                     ->required()

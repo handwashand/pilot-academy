@@ -14,6 +14,12 @@ class CertificatesByCourse extends TableWidget
 
     protected int|string|array $columnSpan = 'full';
 
+    /** Learner data — creators have no business seeing it. */
+    public static function canView(): bool
+    {
+        return (bool) auth()->user()?->isAdmin();
+    }
+
     public function table(Table $table): Table
     {
         return $table

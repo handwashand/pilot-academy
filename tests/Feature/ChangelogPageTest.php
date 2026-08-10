@@ -16,7 +16,7 @@ class ChangelogPageTest extends TestCase
             'name' => 'Pilot Admin',
             'email' => 'admin@pilot.local',
             'password' => bcrypt('password'),
-            'is_admin' => true,
+            'role' => 'admin',
         ]);
 
         $this->actingAs($admin)
@@ -31,7 +31,7 @@ class ChangelogPageTest extends TestCase
             'name' => 'Student',
             'email' => 'student@example.com',
             'password' => bcrypt('secret'),
-            'is_admin' => false,
+            'role' => 'learner',
         ]);
 
         $this->actingAs($student)

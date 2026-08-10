@@ -5,6 +5,35 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ## August 2026
 
+### Product owners can write their own training — the Creator role
+Product managers and module owners can now maintain the training for their own
+product without being given the run of the platform. There are three roles:
+
+- **Admin** — everything, exactly as before.
+- **Creator** — courses and lessons for their assigned products only.
+- **Learner** — takes courses on the student site; no panel access.
+
+A new **Products** section lists the products/modules your training is about
+(GARM, PTM, …). Assign a course to a product, then give someone the **Creator**
+role in **Users** and tick the products they own. When they sign in they see
+**Courses**, **Lessons** and **Media items** holding only their own products'
+content — they can build and publish it just as you would.
+
+Creators cannot see or edit another product's content (the rows are not in
+their list, and a direct link does not work either), cannot open **Users**,
+**Companies**, **Products** or **Certificates**, and cannot see student numbers
+or the certificate report on the dashboard. Reports and the partner "Certified"
+counts still measure **learners only**, so nobody is counted as a student just
+because they have an account.
+
+**Users** now shows a **Role** column and a **Products** column, and can be
+filtered by either.
+
+Nothing changed for your existing accounts: everyone who was an admin is still
+an admin, everyone else is a learner. Existing courses have no product yet, so
+they stay admin-only until you set one — that is the switch that hands a course
+to its product owner.
+
 ### Courses are published on purpose, not by accident
 Creating a course no longer puts it in front of students. Every new course
 starts as a **Draft** that only admins can see, so you can build it — lessons,

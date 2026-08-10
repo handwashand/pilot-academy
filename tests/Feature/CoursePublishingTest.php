@@ -28,7 +28,7 @@ class CoursePublishingTest extends TestCase
         return User::firstOrCreate(['email' => 'admin@pilot.local'], [
             'name' => 'Pilot Admin',
             'password' => bcrypt('password'),
-            'is_admin' => true,
+            'role' => 'admin',
         ]);
     }
 
@@ -37,7 +37,7 @@ class CoursePublishingTest extends TestCase
         return User::firstOrCreate(['email' => 'student@partner.com'], [
             'name' => 'Partner Student',
             'password' => bcrypt('secret'),
-            'is_admin' => false,
+            'role' => 'learner',
         ]);
     }
 

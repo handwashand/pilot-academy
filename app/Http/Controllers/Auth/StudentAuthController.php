@@ -52,7 +52,7 @@ class StudentAuthController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => $data['password'],
-            'is_admin' => false,
+            'role' => User::ROLE_LEARNER,
         ]);
 
         Auth::login($user);
@@ -80,9 +80,9 @@ class StudentAuthController extends Controller
 
         $user = User::where('email', $data['email'])->first();
 
-        if ($user && $user->is_admin) {
+        if ($user && ! $user->isLearner()) {
             throw ValidationException::withMessages([
-                'email' => 'This email belongs to an admin account — please use Log in.',
+                'email' => 'This email belongs to a staff account — please use Log in.',
             ]);
         }
 
@@ -91,7 +91,7 @@ class StudentAuthController extends Controller
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'password' => Str::random(40), // passwordless; access via link
-                'is_admin' => false,
+                'role' => User::ROLE_LEARNER,
             ]);
             $user->ensureLoginToken();
         }

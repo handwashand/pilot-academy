@@ -31,7 +31,7 @@ class FinalQuizCertificateTest extends TestCase
             'name' => 'Final Student',
             'email' => 'final@example.com',
             'password' => bcrypt('secret'),
-            'is_admin' => false,
+            'role' => 'learner',
         ]);
     }
 
@@ -235,7 +235,7 @@ class FinalQuizCertificateTest extends TestCase
         Storage::disk('public')->put('certificates/PA-DL-1.pdf', '%PDF-1.4 test');
 
         $owner = $this->student();
-        $other = User::create(['name' => 'Other', 'email' => 'other@example.com', 'password' => bcrypt('x'), 'is_admin' => false]);
+        $other = User::create(['name' => 'Other', 'email' => 'other@example.com', 'password' => bcrypt('x'), 'role' => 'learner']);
         $course = Course::first();
 
         $certificate = Certificate::create([

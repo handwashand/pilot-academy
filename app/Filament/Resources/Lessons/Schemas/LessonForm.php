@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\Lessons\Schemas;
 
+use App\Models\Course;
 use App\Models\Lesson;
+use Closure;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
@@ -25,10 +27,26 @@ class LessonForm
                     ->schema([
                         Select::make('course_id')
                             ->label('Course')
-                            ->relationship('course', 'title')
+                            ->relationship('course', 'title', function ($query) {
+                                $user = auth()->user();
+
+                                // A creator may only add lessons to their own courses.
+                                return $user?->isCreator()
+                                    ? $query->whereIn('product_id', $user->products()->pluck('products.id'))
+                                    : $query;
+                            })
                             ->required()
                             ->searchable()
-                            ->preload(),
+                            ->preload()
+                            ->rules([
+                                fn (): Closure => function (string $attribute, $value, Closure $fail): void {
+                                    $user = auth()->user();
+
+                                    if ($user && $user->isCreator() && ! $user->canManageCourse(Course::find($value))) {
+                                        $fail('You can only add lessons to a course for a product assigned to you.');
+                                    }
+                                },
+                            ]),
 
                         TextInput::make('sort_order')
                             ->label('Order in course')

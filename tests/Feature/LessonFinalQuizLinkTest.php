@@ -25,7 +25,7 @@ class LessonFinalQuizLinkTest extends TestCase
             'name' => 'Sidebar Student',
             'email' => 'sidebar@example.com',
             'password' => bcrypt('x'),
-            'is_admin' => false,
+            'role' => 'learner',
         ]);
     }
 

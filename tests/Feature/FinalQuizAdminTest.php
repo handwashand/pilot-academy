@@ -20,7 +20,7 @@ class FinalQuizAdminTest extends TestCase
         return User::firstOrCreate(['email' => 'admin@pilot.local'], [
             'name' => 'Pilot Admin',
             'password' => bcrypt('password'),
-            'is_admin' => true,
+            'role' => 'admin',
         ]);
     }
 
@@ -57,7 +57,7 @@ class FinalQuizAdminTest extends TestCase
         $company = Company::create(['name' => 'Acme Partner']);
         $student = User::create([
             'name' => 'Cert Holder', 'email' => 'holder@example.com',
-            'password' => bcrypt('x'), 'is_admin' => false, 'company_id' => $company->id,
+            'password' => bcrypt('x'), 'role' => 'learner', 'company_id' => $company->id,
         ]);
 
         $certificate = Certificate::create([
@@ -81,7 +81,7 @@ class FinalQuizAdminTest extends TestCase
         $course = $this->courseWithFinal();
         $student = User::create([
             'name' => 'RM Student', 'email' => 'rm@example.com',
-            'password' => bcrypt('x'), 'is_admin' => false,
+            'password' => bcrypt('x'), 'role' => 'learner',
         ]);
         Certificate::create([
             'user_id' => $student->id, 'course_id' => $course->id,
