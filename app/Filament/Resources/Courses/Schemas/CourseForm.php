@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Courses\Schemas;
 
 use App\Models\Course;
+use Closure;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -67,9 +68,22 @@ class CourseForm
                     ->default(0)
                     ->helperText('Lower numbers appear first.'),
 
-                Toggle::make('is_published')
-                    ->label('Published')
-                    ->default(true),
+                Select::make('status')
+                    ->label('Status')
+                    ->options(Course::STATUS_LABELS)
+                    ->default(Course::STATUS_DRAFT)
+                    ->required()
+                    // New courses are always drafts — publishing is a separate,
+                    // deliberate step from the course list.
+                    ->disabled(fn (string $operation): bool => $operation === 'create')
+                    ->helperText('Only published courses are visible to students. New courses start as a draft — use Publish in the course list when it is ready.')
+                    ->rules([
+                        fn (?Course $record): Closure => function (string $attribute, $value, Closure $fail) use ($record): void {
+                            if ($value === Course::STATUS_PUBLISHED && $record && ! $record->canBePublished()) {
+                                $fail('Add at least one published lesson before publishing this course.');
+                            }
+                        },
+                    ]),
 
                 Section::make('Final quiz & certificate')
                     ->description('A course-wide quiz students take after finishing every lesson. Passing issues a certificate. Manage the question bank in the "Final questions" tab after saving.')

@@ -20,6 +20,14 @@
         <div>
             <a href="{{ route('academy.course', $course) }}" class="text-sm text-brand font-semibold">&larr; {{ $course->title }}</a>
 
+            @if(! $course->isPublished() || ! $lesson->isPublished())
+                {{-- Only admins ever reach this page for unpublished content. --}}
+                <div class="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                    <strong>{{ ! $lesson->isPublished() ? 'Lesson: '.$lesson->statusLabel() : 'Course: '.$course->statusLabel() }}</strong>
+                    — students cannot see this. You are previewing it as an admin.
+                </div>
+            @endif
+
             <h1 class="text-2xl sm:text-3xl font-extrabold text-navy mt-2">{{ $lesson->title }}</h1>
             @if($lesson->summary)
                 <p class="text-slate-500 mt-1">{{ $lesson->summary }}</p>

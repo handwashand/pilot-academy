@@ -16,6 +16,13 @@
 
     <a href="{{ route('academy.home') }}" class="text-sm text-brand font-semibold">&larr; All courses</a>
 
+    @if(! $course->isPublished())
+        {{-- Only admins ever reach this page for an unpublished course. --}}
+        <div class="mt-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            <strong>{{ $course->statusLabel() }}</strong> — students cannot see this course. You are previewing it as an admin.
+        </div>
+    @endif
+
     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 my-5">
         <div class="flex items-center gap-2 mb-1">
             <span class="text-xs font-semibold uppercase tracking-wide text-brand">Course</span>

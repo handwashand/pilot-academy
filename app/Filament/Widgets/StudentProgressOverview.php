@@ -17,7 +17,7 @@ class StudentProgressOverview extends StatsOverviewWidget
             ->whereHas('completedLessons')
             ->count();
         $completions = DB::table('lesson_user')->count();
-        $publishedLessons = Lesson::where('is_published', true)->count();
+        $publishedLessons = Lesson::published()->count();
 
         $engagement = $students > 0 ? round($active / $students * 100) : 0;
 

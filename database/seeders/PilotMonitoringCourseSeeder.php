@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Course;
+use App\Models\Lesson;
 use App\Models\Question;
 use Illuminate\Database\Seeder;
 
@@ -20,7 +21,7 @@ class PilotMonitoringCourseSeeder extends Seeder
                 'description' => 'Onboard clients on the Pilot monitoring platform: create contracts, users, objects and sensors, then work day-to-day with the map, history and reports.',
                 'level' => 'beginner',
                 'audience' => 'all',
-                'is_published' => true,
+                'status' => Course::STATUS_PUBLISHED,
                 'sort_order' => 1,
             ],
         );
@@ -36,7 +37,7 @@ class PilotMonitoringCourseSeeder extends Seeder
                 'slug' => $data['slug'],
                 'summary' => $data['summary'],
                 'content' => $data['content'],
-                'is_published' => true,
+                'status' => Lesson::STATUS_PUBLISHED,
                 'sort_order' => $i + 1,
             ]);
 

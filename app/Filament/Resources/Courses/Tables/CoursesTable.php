@@ -3,11 +3,13 @@
 namespace App\Filament\Resources\Courses\Tables;
 
 use App\Models\Course;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class CoursesTable
@@ -43,16 +45,64 @@ class CoursesTable
                     ->counts('lessons')
                     ->badge(),
 
-                IconColumn::make('is_published')
-                    ->label('Published')
-                    ->boolean(),
+                TextColumn::make('status')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => Course::STATUS_LABELS[$state] ?? $state)
+                    ->color(fn (string $state): string => match ($state) {
+                        Course::STATUS_PUBLISHED => 'success',
+                        Course::STATUS_ARCHIVED => 'gray',
+                        default => 'warning',
+                    })
+                    ->sortable(),
 
                 TextColumn::make('updated_at')
                     ->label('Updated')
                     ->since()
                     ->sortable(),
             ])
+            ->filters([
+                SelectFilter::make('status')
+                    ->options(Course::STATUS_LABELS),
+            ])
             ->recordActions([
+                Action::make('publish')
+                    ->label('Publish')
+                    ->icon('heroicon-o-rocket-launch')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Publish course')
+                    ->modalDescription(fn (Course $record): string => "\"{$record->title}\" becomes visible to students straight away.")
+                    ->visible(fn (Course $record): bool => $record->status === Course::STATUS_DRAFT)
+                    ->action(function (Course $record): void {
+                        if (! $record->canBePublished()) {
+                            Notification::make()
+                                ->title('Add a lesson first')
+                                ->body('A course needs at least one published lesson before students can open it.')
+                                ->danger()
+                                ->send();
+
+                            return;
+                        }
+
+                        $record->publish();
+
+                        Notification::make()->title('Course published')->body('Students can see it now.')->success()->send();
+                    }),
+
+                Action::make('unpublish')
+                    ->label('Unpublish')
+                    ->icon('heroicon-o-eye-slash')
+                    ->color('gray')
+                    ->requiresConfirmation()
+                    ->modalHeading('Unpublish course')
+                    ->modalDescription('The course goes back to draft and disappears from the student site. Nothing is deleted — lessons, questions and certificates all stay.')
+                    ->visible(fn (Course $record): bool => $record->isPublished())
+                    ->action(function (Course $record): void {
+                        $record->unpublish();
+
+                        Notification::make()->title('Course unpublished')->body('It is a draft again and hidden from students.')->warning()->send();
+                    }),
+
                 EditAction::make(),
             ])
             ->toolbarActions([

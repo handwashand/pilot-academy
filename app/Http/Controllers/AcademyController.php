@@ -14,7 +14,7 @@ class AcademyController extends Controller
 
     public function home(Request $request)
     {
-        $courses = Course::where('is_published', true)
+        $courses = Course::published()
             ->withCount('publishedLessons')
             ->with('publishedLessons.mediaItem')
             ->orderBy('sort_order')
@@ -28,7 +28,7 @@ class AcademyController extends Controller
 
     public function course(Request $request, Course $course)
     {
-        abort_unless($course->is_published, 404);
+        abort_unless($course->isVisibleTo($request->user()), 404);
         $course->load('publishedLessons.mediaItem');
 
         ActivityEvent::record($request->user(), ActivityEvent::TYPE_COURSE_OPENED, $course->title, $request->path());
@@ -47,7 +47,7 @@ class AcademyController extends Controller
 
     public function lesson(Request $request, Course $course, Lesson $lesson)
     {
-        abort_unless($course->is_published && $lesson->is_published, 404);
+        abort_unless($course->isVisibleTo($request->user()) && $lesson->isVisibleTo($request->user()), 404);
         abort_unless($lesson->course_id === $course->id, 404);
 
         $lesson->load('questions.options');
@@ -81,6 +81,7 @@ class AcademyController extends Controller
     public function startQuiz(Request $request, Course $course, Lesson $lesson)
     {
         abort_unless($lesson->course_id === $course->id, 404);
+        abort_unless($course->isVisibleTo($request->user()) && $lesson->isVisibleTo($request->user()), 404);
         $user = $request->user();
         abort_unless($user && $lesson->hasQuizLimits(), 403);
 
@@ -104,6 +105,7 @@ class AcademyController extends Controller
     public function submitQuiz(Request $request, Course $course, Lesson $lesson)
     {
         abort_unless($lesson->course_id === $course->id, 404);
+        abort_unless($course->isVisibleTo($request->user()) && $lesson->isVisibleTo($request->user()), 404);
         $lesson->load('questions.options');
 
         $user = $request->user();
@@ -277,7 +279,7 @@ class AcademyController extends Controller
 
     public function sitemap()
     {
-        $courses = Course::where('is_published', true)
+        $courses = Course::published()
             ->with(['publishedLessons' => fn ($query) => $query->orderBy('sort_order')])
             ->orderBy('sort_order')
             ->get();
