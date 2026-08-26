@@ -138,6 +138,11 @@ The course is live for students straight away. Two things to know:
 > **Archived**. Like a draft, it disappears from the student site, but its
 > certificates and history stay intact.
 
+> **Doing several at once:** tick the checkboxes on the left of **Courses** or
+> **Lessons**, then pick **Publish** or **Unpublish** from the bulk menu that
+> appears. A course with no published lesson is skipped rather than published
+> empty, and you are told which ones by name.
+
 ### Step 5 · Try it as a student
 
 Open the public site (your address *without* `/admin`), go to the course, and finish the lessons. When every lesson is done, the **Final quiz** button unlocks. Pass it to see the whole flow for yourself.
@@ -240,6 +245,7 @@ The home screen has three panels:
 | **Progress by partner company** | How much of the published material each partner's students have worked through. A partner with no students yet reads as 0. |
 | **Students who have gone quiet** | Started a course, completed nothing for two weeks, and no certificate. The one list here worth acting on — click **Open** to see the person. |
 | **Lessons students struggle with** | Lessons ranked by how often students fail the quiz. |
+| **Student activity** | Lessons finished and sign-ins per day over the last 30 days — whether use is picking up or going quiet. |
 
 **What "content needing attention" catches:**
 

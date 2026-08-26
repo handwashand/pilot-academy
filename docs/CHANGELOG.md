@@ -5,6 +5,20 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ## August 2026
 
+### Publish or unpublish several at once
+Tick the checkboxes in **Courses** or **Lessons** and use **Publish** or
+**Unpublish** from the bulk menu. Setting up a new course no longer means
+clicking through its lessons one at a time.
+
+Bulk publishing a course still respects the rule that protects students: a
+course with no published lesson is skipped rather than published empty, and you
+are told by name which ones were left behind.
+
+### Is the academy being used?
+A new **Student activity** chart shows lessons finished and sign-ins per day
+over the last 30 days. The panel could tell you totals before, but never
+whether things were picking up or going quiet.
+
 ### The panel now warns you when content is broken
 Four things could quietly break a course with nothing in the panel saying so.
 A **Content needing attention** panel appears at the top of the dashboard when
