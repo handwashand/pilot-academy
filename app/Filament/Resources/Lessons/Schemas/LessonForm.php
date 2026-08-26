@@ -195,6 +195,19 @@ class LessonForm
                                             ->minItems(2)
                                             ->addActionLabel('Add answer option')
                                             ->columns(4)
+                                            // Grading needs at least one right
+                                            // answer: a question without one can
+                                            // never be passed, and the student is
+                                            // simply stuck on that lesson.
+                                            ->rules([
+                                                fn (): Closure => function (string $attribute, $value, Closure $fail): void {
+                                                    $correct = collect($value)->filter(fn ($option): bool => (bool) ($option['is_correct'] ?? false));
+
+                                                    if ($correct->isEmpty()) {
+                                                        $fail('Tick the correct answer — a question with none can never be passed.');
+                                                    }
+                                                },
+                                            ])
                                             ->schema([
                                                 TextInput::make('text')
                                                     ->label('Answer')

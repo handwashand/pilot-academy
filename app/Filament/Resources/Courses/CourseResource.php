@@ -38,6 +38,43 @@ class CourseResource extends Resource
         return $query;
     }
 
+    /** Drafts are work someone still has to finish and publish. */
+    public static function getNavigationBadge(): ?string
+    {
+        // getEloquentQuery() already limits a creator to their own products,
+        // so the badge cannot leak the size of anyone else's backlog.
+        $drafts = static::getEloquentQuery()->where('status', Course::STATUS_DRAFT)->count();
+
+        return $drafts > 0 ? (string) $drafts : null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'warning';
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return 'Courses still in draft — students cannot see them yet';
+    }
+
+    protected static ?string $recordTitleAttribute = 'title';
+
+    /** @return array<int, string> */
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['title', 'slug'];
+    }
+
+    /** @return array<string, string|null> */
+    public static function getGlobalSearchResultDetails(mixed $record): array
+    {
+        return [
+            'Status' => $record->statusLabel(),
+            'Product' => $record->product?->name ?? '—',
+        ];
+    }
+
     public static function form(Schema $schema): Schema
     {
         return CourseForm::configure($schema);

@@ -27,7 +27,7 @@ Each item in the left menu has one job.
 | **Companies** | Partner companies. Group students and see how many are certified. |
 | **Certificates** | Every certificate that was issued. Download, resend, or revoke them. |
 | **Media items** | A shared image library you can reuse as lesson covers. |
-| **Dashboard** | The home screen: overall numbers and certificates by course. |
+| **Dashboard** | The home screen: overall numbers, progress by partner, and who has gone quiet. |
 
 ---
 
@@ -228,6 +228,53 @@ with a company.
 ### Who finished a course
 
 Go to **Users** and open a student. The **Completed lessons** tab lists every lesson they finished. The **Dashboard** shows overall activity across all students.
+
+### Read the Dashboard
+
+The home screen has three panels:
+
+| Panel | What it tells you |
+|---|---|
+| **Content needing attention** | Only appears when something is broken for students. Each row links straight to the fix. |
+| The numbers along the top | Students and how many are active, lesson completions, published courses and lessons, certificates issued with the average score. |
+| **Progress by partner company** | How much of the published material each partner's students have worked through. A partner with no students yet reads as 0. |
+| **Students who have gone quiet** | Started a course, completed nothing for two weeks, and no certificate. The one list here worth acting on — click **Open** to see the person. |
+| **Lessons students struggle with** | Lessons ranked by how often students fail the quiz. |
+
+**What "content needing attention" catches:**
+
+| Warning | What the student sees |
+|---|---|
+| Question with no correct answer | A quiz they can never pass, however they answer |
+| Final quiz on, question bank empty | A **Final quiz** button that leads nowhere |
+| Published course, no published lessons | An empty course page |
+| Published lesson with no quiz | A lesson they can never mark finished |
+
+> The first one used to be easy to create by accident — forget to tick
+> **Correct** and the lesson becomes impossible. The form now refuses to save a
+> question without a correct answer, and this panel lists any that slipped
+> through before.
+
+> **Lessons students struggle with** is usually telling you a question is
+> unclear, not that the students are weak. A lesson needs at least three graded
+> attempts before it appears, and attempts still in progress do not count
+> against it.
+
+> Every number counts **students only**. Your own account and your creators are
+> never included, even though you complete lessons and pick up certificates
+> while checking a course.
+
+> Someone who finished — even long after they started — never appears in the
+> quiet list. It is about outstanding work, not slow work.
+
+### Find anything quickly
+
+Press **Ctrl+K** (**⌘K** on a Mac) anywhere in the panel and start typing. It
+searches courses, lessons and people. Each result shows its status, course or
+partner underneath, so two records with the same name are still telling apart.
+
+A number next to **Courses** or **Lessons** in the left menu means something is
+still in draft and invisible to students. Hover it to see what it counts.
 
 ### Who got a certificate
 

@@ -5,6 +5,60 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ## August 2026
 
+### The panel now warns you when content is broken
+Four things could quietly break a course with nothing in the panel saying so.
+A **Content needing attention** panel appears at the top of the dashboard when
+any of them is true, with a link straight to the fix:
+
+- A **question with no correct answer ticked**. Grading can never succeed, so
+  the student is stuck on that lesson however they answer. Saving a question
+  without a correct answer is now refused outright.
+- A course whose **final quiz is on but has no questions** — students who finish
+  every lesson reach a dead button.
+- A **published course with no published lessons** — an empty course page.
+- A **published lesson with no quiz** — it can never be marked finished, which
+  also blocks the final quiz.
+
+The panel is not shown at all when there is nothing wrong. Creators see only
+their own products' problems.
+
+### Which lessons students struggle with
+A new **Lessons students struggle with** panel ranks lessons by how often
+students fail their quiz, worst first. A high fail rate is usually a confusing
+question rather than a weak student, so treat it as a list worth rereading.
+
+Only graded attempts count — an attempt still in progress is not a failure —
+and staff attempts are excluded, as everywhere else. A lesson needs at least
+three attempts before it appears, so one bad day does not put it top.
+
+### A dashboard worth opening
+The panel's home screen now answers three questions at a glance.
+
+- **The numbers.** Students and how many are active, lesson completions,
+  published courses and lessons, certificates issued with the average score.
+- **Progress by partner company.** A bar per partner showing how much of the
+  published material their students have worked through. A partner with no
+  students shows as zero rather than disappearing.
+- **Students who have gone quiet.** Anyone who started a course, completed
+  nothing for two weeks, and has no certificate — the one list on the page
+  worth acting on. Finishing late still counts as finished, so nobody who
+  earned a certificate appears here.
+
+Every figure counts **learners only**: admins and creators never appear, not
+their lesson completions and not the certificates they pick up while previewing
+a final quiz.
+
+**Courses** and **Lessons** now carry a number in the sidebar when something is
+still in draft — hover it for an explanation. Creators only ever see a count of
+their own products' work.
+
+Press **Ctrl+K** (or **⌘K**) anywhere in the panel to search courses, lessons
+and people. Results show the status, course or partner alongside the name, so
+two people called the same thing are still telling apart. The sidebar can also
+be collapsed now, and tables use the full width of the window.
+
+
+
 ### Product owners can write their own training — the Creator role
 Product managers and module owners can now maintain the training for their own
 product without being given the run of the platform. There are three roles:
