@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Courses\Tables;
 
+use App\Actions\DuplicateCourse;
 use App\Models\Course;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
@@ -117,6 +118,24 @@ class CoursesTable
                         $record->unpublish();
 
                         Notification::make()->title('Course unpublished')->body('It is a draft again and hidden from students.')->warning()->send();
+                    }),
+
+                Action::make('duplicate')
+                    ->label('Duplicate')
+                    ->icon('heroicon-o-document-duplicate')
+                    ->color('gray')
+                    ->requiresConfirmation()
+                    ->modalHeading('Duplicate course')
+                    ->modalDescription('Copies the course, its lessons and every quiz question as a new draft. Student progress and certificates are not copied.')
+                    ->authorize(fn (Course $record): bool => auth()->user()->canManageCourse($record))
+                    ->action(function (Course $record, DuplicateCourse $duplicate): void {
+                        $copy = $duplicate->handle($record);
+
+                        Notification::make()
+                            ->title('Course duplicated')
+                            ->body('"'.$copy->title.'" was created as a draft.')
+                            ->success()
+                            ->send();
                     }),
 
                 EditAction::make(),

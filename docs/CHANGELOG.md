@@ -5,6 +5,19 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ## August 2026
 
+### Copy a whole course in one click
+**Courses** → the row → **Duplicate**. You get a new **Draft** with the same
+lessons, videos, text, quiz questions and answers, and the same final quiz
+settings and question bank — ready to edit into the next course rather than
+built from scratch.
+
+What is *not* copied: student progress, quiz attempts and certificates. Those
+belong to the course people actually took.
+
+The copy is genuinely separate — editing a question in it never changes the
+original — and it keeps the same product, so the creator who owned the original
+owns the copy too.
+
 ### Publish or unpublish several at once
 Tick the checkboxes in **Courses** or **Lessons** and use **Publish** or
 **Unpublish** from the bulk menu. Setting up a new course no longer means

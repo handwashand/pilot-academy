@@ -168,6 +168,19 @@ Open the course → **Final questions** tab. Here you can **Attach lesson questi
 
 Open the course → **Final quiz & certificate** → **Certificate background**. Upload a full-page image (A4, landscape). The name, course, date, number, and QR code are placed on top automatically. Leave it empty to use the built-in framed design.
 
+### Build a course from an existing one
+
+If the next course is much like one you already have, do not start from an empty
+page. **Courses** → the row → **Duplicate**.
+
+You get a new **Draft** carrying everything that makes up the course: lessons in
+order with their videos and text, every quiz question and answer, and the final
+quiz settings and question bank. Rename it, edit what differs, publish.
+
+> Student progress and certificates are **not** copied — they belong to the
+> course people actually took. And the copy is fully independent: editing a
+> question in it never changes the original.
+
 ### Let a product owner write their own training
 
 Product managers can maintain the training for their own product without you
