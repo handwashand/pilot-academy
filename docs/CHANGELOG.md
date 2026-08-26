@@ -5,6 +5,23 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ## August 2026
 
+### Students can pick up where they left off
+The student home page now opens with a **Continue where you left off** card: the
+next unfinished lesson in the course they are partway through, with a progress
+bar and a **Resume** button. It appears only once someone has started something
+and disappears when they finish. It works for signed-out visitors too, whose
+progress is kept in their browser session.
+
+### Export learner progress to a spreadsheet
+**Users** → **Export learner progress** downloads a CSV: name, email, partner,
+lessons completed, valid certificates, last activity, last login and join date.
+Learners only, and revoked certificates are not counted.
+
+### What students actually open
+A **Most opened courses** chart shows which courses students opened over the
+last 90 days. Certificates only tell you what people finished; this shows what
+drew them in, including a course everyone starts and nobody completes.
+
 ### Copy a whole course in one click
 **Courses** → the row → **Duplicate**. You get a new **Draft** with the same
 lessons, videos, text, quiz questions and answers, and the same final quiz

@@ -39,6 +39,34 @@
         </div>
     @endauth
 
+    @if($resume)
+        @php
+            $resumePct = $resume['total'] > 0 ? round($resume['done'] / $resume['total'] * 100) : 0;
+        @endphp
+        <a href="{{ route('academy.lesson', [$resume['course'], $resume['lesson']]) }}"
+           class="group block mb-8 rounded-2xl border border-brand/30 bg-blue-50/60 p-5 sm:p-6 hover:border-brand hover:shadow-md transition">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div class="min-w-0">
+                    <span class="text-xs font-semibold uppercase tracking-wide text-brand">Continue where you left off</span>
+                    <h2 class="mt-1 text-lg sm:text-xl font-extrabold text-navy group-hover:text-brand transition">
+                        {{ $resume['lesson']->title }}
+                    </h2>
+                    <p class="text-sm text-slate-500 truncate">{{ $resume['course']->title }}</p>
+                </div>
+
+                <div class="shrink-0 sm:text-right">
+                    <div class="text-sm text-slate-500 mb-1">{{ $resume['done'] }} / {{ $resume['total'] }} lessons</div>
+                    <div class="w-full sm:w-44 h-2 rounded-full bg-white overflow-hidden">
+                        <div class="h-full bg-ok" style="width: {{ $resumePct }}%"></div>
+                    </div>
+                    <span class="mt-3 inline-block rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white">
+                        Resume
+                    </span>
+                </div>
+            </div>
+        </a>
+    @endif
+
     @forelse($courses as $course)
         @php
             $total = $course->published_lessons_count;

@@ -259,6 +259,7 @@ The home screen has three panels:
 | **Students who have gone quiet** | Started a course, completed nothing for two weeks, and no certificate. The one list here worth acting on — click **Open** to see the person. |
 | **Lessons students struggle with** | Lessons ranked by how often students fail the quiz. |
 | **Student activity** | Lessons finished and sign-ins per day over the last 30 days — whether use is picking up or going quiet. |
+| **Most opened courses** | What students opened in the last 90 days, finished or not. |
 
 **What "content needing attention" catches:**
 
@@ -317,6 +318,7 @@ Open your site address + `/certificates/` + the certificate number (or scan the 
 | A certificate was issued by mistake | **Certificates** → **Revoke**. Public check shows "Revoked". Changed your mind? **Restore**. |
 | The PDF is empty or won't download | **Certificates** → **Regenerate PDF**, then **Download** again. |
 | You need a list for a report | **Certificates** → **Export CSV** (open in Excel or Google Sheets). |
+| You need everyone's progress, not just certificates | **Users** → **Export learner progress**. One row per student: lessons done, certificates, last activity. |
 | A student ran out of attempts | Open the course → **Final quiz & certificate** → raise **Max attempts**, or clear it for unlimited. |
 | Students can't find a course | Check the **Status** column in **Courses**. Only **Published** courses appear on the student site — click **Publish** on the row. |
 | One lesson is missing from a live course | **Lessons** → check its **Status** → **Publish**. A lesson shows up only if both it *and* its course are published. |

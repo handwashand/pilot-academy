@@ -10,6 +10,8 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class UsersTable
 {
@@ -84,6 +86,13 @@ class UsersTable
                     ->searchable()
                     ->preload(),
             ])
+            ->headerActions([
+                Action::make('exportProgress')
+                    ->label('Export learner progress')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->color('gray')
+                    ->action(fn (): StreamedResponse => static::exportProgress()),
+            ])
             ->recordActions([
                 Action::make('accessLink')
                     ->label('Access link')
@@ -104,5 +113,54 @@ class UsersTable
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    /**
+     * Every learner and how far they have got, for a spreadsheet.
+     *
+     * Learners only, like every other report — a row per admin or creator would
+     * be noise at best and would skew whatever the reader totals up.
+     */
+    protected static function exportProgress(): StreamedResponse
+    {
+        $filename = 'learner-progress-'.now()->format('Y-m-d').'.csv';
+
+        return response()->streamDownload(function (): void {
+            $out = fopen('php://output', 'w');
+            fputcsv($out, [
+                'Name', 'Email', 'Partner', 'Lessons completed',
+                'Certificates', 'Last activity', 'Last login', 'Joined',
+            ]);
+
+            User::query()
+                ->learners()
+                ->with('company')
+                ->withCount([
+                    'completedLessons',
+                    'certificates as valid_certificates_count' => fn ($query) => $query->whereNull('revoked_at'),
+                ])
+                ->addSelect(['last_completed_at' => DB::table('lesson_user')
+                    ->selectRaw('max(completed_at)')
+                    ->whereColumn('lesson_user.user_id', 'users.id'),
+                ])
+                ->orderBy('name')
+                // Chunked so a large partner list never loads at once.
+                ->chunk(200, function ($learners) use ($out): void {
+                    foreach ($learners as $learner) {
+                        fputcsv($out, [
+                            $learner->name,
+                            $learner->email,
+                            $learner->company?->name,
+                            $learner->completed_lessons_count,
+                            $learner->valid_certificates_count,
+                            $learner->last_completed_at,
+                            $learner->last_login_at?->format('Y-m-d H:i'),
+                            $learner->created_at?->format('Y-m-d'),
+                        ]);
+                    }
+                });
+
+            fclose($out);
+        }, $filename, ['Content-Type' => 'text/csv']);
     }
 }
