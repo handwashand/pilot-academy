@@ -1,7 +1,9 @@
 FROM php:8.4-cli
 
 # The base image already bundles mbstring, dom/xml, sqlite3 and pdo_sqlite.
-# Added here: zip (composer), gd (dompdf certificates + QR codes), intl, bcmath.
+# Added here: zip (composer), gd (dompdf certificates + QR codes), intl, bcmath,
+# and pdo_pgsql (the app runs on PostgreSQL; pdo_sqlite stays for the tests and
+# for reading the old database file during the cut-over).
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git \
         unzip \
@@ -10,8 +12,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libjpeg62-turbo-dev \
         libfreetype6-dev \
         libicu-dev \
+        libpq-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j"$(nproc)" bcmath gd intl zip \
+    && docker-php-ext-install -j"$(nproc)" bcmath gd intl pdo_pgsql zip \
     && rm -rf /var/lib/apt/lists/*
 
 # The base image ships no php.ini at all, which leaves short_open_tag on --
@@ -38,8 +41,12 @@ COPY . ./
 RUN cp -n .env.example .env \
     && sed -i \
         -e 's|^APP_URL=.*|APP_URL=http://localhost:8000|' \
-        -e 's|^DB_CONNECTION=.*|DB_CONNECTION=sqlite|' \
-        -e 's|^# DB_DATABASE=.*|DB_DATABASE=/data/database.sqlite|' \
+        -e 's|^DB_CONNECTION=.*|DB_CONNECTION=pgsql|' \
+        -e 's|^DB_HOST=.*|DB_HOST=db|' \
+        -e 's|^DB_PORT=.*|DB_PORT=5432|' \
+        -e 's|^DB_DATABASE=.*|DB_DATABASE=pilot_academy|' \
+        -e 's|^DB_USERNAME=.*|DB_USERNAME=pilot|' \
+        -e 's|^DB_PASSWORD=.*|DB_PASSWORD=secret|' \
         .env \
     && composer dump-autoload --optimize
 
