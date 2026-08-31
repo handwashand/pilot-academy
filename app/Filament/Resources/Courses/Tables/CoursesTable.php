@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources\Courses\Tables;
 
+use App\Actions\DuplicateCourse;
 use App\Models\Course;
 use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -11,6 +13,7 @@ use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Collection;
 
 class CoursesTable
 {
@@ -117,12 +120,81 @@ class CoursesTable
                         Notification::make()->title('Course unpublished')->body('It is a draft again and hidden from students.')->warning()->send();
                     }),
 
+                Action::make('duplicate')
+                    ->label('Duplicate')
+                    ->icon('heroicon-o-document-duplicate')
+                    ->color('gray')
+                    ->requiresConfirmation()
+                    ->modalHeading('Duplicate course')
+                    ->modalDescription('Copies the course, its lessons and every quiz question as a new draft. Student progress and certificates are not copied.')
+                    ->authorize(fn (Course $record): bool => auth()->user()->canManageCourse($record))
+                    ->action(function (Course $record, DuplicateCourse $duplicate): void {
+                        $copy = $duplicate->handle($record);
+
+                        Notification::make()
+                            ->title('Course duplicated')
+                            ->body('"'.$copy->title.'" was created as a draft.')
+                            ->success()
+                            ->send();
+                    }),
+
                 EditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
+                    BulkAction::make('publish')
+                        ->label('Publish')
+                        ->icon('heroicon-o-rocket-launch')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->modalDescription('Only courses with at least one published lesson go live; the rest are skipped and listed back to you.')
+                        ->deselectRecordsAfterCompletion()
+                        ->action(fn (Collection $records) => static::publishAll($records)),
+
+                    BulkAction::make('unpublish')
+                        ->label('Unpublish')
+                        ->icon('heroicon-o-eye-slash')
+                        ->color('gray')
+                        ->requiresConfirmation()
+                        ->modalDescription('The selected courses go back to draft and disappear from the student site. Nothing is deleted.')
+                        ->deselectRecordsAfterCompletion()
+                        ->action(function (Collection $records): void {
+                            $records->each->unpublish();
+
+                            Notification::make()
+                                ->title($records->count().' course(s) unpublished')
+                                ->warning()
+                                ->send();
+                        }),
+
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    /**
+     * Publishing in bulk still respects the one rule that protects students:
+     * an empty course never goes live. Skipped ones are named, because a bulk
+     * action that silently does less than you asked is worse than one that
+     * refuses.
+     */
+    protected static function publishAll(Collection $records): void
+    {
+        [$ready, $empty] = $records->partition(fn (Course $course): bool => $course->canBePublished());
+
+        $ready->each->publish();
+
+        if ($ready->isNotEmpty()) {
+            Notification::make()->title($ready->count().' course(s) published')->success()->send();
+        }
+
+        if ($empty->isNotEmpty()) {
+            Notification::make()
+                ->title($empty->count().' course(s) skipped')
+                ->body('No published lesson yet: '.$empty->pluck('title')->join(', '))
+                ->danger()
+                ->persistent()
+                ->send();
+        }
     }
 }

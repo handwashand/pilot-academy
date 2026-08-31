@@ -20,10 +20,43 @@ class AcademyController extends Controller
             ->orderBy('sort_order')
             ->get();
 
+        $completed = $this->completedIds($request);
+
         return view('academy.home', [
             'courses' => $courses,
-            'completed' => $this->completedIds($request),
+            'completed' => $completed,
+            'resume' => $this->nextLesson($courses, $completed),
         ]);
+    }
+
+    /**
+     * The first unfinished lesson in the first course still in progress, so a
+     * returning student can carry on without hunting for where they stopped.
+     * Nothing is suggested to someone who has not started, or who is done.
+     */
+    private function nextLesson($courses, array $completed): ?array
+    {
+        if (empty($completed)) {
+            return null;
+        }
+
+        foreach ($courses as $course) {
+            $lessons = $course->publishedLessons;
+
+            $hasStarted = $lessons->contains(fn (Lesson $lesson): bool => in_array($lesson->id, $completed, true));
+            $next = $lessons->first(fn (Lesson $lesson): bool => ! in_array($lesson->id, $completed, true));
+
+            if ($hasStarted && $next) {
+                return [
+                    'course' => $course,
+                    'lesson' => $next,
+                    'done' => $lessons->whereIn('id', $completed)->count(),
+                    'total' => $lessons->count(),
+                ];
+            }
+        }
+
+        return null;
     }
 
     public function course(Request $request, Course $course)

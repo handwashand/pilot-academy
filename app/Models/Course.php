@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasPublishStatus;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -56,6 +57,24 @@ class Course extends Model
     public function canBePublished(): bool
     {
         return $this->publishedLessons()->exists();
+    }
+
+    /**
+     * Live, but a student opening it finds nothing. Publishing guards against
+     * this, so it means every lesson was unpublished afterwards.
+     */
+    public function scopePublishedButEmpty(Builder $query): Builder
+    {
+        return $query->published()->whereDoesntHave('publishedLessons');
+    }
+
+    /**
+     * The final quiz is switched on with nothing to ask. Students who finish
+     * every lesson reach a dead button, and nothing tells the admin.
+     */
+    public function scopeFinalQuizWithoutQuestions(Builder $query): Builder
+    {
+        return $query->where('final_quiz_enabled', true)->whereDoesntHave('finalQuestions');
     }
 
     /**

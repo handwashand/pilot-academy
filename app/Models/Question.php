@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -28,6 +29,15 @@ class Question extends Model
     public function lesson(): BelongsTo
     {
         return $this->belongsTo(Lesson::class);
+    }
+
+    /**
+     * Nothing ticked as correct. isAnsweredCorrectly() can then never return
+     * true, so the student is stuck on that lesson however they answer.
+     */
+    public function scopeWithoutCorrectAnswer(Builder $query): Builder
+    {
+        return $query->whereDoesntHave('options', fn (Builder $option) => $option->where('is_correct', true));
     }
 
     public function options(): HasMany

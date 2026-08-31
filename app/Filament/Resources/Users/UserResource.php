@@ -26,6 +26,29 @@ class UserResource extends Resource
         return parent::getEloquentQuery()->withCount('completedLessons');
     }
 
+    protected static ?string $recordTitleAttribute = 'name';
+
+    /** @return array<int, string> */
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'email'];
+    }
+
+    /**
+     * Two partners can easily have a "Jan Kowalski"; the role and company are
+     * what tell you which one you are about to open.
+     *
+     * @return array<string, string|null>
+     */
+    public static function getGlobalSearchResultDetails(mixed $record): array
+    {
+        return [
+            'Role' => $record->roleLabel(),
+            'Partner' => $record->company?->name ?? '—',
+            'Email' => $record->email,
+        ];
+    }
+
     public static function form(Schema $schema): Schema
     {
         return UserForm::configure($schema);

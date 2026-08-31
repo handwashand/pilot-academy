@@ -2,53 +2,90 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Widgets\Concerns\ReportsOnLearners;
+use App\Models\Certificate;
+use App\Models\Course;
 use App\Models\Lesson;
-use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Facades\DB;
 
 class StudentProgressOverview extends StatsOverviewWidget
 {
-    /** Learner data — creators have no business seeing it. */
-    public static function canView(): bool
+    use ReportsOnLearners;
+
+    protected static ?int $sort = 1;
+
+    protected int|string|array $columnSpan = 'full';
+
+    protected function getColumns(): int
     {
-        return (bool) auth()->user()?->isAdmin();
+        return 3;
     }
 
     protected function getStats(): array
     {
-        // Reports are about learners: admins and creators never count.
-        $students = User::learners()->count();
-        $active = User::learners()
-            ->whereHas('completedLessons')
-            ->count();
-        // Staff complete lessons too (previewing, testing) — those completions
-        // are not learner progress and must not inflate the total.
-        $completions = DB::table('lesson_user')
-            ->join('users', 'users.id', '=', 'lesson_user.user_id')
-            ->where('users.role', User::ROLE_LEARNER)
-            ->count();
-        $publishedLessons = Lesson::published()->count();
+        $students = $this->learners()->count();
+        $active = $this->learners()->whereHas('completedLessons')->count();
+        $engagement = $students > 0 ? (int) round($active / $students * 100) : 0;
 
-        $engagement = $students > 0 ? round($active / $students * 100) : 0;
+        $completions = $this->scopeToLearners(DB::table('lesson_user'))->count();
+
+        $publishedCourses = Course::published()->count();
+        $totalCourses = Course::count();
+
+        $certificates = $this->scopeToLearners(
+            Certificate::query()->whereNull('revoked_at'),
+        )->count();
+
+        $averageScore = $this->scopeToLearners(
+            Certificate::query()->whereNull('revoked_at'),
+        )->avg('score_percent');
 
         return [
             Stat::make('Students', $students)
                 ->description('Partner accounts')
+                ->descriptionIcon('heroicon-m-user-group')
                 ->color('primary'),
 
             Stat::make('Active students', $active)
                 ->description($engagement.'% started at least one lesson')
-                ->color('success'),
+                ->descriptionIcon('heroicon-m-arrow-trending-up')
+                ->color($this->band($engagement)),
 
             Stat::make('Lesson completions', $completions)
                 ->description('Across all students')
+                ->descriptionIcon('heroicon-m-check-circle')
                 ->color('info'),
 
-            Stat::make('Published lessons', $publishedLessons)
+            Stat::make('Published courses', $publishedCourses)
+                ->description($totalCourses.' in total, drafts included')
+                ->descriptionIcon('heroicon-m-rectangle-stack')
+                ->color('success'),
+
+            Stat::make('Published lessons', Lesson::published()->count())
                 ->description('Available to learn')
+                ->descriptionIcon('heroicon-m-book-open')
                 ->color('gray'),
+
+            Stat::make('Certificates issued', $certificates)
+                // Staff pick up real certificates when previewing a final quiz,
+                // so this counts learners only — see ReportsOnLearners.
+                ->description($averageScore === null
+                    ? 'No passes yet'
+                    : 'Average score '.round((float) $averageScore).'%')
+                ->descriptionIcon('heroicon-m-academic-cap')
+                ->color($certificates > 0 ? 'success' : 'gray'),
         ];
+    }
+
+    /** Traffic-light banding, so a number is readable without doing the maths. */
+    private function band(int $percent): string
+    {
+        return match (true) {
+            $percent >= 66 => 'success',
+            $percent >= 33 => 'warning',
+            default => 'danger',
+        };
     }
 }

@@ -8,6 +8,25 @@
     @isset($metaDescription)
         <meta name="description" content="{{ $metaDescription }}">
     @endisset
+
+    {{-- public/favicon.ico is the empty stock file, so it is deliberately not
+         linked — an SVG icon covers every current browser. Drop a real .ico in
+         and add a fallback link here if very old browsers ever matter. --}}
+    <link rel="icon" type="image/svg+xml" href="{{ asset('img/pilot-mark.svg') }}">
+    <link rel="apple-touch-icon" href="{{ asset('img/pilot-mark.svg') }}">
+    <meta name="theme-color" content="#0284c7">
+
+    {{-- Link previews, e.g. when a course is shared in a chat. --}}
+    <meta property="og:site_name" content="Pilot Academy">
+    <meta property="og:title" content="@yield('title', 'Pilot Academy')">
+    <meta property="og:type" content="website">
+    {{-- PNG, not the SVG mark: Slack, WhatsApp and Twitter all refuse to render
+         an SVG preview image. --}}
+    <meta property="og:image" content="{{ asset('img/pilot-logo.png') }}">
+    <meta name="twitter:card" content="summary_large_image">
+    @isset($metaDescription)
+        <meta property="og:description" content="{{ $metaDescription }}">
+    @endisset
     {{-- Compiled Tailwind via Vite. In production public/build/manifest.json is
          committed (built in CI), so this serves one static, minified CSS file.
          The CDN below is ONLY a dev fallback for a checkout without a build
@@ -52,7 +71,10 @@
     <header class="sticky top-0 z-20 bg-white border-b border-slate-200">
         <div class="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
             <a href="{{ route('academy.home') }}" class="flex items-center gap-2.5">
-                <span class="w-9 h-9 rounded-lg bg-gradient-to-br from-brand to-navy flex items-center justify-center text-white font-extrabold">P</span>
+                {{-- The Pilot mark. Kept next to the wordmark rather than using
+                     the full lockup, which already reads "PILOT" and would say
+                     it twice beside "Pilot Academy". --}}
+                <img src="{{ asset('img/pilot-mark.svg') }}" alt="" class="w-9 h-9" width="36" height="36">
                 <span class="font-extrabold text-navy text-lg">Pilot <span class="text-brand">Academy</span></span>
             </a>
             <div class="flex items-center gap-3">

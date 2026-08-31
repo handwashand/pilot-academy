@@ -5,6 +5,104 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ## August 2026
 
+### Students can pick up where they left off
+The student home page now opens with a **Continue where you left off** card: the
+next unfinished lesson in the course they are partway through, with a progress
+bar and a **Resume** button. It appears only once someone has started something
+and disappears when they finish. It works for signed-out visitors too, whose
+progress is kept in their browser session.
+
+### Export learner progress to a spreadsheet
+**Users** → **Export learner progress** downloads a CSV: name, email, partner,
+lessons completed, valid certificates, last activity, last login and join date.
+Learners only, and revoked certificates are not counted.
+
+### What students actually open
+A **Most opened courses** chart shows which courses students opened over the
+last 90 days. Certificates only tell you what people finished; this shows what
+drew them in, including a course everyone starts and nobody completes.
+
+### Copy a whole course in one click
+**Courses** → the row → **Duplicate**. You get a new **Draft** with the same
+lessons, videos, text, quiz questions and answers, and the same final quiz
+settings and question bank — ready to edit into the next course rather than
+built from scratch.
+
+What is *not* copied: student progress, quiz attempts and certificates. Those
+belong to the course people actually took.
+
+The copy is genuinely separate — editing a question in it never changes the
+original — and it keeps the same product, so the creator who owned the original
+owns the copy too.
+
+### Publish or unpublish several at once
+Tick the checkboxes in **Courses** or **Lessons** and use **Publish** or
+**Unpublish** from the bulk menu. Setting up a new course no longer means
+clicking through its lessons one at a time.
+
+Bulk publishing a course still respects the rule that protects students: a
+course with no published lesson is skipped rather than published empty, and you
+are told by name which ones were left behind.
+
+### Is the academy being used?
+A new **Student activity** chart shows lessons finished and sign-ins per day
+over the last 30 days. The panel could tell you totals before, but never
+whether things were picking up or going quiet.
+
+### The panel now warns you when content is broken
+Four things could quietly break a course with nothing in the panel saying so.
+A **Content needing attention** panel appears at the top of the dashboard when
+any of them is true, with a link straight to the fix:
+
+- A **question with no correct answer ticked**. Grading can never succeed, so
+  the student is stuck on that lesson however they answer. Saving a question
+  without a correct answer is now refused outright.
+- A course whose **final quiz is on but has no questions** — students who finish
+  every lesson reach a dead button.
+- A **published course with no published lessons** — an empty course page.
+- A **published lesson with no quiz** — it can never be marked finished, which
+  also blocks the final quiz.
+
+The panel is not shown at all when there is nothing wrong. Creators see only
+their own products' problems.
+
+### Which lessons students struggle with
+A new **Lessons students struggle with** panel ranks lessons by how often
+students fail their quiz, worst first. A high fail rate is usually a confusing
+question rather than a weak student, so treat it as a list worth rereading.
+
+Only graded attempts count — an attempt still in progress is not a failure —
+and staff attempts are excluded, as everywhere else. A lesson needs at least
+three attempts before it appears, so one bad day does not put it top.
+
+### A dashboard worth opening
+The panel's home screen now answers three questions at a glance.
+
+- **The numbers.** Students and how many are active, lesson completions,
+  published courses and lessons, certificates issued with the average score.
+- **Progress by partner company.** A bar per partner showing how much of the
+  published material their students have worked through. A partner with no
+  students shows as zero rather than disappearing.
+- **Students who have gone quiet.** Anyone who started a course, completed
+  nothing for two weeks, and has no certificate — the one list on the page
+  worth acting on. Finishing late still counts as finished, so nobody who
+  earned a certificate appears here.
+
+Every figure counts **learners only**: admins and creators never appear, not
+their lesson completions and not the certificates they pick up while previewing
+a final quiz.
+
+**Courses** and **Lessons** now carry a number in the sidebar when something is
+still in draft — hover it for an explanation. Creators only ever see a count of
+their own products' work.
+
+Press **Ctrl+K** (or **⌘K**) anywhere in the panel to search courses, lessons
+and people. Results show the status, course or partner alongside the name, so
+two people called the same thing are still telling apart. The sidebar can also
+be collapsed now, and tables use the full width of the window.
+
+
+
 ### Product owners can write their own training — the Creator role
 Product managers and module owners can now maintain the training for their own
 product without being given the run of the platform. There are three roles:

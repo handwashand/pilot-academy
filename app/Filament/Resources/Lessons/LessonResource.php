@@ -36,6 +36,41 @@ class LessonResource extends Resource
         return $query;
     }
 
+    /** Lessons held back from students, inside the viewer's own courses only. */
+    public static function getNavigationBadge(): ?string
+    {
+        $drafts = static::getEloquentQuery()->where('status', Lesson::STATUS_DRAFT)->count();
+
+        return $drafts > 0 ? (string) $drafts : null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'warning';
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return 'Lessons still in draft — hidden even in a published course';
+    }
+
+    protected static ?string $recordTitleAttribute = 'title';
+
+    /** @return array<int, string> */
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['title', 'slug'];
+    }
+
+    /** @return array<string, string|null> */
+    public static function getGlobalSearchResultDetails(mixed $record): array
+    {
+        return [
+            'Course' => $record->course?->title ?? '—',
+            'Status' => $record->statusLabel(),
+        ];
+    }
+
     public static function form(Schema $schema): Schema
     {
         return LessonForm::configure($schema);
