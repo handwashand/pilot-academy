@@ -23,16 +23,25 @@
     @else
         <div class="mb-8 rounded-2xl bg-gradient-to-br from-brand to-navy text-white p-7 sm:p-9">
             <h1 class="text-2xl sm:text-3xl font-extrabold mb-1">Welcome to Pilot Academy</h1>
-            <p class="text-white/80 mb-5">Short, focused lessons with videos and quizzes — get productive from day one.</p>
+            <p class="text-white mb-5">Short, focused lessons with videos and quizzes — get productive from day one.</p>
             <form method="POST" action="{{ route('academy.name') }}" class="flex flex-col sm:flex-row gap-3 max-w-md">
                 @csrf
-                <input type="text" name="name" required placeholder="Your name"
-                       class="flex-1 rounded-lg px-4 py-2.5 text-slate-800 outline-none">
-                <button class="rounded-lg bg-white text-navy font-semibold px-5 py-2.5 hover:bg-slate-100">
+                {{-- bg-white is load-bearing: Tailwind's preflight makes form
+                     controls transparent, so without it the dark text sits
+                     straight on the gradient and all but vanishes at the navy
+                     end. text-slate-800 must stay too — the card sets
+                     text-white, so an unstyled input would be white on white.
+                     Both classes are already in the committed CSS bundle, so
+                     this reads correctly before CI rebuilds it. --}}
+                <input type="text" name="name" required placeholder="Your name" aria-label="Your name"
+                       class="flex-1 rounded-lg bg-white px-4 py-2.5 text-slate-800 focus:ring-2 focus:ring-white">
+                <button class="rounded-lg bg-white text-navy font-semibold px-5 py-2.5 hover:bg-slate-100 focus:ring-2 focus:ring-white">
                     Start learning
                 </button>
             </form>
-            <p class="text-white/70 text-sm mt-3">
+            {{-- Full white, not white/70: over the brand blue that was 3.2:1.
+                 The hierarchy comes from the smaller size instead. --}}
+            <p class="text-white text-sm mt-3">
                 Have an account? <a href="{{ route('login') }}" class="underline font-semibold">Log in</a>
                 · <a href="{{ route('register') }}" class="underline font-semibold">Register</a>
             </p>

@@ -20,7 +20,10 @@
     <meta property="og:site_name" content="Pilot Academy">
     <meta property="og:title" content="@yield('title', 'Pilot Academy')">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="{{ asset('img/pilot-mark.svg') }}">
+    {{-- PNG, not the SVG mark: Slack, WhatsApp and Twitter all refuse to render
+         an SVG preview image. --}}
+    <meta property="og:image" content="{{ asset('img/pilot-logo.png') }}">
+    <meta name="twitter:card" content="summary_large_image">
     @isset($metaDescription)
         <meta property="og:description" content="{{ $metaDescription }}">
     @endisset

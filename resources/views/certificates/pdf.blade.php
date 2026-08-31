@@ -25,7 +25,8 @@
         .course { position: absolute; top: 103mm; left: 30mm; width: 237mm; text-align: center;
                   font-size: 22pt; font-weight: bold; color: #1463ff; }
 
-        .mark { position: absolute; top: 20mm; left: 22mm; width: 18mm; height: 18mm; }
+        /* 1920x604 lockup, kept to ratio: 54mm wide is 17mm tall. */
+        .logo { position: absolute; top: 20mm; left: 22mm; width: 54mm; height: 17mm; }
 
         .qr { position: absolute; top: 150mm; left: 243mm; width: 34mm; height: 34mm; }
         .qr-caption { position: absolute; top: 185mm; left: 243mm; width: 34mm; text-align: center;
@@ -46,9 +47,9 @@
         @endif
 
         {{-- A custom background is expected to carry its own branding, so the
-             mark is only drawn on the built-in framed layout. --}}
-        @if($mark && ! $background)
-            <img class="mark" src="data:image/svg+xml;base64,{{ $mark }}">
+             logo is only drawn on the built-in framed layout. --}}
+        @if($logo && ! $background)
+            <img class="logo" src="{{ $logo }}">
         @endif
 
         <div class="eyebrow">Certificate of Completion</div>
