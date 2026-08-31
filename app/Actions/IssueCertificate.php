@@ -72,10 +72,16 @@ class IssueCertificate
             $background = Storage::disk('public')->path($certificate->course->certificate_template);
         }
 
+        // Embedded rather than linked: dompdf resolves a data URI without
+        // needing filesystem access, exactly as the QR code above does.
+        $markPath = public_path('img/pilot-mark.svg');
+        $mark = is_file($markPath) ? base64_encode(file_get_contents($markPath)) : null;
+
         $pdf = Pdf::loadView('certificates.pdf', [
             'certificate' => $certificate,
             'qr' => base64_encode($qrSvg),
             'background' => $background,
+            'mark' => $mark,
         ])->setPaper('a4', 'landscape');
 
         $path = "certificates/{$certificate->number}.pdf";

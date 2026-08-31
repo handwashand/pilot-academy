@@ -29,6 +29,11 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->brandName('Pilot Academy')
+            // A view rather than a path, so the panel shows the mark beside the
+            // name — and picks up the full lockup on its own if one is added.
+            ->brandLogo(fn () => view('filament.brand.logo'))
+            ->favicon(asset('img/pilot-mark.svg'))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
