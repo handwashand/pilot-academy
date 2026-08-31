@@ -1,7 +1,7 @@
 # Pilot Academy
 
 Internal training LMS. **Laravel 13 + Filament 5** admin panel at `/admin`,
-Blade + Tailwind public front end, **SQLite**. Requires **PHP 8.4**.
+Blade + Tailwind public front end, **PostgreSQL**. Requires **PHP 8.4**.
 
 Tailwind is compiled by **Vite** into `public/build/` (entry
 `resources/css/app.css`, brand palette in its `@theme`). Nobody here runs
