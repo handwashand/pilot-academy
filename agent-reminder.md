@@ -66,6 +66,28 @@ Last updated: **2026-08-31**
 
 Newest first. Add to this every time.
 
+### 2026-09-02 — Sign-in page: the brand logo
+Reported as "the Sign in text is bigger than the logo". It was, but the cause
+was not a size choice — `resources/views/filament/brand/logo.blade.php` styled
+the logo with `h-7`, `dark:hidden` and `dark:block`, **none of which exist in
+the Filament panel stylesheet** (see the trap below). So the height never
+applied and the dark swap never applied: Filament's default `1.5rem` box was
+holding *both* lockups, drawn on top of each other, on every panel page.
+
+Deleted that view and used Filament's real API in `AdminPanelProvider`:
+`brandLogo()` + `darkModeBrandLogo()` (which drive the working
+`fi-logo-light`/`fi-logo-dark` CSS) and `brandLogoHeight()`, which takes a
+**closure** and is evaluated per request — so the sign-in screen gets `3rem`
+and the panel chrome keeps `1.75rem` without any custom CSS:
+
+```php
+->brandLogoHeight(fn (): string => request()->routeIs('filament.*.auth.*') ? '3rem' : '1.75rem')
+```
+
+48px of brand against a 24px `text-2xl` heading puts the hierarchy back the
+right way up. `brandAsset()` returns `null` for a missing file, which makes
+Filament print the brand name rather than a broken image.
+
 ### 2026-09-02 — Nudge students who have gone quiet
 Closed the loop the dashboard had left open: the stalled-learners panel now
 *identifies* students **and** lets you email them. Row action plus a bulk one,
@@ -167,6 +189,21 @@ grep -c '\.text-slate-900' public/build/assets/app-*.css
 
 This is not theoretical: a hero input styled with an absent `text-slate-900`
 would have inherited the card's `text-white` and rendered **white on white**.
+
+**The Filament panel has no Tailwind utility layer at all.** `/admin` loads
+only `public/css/filament/filament/app.css`, never the Vite bundle, and
+Filament v5 ships semantic `fi-*` classes instead of utilities. `h-7`, `hidden`,
+`dark:block`, `text-2xl`, `mb-6` — **none of them exist there**. A utility class
+in a Blade view rendered inside the panel does nothing, silently. Check before
+relying on one:
+
+```bash
+grep -F '.h-12{' public/css/filament/filament/app.css || echo "not there"
+```
+
+Prefer Filament's own API (`brandLogoHeight()`, `->extraAttributes()`, an
+inline `style`) over utility classes anywhere inside `/admin`. This is what
+made the sign-in logo the wrong size *and* broke its dark-mode swap.
 
 **Tailwind preflight makes form controls transparent.** An `<input>` with no
 `bg-*` class has no background. Fine on a white card, invisible on a coloured

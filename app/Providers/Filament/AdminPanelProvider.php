@@ -30,9 +30,22 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::Amber,
             ])
             ->brandName('Pilot Academy')
-            // A view rather than a path, so the panel shows the mark beside the
-            // name — and picks up the full lockup on its own if one is added.
-            ->brandLogo(fn () => view('filament.brand.logo'))
+            // Filament's own brand API rather than a custom view: it applies the
+            // height as an inline style and swaps the dark lockup through its
+            // fi-logo-light/fi-logo-dark classes. The panel stylesheet carries no
+            // Tailwind utility layer, so h-*/dark:* classes inside a custom view
+            // are inert — the logo was falling back to Filament's default 1.5rem
+            // box with both lockups stacked inside it.
+            //
+            // A missing file gives null, which makes Filament print the brand name.
+            ->brandLogo(fn (): ?string => self::brandAsset('img/pilot-logo.png'))
+            ->darkModeBrandLogo(fn (): ?string => self::brandAsset('img/pilot-logo-white.png'))
+            // Sized for the job it is doing. In the panel chrome the logo is a
+            // wayfinding mark beside the navigation and should stay quiet; on the
+            // sign-in screen it is the only brand element on the page, and at
+            // sidebar size it sat below the 24px "Sign in" heading in the visual
+            // hierarchy — the utility label out-ranking the brand.
+            ->brandLogoHeight(fn (): string => request()->routeIs('filament.*.auth.*') ? '3rem' : '1.75rem')
             ->favicon(asset('img/pilot-mark.svg'))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
@@ -60,5 +73,11 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+    }
+
+    /** Absolute URL for a brand image, or null when that file has not been added. */
+    private static function brandAsset(string $path): ?string
+    {
+        return is_file(public_path($path)) ? asset($path) : null;
     }
 }

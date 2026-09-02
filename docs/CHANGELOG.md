@@ -5,13 +5,13 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ## September 2026
 
-### The Pilot logo, and a tidier menu
-The Pilot mark is now **amber**, matching the buttons in the panel. You will see
-it in the browser tab, the student site header, the admin panel and link
-previews.
+### A a tidier menu
 
-**Certificates keep the original blue logo** — they are formal documents, and
-their frame and course title are blue already.
+
+On the **sign-in page** the logo is now bigger than the **Sign in** heading, so
+the brand leads and the heading reads as the label it is. The logo also shows
+correctly in dark mode — until now the colour and white versions were both drawn,
+one on top of the other, and neither was the size it was meant to be.
 
 In the left menu, **Changelog** is now called **What's new**, and every section
 has its own icon instead of five sharing one.
