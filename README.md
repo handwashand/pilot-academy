@@ -27,7 +27,7 @@ Admin features:
 
 - Laravel 13
 - Filament admin panel
-- SQLite by default for local development
+- PostgreSQL (a `db` service is included in `docker-compose.yml`)
 - Tailwind CSS and Vite
 - DOMPDF for generating certificate PDFs
 - simple-qrcode for QR codes on certificates
@@ -39,7 +39,7 @@ Admin features:
 - PHP 8.4
 - Composer
 - Node.js and npm
-- SQLite (local development)
+- PostgreSQL 17
 - Docker is optional but supported via `docker-compose.yml`
 
 ### Install locally
@@ -77,7 +77,7 @@ generates the app key, migrates, and seeds the demo course plus an admin login
 (`admin@pilot.local` / `password`).
 
 No npm step is needed: the Vite bundle committed in `public/build/` is served
-as-is. The SQLite database and uploaded media live in named volumes, so they
+as-is. The PostgreSQL data and uploaded media live in named volumes, so they
 survive `docker compose down` — add `-v` to start from a clean slate.
 
 ## App structure
