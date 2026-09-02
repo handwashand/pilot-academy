@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AcademyController::class, 'home'])->name('academy.home');
 Route::post('/name', [AcademyController::class, 'setName'])->name('academy.name');
+Route::get('/search', [AcademyController::class, 'search'])->name('academy.search');
 Route::get('/sitemap.xml', [AcademyController::class, 'sitemap'])->name('sitemap');
 
 // Student authentication (public site)

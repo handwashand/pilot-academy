@@ -3,7 +3,40 @@
 A short log of changes to the academy, newest first, in plain language.
 Add a new entry here whenever something visible to admins or students changes.
 
-## September 2026
+## 1.2.0 — September 2026
+
+### Six improvements to the student site
+
+**Students can see how long things take.** Courses and lessons now show their
+running time — on the home page, the course page, the lesson list and the lesson
+itself — and the course page shows how much is **left**, e.g. "3 / 8 lessons ·
+32 min left". Someone with fifteen minutes before a shift can now tell whether
+to start.
+
+> **This needs you to fill it in.** Right now most lessons have no duration set,
+> so no time is shown. Add **Duration (minutes)** when you write a lesson. Leave
+> the *course* duration empty and the academy adds its lessons up for you.
+
+**A search box.** Students can search courses and lessons by name from the home
+page. Only published material is ever returned — drafts stay invisible.
+
+**A better video player for uploaded videos.** Speed controls (Normal, 1.25×,
+1.5×, 2×) for people re-watching to revise, and the volume and speed a student
+picks are remembered for the next lesson. YouTube lessons already had this.
+
+**Quizzes say what they cost before you start.** The knowledge check now shows
+"5 questions · 10 min limit · 2 attempts left" up front, instead of springing
+the timer and attempt limit on someone after they begin.
+
+**Finishing a course means something.** Completing the last lesson used to drop
+students back on the home page with no acknowledgement. They now get a **Course
+complete** card with what they finished, their certificate if there is one, and
+the next course to take.
+
+**It can be used without a mouse or with a screen reader.** A skip link, proper
+labels on progress bars, and text alternatives everywhere a ✓ or a colour was
+the only signal — so a student who uses a screen reader can complete training
+their employer requires.
 
 ### Two fixes for students on phones
 

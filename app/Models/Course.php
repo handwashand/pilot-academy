@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasDuration;
 use App\Models\Concerns\HasPublishStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Course extends Model
 {
-    use HasPublishStatus;
+    use HasDuration, HasPublishStatus;
 
     protected $fillable = [
         'product_id',
@@ -101,6 +102,30 @@ class Course extends Model
     public function publishedLessons(): HasMany
     {
         return $this->lessons()->published();
+    }
+
+    /**
+     * The course's own running time when an admin has set one, otherwise the
+     * sum of its published lessons — so a course shows a time as soon as its
+     * lessons do, without anyone having to keep a total up to date by hand.
+     */
+    public function durationMinutes(): ?int
+    {
+        $own = (int) ($this->duration_minutes ?? 0);
+
+        if ($own > 0) {
+            return $own;
+        }
+
+        // Use the already-loaded relation where there is one; this runs inside
+        // the course loop on the home page.
+        $lessons = $this->relationLoaded('publishedLessons')
+            ? $this->publishedLessons
+            : $this->publishedLessons()->get();
+
+        $sum = (int) $lessons->sum('duration_minutes');
+
+        return $sum > 0 ? $sum : null;
     }
 
     /** Questions that make up this course's final quiz bank. */

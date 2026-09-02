@@ -65,9 +65,37 @@
         .prose-lesson img, .prose-lesson video { max-width: 100%; height: auto; border-radius: 8px; }
         .prose-lesson iframe { max-width: 100%; }
         .prose-lesson table { display: block; max-width: 100%; overflow-x: auto; }
+
+        /* Visually hidden, still announced. Tailwind's `sr-only` is not in the
+           committed CSS bundle, so the academy defines its own. */
+        .vh {
+            position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+            overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+        }
+
+        /* Lets a keyboard or screen-reader user jump the header on every page. */
+        .skip-link {
+            position: absolute; left: 12px; top: -64px; z-index: 50;
+            background: #fff; color: #0a2540; font-weight: 600;
+            padding: 10px 16px; border-radius: 8px;
+            box-shadow: 0 4px 14px rgba(10, 37, 64, .18);
+        }
+        .skip-link:focus { top: 12px; }
+
+        /* The default focus ring is invisible against the brand blue links. */
+        :focus-visible { outline: 2px solid #1463ff; outline-offset: 2px; border-radius: 4px; }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important; scroll-behavior: auto !important;
+            }
+        }
     </style>
 </head>
 <body class="h-full bg-slate-50 text-slate-800">
+    <a href="#main" class="skip-link">Skip to content</a>
+
     <header class="sticky top-0 z-20 bg-white border-b border-slate-200">
         <div class="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
             <a href="{{ route('academy.home') }}" class="flex items-center gap-2.5">
@@ -115,7 +143,7 @@
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-5 py-8">
+    <main id="main" class="max-w-6xl mx-auto px-5 py-8">
         @yield('content')
     </main>
 

@@ -75,6 +75,12 @@ class AcademyController extends Controller
             'certificate' => $user
                 ? $course->certificates()->where('user_id', $user->id)->whereNull('revoked_at')->latest('issued_at')->first()
                 : null,
+            // Somewhere to go once the course is finished, so completing it is
+            // not a dead end. Null on the last course, which is fine.
+            'nextCourse' => Course::published()
+                ->where('sort_order', '>', $course->sort_order)
+                ->orderBy('sort_order')
+                ->first(),
         ]);
     }
 
@@ -300,6 +306,52 @@ class AcademyController extends Controller
             'attemptsUsed' => $used,
             'attemptsRemaining' => $attemptsRemaining,
         ];
+    }
+
+    /**
+     * Student-facing search. Deliberately a LIKE over titles and summaries:
+     * this is dozens of rows, not thousands, so an index or a search engine
+     * would be machinery with nothing to do.
+     *
+     * Only published lessons in published courses are ever returned — a draft
+     * must not surface here just because someone guessed a word in its title.
+     */
+    public function search(Request $request)
+    {
+        $term = trim((string) $request->query('q', ''));
+        $courses = collect();
+        $lessons = collect();
+
+        if ($term !== '') {
+            // LOWER() on both sides rather than a bare LIKE: SQLite matches
+            // case-insensitively, PostgreSQL does not, and the move to
+            // PostgreSQL is already written.
+            $like = '%'.mb_strtolower($term).'%';
+
+            $courses = Course::published()
+                ->where(fn ($query) => $query
+                    ->whereRaw('LOWER(title) LIKE ?', [$like])
+                    ->orWhereRaw('LOWER(description) LIKE ?', [$like]))
+                ->orderBy('sort_order')
+                ->limit(20)
+                ->get();
+
+            $lessons = Lesson::published()
+                ->whereHas('course', fn ($query) => $query->published())
+                ->where(fn ($query) => $query
+                    ->whereRaw('LOWER(lessons.title) LIKE ?', [$like])
+                    ->orWhereRaw('LOWER(lessons.summary) LIKE ?', [$like]))
+                ->with('course')
+                ->orderBy('sort_order')
+                ->limit(30)
+                ->get();
+        }
+
+        return view('academy.search', [
+            'term' => $term,
+            'courses' => $courses,
+            'lessons' => $lessons,
+        ]);
     }
 
     public function setName(Request $request)

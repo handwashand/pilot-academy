@@ -42,7 +42,10 @@ The path is always the same: **make a course → fill it with lessons → turn o
 3. Fill in the main fields:
    - **Course title** — the name, e.g. "Pilot Basics".
    - **Short description** — one or two sentences. Students see this on the course card.
-   - The other fields (level, duration) are optional.
+   - **Duration (minutes)** — optional, but **students now see it**, so it is worth
+     filling in. If you leave the course duration empty, the academy adds up the
+     durations of its lessons instead. If nothing has a duration, no time is shown.
+   - The other fields (level) are optional.
 4. Click **Create**.
 
 > New courses are saved as a **Draft**. Students cannot see a draft — you publish it yourself in Step 4, once the lessons are in place.
@@ -55,9 +58,13 @@ The path is always the same: **make a course → fill it with lessons → turn o
 2. Choose the **Course** and give the lesson a title.
 3. Add a video: paste a link into **YouTube link**, or use **Or upload a video file**.
 4. Write the lesson content in **Lesson text**.
-5. Scroll to **Knowledge check (quiz)**. Click **Add question**, type the question, add answer options, and turn on **Correct** for the right one. Add as many questions as you want.
-6. Leave **Status** on **Published** and click **Create**.
-7. Repeat for every lesson in the course.
+5. Set **Duration (minutes)** — how long the lesson takes. Students see this on
+   the lesson card, in the lesson list and on the course page ("32 min left"),
+   and it is how they decide whether to start now or come back later. It also
+   adds up into the course total when the course has no duration of its own.
+6. Scroll to **Knowledge check (quiz)**. Click **Add question**, type the question, add answer options, and turn on **Correct** for the right one. Add as many questions as you want.
+7. Leave **Status** on **Published** and click **Create**.
+8. Repeat for every lesson in the course.
 
 > New lessons are **Published** straight away — and that is safe, because
 > students still see nothing until the *course* is published in Step 4. So there

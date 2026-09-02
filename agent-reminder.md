@@ -34,7 +34,12 @@ is not obvious in this repo.
 
 ## Where things stand
 
-Last updated: **2026-08-31**
+Last updated: **2026-09-02**
+
+Next release is **1.2.0** — the first version number this project has had. There
+are no git tags yet; the version lives in the `docs/CHANGELOG.md` heading, which
+is what admins read under **What's new**. Earlier entries are month-only and are
+deliberately *not* renumbered after the fact.
 
 ### Branches
 
@@ -42,7 +47,8 @@ Last updated: **2026-08-31**
 | --- | --- |
 | `laravel` | Main. Deploys to production by `git pull`. At the merge of PR #33. |
 | `feature/sqlite-postgres` | **Pushed, no PR opened.** SQLite → PostgreSQL move. Ready for review. |
-| `feature/admin-dashboard` | **In progress, uncommitted work on it.** Dashboard, branding, contrast fix. |
+| `feature/admin-dashboard` | PR #34, open. Dashboard, branding, nudge, mobile fixes. |
+| `feature/learner-experience` | **Stacked on `feature/admin-dashboard`, not on `laravel`.** Duration, search, video controls, accessibility, quiz cost, course completion. Merge #34 first. |
 | `feature/course-publishing-workflow` | Merged as PR #32. Safe to delete. |
 | `feature/creator-role` | Merged as PR #33. Safe to delete. |
 | `feature/postgres-migration` | Duplicate of `feature/sqlite-postgres`, same commit. **Delete it** so nobody reviews the wrong one. |
@@ -65,6 +71,42 @@ Last updated: **2026-08-31**
 ## Work log
 
 Newest first. Add to this every time.
+
+### 2026-09-02 — Six learner-experience improvements
+The no-migration half of a review against Claude Academy / Udemy / LinkedIn
+Learning. All six shipped together; **no schema change**, so this is an ordinary
+`git pull` deploy.
+
+1. **Duration is shown.** New `app/Models/Concerns/HasDuration.php` trait on
+   Course and Lesson (`durationMinutes()`, `durationLabel()`, static
+   `formatMinutes()`). Course overrides `durationMinutes()` to **fall back to
+   the sum of its published lessons**, using the loaded relation when there is
+   one so the home-page loop does not go N+1.
+   **Watch out:** `duration_minutes` was NULL on every row in dev — the column
+   existed but nobody filled it in. Everything degrades to showing nothing
+   rather than "0 min", and `docs/admin-guide.md` now tells admins to set it.
+2. **Video player.** Speed buttons + remembered volume/speed in `localStorage`
+   (guarded try/catch — it throws in private windows). Uploaded videos only;
+   YouTube already has its own controls.
+3. **Search.** `GET /search` → `AcademyController@search`, a LIKE over titles
+   and summaries. Uses `LOWER(...) LIKE ?` **on purpose**: SQLite's LIKE is
+   case-insensitive but PostgreSQL's is not, and the Postgres move is written.
+   Only published lessons in published courses are returned; there are tests
+   that a draft never surfaces.
+4. **Accessibility.** Skip link, `role="progressbar"` with values, `role="status"`
+   on quiz results, `aria-current="page"` in the lesson sidebar, and text
+   alternatives wherever a ✓ or colour was the only signal.
+5. **Quiz cost up front** — "5 questions · 10 min limit · 2 attempts left".
+6. **Course completion card** on the course page, plus `nextCourse` from the
+   controller. Only shown when there is no final quiz left to take, so it does
+   not duplicate the existing final-quiz card.
+
+`.vh` (visually hidden) and the skip-link/focus styles live in the layout's own
+`<style>` block, **not** Tailwind: `sr-only` is not in the committed bundle.
+
+13 new tests in `tests/Feature/LearnerExperienceTest.php`. Note there are **no
+model factories in this repo** — tests build rows directly, as the other suites
+do.
 
 ### 2026-09-02 — Two mobile bugs on the student site
 Found while reviewing the learner experience against Claude Academy / Udemy /
@@ -270,9 +312,26 @@ made the sign-in logo the wrong size *and* broke its dark-mode swap.
 `bg-*` class has no background. Fine on a white card, invisible on a coloured
 one.
 
-**`@php(...)` cannot take a ternary.** Blade emits a raw, unterminated `<?php`
-and swallows the rest of the template — the page 500s and `view:cache` still
-reports success. Use the `@php … @endphp` block form.
+**`@php(...)` is not to be trusted at all — use `@php … @endphp`.** It is not
+only ternaries: `@php($questionCount = $lesson->questions->count())` also emitted
+a raw, unterminated `<?php(` and swallowed the rest of the template, while other
+`@php(...)` lines in the *same file* compiled fine. The page 500s and
+`view:cache` still reports success. Always use the block form.
+
+**A Blade directive glued to the preceding word is not compiled.**
+`...lessons@if($x)` leaves `@if` as literal text while its `@endif` compiles, so
+PHP hits an `endif` with no `if` and the template dies with "unexpected endif".
+Always leave whitespace before `@if` / `@endif` / `@foreach`. Both halves of
+this trap cost a debugging round on the same afternoon; when a Blade page 500s
+with a syntax error, lint the compiled file in
+`storage/framework/views/` and grep it for directives that never compiled:
+
+```bash
+grep -noE "@(if|endif|else|foreach|endforeach)\b" storage/framework/views/<hash>.php
+```
+
+**PHP casts float array keys to int.** `@foreach([1.25 => 'a', 1.5 => 'b'] …)`
+silently collapses to a single entry. Use pairs: `[['1.25', 'a'], ['1.5', 'b']]`.
 
 **A Livewire view must have a single root element.** Wrapping the whole view in
 `@if` means an empty render, which throws. Put the `@if` inside the root.

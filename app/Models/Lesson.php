@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasDuration;
 use App\Models\Concerns\HasPublishStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 
 class Lesson extends Model
 {
-    use HasPublishStatus;
+    use HasDuration, HasPublishStatus;
 
     protected $fillable = [
         'course_id',

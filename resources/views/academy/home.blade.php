@@ -48,6 +48,11 @@
         </div>
     @endauth
 
+    {{-- Scrolling the whole page was the only way to find a lesson. --}}
+    <div class="mb-8">
+        @include('academy.partials.search-form', ['inputId' => 'home-search'])
+    </div>
+
     @if($resume)
         @php
             $resumePct = $resume['total'] > 0 ? round($resume['done'] / $resume['total'] * 100) : 0;
@@ -65,7 +70,9 @@
 
                 <div class="shrink-0 sm:text-right">
                     <div class="text-sm text-slate-500 mb-1">{{ $resume['done'] }} / {{ $resume['total'] }} lessons</div>
-                    <div class="w-full sm:w-44 h-2 rounded-full bg-white overflow-hidden">
+                    <div class="w-full sm:w-44 h-2 rounded-full bg-white overflow-hidden"
+                         role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $resumePct }}"
+                         aria-label="Progress: {{ $resume['done'] }} of {{ $resume['total'] }} lessons complete">
                         <div class="h-full bg-ok" style="width: {{ $resumePct }}%"></div>
                     </div>
                     <span class="mt-3 inline-block rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white">
@@ -95,10 +102,19 @@
                         </div>
                         <h2 class="text-xl font-extrabold text-navy">{{ $course->title }}</h2>
                         <p class="text-slate-500 mt-1 max-w-2xl">{{ $course->description }}</p>
+                        <div class="mt-2 flex flex-wrap items-center gap-2 text-sm text-slate-500">
+                            <span>{{ $total }} {{ $total === 1 ? 'lesson' : 'lessons' }}</span>
+                            @if($course->durationLabel())
+                                <span aria-hidden="true">·</span>
+                                <span>{{ $course->durationLabel() }}</span>
+                            @endif
+                        </div>
                     </div>
                     <div class="text-right">
                         <div class="text-sm text-slate-500 mb-1">{{ $done }} / {{ $total }} lessons</div>
-                        <div class="w-44 h-2 rounded-full bg-slate-100 overflow-hidden">
+                        <div class="w-44 h-2 rounded-full bg-slate-100 overflow-hidden"
+                             role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $pct }}"
+                             aria-label="{{ $course->title }} progress: {{ $done }} of {{ $total }} lessons complete">
                             <div class="h-full bg-ok" style="width: {{ $pct }}%"></div>
                         </div>
                     </div>
@@ -117,7 +133,10 @@
                                 <span class="text-white/90 text-4xl font-extrabold">{{ $i + 1 }}</span>
                             @endif
                             @if($isDone)
-                                <span class="absolute top-3 right-3 w-7 h-7 rounded-full bg-ok text-white flex items-center justify-center text-sm shadow">✓</span>
+                                <span class="absolute top-3 right-3 w-7 h-7 rounded-full bg-ok text-white flex items-center justify-center text-sm shadow">
+                                    <span aria-hidden="true">✓</span>
+                                    <span class="vh">Completed</span>
+                                </span>
                             @endif
                         </div>
                         <div class="p-5">
@@ -130,6 +149,9 @@
                             </div>
                             <h3 class="font-bold text-navy group-hover:text-brand transition">{{ $lesson->title }}</h3>
                             <p class="text-sm text-slate-500 mt-1 line-clamp-2">{{ $lesson->summary }}</p>
+                            @if($lesson->durationLabel())
+                                <p class="text-xs text-slate-400 mt-2">{{ $lesson->durationLabel() }}</p>
+                            @endif
                         </div>
                     </a>
                 @endforeach

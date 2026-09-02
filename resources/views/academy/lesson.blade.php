@@ -32,15 +32,77 @@
             @if($lesson->summary)
                 <p class="text-slate-500 mt-1">{{ $lesson->summary }}</p>
             @endif
+            @if($lesson->durationLabel())
+                <p class="text-sm text-slate-400 mt-1">{{ $lesson->durationLabel() }}</p>
+            @endif
 
             {{-- Video: uploaded file takes priority, otherwise YouTube embed --}}
             @if($lesson->video_url)
                 <div class="mt-6 rounded-2xl overflow-hidden border border-slate-200 shadow-sm aspect-video bg-black">
-                    <video class="w-full h-full" controls playsinline preload="metadata">
+                    <video id="lesson-video" class="w-full h-full" controls playsinline preload="metadata">
                         <source src="{{ $lesson->video_url }}">
                         Your browser does not support the video tag.
                     </video>
                 </div>
+
+                {{-- An uploaded file only gets the browser's bare player, while a
+                     YouTube lesson comes with speed control. People re-watch
+                     training to revise, so speed is worth having on both. --}}
+                <div class="mt-2 flex flex-wrap items-center gap-2">
+                    <span class="text-xs text-slate-400" id="speed-label">Playback speed</span>
+                    {{-- Pairs, not a keyed array: PHP casts float keys to int,
+                         so 1.25 and 1.5 would collide into a single entry. --}}
+                    @foreach([['1', 'Normal'], ['1.25', '1.25×'], ['1.5', '1.5×'], ['2', '2×']] as [$rate, $caption])
+                        <button type="button" data-speed="{{ $rate }}" aria-describedby="speed-label"
+                                class="inline-flex items-center h-11 px-3 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 active:bg-slate-100">
+                            {{ $caption }}
+                        </button>
+                    @endforeach
+                </div>
+
+                <script>
+                    (function () {
+                        var video = document.getElementById('lesson-video');
+                        if (!video) return;
+
+                        // Volume and speed are remembered across lessons, so a
+                        // student sets them once. Storage can throw in private
+                        // windows, so every access is guarded.
+                        function read(key) { try { return window.localStorage.getItem(key); } catch (e) { return null; } }
+                        function write(key, value) { try { window.localStorage.setItem(key, value); } catch (e) {} }
+
+                        var savedVolume = parseFloat(read('pa.video.volume'));
+                        if (!isNaN(savedVolume) && savedVolume >= 0 && savedVolume <= 1) video.volume = savedVolume;
+                        if (read('pa.video.muted') === '1') video.muted = true;
+
+                        var savedRate = parseFloat(read('pa.video.rate'));
+                        if (!isNaN(savedRate) && savedRate >= 0.5 && savedRate <= 2) video.playbackRate = savedRate;
+
+                        video.addEventListener('volumechange', function () {
+                            write('pa.video.volume', video.volume);
+                            write('pa.video.muted', video.muted ? '1' : '0');
+                        });
+
+                        var buttons = document.querySelectorAll('[data-speed]');
+                        function mark() {
+                            buttons.forEach(function (button) {
+                                var on = parseFloat(button.dataset.speed) === video.playbackRate;
+                                button.setAttribute('aria-pressed', on ? 'true' : 'false');
+                                button.classList.toggle('bg-slate-100', on);
+                                button.classList.toggle('text-navy', on);
+                            });
+                        }
+                        buttons.forEach(function (button) {
+                            button.addEventListener('click', function () {
+                                video.playbackRate = parseFloat(button.dataset.speed);
+                                write('pa.video.rate', video.playbackRate);
+                                mark();
+                            });
+                        });
+                        video.addEventListener('ratechange', mark);
+                        mark();
+                    })();
+                </script>
             @elseif($lesson->youtube_id)
                 <div class="mt-6 rounded-2xl overflow-hidden border border-slate-200 shadow-sm aspect-video bg-black">
                     <iframe class="w-full h-full"
@@ -103,23 +165,48 @@
                             </span>
                         @endif
                     </div>
-                    <p class="text-slate-500 text-sm mb-5">Answer all questions correctly to complete this lesson.</p>
+                    <p class="text-slate-500 text-sm mb-2">Answer all questions correctly to complete this lesson.</p>
 
-                    {{-- Status banners --}}
+                    {{-- What the quiz costs, before it starts rather than after.
+                         Attempts remaining is only known once someone is logged
+                         in and the lesson sets limits. --}}
+                    @php
+                        // Block form, not @php(...): the inline form silently
+                        // emitted an unterminated "<?php(" here and swallowed
+                        // the rest of the template.
+                        $questionCount = $lesson->questions->count();
+                    @endphp
+                    <div class="flex flex-wrap items-center gap-2 text-sm text-slate-500 mb-5">
+                        <span>{{ $questionCount }} {{ $questionCount === 1 ? 'question' : 'questions' }}</span>
+                        @if($lesson->quiz_time_limit_minutes)
+                            <span aria-hidden="true">·</span>
+                            <span>{{ $lesson->quiz_time_limit_minutes }} min limit</span>
+                        @endif
+                        @if(($quiz['attemptsRemaining'] ?? null) !== null)
+                            <span aria-hidden="true">·</span>
+                            <span>{{ $quiz['attemptsRemaining'] }} {{ $quiz['attemptsRemaining'] === 1 ? 'attempt' : 'attempts' }} left</span>
+                        @elseif($lesson->quiz_max_attempts)
+                            <span aria-hidden="true">·</span>
+                            <span>{{ $lesson->quiz_max_attempts }} attempts</span>
+                        @endif
+                    </div>
+
+                    {{-- Status banners. role="status" so the result is announced
+                         rather than left to the green tint and a ✓. --}}
                     @if($passed || $isDone)
-                        <div class="rounded-xl bg-green-50 border border-green-200 text-green-800 px-5 py-4 mb-5 flex items-center gap-3">
-                            <span class="w-8 h-8 rounded-full bg-ok text-white flex items-center justify-center flex-none">✓</span>
+                        <div role="status" class="rounded-xl bg-green-50 border border-green-200 text-green-800 px-5 py-4 mb-5 flex items-center gap-3">
+                            <span aria-hidden="true" class="w-8 h-8 rounded-full bg-ok text-white flex items-center justify-center flex-none">✓</span>
                             <div>
                                 <div class="font-bold">Lesson complete!</div>
                                 <div class="text-sm text-green-700">Nice work. {{ $next ? 'Continue to the next lesson.' : 'You\'ve finished the course.' }}</div>
                             </div>
                         </div>
                     @elseif($timeup)
-                        <div class="rounded-xl bg-red-50 border border-red-200 text-red-700 px-5 py-4 mb-5">
+                        <div role="status" class="rounded-xl bg-red-50 border border-red-200 text-red-700 px-5 py-4 mb-5">
                             ⏱ <strong>Time's up.</strong> This attempt was not counted as successful.
                         </div>
                     @elseif($failed)
-                        <div class="rounded-xl bg-amber-50 border border-amber-200 text-amber-800 px-5 py-4 mb-5">
+                        <div role="status" class="rounded-xl bg-amber-50 border border-amber-200 text-amber-800 px-5 py-4 mb-5">
                             Attempt unsuccessful
                             @if(session('quiz_score'))
                                 (score {{ session('quiz_score') }})
@@ -171,7 +258,12 @@
                                     <fieldset class="border border-slate-200 rounded-xl p-5">
                                         <legend class="px-2 font-semibold text-navy">
                                             {{ $qn + 1 }}. {{ $question->prompt }}
-                                            @if($qResult === true)<span class="text-ok">✓</span>@elseif($qResult === false)<span class="text-red-500">✗</span>@endif
+                                            {{-- Correctness was carried by colour and a glyph alone. --}}
+                                            @if($qResult === true)
+                                                <span class="text-ok" aria-hidden="true">✓</span><span class="vh">Correct</span>
+                                            @elseif($qResult === false)
+                                                <span class="text-red-500" aria-hidden="true">✗</span><span class="vh">Incorrect</span>
+                                            @endif
                                         </legend>
                                         @if($multiple)
                                             <p class="px-2 text-xs text-slate-400 mb-1">Select all that apply.</p>
@@ -253,8 +345,10 @@
                                 Take the final quiz &rarr;
                             </a>
                         @else
-                            <a href="{{ route('academy.home') }}"
-                               class="inline-block rounded-lg bg-ok text-white px-5 py-2.5 font-semibold">
+                            {{-- The course page, not the home page: it shows what
+                                 they finished and what to take next. --}}
+                            <a href="{{ route('academy.course', $course) }}"
+                               class="inline-block rounded-lg bg-ok text-white px-5 py-2.5 font-semibold hover:bg-green-700">
                                 Finish course ✓
                             </a>
                         @endif
@@ -272,11 +366,20 @@
                         @php($lDone = in_array($l->id, $completed, true))
                         <li>
                             <a href="{{ route('academy.lesson', [$course, $l]) }}"
+                               @if($l->id === $lesson->id) aria-current="page" @endif
                                class="flex items-center gap-3 px-2 py-2 rounded-lg text-sm {{ $l->id === $lesson->id ? 'bg-blue-50 text-brand font-semibold' : 'text-slate-600 hover:bg-slate-50' }}">
-                                <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs {{ $lDone ? 'bg-ok text-white' : 'bg-slate-100 text-slate-500' }}">
-                                    {{ $lDone ? '✓' : $i + 1 }}
+                                <span class="w-6 h-6 flex-none rounded-full flex items-center justify-center text-xs {{ $lDone ? 'bg-ok text-white' : 'bg-slate-100 text-slate-500' }}">
+                                    <span aria-hidden="true">{{ $lDone ? '✓' : $i + 1 }}</span>
+                                    @if($lDone)
+                                        <span class="vh">Completed</span>
+                                    @endif
                                 </span>
-                                <span class="truncate">{{ $l->title }}</span>
+                                <span class="min-w-0 flex-1">
+                                    <span class="block truncate">{{ $l->title }}</span>
+                                    @if($l->durationLabel())
+                                        <span class="block text-xs text-slate-400">{{ $l->durationLabel() }}</span>
+                                    @endif
+                                </span>
                             </a>
                         </li>
                     @endforeach
