@@ -5,6 +5,24 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ## 1.2.0 — September 2026
 
+### Order lessons by dragging them, and reuse ones you already have
+
+Open a course (**Courses** → **Edit**) and there is now a **Lessons** tab.
+
+**Drag the rows to set the order.** That order is what students work through —
+the course page, the lesson sidebar and "Continue where you left off" all follow
+it. Nothing to save.
+
+**Add existing lesson** moves a lesson you already wrote into this course,
+searching by name and showing which course it sits in now.
+
+> A lesson belongs to one course only, so this is a **move, not a copy** — it
+> leaves the course it was in. Its video, text, questions and students' progress
+> all move with it. To reuse material in two courses, **Duplicate** the course
+> instead.
+
+Creators only ever see and move lessons from their own products.
+
 ### The student site carries the real logo
 
 The **log in**, **register** and **start learning** pages now open with the full

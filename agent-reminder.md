@@ -90,6 +90,29 @@ There are no tags in this repo yet, so `v1.2.0` will be the first.
 
 Newest first. Add to this every time.
 
+### 2026-09-02 — Lessons tab on the course editor
+`LessonsRelationManager` on `CourseResource`: drag-to-reorder plus
+**Add existing lesson**. Filament's `->reorderable('sort_order')` and
+`AssociateAction`, no custom machinery.
+
+Things worth knowing before touching it:
+
+- **`lessons.course_id` is NOT NULL**, so `DissociateAction` is impossible and
+  is deliberately absent. "Adding" an existing lesson therefore **moves** it out
+  of its current course. The modal says so in as many words; do not quietly turn
+  this into something that looks like a copy.
+- **A relation manager only renders on the *edit* page.** There is no record to
+  associate against while creating, so the tab appears after **Create**. The
+  admin guide says this.
+- **The associate list is scoped for creators** with the same `whereHas('course',
+  …product_id…)` the Lessons list uses — otherwise a creator could pull a lesson
+  out of a product they do not own. There is a test for it **and a positive
+  control** proving a creator can still move lessons inside their own products;
+  without the control the scoping test would pass even if the action were simply
+  broken for creators.
+- Reordering writes `sort_order`, which every student-facing query already sorts
+  by, so the order takes effect immediately with no extra wiring.
+
 ### 2026-09-02 — Branding audit of the learner UI
 Checked every logo surface on the student site after the lockup changed. Three
 things had gone stale, all of them left behind by the mark turning amber.

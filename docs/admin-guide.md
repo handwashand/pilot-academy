@@ -76,6 +76,26 @@ The path is always the same: **make a course → fill it with lessons → turn o
 > Unpublishing never deletes anything — the text, video, questions and student
 > progress all stay.
 
+#### Put the lessons in the right order, and reuse ones you already have
+
+Open the course (**Courses** → **Edit**) and look at the **Lessons** tab. It
+lists every lesson in that course.
+
+- **To change the order**, drag a row by the handle on its left. The order you
+  set here is the order students work through, on the course page, in the lesson
+  sidebar and in "Continue where you left off". There is nothing to save.
+- **To reuse a lesson that already exists**, click **Add existing lesson**,
+  search for it and move it across. The search shows which course each lesson is
+  in now.
+
+> **A lesson lives in one course only.** Adding an existing lesson to this course
+> takes it *out* of the course it is in now — it is a move, not a copy. Its
+> video, text, questions and students' progress all travel with it. If you want
+> the same material in two courses, use **Duplicate** on the course instead.
+
+> You can only do this once the course exists, so on a brand-new course finish
+> **Create** first and the **Lessons** tab appears.
+
 **Screen — Knowledge check (quiz):**
 
 | Field | Example |
