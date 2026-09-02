@@ -3,7 +3,7 @@
 A short log of changes to the academy, newest first, in plain language.
 Add a new entry here whenever something visible to admins or students changes.
 
-## September 2026
+## 2.0.0 — September 2026
 
 ### Two fixes for students on phones
 
