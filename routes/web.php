@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AcademyController::class, 'home'])->name('academy.home');
 Route::post('/name', [AcademyController::class, 'setName'])->name('academy.name');
+Route::get('/search', [AcademyController::class, 'search'])->name('academy.search');
 Route::get('/sitemap.xml', [AcademyController::class, 'sitemap'])->name('sitemap');
 
 // Student authentication (public site)
@@ -27,6 +28,15 @@ Route::get('/courses/{course:slug}', [AcademyController::class, 'course'])->name
 Route::get('/courses/{course:slug}/lessons/{lesson:slug}', [AcademyController::class, 'lesson'])->name('academy.lesson');
 Route::post('/courses/{course:slug}/lessons/{lesson:slug}/quiz/start', [AcademyController::class, 'startQuiz'])->name('academy.quiz.start');
 Route::post('/courses/{course:slug}/lessons/{lesson:slug}/quiz', [AcademyController::class, 'submitQuiz'])->name('academy.quiz');
+
+// Remembering a place in a video, and what a student thought of a course, both
+// belong to an account — there is nowhere to keep them for an anonymous visitor.
+Route::middleware('auth')->group(function () {
+    Route::post('/courses/{course:slug}/lessons/{lesson:slug}/position', [AcademyController::class, 'saveVideoPosition'])
+        ->name('academy.lesson.position');
+    Route::post('/courses/{course:slug}/feedback', [AcademyController::class, 'saveFeedback'])
+        ->name('academy.course.feedback');
+});
 
 // Final quiz + student certificates (logged-in students only)
 Route::middleware('auth')->group(function () {

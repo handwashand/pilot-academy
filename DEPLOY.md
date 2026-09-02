@@ -73,8 +73,24 @@ php artisan filament:assets
 php artisan optimize        # re-cache config/routes/views
 ```
 
-To roll a release back, run `php artisan migrate:rollback --step=<n>` **before**
-reverting the code — the older code expects the pre-migration columns to exist.
+> **Run `migrate` before anyone uses the site.** Between new code landing and
+> its migration running, any page whose query names a new column returns a 500 —
+> `/search` does exactly that for `lessons.transcript` in 2.0.0. Normally that
+> gap is a couple of seconds; it becomes an outage if the migration is skipped
+> or fails.
+
+**Rolling a release back.** The safe order depends on what the migration did:
+
+- **It only added** columns or tables (2.0.0 is this kind) — **revert the code
+  first**, then `php artisan migrate:rollback --step=<n>`. The extra columns are
+  harmless to the older code, which simply ignores them.
+- **It dropped or renamed** anything — **roll the migration back first**, then
+  revert the code, because the older code needs those columns to exist. Restore
+  the `pg_dump` above if the rollback cannot recreate the data.
+
+> Version numbers live in `config/app.php` (`'version'`, shown at the bottom of
+> the admin sidebar) and in the heading in `docs/CHANGELOG.md`. Tag the merge
+> commit on `laravel` to match, e.g. `git tag v2.0.0 && git push origin v2.0.0`.
 
 ## Moving an existing SQLite database to PostgreSQL
 

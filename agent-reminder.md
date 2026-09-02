@@ -34,7 +34,30 @@ is not obvious in this repo.
 
 ## Where things stand
 
-Last updated: **2026-08-31**
+Last updated: **2026-09-02**
+
+Next release is **2.0.0** — the first version number this project has had.
+Earlier changelog entries are month-only and are deliberately *not* renumbered
+after the fact.
+
+### Cutting a release
+
+The version lives in **two places that must move together**:
+
+1. `config/app.php` → `'version'`. A literal, not an env value: it describes the
+   code, not the server. This is what the panel renders.
+2. The heading in `docs/CHANGELOG.md` (`## 2.0.0 — September 2026`), which is
+   what admins read under **What's new**.
+
+It is shown at the bottom of the admin sidebar via the
+`PanelsRenderHook::SIDEBAR_FOOTER` hook (`resources/views/filament/sidebar-version.blade.php`),
+linked to the What's new page. **That view is styled with inline CSS on purpose**
+— the panel stylesheet has no Tailwind utility layer, so classes there do
+nothing (see the trap below). Its greys use Filament's own `--gray-*` custom
+properties, which Filament injects per page, so they work in both themes.
+
+Tag the **merge commit on `laravel`**, not a feature branch: `git tag v2.0.0`.
+There are no tags in this repo yet, so `v2.0.0` will be the first.
 
 ### Branches
 
@@ -42,7 +65,8 @@ Last updated: **2026-08-31**
 | --- | --- |
 | `laravel` | Main. Deploys to production by `git pull`. At the merge of PR #33. |
 | `feature/sqlite-postgres` | **Pushed, no PR opened.** SQLite → PostgreSQL move. Ready for review. |
-| `feature/admin-dashboard` | **In progress, uncommitted work on it.** Dashboard, branding, contrast fix. |
+| `feature/admin-dashboard` | PR #34, open. Dashboard, branding, nudge, mobile fixes. |
+| `feature/learner-experience` | **Stacked on `feature/admin-dashboard`, not on `laravel`.** Duration, search, video controls, accessibility, quiz cost, course completion. Merge #34 first. |
 | `feature/course-publishing-workflow` | Merged as PR #32. Safe to delete. |
 | `feature/creator-role` | Merged as PR #33. Safe to delete. |
 | `feature/postgres-migration` | Duplicate of `feature/sqlite-postgres`, same commit. **Delete it** so nobody reviews the wrong one. |
@@ -65,6 +89,143 @@ Last updated: **2026-08-31**
 ## Work log
 
 Newest first. Add to this every time.
+
+### 2026-09-02 — Video resume, transcripts, course feedback (**schema change**)
+The three migration-needing items from the learner-experience review, shipped as
+**one batch** so there is a single deploy window. Three migrations,
+`2026_09_02_000001..3`.
+
+**The trap that shaped the design.** Playback position is *not* a column on the
+`lesson_user` pivot, though that is the obvious place. `completedLessons()` is a
+plain `belongsToMany` with **no filter on `completed_at`**, and the dashboard's
+raw queries (`CompletionsByCompany`, `StalledLearners`, `UsersTable`) read the
+table directly. A row written when someone merely pressed play would therefore
+count as a **completed lesson** everywhere — progress bars, partner reports, and
+the gate that unlocks the final quiz and issues a certificate. Hence a separate
+`video_positions` table. `test_watching_a_video_does_not_mark_the_lesson_complete`
+guards it; do not "simplify" this onto the pivot without fixing that relation
+first.
+
+**Rollback was rehearsed** (roll back 3, check the site, migrate forward). It
+surfaced a real hazard: **`/search` 500s while the migration is rolled back**,
+because the query names `lessons.transcript`. Documented in `DEPLOY.md` — migrate
+before use, and roll the *code* back before the migration.
+
+Other notes:
+
+- `course_feedback` needs an explicit `$table`; Laravel would pluralise the model
+  to `course_feedbacks`.
+- Feedback is staff-only and write-once-per-student (`updateOrCreate` on a unique
+  `user_id + course_id`). The relation manager is `isReadOnly()` — students write
+  it, staff read it. Deliberately **not** public star ratings.
+- The position endpoint is `POST` + `auth`; anonymous visitors have nowhere to
+  store this, and `keepalive: true` on the fetch is what makes the last write
+  survive the tab closing.
+- `.transcript { white-space: pre-line }` lives in the layout's `<style>`:
+  `whitespace-pre-line` is not in the committed bundle either.
+
+### 2026-09-02 — Lessons tab on the course editor
+`LessonsRelationManager` on `CourseResource`: drag-to-reorder plus
+**Add existing lesson**. Filament's `->reorderable('sort_order')` and
+`AssociateAction`, no custom machinery.
+
+Things worth knowing before touching it:
+
+- **`lessons.course_id` is NOT NULL**, so `DissociateAction` is impossible and
+  is deliberately absent. "Adding" an existing lesson therefore **moves** it out
+  of its current course. The modal says so in as many words; do not quietly turn
+  this into something that looks like a copy.
+- **A relation manager only renders on the *edit* page.** There is no record to
+  associate against while creating, so the tab appears after **Create**. The
+  admin guide says this.
+- **The associate list is scoped for creators** with the same `whereHas('course',
+  …product_id…)` the Lessons list uses — otherwise a creator could pull a lesson
+  out of a product they do not own. There is a test for it **and a positive
+  control** proving a creator can still move lessons inside their own products;
+  without the control the scoping test would pass even if the action were simply
+  broken for creators.
+- Reordering writes `sort_order`, which every student-facing query already sorts
+  by, so the order takes effect immediately with no extra wiring.
+
+### 2026-09-02 — Branding audit of the learner UI
+Checked every logo surface on the student site after the lockup changed. Three
+things had gone stale, all of them left behind by the mark turning amber.
+
+- **The header's rationale was out of date.** Its comment said the lockup "would
+  say PILOT twice" — true when the lockup was mark + PILOT, not now. The header
+  still uses mark + HTML text, but for a *different* reason worth keeping: the
+  bar is 64px, the mark 36px, and at that scale the lockup's stacked "ACADEMY"
+  renders **~6px** and cannot be read. Comment rewritten to say so.
+- **"Academy" was brand blue** (`text-brand`, #1463ff) next to an amber mark.
+  Coherent while the mark was blue; a clash afterwards. Now one navy ink, with
+  the amber mark carrying the colour.
+- **`theme-color` was `#0284c7`** — the mark's old blue, which is in no palette
+  any more. Now navy `#0a2540`.
+
+The auth pages (login, register, join) now use the **real lockup** at `h-12`,
+matching the admin sign-in's `3rem`, via
+`resources/views/academy/partials/auth-brand.blade.php`. There is room there,
+unlike the header.
+
+**Still open: `apple-touch-icon` points at an SVG, which iOS ignores**, so "Add
+to Home Screen" gets a screenshot instead of the mark. Fixing it needs a square
+**180x180 PNG** in `public/img/`; the container has no ImageMagick, Imagick or
+rsvg, and GD cannot rasterise SVG, so it could not be generated here.
+
+### 2026-09-02 — App version in the sidebar
+`config('app.version')` rendered at the bottom of the admin sidebar through
+`PanelsRenderHook::SIDEBAR_FOOTER`, linked to **What's new**. See
+[Cutting a release](#cutting-a-release) for the two places the number lives.
+
+Checked rather than assumed, because the panel is a different world from the
+student site:
+
+- `SIDEBAR_FOOTER` renders as the **last child of `<aside>`**, unconditionally.
+  (`SIDEBAR_NAV_END` sits inside `<nav>`, above Filament's own footer block.)
+- The `--gray-*` custom properties are **not** in the static panel stylesheet;
+  Filament injects them per page, so `var(--gray-400)` resolves at runtime and
+  in both themes.
+- Collapsing uses Alpine, not a CSS class: `x-show="$store.sidebar.isOpen"`,
+  guarded by `filament()->isSidebarCollapsibleOnDesktop()` so the store is
+  guaranteed to exist.
+- **`[x-cloak]` is not defined in the panel stylesheet**, so `x-cloak` there is
+  a no-op. It was removed rather than left in looking useful.
+
+### 2026-09-02 — Six learner-experience improvements
+The no-migration half of a review against Claude Academy / Udemy / LinkedIn
+Learning. All six shipped together; **no schema change**, so this is an ordinary
+`git pull` deploy.
+
+1. **Duration is shown.** New `app/Models/Concerns/HasDuration.php` trait on
+   Course and Lesson (`durationMinutes()`, `durationLabel()`, static
+   `formatMinutes()`). Course overrides `durationMinutes()` to **fall back to
+   the sum of its published lessons**, using the loaded relation when there is
+   one so the home-page loop does not go N+1.
+   **Watch out:** `duration_minutes` was NULL on every row in dev — the column
+   existed but nobody filled it in. Everything degrades to showing nothing
+   rather than "0 min", and `docs/admin-guide.md` now tells admins to set it.
+2. **Video player.** Speed buttons + remembered volume/speed in `localStorage`
+   (guarded try/catch — it throws in private windows). Uploaded videos only;
+   YouTube already has its own controls.
+3. **Search.** `GET /search` → `AcademyController@search`, a LIKE over titles
+   and summaries. Uses `LOWER(...) LIKE ?` **on purpose**: SQLite's LIKE is
+   case-insensitive but PostgreSQL's is not, and the Postgres move is written.
+   Only published lessons in published courses are returned; there are tests
+   that a draft never surfaces.
+4. **Accessibility.** Skip link, `role="progressbar"` with values, `role="status"`
+   on quiz results, `aria-current="page"` in the lesson sidebar, and text
+   alternatives wherever a ✓ or colour was the only signal.
+5. **Quiz cost up front** — "5 questions · 10 min limit · 2 attempts left".
+6. **Course completion card** on the course page, plus `nextCourse` from the
+   controller. Only shown when there is no final quiz left to take, so it does
+   not duplicate the existing final-quiz card.
+
+`.vh` (visually hidden) and the skip-link/focus styles live in the layout's own
+`<style>` block, **not** Tailwind: `sr-only` is not in the committed bundle.
+
+13 new tests in `tests/Feature/LearnerExperienceTest.php`. Note there are **no
+model factories in this repo** — tests build rows directly, as the other suites
+do.
 
 ### 2026-09-02 — Two mobile bugs on the student site
 Found while reviewing the learner experience against Claude Academy / Udemy /
@@ -270,9 +431,26 @@ made the sign-in logo the wrong size *and* broke its dark-mode swap.
 `bg-*` class has no background. Fine on a white card, invisible on a coloured
 one.
 
-**`@php(...)` cannot take a ternary.** Blade emits a raw, unterminated `<?php`
-and swallows the rest of the template — the page 500s and `view:cache` still
-reports success. Use the `@php … @endphp` block form.
+**`@php(...)` is not to be trusted at all — use `@php … @endphp`.** It is not
+only ternaries: `@php($questionCount = $lesson->questions->count())` also emitted
+a raw, unterminated `<?php(` and swallowed the rest of the template, while other
+`@php(...)` lines in the *same file* compiled fine. The page 500s and
+`view:cache` still reports success. Always use the block form.
+
+**A Blade directive glued to the preceding word is not compiled.**
+`...lessons@if($x)` leaves `@if` as literal text while its `@endif` compiles, so
+PHP hits an `endif` with no `if` and the template dies with "unexpected endif".
+Always leave whitespace before `@if` / `@endif` / `@foreach`. Both halves of
+this trap cost a debugging round on the same afternoon; when a Blade page 500s
+with a syntax error, lint the compiled file in
+`storage/framework/views/` and grep it for directives that never compiled:
+
+```bash
+grep -noE "@(if|endif|else|foreach|endforeach)\b" storage/framework/views/<hash>.php
+```
+
+**PHP casts float array keys to int.** `@foreach([1.25 => 'a', 1.5 => 'b'] …)`
+silently collapses to a single entry. Use pairs: `[['1.25', 'a'], ['1.5', 'b']]`.
 
 **A Livewire view must have a single root element.** Wrapping the whole view in
 `@if` means an empty render, which throws. Put the `@if` inside the root.

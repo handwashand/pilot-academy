@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\ActivityEvent;
 use App\Models\Course;
+use App\Models\CourseFeedback;
 use App\Models\Lesson;
 use App\Models\QuizAttempt;
+use App\Models\VideoPosition;
 use Illuminate\Http\Request;
 
 class AcademyController extends Controller
@@ -75,6 +77,17 @@ class AcademyController extends Controller
             'certificate' => $user
                 ? $course->certificates()->where('user_id', $user->id)->whereNull('revoked_at')->latest('issued_at')->first()
                 : null,
+            // Somewhere to go once the course is finished, so completing it is
+            // not a dead end. Null on the last course, which is fine.
+            'nextCourse' => Course::published()
+                ->where('sort_order', '>', $course->sort_order)
+                ->orderBy('sort_order')
+                ->first(),
+            // Their own verdict, so the form shows what they already said
+            // rather than asking twice.
+            'feedback' => $user
+                ? CourseFeedback::where('user_id', $user->id)->where('course_id', $course->id)->first()
+                : null,
         ]);
     }
 
@@ -101,11 +114,63 @@ class AcademyController extends Controller
             'prev' => $prev,
             'completed' => $this->completedIds($request),
             'quiz' => $this->quizState($request, $lesson),
+            // Where they got to last time, so a 25-minute video does not start
+            // from zero. Anonymous visitors have nowhere to keep this.
+            'videoPosition' => $user
+                ? (int) VideoPosition::where('user_id', $user->id)->where('lesson_id', $lesson->id)->value('seconds')
+                : 0,
             'finalUnlocked' => $course->finalQuizUnlockedFor($user),
             'certificate' => $user
                 ? $course->certificates()->where('user_id', $user->id)->whereNull('revoked_at')->latest('issued_at')->first()
                 : null,
         ]);
+    }
+
+    /**
+     * Remember where a student got to inside a lesson video. Sent every few
+     * seconds while playing, so it stays a single upserted row per lesson.
+     */
+    public function saveVideoPosition(Request $request, Course $course, Lesson $lesson)
+    {
+        abort_unless($lesson->course_id === $course->id, 404);
+        abort_unless($course->isVisibleTo($request->user()) && $lesson->isVisibleTo($request->user()), 404);
+
+        $data = $request->validate([
+            'seconds' => ['required', 'integer', 'min:0', 'max:86400'],
+        ]);
+
+        VideoPosition::updateOrCreate(
+            ['user_id' => $request->user()->id, 'lesson_id' => $lesson->id],
+            ['seconds' => $data['seconds']],
+        );
+
+        return response()->noContent();
+    }
+
+    /**
+     * What a student thought of a course. Asked only once they have finished it,
+     * and never shown to other students.
+     */
+    public function saveFeedback(Request $request, Course $course)
+    {
+        abort_unless($course->isVisibleTo($request->user()), 404);
+
+        $user = $request->user();
+
+        // Nothing to say about a course you have not taken.
+        abort_unless($course->isCompletedBy($user), 403);
+
+        $data = $request->validate([
+            'is_positive' => ['required', 'boolean'],
+            'comment' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        CourseFeedback::updateOrCreate(
+            ['user_id' => $user->id, 'course_id' => $course->id],
+            ['is_positive' => $request->boolean('is_positive'), 'comment' => $data['comment'] ?? null],
+        );
+
+        return redirect()->route('academy.course', $course)->with('feedback_saved', true);
     }
 
     /**
@@ -300,6 +365,55 @@ class AcademyController extends Controller
             'attemptsUsed' => $used,
             'attemptsRemaining' => $attemptsRemaining,
         ];
+    }
+
+    /**
+     * Student-facing search. Deliberately a LIKE over titles and summaries:
+     * this is dozens of rows, not thousands, so an index or a search engine
+     * would be machinery with nothing to do.
+     *
+     * Only published lessons in published courses are ever returned — a draft
+     * must not surface here just because someone guessed a word in its title.
+     */
+    public function search(Request $request)
+    {
+        $term = trim((string) $request->query('q', ''));
+        $courses = collect();
+        $lessons = collect();
+
+        if ($term !== '') {
+            // LOWER() on both sides rather than a bare LIKE: SQLite matches
+            // case-insensitively, PostgreSQL does not, and the move to
+            // PostgreSQL is already written.
+            $like = '%'.mb_strtolower($term).'%';
+
+            $courses = Course::published()
+                ->where(fn ($query) => $query
+                    ->whereRaw('LOWER(title) LIKE ?', [$like])
+                    ->orWhereRaw('LOWER(description) LIKE ?', [$like]))
+                ->orderBy('sort_order')
+                ->limit(20)
+                ->get();
+
+            $lessons = Lesson::published()
+                ->whereHas('course', fn ($query) => $query->published())
+                ->where(fn ($query) => $query
+                    ->whereRaw('LOWER(lessons.title) LIKE ?', [$like])
+                    ->orWhereRaw('LOWER(lessons.summary) LIKE ?', [$like])
+                    // The transcript is what makes a video findable at all —
+                    // until it existed, spoken content matched nothing.
+                    ->orWhereRaw('LOWER(lessons.transcript) LIKE ?', [$like]))
+                ->with('course')
+                ->orderBy('sort_order')
+                ->limit(30)
+                ->get();
+        }
+
+        return view('academy.search', [
+            'term' => $term,
+            'courses' => $courses,
+            'lessons' => $lessons,
+        ]);
     }
 
     public function setName(Request $request)

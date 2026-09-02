@@ -5,6 +5,100 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ## 2.0.0 — September 2026
 
+### Videos remember where you stopped, and can be read instead of watched
+
+**A video picks up where the student left it.** Someone interrupted 18 minutes
+into a 25-minute video used to start again from the beginning. Their place is
+saved to their account, so it follows them to another device. Being near the end
+starts the video fresh, since that means they had finished.
+
+**Lessons can now carry a transcript.** Add one in **Lessons** → **Video
+transcript** (paste the captions from YouTube if you have them). Students get a
+**Transcript** panel under the video they can open and read instead of watching
+— which also means someone who cannot use audio can still complete the training.
+
+**It also makes videos searchable.** Until now the words spoken in a video
+matched nothing; student search now looks inside transcripts too.
+
+### Tell us what you thought of a course
+
+When a student finishes every lesson, the **Course complete** card asks whether
+the course was useful — a thumbs up or down and an optional sentence.
+
+Read it in **Courses** → **Edit** → **Student feedback**, with the student, their
+partner company and what they wrote. Filter by verdict to see the complaints on
+their own.
+
+> **Students never see each other's feedback**, and there are no public star
+> ratings. The dashboard could already tell you which lessons students *fail*.
+> This answers the different question of which ones they found useless.
+
+### Order lessons by dragging them, and reuse ones you already have
+
+Open a course (**Courses** → **Edit**) and there is now a **Lessons** tab.
+
+**Drag the rows to set the order.** That order is what students work through —
+the course page, the lesson sidebar and "Continue where you left off" all follow
+it. Nothing to save.
+
+**Add existing lesson** moves a lesson you already wrote into this course,
+searching by name and showing which course it sits in now.
+
+> A lesson belongs to one course only, so this is a **move, not a copy** — it
+> leaves the course it was in. Its video, text, questions and students' progress
+> all move with it. To reuse material in two courses, **Duplicate** the course
+> instead.
+
+Creators only ever see and move lessons from their own products.
+
+### The student site carries the real logo
+
+The **log in**, **register** and **start learning** pages now open with the full
+**PILOT ACADEMY** logo above the form, the same size and treatment as the admin
+sign-in page — so both front doors look like the same product.
+
+In the header, "Academy" is no longer blue. That blue made sense when the mark
+was blue; since the mark turned amber the two had been fighting each other. The
+name is now one colour and the amber mark carries the accent.
+
+### The version is on screen
+
+The bottom of the left menu now shows which version you are on, e.g. **v2.0.0**.
+Click it to come straight here and read what changed.
+
+### Six improvements to the student site
+
+**Students can see how long things take.** Courses and lessons now show their
+running time — on the home page, the course page, the lesson list and the lesson
+itself — and the course page shows how much is **left**, e.g. "3 / 8 lessons ·
+32 min left". Someone with fifteen minutes before a shift can now tell whether
+to start.
+
+> **This needs you to fill it in.** Right now most lessons have no duration set,
+> so no time is shown. Add **Duration (minutes)** when you write a lesson. Leave
+> the *course* duration empty and the academy adds its lessons up for you.
+
+**A search box.** Students can search courses and lessons by name from the home
+page. Only published material is ever returned — drafts stay invisible.
+
+**A better video player for uploaded videos.** Speed controls (Normal, 1.25×,
+1.5×, 2×) for people re-watching to revise, and the volume and speed a student
+picks are remembered for the next lesson. YouTube lessons already had this.
+
+**Quizzes say what they cost before you start.** The knowledge check now shows
+"5 questions · 10 min limit · 2 attempts left" up front, instead of springing
+the timer and attempt limit on someone after they begin.
+
+**Finishing a course means something.** Completing the last lesson used to drop
+students back on the home page with no acknowledgement. They now get a **Course
+complete** card with what they finished, their certificate if there is one, and
+the next course to take.
+
+**It can be used without a mouse or with a screen reader.** A skip link, proper
+labels on progress bars, and text alternatives everywhere a ✓ or a colour was
+the only signal — so a student who uses a screen reader can complete training
+their employer requires.
+
 ### Two fixes for students on phones
 
 **Certificates can be opened on a phone again.** The link was there on a laptop

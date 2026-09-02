@@ -42,7 +42,10 @@ The path is always the same: **make a course → fill it with lessons → turn o
 3. Fill in the main fields:
    - **Course title** — the name, e.g. "Pilot Basics".
    - **Short description** — one or two sentences. Students see this on the course card.
-   - The other fields (level, duration) are optional.
+   - **Duration (minutes)** — optional, but **students now see it**, so it is worth
+     filling in. If you leave the course duration empty, the academy adds up the
+     durations of its lessons instead. If nothing has a duration, no time is shown.
+   - The other fields (level) are optional.
 4. Click **Create**.
 
 > New courses are saved as a **Draft**. Students cannot see a draft — you publish it yourself in Step 4, once the lessons are in place.
@@ -55,9 +58,18 @@ The path is always the same: **make a course → fill it with lessons → turn o
 2. Choose the **Course** and give the lesson a title.
 3. Add a video: paste a link into **YouTube link**, or use **Or upload a video file**.
 4. Write the lesson content in **Lesson text**.
-5. Scroll to **Knowledge check (quiz)**. Click **Add question**, type the question, add answer options, and turn on **Correct** for the right one. Add as many questions as you want.
-6. Leave **Status** on **Published** and click **Create**.
-7. Repeat for every lesson in the course.
+5. Set **Duration (minutes)** — how long the lesson takes. Students see this on
+   the lesson card, in the lesson list and on the course page ("32 min left"),
+   and it is how they decide whether to start now or come back later. It also
+   adds up into the course total when the course has no duration of its own.
+6. Paste a **Video transcript** if the lesson has a video. It is worth the two
+   minutes: students can read it instead of watching, someone who cannot use
+   audio can still finish the training, and it is the **only** way the words
+   spoken in a video turn up in student search. YouTube's own captions can be
+   copied straight in.
+7. Scroll to **Knowledge check (quiz)**. Click **Add question**, type the question, add answer options, and turn on **Correct** for the right one. Add as many questions as you want.
+8. Leave **Status** on **Published** and click **Create**.
+9. Repeat for every lesson in the course.
 
 > New lessons are **Published** straight away — and that is safe, because
 > students still see nothing until the *course* is published in Step 4. So there
@@ -68,6 +80,26 @@ The path is always the same: **make a course → fill it with lessons → turn o
 > while the rest of the course is live, or retire an old one with **Archived**.
 > Unpublishing never deletes anything — the text, video, questions and student
 > progress all stay.
+
+#### Put the lessons in the right order, and reuse ones you already have
+
+Open the course (**Courses** → **Edit**) and look at the **Lessons** tab. It
+lists every lesson in that course.
+
+- **To change the order**, drag a row by the handle on its left. The order you
+  set here is the order students work through, on the course page, in the lesson
+  sidebar and in "Continue where you left off". There is nothing to save.
+- **To reuse a lesson that already exists**, click **Add existing lesson**,
+  search for it and move it across. The search shows which course each lesson is
+  in now.
+
+> **A lesson lives in one course only.** Adding an existing lesson to this course
+> takes it *out* of the course it is in now — it is a move, not a copy. Its
+> video, text, questions and students' progress all travel with it. If you want
+> the same material in two courses, use **Duplicate** on the course instead.
+
+> You can only do this once the course exists, so on a brand-new course finish
+> **Create** first and the **Lessons** tab appears.
 
 **Screen — Knowledge check (quiz):**
 
@@ -246,6 +278,21 @@ with a company.
 ### Who finished a course
 
 Go to **Users** and open a student. The **Completed lessons** tab lists every lesson they finished. The **Dashboard** shows overall activity across all students.
+
+### What students thought of a course
+
+Open the course (**Courses** → **Edit**) and go to **Student feedback**. Once a
+student finishes every lesson they are asked whether the course was useful, and
+can add a sentence. You see the verdict, who said it, their partner company and
+their comment. Use the **Verdict** filter to read just the complaints.
+
+> This is the one report that tells you a course is *bad* rather than *hard*.
+> **Lessons students struggle with** on the Dashboard shows where people fail;
+> this shows where they felt their time was wasted, and those are different
+> lists.
+
+> Students never see each other's feedback, and there are no public star
+> ratings — this is training your company assigns, not a shop.
 
 ### Read the Dashboard
 

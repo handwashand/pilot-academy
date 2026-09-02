@@ -10,6 +10,7 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -56,6 +57,12 @@ class AdminPanelProvider extends PanelProvider
             // account and version cards are deliberately left off: signing out
             // belongs in the profile menu, top right, where people look for it.
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
+            // The release number at the very bottom of the sidebar, so anyone
+            // can answer "which version is this?" without opening a terminal.
+            ->renderHook(
+                PanelsRenderHook::SIDEBAR_FOOTER,
+                fn (): string => view('filament.sidebar-version')->render(),
+            )
             ->sidebarCollapsibleOnDesktop()
             ->maxContentWidth('full')
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])

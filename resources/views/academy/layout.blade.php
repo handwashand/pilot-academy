@@ -13,8 +13,13 @@
          linked — an SVG icon covers every current browser. Drop a real .ico in
          and add a fallback link here if very old browsers ever matter. --}}
     <link rel="icon" type="image/svg+xml" href="{{ asset('img/pilot-mark.svg') }}">
+    {{-- NOTE: iOS ignores an SVG apple-touch-icon, so "Add to Home Screen"
+         currently falls back to a screenshot. Fixing it needs a square PNG
+         mark (180x180) in public/img/ — there isn't one yet. --}}
     <link rel="apple-touch-icon" href="{{ asset('img/pilot-mark.svg') }}">
-    <meta name="theme-color" content="#0284c7">
+    {{-- Navy, the brand's dark ink. This was #0284c7 — the blue the mark used
+         before it turned amber — which is no longer in the palette at all. --}}
+    <meta name="theme-color" content="#0a2540">
 
     {{-- Link previews, e.g. when a course is shared in a chat. --}}
     <meta property="og:site_name" content="Pilot Academy">
@@ -65,17 +70,56 @@
         .prose-lesson img, .prose-lesson video { max-width: 100%; height: auto; border-radius: 8px; }
         .prose-lesson iframe { max-width: 100%; }
         .prose-lesson table { display: block; max-width: 100%; overflow-x: auto; }
+
+        /* Transcripts are plain text with real line breaks. Tailwind's
+           `whitespace-pre-line` is not in the committed bundle. */
+        .transcript { white-space: pre-line; }
+
+        /* Visually hidden, still announced. Tailwind's `sr-only` is not in the
+           committed CSS bundle, so the academy defines its own. */
+        .vh {
+            position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+            overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+        }
+
+        /* Lets a keyboard or screen-reader user jump the header on every page. */
+        .skip-link {
+            position: absolute; left: 12px; top: -64px; z-index: 50;
+            background: #fff; color: #0a2540; font-weight: 600;
+            padding: 10px 16px; border-radius: 8px;
+            box-shadow: 0 4px 14px rgba(10, 37, 64, .18);
+        }
+        .skip-link:focus { top: 12px; }
+
+        /* The default focus ring is invisible against the brand blue links. */
+        :focus-visible { outline: 2px solid #1463ff; outline-offset: 2px; border-radius: 4px; }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important; scroll-behavior: auto !important;
+            }
+        }
     </style>
 </head>
 <body class="h-full bg-slate-50 text-slate-800">
+    <a href="#main" class="skip-link">Skip to content</a>
+
     <header class="sticky top-0 z-20 bg-white border-b border-slate-200">
         <div class="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
             <a href="{{ route('academy.home') }}" class="flex items-center gap-2.5">
-                {{-- The Pilot mark. Kept next to the wordmark rather than using
-                     the full lockup, which already reads "PILOT" and would say
-                     it twice beside "Pilot Academy". --}}
+                {{-- The mark plus HTML text rather than the lockup image. The
+                     lockup now says "PILOT ACADEMY" so it would no longer say
+                     the name twice — but this header is only 64px tall, and at
+                     the 36px the mark allows the lockup's stacked "ACADEMY"
+                     renders about 6px high and cannot be read. The auth pages
+                     have room and do use the real lockup.
+
+                     One ink for the wordmark: the amber mark carries the
+                     colour. "Academy" used to be brand blue, which worked when
+                     the mark was blue too and clashed once it turned amber. --}}
                 <img src="{{ asset('img/pilot-mark.svg') }}" alt="" class="w-9 h-9" width="36" height="36">
-                <span class="font-extrabold text-navy text-lg">Pilot <span class="text-brand">Academy</span></span>
+                <span class="font-extrabold text-navy text-lg">Pilot Academy</span>
             </a>
             <div class="flex items-center gap-3">
                 @auth
@@ -115,7 +159,7 @@
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-5 py-8">
+    <main id="main" class="max-w-6xl mx-auto px-5 py-8">
         @yield('content')
     </main>
 

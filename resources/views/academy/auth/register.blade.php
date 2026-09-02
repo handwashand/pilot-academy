@@ -7,6 +7,8 @@
 @endphp
 
 @section('content')
+    @include('academy.partials.auth-brand')
+
     <div class="max-w-md mx-auto bg-white rounded-2xl border border-slate-200 shadow-sm p-7 mt-6">
         <h1 class="text-2xl font-extrabold text-navy mb-1">Create your account</h1>
         <p class="text-slate-500 text-sm mb-6">Track your progress and earn certificates.</p>
