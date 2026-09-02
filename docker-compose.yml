@@ -9,10 +9,27 @@ services:
       # Filament loads many assets at once; a single-worker built-in server stalls.
       # App config lives in the image's .env — see the note in the Dockerfile.
       PHP_CLI_SERVER_WORKERS: "4"
+    depends_on:
+      db:
+        condition: service_healthy
     volumes:
-      - database:/data
       - uploads:/var/www/html/storage/app
 
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: pilot_academy
+      POSTGRES_USER: pilot
+      POSTGRES_PASSWORD: secret
+    # The app waits on this, so a slow first boot cannot race the migrations.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pilot -d pilot_academy"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
 volumes:
-  database:
+  pgdata:
   uploads:
