@@ -15,7 +15,7 @@ entry to the [work log](#work-log) below: what changed, why, and anything left
 open. Newest first. A one-line entry beats no entry.
 
 **2. Always update `docs/CHANGELOG.md`.** It renders live in the panel under
-**Changelog**, so admins read it. Newest first, dated, plain language — describe
+**What's new**, so admins read it. Newest first, dated, plain language — describe
 what a person can now do, not which class you added. Required whenever you
 change anything an admin or student can see.
 

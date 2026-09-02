@@ -19,7 +19,7 @@ class LessonResource extends Resource
 {
     protected static ?string $model = Lesson::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
     /** Creators only ever see lessons inside their own products' courses. */
     public static function getEloquentQuery(): Builder

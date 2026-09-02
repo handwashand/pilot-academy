@@ -72,7 +72,7 @@ kept current:
 
 - `docs/admin-guide.md` — the manager guide, shown under **Guide**
   (`app/Filament/Pages/AdminGuide.php`, `/admin/admin-guide`).
-- `docs/CHANGELOG.md` — a plain-language change log, shown under **Changelog**
+- `docs/CHANGELOG.md` — a plain-language change log, shown under **What's new**
   (`app/Filament/Pages/Changelog.php`, `/admin/changelog`).
 
 Both render through `resources/views/filament/pages/partials/doc.blade.php`.
