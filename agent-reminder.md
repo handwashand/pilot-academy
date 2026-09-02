@@ -66,6 +66,21 @@ Last updated: **2026-08-31**
 
 Newest first. Add to this every time.
 
+### 2026-09-02 — Nudge students who have gone quiet
+Closed the loop the dashboard had left open: the stalled-learners panel now
+*identifies* students **and** lets you email them. Row action plus a bulk one,
+sending a personal magic link that lands them on the home page, where "Continue
+where you left off" already offers the next lesson — so no resume logic is
+duplicated in the email.
+
+Nudges are recorded as a new `ActivityEvent` type (`reminder_sent`), which needs
+**no migration** because `type` is a plain string column. That gives a "Reminded"
+column and a 7-day cooldown, so two managers working the same list cannot chase
+the same person twice.
+
+Also switched the six student-facing meta descriptions from Russian to English —
+learners are English-first; French, Spanish and Portuguese come later.
+
 ### 2026-08-31 — Branding and a contrast fix
 Added the Pilot mark and full lockup: favicon (the site had **none** — the
 stock `favicon.ico` is 0 bytes), public header, Filament panel brand, the

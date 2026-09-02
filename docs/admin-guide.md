@@ -256,7 +256,7 @@ The home screen has three panels:
 | **Content needing attention** | Only appears when something is broken for students. Each row links straight to the fix. |
 | The numbers along the top | Students and how many are active, lesson completions, published courses and lessons, certificates issued with the average score. |
 | **Progress by partner company** | How much of the published material each partner's students have worked through. A partner with no students yet reads as 0. |
-| **Students who have gone quiet** | Started a course, completed nothing for two weeks, and no certificate. The one list here worth acting on — click **Open** to see the person. |
+| **Students who have gone quiet** | Started a course, completed nothing for two weeks, and no certificate. The one list here worth acting on — **Send reminder** emails them a link straight back to their next lesson, or **Open** to see the person. |
 | **Lessons students struggle with** | Lessons ranked by how often students fail the quiz. |
 | **Student activity** | Lessons finished and sign-ins per day over the last 30 days — whether use is picking up or going quiet. |
 | **Most opened courses** | What students opened in the last 90 days, finished or not. |
@@ -279,6 +279,23 @@ The home screen has three panels:
 > unclear, not that the students are weak. A lesson needs at least three graded
 > attempts before it appears, and attempts still in progress do not count
 > against it.
+
+### Chase a student who stopped
+
+On **Students who have gone quiet**, click **Send reminder** on their row — or
+tick several and use the bulk **Send reminders**. They get an email with a
+personal link that signs them in and opens their next lesson.
+
+The **Reminded** column shows who has already been chased. Nobody can be
+reminded twice inside 7 days, no matter who clicks, so two managers working the
+same list cannot double up — a bulk send simply skips anyone inside that window
+and tells you how many it skipped.
+
+> A reminder is not progress. The student stays on the list until they come back
+> and finish a lesson, which is what you actually wanted.
+
+> Reminders are recorded in the student's **Activity** tab, so you can see the
+> full history: what they did, and when someone chased them.
 
 > Every number counts **students only**. Your own account and your creators are
 > never included, even though you complete lessons and pick up certificates

@@ -4,7 +4,7 @@
 
 @php
     $metaDescription = \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags($lesson->summary ?: $lesson->content))), 155)
-        ?: $lesson->title.' — урок курса «'.$course->title.'» в Pilot Academy.';
+        ?: $lesson->title.' — a lesson from '.$course->title.' on Pilot Academy.';
 @endphp
 
 @section('content')

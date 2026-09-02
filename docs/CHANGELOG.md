@@ -3,9 +3,28 @@
 A short log of changes to the academy, newest first, in plain language.
 Add a new entry here whenever something visible to admins or students changes.
 
+## September 2026
+
+### Nudge students who have gone quiet
+
+The **Students who have gone quiet** panel now has a **Send reminder** button on
+each row, and a bulk version for chasing several at once. The student gets an
+email with a personal link that signs them straight in and drops them on the
+page showing their next unfinished lesson — no password to remember.
+
+The panel also shows a **Reminded** column, so you can see who has already been
+chased and when. Nobody can be reminded twice within 7 days, whoever clicks: a
+bulk send skips anyone still inside that window and tells you how many it
+skipped. Reminders appear in a student's **Activity** tab alongside their
+lessons.
+
+Being reminded is not progress, so a student stays on the list until they
+actually come back and finish something.
+
 ## August 2026
 
 ### Students can pick up where they left off
+
 The student home page now opens with a **Continue where you left off** card: the
 next unfinished lesson in the course they are partway through, with a progress
 bar and a **Resume** button. It appears only once someone has started something
@@ -13,22 +32,25 @@ and disappears when they finish. It works for signed-out visitors too, whose
 progress is kept in their browser session.
 
 ### Export learner progress to a spreadsheet
+
 **Users** → **Export learner progress** downloads a CSV: name, email, partner,
 lessons completed, valid certificates, last activity, last login and join date.
 Learners only, and revoked certificates are not counted.
 
 ### What students actually open
+
 A **Most opened courses** chart shows which courses students opened over the
 last 90 days. Certificates only tell you what people finished; this shows what
 drew them in, including a course everyone starts and nobody completes.
 
 ### Copy a whole course in one click
+
 **Courses** → the row → **Duplicate**. You get a new **Draft** with the same
 lessons, videos, text, quiz questions and answers, and the same final quiz
 settings and question bank — ready to edit into the next course rather than
 built from scratch.
 
-What is *not* copied: student progress, quiz attempts and certificates. Those
+What is _not_ copied: student progress, quiz attempts and certificates. Those
 belong to the course people actually took.
 
 The copy is genuinely separate — editing a question in it never changes the
@@ -36,6 +58,7 @@ original — and it keeps the same product, so the creator who owned the origina
 owns the copy too.
 
 ### Publish or unpublish several at once
+
 Tick the checkboxes in **Courses** or **Lessons** and use **Publish** or
 **Unpublish** from the bulk menu. Setting up a new course no longer means
 clicking through its lessons one at a time.
@@ -45,11 +68,13 @@ course with no published lesson is skipped rather than published empty, and you
 are told by name which ones were left behind.
 
 ### Is the academy being used?
+
 A new **Student activity** chart shows lessons finished and sign-ins per day
 over the last 30 days. The panel could tell you totals before, but never
 whether things were picking up or going quiet.
 
 ### The panel now warns you when content is broken
+
 Four things could quietly break a course with nothing in the panel saying so.
 A **Content needing attention** panel appears at the top of the dashboard when
 any of them is true, with a link straight to the fix:
@@ -67,6 +92,7 @@ The panel is not shown at all when there is nothing wrong. Creators see only
 their own products' problems.
 
 ### Which lessons students struggle with
+
 A new **Lessons students struggle with** panel ranks lessons by how often
 students fail their quiz, worst first. A high fail rate is usually a confusing
 question rather than a weak student, so treat it as a list worth rereading.
@@ -76,6 +102,7 @@ and staff attempts are excluded, as everywhere else. A lesson needs at least
 three attempts before it appears, so one bad day does not put it top.
 
 ### A dashboard worth opening
+
 The panel's home screen now answers three questions at a glance.
 
 - **The numbers.** Students and how many are active, lesson completions,
@@ -101,9 +128,8 @@ and people. Results show the status, course or partner alongside the name, so
 two people called the same thing are still telling apart. The sidebar can also
 be collapsed now, and tables use the full width of the window.
 
-
-
 ### Product owners can write their own training — the Creator role
+
 Product managers and module owners can now maintain the training for their own
 product without being given the run of the platform. There are three roles:
 
@@ -141,6 +167,7 @@ they stay admin-only until you set one — that is the switch that hands a cours
 to its product owner.
 
 ### Courses are published on purpose, not by accident
+
 Creating a course no longer puts it in front of students. Every new course
 starts as a **Draft** that only admins can see, so you can build it — lessons,
 quizzes and all — in peace, and open it to students when you are ready.
@@ -170,28 +197,33 @@ see before this update is still **Published**.
 ## July 2026
 
 ### Certificate check no longer shows a score
+
 The public verification page now shows only what matters to whoever is
 checking: who it was issued to, the course, the date, and whether it is
 **Valid** or **Revoked**. Passing is pass/fail, so the percentage is gone.
 The score is still kept and visible to you in **Certificates**.
 
 ### Admins can preview the final quiz
+
 Admins can now open and take any course's final quiz without finishing the
 lessons first — useful for checking questions and the certificate. It issues a
 real certificate to the admin account (revoke it afterwards under **Certificates**
 if it was only a test). Students still have to finish every lesson.
 
 ### Final quiz link inside lessons
+
 Students can now open the final quiz straight from the **Lessons** panel while
 inside a lesson — no need to go back to the course page. If some lessons are
 still unfinished, it shows how many are left. On the last lesson, the button
 becomes **Take the final quiz**.
 
 ### Admin guide in the panel
+
 A step-by-step guide for managers is now available in the panel under
 **Guide** — how to build a course, run the final quiz, and issue certificates.
 
 ### Manage the final quiz and certificates in the panel
+
 - A new **Certificates** section lists every issued certificate, with
   **Download**, **Resend email**, **Regenerate PDF**, **Revoke**, and **Export CSV**.
 - Each course has a **Final quiz & certificate** settings block and a
@@ -200,10 +232,12 @@ A step-by-step guide for managers is now available in the panel under
 - The dashboard shows **Certificates issued by course**.
 
 ### Cleaner certificate
+
 Removed the score line from the printed certificate. The score is still kept
 and shown on the verification page, in the student's account, and in the admin.
 
 ### Final quiz and certificates launched
+
 After finishing every lesson in a course, students take a course-wide **final
 quiz**. Passing (80% by default) automatically issues a **PDF certificate**
 with the student's name, the course, the date, a unique number, and a QR code.
@@ -212,4 +246,4 @@ checked by anyone on a public verification page.
 
 ---
 
-*This changelog is also shown in the admin panel under **Changelog**.*
+_This changelog is also shown in the admin panel under **Changelog**._

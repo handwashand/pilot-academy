@@ -3,7 +3,7 @@
 @section('title', 'Pilot Academy — My Learning')
 
 @php
-    $metaDescription = 'Pilot Academy — онлайн-обучение работе с системой мониторинга транспорта Pilot: короткие уроки с видео и тестами. Освойте Pilot с первого дня.';
+    $metaDescription = 'Pilot Academy — online training for the Pilot vehicle monitoring platform. Short, focused lessons with videos and quizzes: get productive from day one.';
 @endphp
 
 @section('content')
