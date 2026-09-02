@@ -90,6 +90,31 @@ There are no tags in this repo yet, so `v1.2.0` will be the first.
 
 Newest first. Add to this every time.
 
+### 2026-09-02 — Branding audit of the learner UI
+Checked every logo surface on the student site after the lockup changed. Three
+things had gone stale, all of them left behind by the mark turning amber.
+
+- **The header's rationale was out of date.** Its comment said the lockup "would
+  say PILOT twice" — true when the lockup was mark + PILOT, not now. The header
+  still uses mark + HTML text, but for a *different* reason worth keeping: the
+  bar is 64px, the mark 36px, and at that scale the lockup's stacked "ACADEMY"
+  renders **~6px** and cannot be read. Comment rewritten to say so.
+- **"Academy" was brand blue** (`text-brand`, #1463ff) next to an amber mark.
+  Coherent while the mark was blue; a clash afterwards. Now one navy ink, with
+  the amber mark carrying the colour.
+- **`theme-color` was `#0284c7`** — the mark's old blue, which is in no palette
+  any more. Now navy `#0a2540`.
+
+The auth pages (login, register, join) now use the **real lockup** at `h-12`,
+matching the admin sign-in's `3rem`, via
+`resources/views/academy/partials/auth-brand.blade.php`. There is room there,
+unlike the header.
+
+**Still open: `apple-touch-icon` points at an SVG, which iOS ignores**, so "Add
+to Home Screen" gets a screenshot instead of the mark. Fixing it needs a square
+**180x180 PNG** in `public/img/`; the container has no ImageMagick, Imagick or
+rsvg, and GD cannot rasterise SVG, so it could not be generated here.
+
 ### 2026-09-02 — App version in the sidebar
 `config('app.version')` rendered at the bottom of the admin sidebar through
 `PanelsRenderHook::SIDEBAR_FOOTER`, linked to **What's new**. See

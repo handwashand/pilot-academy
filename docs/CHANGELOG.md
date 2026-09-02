@@ -5,6 +5,16 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ## 1.2.0 — September 2026
 
+### The student site carries the real logo
+
+The **log in**, **register** and **start learning** pages now open with the full
+**PILOT ACADEMY** logo above the form, the same size and treatment as the admin
+sign-in page — so both front doors look like the same product.
+
+In the header, "Academy" is no longer blue. That blue made sense when the mark
+was blue; since the mark turned amber the two had been fighting each other. The
+name is now one colour and the amber mark carries the accent.
+
 ### The version is on screen
 
 The bottom of the left menu now shows which version you are on, e.g. **v1.2.0**.

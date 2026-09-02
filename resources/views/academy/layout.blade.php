@@ -13,8 +13,13 @@
          linked — an SVG icon covers every current browser. Drop a real .ico in
          and add a fallback link here if very old browsers ever matter. --}}
     <link rel="icon" type="image/svg+xml" href="{{ asset('img/pilot-mark.svg') }}">
+    {{-- NOTE: iOS ignores an SVG apple-touch-icon, so "Add to Home Screen"
+         currently falls back to a screenshot. Fixing it needs a square PNG
+         mark (180x180) in public/img/ — there isn't one yet. --}}
     <link rel="apple-touch-icon" href="{{ asset('img/pilot-mark.svg') }}">
-    <meta name="theme-color" content="#0284c7">
+    {{-- Navy, the brand's dark ink. This was #0284c7 — the blue the mark used
+         before it turned amber — which is no longer in the palette at all. --}}
+    <meta name="theme-color" content="#0a2540">
 
     {{-- Link previews, e.g. when a course is shared in a chat. --}}
     <meta property="og:site_name" content="Pilot Academy">
@@ -99,11 +104,18 @@
     <header class="sticky top-0 z-20 bg-white border-b border-slate-200">
         <div class="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
             <a href="{{ route('academy.home') }}" class="flex items-center gap-2.5">
-                {{-- The Pilot mark. Kept next to the wordmark rather than using
-                     the full lockup, which already reads "PILOT" and would say
-                     it twice beside "Pilot Academy". --}}
+                {{-- The mark plus HTML text rather than the lockup image. The
+                     lockup now says "PILOT ACADEMY" so it would no longer say
+                     the name twice — but this header is only 64px tall, and at
+                     the 36px the mark allows the lockup's stacked "ACADEMY"
+                     renders about 6px high and cannot be read. The auth pages
+                     have room and do use the real lockup.
+
+                     One ink for the wordmark: the amber mark carries the
+                     colour. "Academy" used to be brand blue, which worked when
+                     the mark was blue too and clashed once it turned amber. --}}
                 <img src="{{ asset('img/pilot-mark.svg') }}" alt="" class="w-9 h-9" width="36" height="36">
-                <span class="font-extrabold text-navy text-lg">Pilot <span class="text-brand">Academy</span></span>
+                <span class="font-extrabold text-navy text-lg">Pilot Academy</span>
             </a>
             <div class="flex items-center gap-3">
                 @auth
