@@ -4,6 +4,34 @@ A short log of changes to the academy, newest first, in plain language.
 Add a new entry here whenever something visible to admins or students changes.
 
 ## 1.2.0 — September 2026
+hol
+### Videos remember where you stopped, and can be read instead of watched
+
+**A video picks up where the student left it.** Someone interrupted 18 minutes
+into a 25-minute video used to start again from the beginning. Their place is
+saved to their account, so it follows them to another device. Being near the end
+starts the video fresh, since that means they had finished.
+
+**Lessons can now carry a transcript.** Add one in **Lessons** → **Video
+transcript** (paste the captions from YouTube if you have them). Students get a
+**Transcript** panel under the video they can open and read instead of watching
+— which also means someone who cannot use audio can still complete the training.
+
+**It also makes videos searchable.** Until now the words spoken in a video
+matched nothing; student search now looks inside transcripts too.
+
+### Tell us what you thought of a course
+
+When a student finishes every lesson, the **Course complete** card asks whether
+the course was useful — a thumbs up or down and an optional sentence.
+
+Read it in **Courses** → **Edit** → **Student feedback**, with the student, their
+partner company and what they wrote. Filter by verdict to see the complaints on
+their own.
+
+> **Students never see each other's feedback**, and there are no public star
+> ratings. The dashboard could already tell you which lessons students *fail*.
+> This answers the different question of which ones they found useless.
 
 ### Order lessons by dragging them, and reuse ones you already have
 

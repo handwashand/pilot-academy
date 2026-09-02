@@ -29,6 +29,15 @@ Route::get('/courses/{course:slug}/lessons/{lesson:slug}', [AcademyController::c
 Route::post('/courses/{course:slug}/lessons/{lesson:slug}/quiz/start', [AcademyController::class, 'startQuiz'])->name('academy.quiz.start');
 Route::post('/courses/{course:slug}/lessons/{lesson:slug}/quiz', [AcademyController::class, 'submitQuiz'])->name('academy.quiz');
 
+// Remembering a place in a video, and what a student thought of a course, both
+// belong to an account — there is nowhere to keep them for an anonymous visitor.
+Route::middleware('auth')->group(function () {
+    Route::post('/courses/{course:slug}/lessons/{lesson:slug}/position', [AcademyController::class, 'saveVideoPosition'])
+        ->name('academy.lesson.position');
+    Route::post('/courses/{course:slug}/feedback', [AcademyController::class, 'saveFeedback'])
+        ->name('academy.course.feedback');
+});
+
 // Final quiz + student certificates (logged-in students only)
 Route::middleware('auth')->group(function () {
     Route::get('/courses/{course:slug}/final-quiz', [FinalQuizController::class, 'show'])->name('academy.final.show');

@@ -57,6 +57,17 @@ php artisan filament:assets
 php artisan optimize        # re-cache config/routes/views
 ```
 
+> Run `migrate` **before** anyone uses the site, and roll the code back
+> **before** the migration if you have to undo a release. Between new code
+> landing and its migration running, any page whose query names a new column
+> returns a 500 — `/search` does exactly that for `lessons.transcript` in 1.2.0.
+> The gap is normally a couple of seconds; it becomes an outage only if the
+> migration fails or is skipped.
+
+> Version numbers live in `config/app.php` (`'version'`, shown at the bottom of
+> the admin sidebar) and in the heading in `docs/CHANGELOG.md`. Tag the merge
+> commit on `laravel` to match, e.g. `git tag v1.2.0 && git push origin v1.2.0`.
+
 ## nginx server block (subdomain example)
 
 ```nginx

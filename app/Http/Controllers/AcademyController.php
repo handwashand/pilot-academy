@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\ActivityEvent;
 use App\Models\Course;
+use App\Models\CourseFeedback;
 use App\Models\Lesson;
 use App\Models\QuizAttempt;
+use App\Models\VideoPosition;
 use Illuminate\Http\Request;
 
 class AcademyController extends Controller
@@ -81,6 +83,11 @@ class AcademyController extends Controller
                 ->where('sort_order', '>', $course->sort_order)
                 ->orderBy('sort_order')
                 ->first(),
+            // Their own verdict, so the form shows what they already said
+            // rather than asking twice.
+            'feedback' => $user
+                ? CourseFeedback::where('user_id', $user->id)->where('course_id', $course->id)->first()
+                : null,
         ]);
     }
 
@@ -107,11 +114,63 @@ class AcademyController extends Controller
             'prev' => $prev,
             'completed' => $this->completedIds($request),
             'quiz' => $this->quizState($request, $lesson),
+            // Where they got to last time, so a 25-minute video does not start
+            // from zero. Anonymous visitors have nowhere to keep this.
+            'videoPosition' => $user
+                ? (int) VideoPosition::where('user_id', $user->id)->where('lesson_id', $lesson->id)->value('seconds')
+                : 0,
             'finalUnlocked' => $course->finalQuizUnlockedFor($user),
             'certificate' => $user
                 ? $course->certificates()->where('user_id', $user->id)->whereNull('revoked_at')->latest('issued_at')->first()
                 : null,
         ]);
+    }
+
+    /**
+     * Remember where a student got to inside a lesson video. Sent every few
+     * seconds while playing, so it stays a single upserted row per lesson.
+     */
+    public function saveVideoPosition(Request $request, Course $course, Lesson $lesson)
+    {
+        abort_unless($lesson->course_id === $course->id, 404);
+        abort_unless($course->isVisibleTo($request->user()) && $lesson->isVisibleTo($request->user()), 404);
+
+        $data = $request->validate([
+            'seconds' => ['required', 'integer', 'min:0', 'max:86400'],
+        ]);
+
+        VideoPosition::updateOrCreate(
+            ['user_id' => $request->user()->id, 'lesson_id' => $lesson->id],
+            ['seconds' => $data['seconds']],
+        );
+
+        return response()->noContent();
+    }
+
+    /**
+     * What a student thought of a course. Asked only once they have finished it,
+     * and never shown to other students.
+     */
+    public function saveFeedback(Request $request, Course $course)
+    {
+        abort_unless($course->isVisibleTo($request->user()), 404);
+
+        $user = $request->user();
+
+        // Nothing to say about a course you have not taken.
+        abort_unless($course->isCompletedBy($user), 403);
+
+        $data = $request->validate([
+            'is_positive' => ['required', 'boolean'],
+            'comment' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        CourseFeedback::updateOrCreate(
+            ['user_id' => $user->id, 'course_id' => $course->id],
+            ['is_positive' => $request->boolean('is_positive'), 'comment' => $data['comment'] ?? null],
+        );
+
+        return redirect()->route('academy.course', $course)->with('feedback_saved', true);
     }
 
     /**
@@ -340,7 +399,10 @@ class AcademyController extends Controller
                 ->whereHas('course', fn ($query) => $query->published())
                 ->where(fn ($query) => $query
                     ->whereRaw('LOWER(lessons.title) LIKE ?', [$like])
-                    ->orWhereRaw('LOWER(lessons.summary) LIKE ?', [$like]))
+                    ->orWhereRaw('LOWER(lessons.summary) LIKE ?', [$like])
+                    // The transcript is what makes a video findable at all —
+                    // until it existed, spoken content matched nothing.
+                    ->orWhereRaw('LOWER(lessons.transcript) LIKE ?', [$like]))
                 ->with('course')
                 ->orderBy('sort_order')
                 ->limit(30)

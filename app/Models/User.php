@@ -131,6 +131,18 @@ class User extends Authenticatable implements FilamentUser
         return $this->belongsToMany(Lesson::class)->withPivot('completed_at')->withTimestamps();
     }
 
+    /** How far this student got into each lesson video. */
+    public function videoPositions(): HasMany
+    {
+        return $this->hasMany(VideoPosition::class);
+    }
+
+    /** What this student thought of the courses they finished. */
+    public function courseFeedback(): HasMany
+    {
+        return $this->hasMany(CourseFeedback::class);
+    }
+
     public function activities(): HasMany
     {
         return $this->hasMany(ActivityEvent::class)->latest();

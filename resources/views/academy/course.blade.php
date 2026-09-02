@@ -105,6 +105,46 @@
                             </a>
                         @endif
                     </div>
+
+                    {{-- Asked once they have finished, and seen only by staff.
+                         Not public stars: this is assigned training, not a
+                         marketplace where strangers pick between sellers. --}}
+                    @auth
+                        <div class="mt-5 pt-5 border-t border-slate-100">
+                            @if(session('feedback_saved'))
+                                <p role="status" class="text-sm font-semibold text-ok">Thanks — that helps us fix the course.</p>
+                            @endif
+
+                            @if($feedback)
+                                <p class="text-sm text-slate-500">
+                                    You said this course was
+                                    <strong class="text-navy">{{ $feedback->is_positive ? 'useful' : 'not useful' }}</strong>.
+                                </p>
+                            @else
+                                <p class="text-sm font-semibold text-navy mb-1">Was this course useful?</p>
+                                <p class="text-sm text-slate-500 mb-3">Only the training team sees this — other students never do.</p>
+                            @endif
+
+                            <form method="POST" action="{{ route('academy.course.feedback', $course) }}" class="mt-2">
+                                @csrf
+                                <label for="feedback-comment" class="vh">Anything you would change?</label>
+                                <textarea id="feedback-comment" name="comment" rows="2" maxlength="1000"
+                                          placeholder="Anything you would change? (optional)"
+                                          class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm">{{ $feedback->comment ?? '' }}</textarea>
+
+                                <div class="mt-3 flex flex-wrap gap-3">
+                                    <button type="submit" name="is_positive" value="1"
+                                            class="inline-flex items-center gap-2 h-11 px-5 rounded-lg font-semibold {{ $feedback && $feedback->is_positive ? 'bg-ok text-white' : 'border border-slate-300 text-slate-600 hover:bg-slate-50' }}">
+                                        <span aria-hidden="true">👍</span> Useful
+                                    </button>
+                                    <button type="submit" name="is_positive" value="0"
+                                            class="inline-flex items-center gap-2 h-11 px-5 rounded-lg font-semibold {{ $feedback && ! $feedback->is_positive ? 'bg-navy text-white' : 'border border-slate-300 text-slate-600 hover:bg-slate-50' }}">
+                                        <span aria-hidden="true">👎</span> Not useful
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    @endauth
                 </div>
             </div>
         </div>

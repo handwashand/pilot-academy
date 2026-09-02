@@ -65,6 +65,49 @@
                         var video = document.getElementById('lesson-video');
                         if (!video) return;
 
+                        // Pick the video up where it was left. Sent back to the
+                        // server every 10s of playback and on the way out, so an
+                        // interrupted 25-minute video does not restart.
+                        var startAt = {{ (int) ($videoPosition ?? 0) }};
+                        var saveUrl = @json($lesson->video_url ? route('academy.lesson.position', [$course, $lesson]) : null);
+                        var token = document.querySelector('meta[name="csrf-token"]');
+
+                        if (startAt > 0) {
+                            video.addEventListener('loadedmetadata', function () {
+                                // Never resume within the last 15s: that is
+                                // "finished", and reopening should start again.
+                                if (isFinite(video.duration) && startAt < video.duration - 15) {
+                                    video.currentTime = startAt;
+                                }
+                            }, { once: true });
+                        }
+
+                        if (saveUrl && token) {
+                            var lastSaved = -1;
+                            var save = function () {
+                                var at = Math.floor(video.currentTime || 0);
+                                if (at === lastSaved) return;
+                                lastSaved = at;
+                                // keepalive so the last write survives the page
+                                // being closed mid-lesson.
+                                fetch(saveUrl, {
+                                    method: 'POST',
+                                    keepalive: true,
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': token.content,
+                                    },
+                                    body: JSON.stringify({ seconds: at }),
+                                }).catch(function () { /* losing a position is not worth an error */ });
+                            };
+
+                            video.addEventListener('timeupdate', function () {
+                                if (Math.floor(video.currentTime) % 10 === 0) save();
+                            });
+                            video.addEventListener('pause', save);
+                            window.addEventListener('pagehide', save);
+                        }
+
                         // Volume and speed are remembered across lessons, so a
                         // student sets them once. Storage can throw in private
                         // windows, so every access is guarded.
@@ -112,6 +155,19 @@
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowfullscreen></iframe>
                 </div>
+            @endif
+
+            {{-- Transcript. Collapsed so it never buries the lesson, but present
+                 in the page for anyone who cannot use the audio, wants to skim
+                 rather than scrub, or uses Ctrl+F. --}}
+            @if($lesson->transcript)
+                <details class="mt-6 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                    <summary class="font-bold text-navy cursor-pointer">
+                        Transcript
+                        <span class="text-sm font-medium text-slate-500">— read instead of watching</span>
+                    </summary>
+                    <div class="transcript mt-4 text-slate-700">{{ $lesson->transcript }}</div>
+                </details>
             @endif
 
             {{-- Lesson text --}}

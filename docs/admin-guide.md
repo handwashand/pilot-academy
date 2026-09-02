@@ -62,9 +62,14 @@ The path is always the same: **make a course → fill it with lessons → turn o
    the lesson card, in the lesson list and on the course page ("32 min left"),
    and it is how they decide whether to start now or come back later. It also
    adds up into the course total when the course has no duration of its own.
-6. Scroll to **Knowledge check (quiz)**. Click **Add question**, type the question, add answer options, and turn on **Correct** for the right one. Add as many questions as you want.
-7. Leave **Status** on **Published** and click **Create**.
-8. Repeat for every lesson in the course.
+6. Paste a **Video transcript** if the lesson has a video. It is worth the two
+   minutes: students can read it instead of watching, someone who cannot use
+   audio can still finish the training, and it is the **only** way the words
+   spoken in a video turn up in student search. YouTube's own captions can be
+   copied straight in.
+7. Scroll to **Knowledge check (quiz)**. Click **Add question**, type the question, add answer options, and turn on **Correct** for the right one. Add as many questions as you want.
+8. Leave **Status** on **Published** and click **Create**.
+9. Repeat for every lesson in the course.
 
 > New lessons are **Published** straight away — and that is safe, because
 > students still see nothing until the *course* is published in Step 4. So there
@@ -273,6 +278,21 @@ with a company.
 ### Who finished a course
 
 Go to **Users** and open a student. The **Completed lessons** tab lists every lesson they finished. The **Dashboard** shows overall activity across all students.
+
+### What students thought of a course
+
+Open the course (**Courses** → **Edit**) and go to **Student feedback**. Once a
+student finishes every lesson they are asked whether the course was useful, and
+can add a sentence. You see the verdict, who said it, their partner company and
+their comment. Use the **Verdict** filter to read just the complaints.
+
+> This is the one report that tells you a course is *bad* rather than *hard*.
+> **Lessons students struggle with** on the Dashboard shows where people fail;
+> this shows where they felt their time was wasted, and those are different
+> lists.
+
+> Students never see each other's feedback, and there are no public star
+> ratings — this is training your company assigns, not a shop.
 
 ### Read the Dashboard
 

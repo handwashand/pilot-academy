@@ -137,6 +137,12 @@ class Course extends Model
             ->orderBy('course_final_questions.sort_order');
     }
 
+    /** What students said about this course once they finished it. */
+    public function feedback(): HasMany
+    {
+        return $this->hasMany(CourseFeedback::class);
+    }
+
     public function certificates(): HasMany
     {
         return $this->hasMany(Certificate::class);

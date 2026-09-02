@@ -128,6 +128,12 @@ class LessonForm
                         RichEditor::make('content')
                             ->label('Lesson text')
                             ->columnSpanFull(),
+
+                        Textarea::make('transcript')
+                            ->label('Video transcript')
+                            ->rows(6)
+                            ->columnSpanFull()
+                            ->helperText('What is said in the video, as plain text. Students can read it instead of watching, and it is the only way the words inside a video turn up in search. Paste the captions from YouTube if you have them.'),
                     ]),
 
                 Section::make('Documentation links')

@@ -90,6 +90,40 @@ There are no tags in this repo yet, so `v1.2.0` will be the first.
 
 Newest first. Add to this every time.
 
+### 2026-09-02 — Video resume, transcripts, course feedback (**schema change**)
+The three migration-needing items from the learner-experience review, shipped as
+**one batch** so there is a single deploy window. Three migrations,
+`2026_09_02_000001..3`.
+
+**The trap that shaped the design.** Playback position is *not* a column on the
+`lesson_user` pivot, though that is the obvious place. `completedLessons()` is a
+plain `belongsToMany` with **no filter on `completed_at`**, and the dashboard's
+raw queries (`CompletionsByCompany`, `StalledLearners`, `UsersTable`) read the
+table directly. A row written when someone merely pressed play would therefore
+count as a **completed lesson** everywhere — progress bars, partner reports, and
+the gate that unlocks the final quiz and issues a certificate. Hence a separate
+`video_positions` table. `test_watching_a_video_does_not_mark_the_lesson_complete`
+guards it; do not "simplify" this onto the pivot without fixing that relation
+first.
+
+**Rollback was rehearsed** (roll back 3, check the site, migrate forward). It
+surfaced a real hazard: **`/search` 500s while the migration is rolled back**,
+because the query names `lessons.transcript`. Documented in `DEPLOY.md` — migrate
+before use, and roll the *code* back before the migration.
+
+Other notes:
+
+- `course_feedback` needs an explicit `$table`; Laravel would pluralise the model
+  to `course_feedbacks`.
+- Feedback is staff-only and write-once-per-student (`updateOrCreate` on a unique
+  `user_id + course_id`). The relation manager is `isReadOnly()` — students write
+  it, staff read it. Deliberately **not** public star ratings.
+- The position endpoint is `POST` + `auth`; anonymous visitors have nowhere to
+  store this, and `keepalive: true` on the fetch is what makes the last write
+  survive the tab closing.
+- `.transcript { white-space: pre-line }` lives in the layout's `<style>`:
+  `whitespace-pre-line` is not in the committed bundle either.
+
 ### 2026-09-02 — Lessons tab on the course editor
 `LessonsRelationManager` on `CourseResource`: drag-to-reorder plus
 **Add existing lesson**. Filament's `->reorderable('sort_order')` and

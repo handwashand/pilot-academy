@@ -90,6 +90,7 @@ class CourseResource extends Resource
         return [
             RelationManagers\LessonsRelationManager::class,
             RelationManagers\FinalQuestionsRelationManager::class,
+            RelationManagers\FeedbackRelationManager::class,
         ];
     }
 

@@ -24,6 +24,7 @@ class Lesson extends Model
         'youtube_url',
         'video_path',
         'content',
+        'transcript',
         'doc_links',
         'quiz_time_limit_minutes',
         'quiz_max_attempts',

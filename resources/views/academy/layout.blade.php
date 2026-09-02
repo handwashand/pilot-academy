@@ -71,6 +71,10 @@
         .prose-lesson iframe { max-width: 100%; }
         .prose-lesson table { display: block; max-width: 100%; overflow-x: auto; }
 
+        /* Transcripts are plain text with real line breaks. Tailwind's
+           `whitespace-pre-line` is not in the committed bundle. */
+        .transcript { white-space: pre-line; }
+
         /* Visually hidden, still announced. Tailwind's `sr-only` is not in the
            committed CSS bundle, so the academy defines its own. */
         .vh {
