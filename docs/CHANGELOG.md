@@ -5,6 +5,11 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ## 1.2.0 — September 2026
 
+### The version is on screen
+
+The bottom of the left menu now shows which version you are on, e.g. **v1.2.0**.
+Click it to come straight here and read what changed.
+
 ### Six improvements to the student site
 
 **Students can see how long things take.** Courses and lessons now show their

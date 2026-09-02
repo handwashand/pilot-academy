@@ -17,6 +17,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Application Version
+    |--------------------------------------------------------------------------
+    |
+    | Shown at the bottom of the admin sidebar and used to tell people which
+    | release they are looking at. It belongs to the code, not the server, so
+    | it is a literal here rather than an env value.
+    |
+    | Bump it in the same change that adds a dated heading to
+    | docs/CHANGELOG.md, and tag the merge commit to match.
+    |
+    */
+
+    'version' => '1.2.0',
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |

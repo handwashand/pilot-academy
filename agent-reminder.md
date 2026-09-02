@@ -36,10 +36,28 @@ is not obvious in this repo.
 
 Last updated: **2026-09-02**
 
-Next release is **1.2.0** — the first version number this project has had. There
-are no git tags yet; the version lives in the `docs/CHANGELOG.md` heading, which
-is what admins read under **What's new**. Earlier entries are month-only and are
-deliberately *not* renumbered after the fact.
+Next release is **1.2.0** — the first version number this project has had.
+Earlier changelog entries are month-only and are deliberately *not* renumbered
+after the fact.
+
+### Cutting a release
+
+The version lives in **two places that must move together**:
+
+1. `config/app.php` → `'version'`. A literal, not an env value: it describes the
+   code, not the server. This is what the panel renders.
+2. The heading in `docs/CHANGELOG.md` (`## 1.2.0 — September 2026`), which is
+   what admins read under **What's new**.
+
+It is shown at the bottom of the admin sidebar via the
+`PanelsRenderHook::SIDEBAR_FOOTER` hook (`resources/views/filament/sidebar-version.blade.php`),
+linked to the What's new page. **That view is styled with inline CSS on purpose**
+— the panel stylesheet has no Tailwind utility layer, so classes there do
+nothing (see the trap below). Its greys use Filament's own `--gray-*` custom
+properties, which Filament injects per page, so they work in both themes.
+
+Tag the **merge commit on `laravel`**, not a feature branch: `git tag v1.2.0`.
+There are no tags in this repo yet, so `v1.2.0` will be the first.
 
 ### Branches
 
@@ -71,6 +89,25 @@ deliberately *not* renumbered after the fact.
 ## Work log
 
 Newest first. Add to this every time.
+
+### 2026-09-02 — App version in the sidebar
+`config('app.version')` rendered at the bottom of the admin sidebar through
+`PanelsRenderHook::SIDEBAR_FOOTER`, linked to **What's new**. See
+[Cutting a release](#cutting-a-release) for the two places the number lives.
+
+Checked rather than assumed, because the panel is a different world from the
+student site:
+
+- `SIDEBAR_FOOTER` renders as the **last child of `<aside>`**, unconditionally.
+  (`SIDEBAR_NAV_END` sits inside `<nav>`, above Filament's own footer block.)
+- The `--gray-*` custom properties are **not** in the static panel stylesheet;
+  Filament injects them per page, so `var(--gray-400)` resolves at runtime and
+  in both themes.
+- Collapsing uses Alpine, not a CSS class: `x-show="$store.sidebar.isOpen"`,
+  guarded by `filament()->isSidebarCollapsibleOnDesktop()` so the store is
+  guaranteed to exist.
+- **`[x-cloak]` is not defined in the panel stylesheet**, so `x-cloak` there is
+  a no-op. It was removed rather than left in looking useful.
 
 ### 2026-09-02 — Six learner-experience improvements
 The no-migration half of a review against Claude Academy / Udemy / LinkedIn
