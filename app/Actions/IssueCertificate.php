@@ -72,9 +72,13 @@ class IssueCertificate
             $background = Storage::disk('public')->path($certificate->course->certificate_template);
         }
 
-        // The full lockup, embedded rather than linked: dompdf resolves a data
-        // URI without needing filesystem access, exactly as the QR does above.
-        $logoPath = public_path('img/pilot-logo.png');
+        // Deliberately the blue lockup, not the amber one used everywhere else:
+        // a certificate is a formal document, and its frame and course title are
+        // already brand blue (#1463ff).
+        //
+        // Embedded rather than linked, so dompdf resolves it without filesystem
+        // access — exactly as the QR does above.
+        $logoPath = public_path('img/pilot-logo-blue.png');
         $logo = is_file($logoPath)
             ? 'data:image/png;base64,'.base64_encode(file_get_contents($logoPath))
             : null;

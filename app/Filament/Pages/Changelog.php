@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 
 class Changelog extends Page
 {
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSparkles;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMegaphone;
 
     // The class and route stay "changelog" so existing links keep working;
     // only what people read is changed.

@@ -5,6 +5,17 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ## September 2026
 
+### The Pilot logo, and a tidier menu
+The Pilot mark is now **amber**, matching the buttons in the panel. You will see
+it in the browser tab, the student site header, the admin panel and link
+previews.
+
+**Certificates keep the original blue logo** — they are formal documents, and
+their frame and course title are blue already.
+
+In the left menu, **Changelog** is now called **What's new**, and every section
+has its own icon instead of five sharing one.
+
 ### Nudge students who have gone quiet
 
 The **Students who have gone quiet** panel now has a **Send reminder** button on
