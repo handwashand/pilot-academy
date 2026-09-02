@@ -8,6 +8,12 @@ Add a new entry here whenever something visible to admins or students changes.
 ### A a tidier menu
 
 
+The logo now reads **PILOT ACADEMY**, not just **PILOT** — in the admin panel,
+on certificates and in the emails the academy sends. "ACADEMY" sits under the
+Pilot wordmark in grey, the same way the other Pilot products write their name
+(PILOT Video, PILOT IOT, PILOT Autoconductor), so the academy looks like part
+of the family rather than a separate thing.
+
 On the **sign-in page** the logo is now bigger than the **Sign in** heading, so
 the brand leads and the heading reads as the label it is. The logo also shows
 correctly in dark mode — until now the colour and white versions were both drawn,

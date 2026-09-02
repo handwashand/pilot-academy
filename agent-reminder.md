@@ -66,6 +66,41 @@ Last updated: **2026-08-31**
 
 Newest first. Add to this every time.
 
+### 2026-09-02 — Lockup now says PILOT ACADEMY
+The supplied lockup was mark + "PILOT" only. Regenerated all three variants
+(`pilot-logo.png`, `-white`, `-blue`) with "ACADEMY" added.
+
+**Pilot already has a house rule for this** and we now follow it. The product
+lockups on <https://pilot-telematics.com/products/> (PILOT Video, IOT,
+Autoconductor, Utilities, Development, TMS) all set the product word the same
+way, and measuring six of them gives:
+
+| | |
+|---|---|
+| descriptor cap height | **40%** of the PILOT cap |
+| gap below the PILOT baseline | **0.27 x** the PILOT cap |
+| alignment | left edge of the **wordmark**, not the mark |
+| colour | **`#9F9FA9`** grey, whatever colour the mark is |
+| placement | **stacked underneath**, the stack centred on the mark |
+
+Their proportions are ours: PILOT's cap is 45% of canvas height in both. So the
+wordmark is raised 90px to re-centre the stack, and ACADEMY sits at cap 109px,
+0.18em tracking, baseline 529.
+
+**Canvas stays 1920x604**, so nothing that hardcodes the ratio had to move —
+`certificates/pdf.blade.php` keeps `54mm x 17mm` and the mail templates keep
+`width=180`. An earlier attempt set ACADEMY *inline* after PILOT, which pushed
+the canvas to 3238x604 and forced changes in all three of those files; that was
+reverted once the house convention was clear. **If you ever change the canvas
+ratio, those files must move with it.**
+
+Typeface: the PILOT logotype is a custom face we do not have, so the descriptor
+is DejaVu Sans Bold — the only TTF on hand, shipped with dompdf. Generated with
+GD in the container: there is no ImageMagick and no system fonts.
+
+The student site header does *not* use the lockup (mark SVG + HTML text), so
+it needed nothing.
+
 ### 2026-09-02 — Sign-in page: the brand logo
 Reported as "the Sign in text is bigger than the logo". It was, but the cause
 was not a size choice — `resources/views/filament/brand/logo.blade.php` styled
