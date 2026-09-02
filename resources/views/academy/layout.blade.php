@@ -80,7 +80,21 @@
             <div class="flex items-center gap-3">
                 @auth
                     @php($name = auth()->user()->name)
-                    <a href="{{ route('certificates.index') }}" class="hidden sm:block text-sm text-slate-600 hover:text-brand font-medium">Certificates</a>
+                    {{-- Certificates has to stay reachable on a phone: the word
+                         alone overflows the header below sm:, so the 🎓 used for
+                         certificates elsewhere in the academy carries it there and
+                         the label joins it from sm: up. One link, not two, so
+                         there is nothing to keep in sync.
+
+                         `sm:hidden` is NOT in the committed CSS bundle — hiding
+                         the icon on desktop would silently do nothing. Every class
+                         here was checked against public/build/assets/app-*.css. --}}
+                    <a href="{{ route('certificates.index') }}"
+                       class="flex items-center gap-2 h-11 px-2 rounded-lg text-sm text-slate-600 hover:text-brand hover:bg-slate-50 active:bg-slate-100 font-medium"
+                       aria-label="My certificates">
+                        <span aria-hidden="true">🎓</span>
+                        <span class="hidden sm:block">Certificates</span>
+                    </a>
                     <span class="hidden sm:block text-sm text-slate-500">{{ $name }}</span>
                     <span class="w-9 h-9 rounded-full bg-navy text-white flex items-center justify-center font-bold text-sm">
                         {{ strtoupper(mb_substr($name, 0, 1)) }}

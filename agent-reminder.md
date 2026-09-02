@@ -66,6 +66,29 @@ Last updated: **2026-08-31**
 
 Newest first. Add to this every time.
 
+### 2026-09-02 — Two mobile bugs on the student site
+Found while reviewing the learner experience against Claude Academy / Udemy /
+LinkedIn Learning. Both break rules `CLAUDE.md` sets for this project.
+
+**1. Certificates were unreachable on a phone.** The header link was
+`hidden sm:block` with no menu behind it and no other route to
+`/my/certificates` — a student on a phone who had earned a certificate could not
+open it. Straight violation of *"Header/nav must not overflow or hide key
+actions on narrow screens."* Now one link that shows 🎓 always and the word from
+`sm:` up, `h-11` so the tap target meets the ~44px rule.
+
+**2. Uploaded videos forced full screen on iOS.** `<video controls>` without
+`playsinline` makes iOS Safari take over the screen on play, hiding the lesson
+body and the quiz. YouTube lessons were unaffected, so the experience silently
+depended on which source the admin picked. Added `playsinline`.
+
+**The bundle trap fired again, and this time it would have shipped.** The first
+attempt used a separate icon link hidden with `sm:hidden` — **`sm:hidden` is not
+in `public/build/assets/app-*.css`**, so the icon would have shown on desktop
+too, next to the text link. `sm:block` and `hidden` *are* in the bundle, which is
+why the inverted form works. Every class in the fix was checked against the
+bundle before committing to it.
+
 ### 2026-09-02 — Lockup now says PILOT ACADEMY
 The supplied lockup was mark + "PILOT" only. Regenerated all three variants
 (`pilot-logo.png`, `-white`, `-blue`) with "ACADEMY" added.
@@ -222,8 +245,11 @@ does nothing until CI catches up:
 grep -c '\.text-slate-900' public/build/assets/app-*.css
 ```
 
-This is not theoretical: a hero input styled with an absent `text-slate-900`
-would have inherited the card's `text-white` and rendered **white on white**.
+This is not theoretical, and it has now fired twice: a hero input styled with an
+absent `text-slate-900` would have inherited the card's `text-white` and rendered
+**white on white**; and **`sm:hidden` is not in the bundle** (though `hidden` and
+`sm:block` are), so an element hidden that way on desktop stays visible. Prefer
+the `hidden sm:block` direction, which is already compiled.
 
 **The Filament panel has no Tailwind utility layer at all.** `/admin` loads
 only `public/css/filament/filament/app.css`, never the Vite bundle, and

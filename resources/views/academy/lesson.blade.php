@@ -36,7 +36,7 @@
             {{-- Video: uploaded file takes priority, otherwise YouTube embed --}}
             @if($lesson->video_url)
                 <div class="mt-6 rounded-2xl overflow-hidden border border-slate-200 shadow-sm aspect-video bg-black">
-                    <video class="w-full h-full" controls preload="metadata">
+                    <video class="w-full h-full" controls playsinline preload="metadata">
                         <source src="{{ $lesson->video_url }}">
                         Your browser does not support the video tag.
                     </video>

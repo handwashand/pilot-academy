@@ -5,6 +5,17 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ## September 2026
 
+### Two fixes for students on phones
+
+**Certificates can be opened on a phone again.** The link was there on a laptop
+but disappeared on a narrow screen, so a student who had earned a certificate
+had no way to reach it from their phone. The header now shows a 🎓 on small
+screens and the full **Certificates** link from tablet size up.
+
+**Uploaded lesson videos no longer take over the screen on iPhones.** They used
+to jump to full screen the moment a student pressed play, hiding the lesson and
+the quiz underneath. They now play in place, as YouTube lessons already did.
+
 ### A a tidier menu
 
 
