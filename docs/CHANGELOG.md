@@ -3,9 +3,161 @@
 A short log of changes to the academy, newest first, in plain language.
 Add a new entry here whenever something visible to admins or students changes.
 
+## September 2026
+
+### Two fixes for students on phones
+
+**Certificates can be opened on a phone again.** The link was there on a laptop
+but disappeared on a narrow screen, so a student who had earned a certificate
+had no way to reach it from their phone. The header now shows a 🎓 on small
+screens and the full **Certificates** link from tablet size up.
+
+**Uploaded lesson videos no longer take over the screen on iPhones.** They used
+to jump to full screen the moment a student pressed play, hiding the lesson and
+the quiz underneath. They now play in place, as YouTube lessons already did.
+
+### A a tidier menu
+
+
+The logo now reads **PILOT ACADEMY**, not just **PILOT** — in the admin panel,
+on certificates and in the emails the academy sends. "ACADEMY" sits under the
+Pilot wordmark in grey, the same way the other Pilot products write their name
+(PILOT Video, PILOT IOT, PILOT Autoconductor), so the academy looks like part
+of the family rather than a separate thing.
+
+On the **sign-in page** the logo is now bigger than the **Sign in** heading, so
+the brand leads and the heading reads as the label it is. The logo also shows
+correctly in dark mode — until now the colour and white versions were both drawn,
+one on top of the other, and neither was the size it was meant to be.
+
+In the left menu, **Changelog** is now called **What's new**, and every section
+has its own icon instead of five sharing one.
+
+### Nudge students who have gone quiet
+
+The **Students who have gone quiet** panel now has a **Send reminder** button on
+each row, and a bulk version for chasing several at once. The student gets an
+email with a personal link that signs them straight in and drops them on the
+page showing their next unfinished lesson — no password to remember.
+
+The panel also shows a **Reminded** column, so you can see who has already been
+chased and when. Nobody can be reminded twice within 7 days, whoever clicks: a
+bulk send skips anyone still inside that window and tells you how many it
+skipped. Reminders appear in a student's **Activity** tab alongside their
+lessons.
+
+Being reminded is not progress, so a student stays on the list until they
+actually come back and finish something.
+
 ## August 2026
 
+### Students can pick up where they left off
+
+The student home page now opens with a **Continue where you left off** card: the
+next unfinished lesson in the course they are partway through, with a progress
+bar and a **Resume** button. It appears only once someone has started something
+and disappears when they finish. It works for signed-out visitors too, whose
+progress is kept in their browser session.
+
+### Export learner progress to a spreadsheet
+
+**Users** → **Export learner progress** downloads a CSV: name, email, partner,
+lessons completed, valid certificates, last activity, last login and join date.
+Learners only, and revoked certificates are not counted.
+
+### What students actually open
+
+A **Most opened courses** chart shows which courses students opened over the
+last 90 days. Certificates only tell you what people finished; this shows what
+drew them in, including a course everyone starts and nobody completes.
+
+### Copy a whole course in one click
+
+**Courses** → the row → **Duplicate**. You get a new **Draft** with the same
+lessons, videos, text, quiz questions and answers, and the same final quiz
+settings and question bank — ready to edit into the next course rather than
+built from scratch.
+
+What is _not_ copied: student progress, quiz attempts and certificates. Those
+belong to the course people actually took.
+
+The copy is genuinely separate — editing a question in it never changes the
+original — and it keeps the same product, so the creator who owned the original
+owns the copy too.
+
+### Publish or unpublish several at once
+
+Tick the checkboxes in **Courses** or **Lessons** and use **Publish** or
+**Unpublish** from the bulk menu. Setting up a new course no longer means
+clicking through its lessons one at a time.
+
+Bulk publishing a course still respects the rule that protects students: a
+course with no published lesson is skipped rather than published empty, and you
+are told by name which ones were left behind.
+
+### Is the academy being used?
+
+A new **Student activity** chart shows lessons finished and sign-ins per day
+over the last 30 days. The panel could tell you totals before, but never
+whether things were picking up or going quiet.
+
+### The panel now warns you when content is broken
+
+Four things could quietly break a course with nothing in the panel saying so.
+A **Content needing attention** panel appears at the top of the dashboard when
+any of them is true, with a link straight to the fix:
+
+- A **question with no correct answer ticked**. Grading can never succeed, so
+  the student is stuck on that lesson however they answer. Saving a question
+  without a correct answer is now refused outright.
+- A course whose **final quiz is on but has no questions** — students who finish
+  every lesson reach a dead button.
+- A **published course with no published lessons** — an empty course page.
+- A **published lesson with no quiz** — it can never be marked finished, which
+  also blocks the final quiz.
+
+The panel is not shown at all when there is nothing wrong. Creators see only
+their own products' problems.
+
+### Which lessons students struggle with
+
+A new **Lessons students struggle with** panel ranks lessons by how often
+students fail their quiz, worst first. A high fail rate is usually a confusing
+question rather than a weak student, so treat it as a list worth rereading.
+
+Only graded attempts count — an attempt still in progress is not a failure —
+and staff attempts are excluded, as everywhere else. A lesson needs at least
+three attempts before it appears, so one bad day does not put it top.
+
+### A dashboard worth opening
+
+The panel's home screen now answers three questions at a glance.
+
+- **The numbers.** Students and how many are active, lesson completions,
+  published courses and lessons, certificates issued with the average score.
+- **Progress by partner company.** A bar per partner showing how much of the
+  published material their students have worked through. A partner with no
+  students shows as zero rather than disappearing.
+- **Students who have gone quiet.** Anyone who started a course, completed
+  nothing for two weeks, and has no certificate — the one list on the page
+  worth acting on. Finishing late still counts as finished, so nobody who
+  earned a certificate appears here.
+
+Every figure counts **learners only**: admins and creators never appear, not
+their lesson completions and not the certificates they pick up while previewing
+a final quiz.
+
+**Courses** and **Lessons** now carry a number in the sidebar when something is
+still in draft — hover it for an explanation. Creators only ever see a count of
+their own products' work.
+
+Press **Ctrl+K** (or **⌘K**) anywhere in the panel to search courses, lessons
+and people. Results show the status, course or partner alongside the name, so
+two people called the same thing are still telling apart. The sidebar can also
+be collapsed now, and tables use the full width of the window.
+
 ### Product owners can write their own training — the Creator role
+
 Product managers and module owners can now maintain the training for their own
 product without being given the run of the platform. There are three roles:
 
@@ -43,6 +195,7 @@ they stay admin-only until you set one — that is the switch that hands a cours
 to its product owner.
 
 ### Courses are published on purpose, not by accident
+
 Creating a course no longer puts it in front of students. Every new course
 starts as a **Draft** that only admins can see, so you can build it — lessons,
 quizzes and all — in peace, and open it to students when you are ready.
@@ -72,28 +225,33 @@ see before this update is still **Published**.
 ## July 2026
 
 ### Certificate check no longer shows a score
+
 The public verification page now shows only what matters to whoever is
 checking: who it was issued to, the course, the date, and whether it is
 **Valid** or **Revoked**. Passing is pass/fail, so the percentage is gone.
 The score is still kept and visible to you in **Certificates**.
 
 ### Admins can preview the final quiz
+
 Admins can now open and take any course's final quiz without finishing the
 lessons first — useful for checking questions and the certificate. It issues a
 real certificate to the admin account (revoke it afterwards under **Certificates**
 if it was only a test). Students still have to finish every lesson.
 
 ### Final quiz link inside lessons
+
 Students can now open the final quiz straight from the **Lessons** panel while
 inside a lesson — no need to go back to the course page. If some lessons are
 still unfinished, it shows how many are left. On the last lesson, the button
 becomes **Take the final quiz**.
 
 ### Admin guide in the panel
+
 A step-by-step guide for managers is now available in the panel under
 **Guide** — how to build a course, run the final quiz, and issue certificates.
 
 ### Manage the final quiz and certificates in the panel
+
 - A new **Certificates** section lists every issued certificate, with
   **Download**, **Resend email**, **Regenerate PDF**, **Revoke**, and **Export CSV**.
 - Each course has a **Final quiz & certificate** settings block and a
@@ -102,10 +260,12 @@ A step-by-step guide for managers is now available in the panel under
 - The dashboard shows **Certificates issued by course**.
 
 ### Cleaner certificate
+
 Removed the score line from the printed certificate. The score is still kept
 and shown on the verification page, in the student's account, and in the admin.
 
 ### Final quiz and certificates launched
+
 After finishing every lesson in a course, students take a course-wide **final
 quiz**. Passing (80% by default) automatically issues a **PDF certificate**
 with the student's name, the course, the date, a unique number, and a QR code.
@@ -114,4 +274,4 @@ checked by anyone on a public verification page.
 
 ---
 
-*This changelog is also shown in the admin panel under **Changelog**.*
+_This changelog is also shown in the admin panel under **Changelog**._

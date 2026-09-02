@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasPublishStatus;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -59,6 +60,12 @@ class Lesson extends Model
     public function mediaItem(): BelongsTo
     {
         return $this->belongsTo(MediaItem::class);
+    }
+
+    /** No knowledge check, so a student can never mark the lesson finished. */
+    public function scopeWithoutQuestions(Builder $query): Builder
+    {
+        return $query->whereDoesntHave('questions');
     }
 
     public function questions(): HasMany

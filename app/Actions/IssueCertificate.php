@@ -72,10 +72,22 @@ class IssueCertificate
             $background = Storage::disk('public')->path($certificate->course->certificate_template);
         }
 
+        // Deliberately the blue lockup, not the amber one used everywhere else:
+        // a certificate is a formal document, and its frame and course title are
+        // already brand blue (#1463ff).
+        //
+        // Embedded rather than linked, so dompdf resolves it without filesystem
+        // access — exactly as the QR does above.
+        $logoPath = public_path('img/pilot-logo-blue.png');
+        $logo = is_file($logoPath)
+            ? 'data:image/png;base64,'.base64_encode(file_get_contents($logoPath))
+            : null;
+
         $pdf = Pdf::loadView('certificates.pdf', [
             'certificate' => $certificate,
             'qr' => base64_encode($qrSvg),
             'background' => $background,
+            'logo' => $logo,
         ])->setPaper('a4', 'landscape');
 
         $path = "certificates/{$certificate->number}.pdf";

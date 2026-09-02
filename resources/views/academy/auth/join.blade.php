@@ -3,7 +3,7 @@
 @section('title', 'Join — Pilot Academy')
 
 @php
-    $metaDescription = 'Начните обучение в Pilot Academy — введите имя и приступайте к урокам по системе мониторинга транспорта Pilot. Прогресс сохраняется.';
+    $metaDescription = 'Start learning on Pilot Academy — enter your name and begin the Pilot vehicle monitoring lessons. Your progress is saved as you go.';
 @endphp
 
 @section('content')

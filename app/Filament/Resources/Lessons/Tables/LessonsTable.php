@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Lessons\Tables;
 
 use App\Models\Lesson;
 use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -13,6 +14,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Collection;
 
 class LessonsTable
 {
@@ -111,6 +113,33 @@ class LessonsTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
+                    // No prerequisite here: a lesson has nothing to be empty of,
+                    // and its course still gates whether students see it.
+                    BulkAction::make('publish')
+                        ->label('Publish')
+                        ->icon('heroicon-o-rocket-launch')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->deselectRecordsAfterCompletion()
+                        ->action(function (Collection $records): void {
+                            $records->each->publish();
+
+                            Notification::make()->title($records->count().' lesson(s) published')->success()->send();
+                        }),
+
+                    BulkAction::make('unpublish')
+                        ->label('Unpublish')
+                        ->icon('heroicon-o-eye-slash')
+                        ->color('gray')
+                        ->requiresConfirmation()
+                        ->modalDescription('The selected lessons disappear from their courses. Text, video, questions and student progress all stay.')
+                        ->deselectRecordsAfterCompletion()
+                        ->action(function (Collection $records): void {
+                            $records->each->unpublish();
+
+                            Notification::make()->title($records->count().' lesson(s) unpublished')->warning()->send();
+                        }),
+
                     DeleteBulkAction::make(),
                 ]),
             ]);

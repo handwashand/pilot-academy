@@ -4,7 +4,7 @@
 
 @php
     $metaDescription = \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags($course->description))), 155)
-        ?: 'Курс «'.$course->title.'» в Pilot Academy: короткие уроки с видео и тестами по работе с системой мониторинга транспорта Pilot.';
+        ?: $course->title.' on Pilot Academy: short lessons with videos and quizzes on the Pilot vehicle monitoring platform.';
 @endphp
 
 @section('content')

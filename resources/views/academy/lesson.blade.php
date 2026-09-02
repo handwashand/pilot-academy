@@ -4,7 +4,7 @@
 
 @php
     $metaDescription = \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags($lesson->summary ?: $lesson->content))), 155)
-        ?: $lesson->title.' — урок курса «'.$course->title.'» в Pilot Academy.';
+        ?: $lesson->title.' — a lesson from '.$course->title.' on Pilot Academy.';
 @endphp
 
 @section('content')
@@ -36,7 +36,7 @@
             {{-- Video: uploaded file takes priority, otherwise YouTube embed --}}
             @if($lesson->video_url)
                 <div class="mt-6 rounded-2xl overflow-hidden border border-slate-200 shadow-sm aspect-video bg-black">
-                    <video class="w-full h-full" controls preload="metadata">
+                    <video class="w-full h-full" controls playsinline preload="metadata">
                         <source src="{{ $lesson->video_url }}">
                         Your browser does not support the video tag.
                     </video>

@@ -27,7 +27,7 @@ Each item in the left menu has one job.
 | **Companies** | Partner companies. Group students and see how many are certified. |
 | **Certificates** | Every certificate that was issued. Download, resend, or revoke them. |
 | **Media items** | A shared image library you can reuse as lesson covers. |
-| **Dashboard** | The home screen: overall numbers and certificates by course. |
+| **Dashboard** | The home screen: overall numbers, progress by partner, and who has gone quiet. |
 
 ---
 
@@ -138,6 +138,11 @@ The course is live for students straight away. Two things to know:
 > **Archived**. Like a draft, it disappears from the student site, but its
 > certificates and history stay intact.
 
+> **Doing several at once:** tick the checkboxes on the left of **Courses** or
+> **Lessons**, then pick **Publish** or **Unpublish** from the bulk menu that
+> appears. A course with no published lesson is skipped rather than published
+> empty, and you are told which ones by name.
+
 ### Step 5 · Try it as a student
 
 Open the public site (your address *without* `/admin`), go to the course, and finish the lessons. When every lesson is done, the **Final quiz** button unlocks. Pass it to see the whole flow for yourself.
@@ -162,6 +167,19 @@ Open the course → **Final questions** tab. Here you can **Attach lesson questi
 ### Upload your own certificate background
 
 Open the course → **Final quiz & certificate** → **Certificate background**. Upload a full-page image (A4, landscape). The name, course, date, number, and QR code are placed on top automatically. Leave it empty to use the built-in framed design.
+
+### Build a course from an existing one
+
+If the next course is much like one you already have, do not start from an empty
+page. **Courses** → the row → **Duplicate**.
+
+You get a new **Draft** carrying everything that makes up the course: lessons in
+order with their videos and text, every quiz question and answer, and the final
+quiz settings and question bank. Rename it, edit what differs, publish.
+
+> Student progress and certificates are **not** copied — they belong to the
+> course people actually took. And the copy is fully independent: editing a
+> question in it never changes the original.
 
 ### Let a product owner write their own training
 
@@ -229,6 +247,72 @@ with a company.
 
 Go to **Users** and open a student. The **Completed lessons** tab lists every lesson they finished. The **Dashboard** shows overall activity across all students.
 
+### Read the Dashboard
+
+The home screen has three panels:
+
+| Panel | What it tells you |
+|---|---|
+| **Content needing attention** | Only appears when something is broken for students. Each row links straight to the fix. |
+| The numbers along the top | Students and how many are active, lesson completions, published courses and lessons, certificates issued with the average score. |
+| **Progress by partner company** | How much of the published material each partner's students have worked through. A partner with no students yet reads as 0. |
+| **Students who have gone quiet** | Started a course, completed nothing for two weeks, and no certificate. The one list here worth acting on — **Send reminder** emails them a link straight back to their next lesson, or **Open** to see the person. |
+| **Lessons students struggle with** | Lessons ranked by how often students fail the quiz. |
+| **Student activity** | Lessons finished and sign-ins per day over the last 30 days — whether use is picking up or going quiet. |
+| **Most opened courses** | What students opened in the last 90 days, finished or not. |
+
+**What "content needing attention" catches:**
+
+| Warning | What the student sees |
+|---|---|
+| Question with no correct answer | A quiz they can never pass, however they answer |
+| Final quiz on, question bank empty | A **Final quiz** button that leads nowhere |
+| Published course, no published lessons | An empty course page |
+| Published lesson with no quiz | A lesson they can never mark finished |
+
+> The first one used to be easy to create by accident — forget to tick
+> **Correct** and the lesson becomes impossible. The form now refuses to save a
+> question without a correct answer, and this panel lists any that slipped
+> through before.
+
+> **Lessons students struggle with** is usually telling you a question is
+> unclear, not that the students are weak. A lesson needs at least three graded
+> attempts before it appears, and attempts still in progress do not count
+> against it.
+
+### Chase a student who stopped
+
+On **Students who have gone quiet**, click **Send reminder** on their row — or
+tick several and use the bulk **Send reminders**. They get an email with a
+personal link that signs them in and opens their next lesson.
+
+The **Reminded** column shows who has already been chased. Nobody can be
+reminded twice inside 7 days, no matter who clicks, so two managers working the
+same list cannot double up — a bulk send simply skips anyone inside that window
+and tells you how many it skipped.
+
+> A reminder is not progress. The student stays on the list until they come back
+> and finish a lesson, which is what you actually wanted.
+
+> Reminders are recorded in the student's **Activity** tab, so you can see the
+> full history: what they did, and when someone chased them.
+
+> Every number counts **students only**. Your own account and your creators are
+> never included, even though you complete lessons and pick up certificates
+> while checking a course.
+
+> Someone who finished — even long after they started — never appears in the
+> quiet list. It is about outstanding work, not slow work.
+
+### Find anything quickly
+
+Press **Ctrl+K** (**⌘K** on a Mac) anywhere in the panel and start typing. It
+searches courses, lessons and people. Each result shows its status, course or
+partner underneath, so two records with the same name are still telling apart.
+
+A number next to **Courses** or **Lessons** in the left menu means something is
+still in draft and invisible to students. Hover it to see what it counts.
+
 ### Who got a certificate
 
 Open **Certificates**. Each row shows the student, their company, the course, the score, the date, the number, and whether it is **Valid** or **Revoked**. Use the filters at the top to narrow by course, partner, or status.
@@ -251,6 +335,7 @@ Open your site address + `/certificates/` + the certificate number (or scan the 
 | A certificate was issued by mistake | **Certificates** → **Revoke**. Public check shows "Revoked". Changed your mind? **Restore**. |
 | The PDF is empty or won't download | **Certificates** → **Regenerate PDF**, then **Download** again. |
 | You need a list for a report | **Certificates** → **Export CSV** (open in Excel or Google Sheets). |
+| You need everyone's progress, not just certificates | **Users** → **Export learner progress**. One row per student: lessons done, certificates, last activity. |
 | A student ran out of attempts | Open the course → **Final quiz & certificate** → raise **Max attempts**, or clear it for unlimited. |
 | Students can't find a course | Check the **Status** column in **Courses**. Only **Published** courses appear on the student site — click **Publish** on the row. |
 | One lesson is missing from a live course | **Lessons** → check its **Status** → **Publish**. A lesson shows up only if both it *and* its course are published. |

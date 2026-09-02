@@ -3,7 +3,7 @@
 @section('title', 'Pilot Academy — My Learning')
 
 @php
-    $metaDescription = 'Pilot Academy — онлайн-обучение работе с системой мониторинга транспорта Pilot: короткие уроки с видео и тестами. Освойте Pilot с первого дня.';
+    $metaDescription = 'Pilot Academy — online training for the Pilot vehicle monitoring platform. Short, focused lessons with videos and quizzes: get productive from day one.';
 @endphp
 
 @section('content')
@@ -23,21 +23,58 @@
     @else
         <div class="mb-8 rounded-2xl bg-gradient-to-br from-brand to-navy text-white p-7 sm:p-9">
             <h1 class="text-2xl sm:text-3xl font-extrabold mb-1">Welcome to Pilot Academy</h1>
-            <p class="text-white/80 mb-5">Short, focused lessons with videos and quizzes — get productive from day one.</p>
+            <p class="text-white mb-5">Short, focused lessons with videos and quizzes — get productive from day one.</p>
             <form method="POST" action="{{ route('academy.name') }}" class="flex flex-col sm:flex-row gap-3 max-w-md">
                 @csrf
-                <input type="text" name="name" required placeholder="Your name"
-                       class="flex-1 rounded-lg px-4 py-2.5 text-slate-800 outline-none">
-                <button class="rounded-lg bg-white text-navy font-semibold px-5 py-2.5 hover:bg-slate-100">
+                {{-- bg-white is load-bearing: Tailwind's preflight makes form
+                     controls transparent, so without it the dark text sits
+                     straight on the gradient and all but vanishes at the navy
+                     end. text-slate-800 must stay too — the card sets
+                     text-white, so an unstyled input would be white on white.
+                     Both classes are already in the committed CSS bundle, so
+                     this reads correctly before CI rebuilds it. --}}
+                <input type="text" name="name" required placeholder="Your name" aria-label="Your name"
+                       class="flex-1 rounded-lg bg-white px-4 py-2.5 text-slate-800 focus:ring-2 focus:ring-white">
+                <button class="rounded-lg bg-white text-navy font-semibold px-5 py-2.5 hover:bg-slate-100 focus:ring-2 focus:ring-white">
                     Start learning
                 </button>
             </form>
-            <p class="text-white/70 text-sm mt-3">
+            {{-- Full white, not white/70: over the brand blue that was 3.2:1.
+                 The hierarchy comes from the smaller size instead. --}}
+            <p class="text-white text-sm mt-3">
                 Have an account? <a href="{{ route('login') }}" class="underline font-semibold">Log in</a>
                 · <a href="{{ route('register') }}" class="underline font-semibold">Register</a>
             </p>
         </div>
     @endauth
+
+    @if($resume)
+        @php
+            $resumePct = $resume['total'] > 0 ? round($resume['done'] / $resume['total'] * 100) : 0;
+        @endphp
+        <a href="{{ route('academy.lesson', [$resume['course'], $resume['lesson']]) }}"
+           class="group block mb-8 rounded-2xl border border-brand/30 bg-blue-50/60 p-5 sm:p-6 hover:border-brand hover:shadow-md transition">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div class="min-w-0">
+                    <span class="text-xs font-semibold uppercase tracking-wide text-brand">Continue where you left off</span>
+                    <h2 class="mt-1 text-lg sm:text-xl font-extrabold text-navy group-hover:text-brand transition">
+                        {{ $resume['lesson']->title }}
+                    </h2>
+                    <p class="text-sm text-slate-500 truncate">{{ $resume['course']->title }}</p>
+                </div>
+
+                <div class="shrink-0 sm:text-right">
+                    <div class="text-sm text-slate-500 mb-1">{{ $resume['done'] }} / {{ $resume['total'] }} lessons</div>
+                    <div class="w-full sm:w-44 h-2 rounded-full bg-white overflow-hidden">
+                        <div class="h-full bg-ok" style="width: {{ $resumePct }}%"></div>
+                    </div>
+                    <span class="mt-3 inline-block rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white">
+                        Resume
+                    </span>
+                </div>
+            </div>
+        </a>
+    @endif
 
     @forelse($courses as $course)
         @php

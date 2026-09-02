@@ -72,7 +72,7 @@ kept current:
 
 - `docs/admin-guide.md` — the manager guide, shown under **Guide**
   (`app/Filament/Pages/AdminGuide.php`, `/admin/admin-guide`).
-- `docs/CHANGELOG.md` — a plain-language change log, shown under **Changelog**
+- `docs/CHANGELOG.md` — a plain-language change log, shown under **What's new**
   (`app/Filament/Pages/Changelog.php`, `/admin/changelog`).
 
 Both render through `resources/views/filament/pages/partials/doc.blade.php`.
@@ -82,6 +82,14 @@ lessons, the final quiz, certificates), in the same change:**
 
 1. Update `docs/admin-guide.md` if the instructions change.
 2. Add a dated entry to `docs/CHANGELOG.md` (newest first, plain language).
+3. Update `README.md` if the stack or local setup moved, and `DEPLOY.md` if
+   deployment did.
+
+**Then record the task in `agent-reminder.md`** — the running work log at the
+repo root. Read it before starting anything: it carries what is half-finished,
+which branches are still open, and the traps this codebase has already sprung
+on people (the CI-built CSS bundle, Blade `@php()`, Livewire root elements).
+Add an entry before you call a task done.
 
 A styled copy of the guide (with screen mockups, for print/PDF) is also
 maintained as a Claude Artifact by the team lead — keep it in sync when it is
