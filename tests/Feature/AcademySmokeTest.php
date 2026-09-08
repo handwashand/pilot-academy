@@ -1,0 +1,426 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\Course;
+use App\Models\Lesson;
+use App\Models\MediaItem;
+use App\Models\QuizAttempt;
+use App\Models\User;
+use Database\Seeders\PilotQuickStartSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class AcademySmokeTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(PilotQuickStartSeeder::class);
+    }
+
+    public function test_home_lists_the_course(): void
+    {
+        $this->get('/')
+            ->assertStatus(200)
+            ->assertSee('Pilot Quick Start');
+    }
+
+    public function test_course_audience_badge_is_shown(): void
+    {
+        $course = Course::first();
+        $course->update(['audience' => 'technical']);
+
+        $this->get('/')
+            ->assertStatus(200)
+            ->assertSee('For Technical');
+    }
+
+    public function test_lesson_card_shows_uploaded_cover_image(): void
+    {
+        $course = Course::first();
+        $lesson = $course->lessons()->first();
+        $lesson->update(['image_path' => 'lesson-images/cover.jpg']);
+
+        $this->get('/')
+            ->assertStatus(200)
+            ->assertSee('lesson-images/cover.jpg', false);
+    }
+
+    public function test_lesson_page_shows_video_and_quiz(): void
+    {
+        $course = Course::first();
+        $lesson = $course->lessons()->first();
+
+        $this->get(route('academy.lesson', [$course, $lesson]))
+            ->assertStatus(200)
+            ->assertSee('youtube.com/embed', false)
+            ->assertSee('Knowledge check');
+    }
+
+    public function test_correct_quiz_answers_complete_the_lesson(): void
+    {
+        $course = Course::first();
+        $lesson = $course->lessons()->with('questions.options')->first();
+
+        $answers = [];
+        foreach ($lesson->questions as $q) {
+            $answers[$q->id] = $q->options->firstWhere('is_correct', true)->id;
+        }
+
+        $this->post(route('academy.quiz', [$course, $lesson]), ['answers' => $answers])
+            ->assertRedirect(route('academy.lesson', [$course, $lesson]).'#quiz')
+            ->assertSessionHas('quiz_passed', true);
+    }
+
+    public function test_uploaded_video_takes_priority_over_youtube(): void
+    {
+        $course = Course::first();
+        $lesson = $course->lessons()->first();
+        $lesson->update([
+            'video_path' => 'lesson-videos/sample.mp4',
+            'youtube_url' => 'https://www.youtube.com/watch?v=aqz-KE-bpKQ',
+        ]);
+
+        $this->get(route('academy.lesson', [$course, $lesson]))
+            ->assertStatus(200)
+            ->assertSee('<video', false)
+            ->assertSee('lesson-videos/sample.mp4', false)
+            ->assertDontSee('youtube.com/embed', false);
+    }
+
+    public function test_admin_can_open_lesson_edit_form_with_quiz_repeater(): void
+    {
+        $admin = User::firstOrCreate(['email' => 'admin@pilot.local'], [
+            'name' => 'Pilot Admin',
+            'password' => bcrypt('password'),
+            'role' => 'admin',
+        ]);
+
+        $lesson = Lesson::first();
+
+        $this->actingAs($admin)
+            ->get("/admin/lessons/{$lesson->id}/edit")
+            ->assertStatus(200);
+
+        $this->actingAs($admin)
+            ->get('/admin/courses')
+            ->assertStatus(200);
+    }
+
+    public function test_admin_can_manage_users_and_companies(): void
+    {
+        $admin = User::firstOrCreate(['email' => 'admin@pilot.local'], [
+            'name' => 'Pilot Admin',
+            'password' => bcrypt('password'),
+            'role' => 'admin',
+        ]);
+
+        $this->actingAs($admin)->get('/admin/users')->assertStatus(200);
+        $this->actingAs($admin)->get('/admin/companies')->assertStatus(200);
+    }
+
+    public function test_admin_progress_report_renders(): void
+    {
+        $admin = User::firstOrCreate(['email' => 'admin@pilot.local'], [
+            'name' => 'Pilot Admin',
+            'password' => bcrypt('password'),
+            'role' => 'admin',
+        ]);
+
+        $student = User::create([
+            'name' => 'Progress Student',
+            'email' => 'progress@example.com',
+            'password' => bcrypt('secret'),
+            'role' => 'learner',
+        ]);
+        $student->completedLessons()->attach(Lesson::first()->id, ['completed_at' => now()]);
+
+        // Dashboard (with the stats widget) and the Users progress list both render.
+        $this->actingAs($admin)->get('/admin')->assertStatus(200);
+        $this->actingAs($admin)->get('/admin/users')->assertStatus(200);
+    }
+
+    public function test_login_records_login_activity(): void
+    {
+        $student = User::create([
+            'name' => 'Login User',
+            'email' => 'loginuser@example.com',
+            'password' => bcrypt('password123'),
+            'role' => 'learner',
+        ]);
+
+        $this->post('/login', ['email' => 'loginuser@example.com', 'password' => 'password123'])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('activity_events', ['user_id' => $student->id, 'type' => 'login']);
+        $this->assertNotNull($student->fresh()->last_login_at);
+    }
+
+    public function test_course_and_lesson_opens_are_logged_and_admin_can_view(): void
+    {
+        $admin = User::firstOrCreate(['email' => 'admin@pilot.local'], [
+            'name' => 'Pilot Admin',
+            'password' => bcrypt('password'),
+            'role' => 'admin',
+        ]);
+        $student = User::create([
+            'name' => 'Activity User',
+            'email' => 'activity@example.com',
+            'password' => bcrypt('secret'),
+            'role' => 'learner',
+        ]);
+        $course = Course::first();
+        $lesson = $course->lessons()->first();
+
+        $this->actingAs($student)->get(route('academy.course', $course))->assertStatus(200);
+        $this->actingAs($student)->get(route('academy.lesson', [$course, $lesson]))->assertStatus(200);
+
+        $this->assertDatabaseHas('activity_events', ['user_id' => $student->id, 'type' => 'course_opened']);
+        $this->assertDatabaseHas('activity_events', ['user_id' => $student->id, 'type' => 'lesson_opened']);
+
+        // Admin edit page hosts the Activity relation manager.
+        $this->actingAs($admin)->get("/admin/users/{$student->id}/edit")->assertStatus(200);
+    }
+
+    public function test_join_link_creates_account_and_signs_in(): void
+    {
+        $this->post('/join', ['name' => 'Invited Tester', 'email' => 'invited@example.com'])
+            ->assertRedirect(route('academy.home'));
+
+        $this->assertAuthenticated();
+        $this->assertDatabaseHas('users', ['email' => 'invited@example.com', 'role' => 'learner']);
+    }
+
+    public function test_personal_magic_link_signs_in(): void
+    {
+        $student = User::create([
+            'name' => 'Magic User',
+            'email' => 'magic@example.com',
+            'password' => bcrypt('secret'),
+            'role' => 'learner',
+        ]);
+        $token = $student->ensureLoginToken();
+
+        $this->get('/enter/'.$token)->assertRedirect(route('academy.home'));
+        $this->assertAuthenticatedAs($student->fresh());
+
+        $this->get('/enter/not-a-real-token')->assertNotFound();
+    }
+
+    public function test_logged_in_completion_is_recorded_for_admin_view(): void
+    {
+        $student = User::create([
+            'name' => 'Completer',
+            'email' => 'completer@example.com',
+            'password' => bcrypt('secret'),
+            'role' => 'learner',
+        ]);
+        $course = Course::first();
+        $lesson = $course->lessons()->with('questions.options')->first();
+
+        $answers = [];
+        foreach ($lesson->questions as $q) {
+            $answers[$q->id] = $q->options->firstWhere('is_correct', true)->id;
+        }
+
+        $this->actingAs($student)
+            ->post(route('academy.quiz', [$course, $lesson]), ['answers' => $answers])
+            ->assertSessionHas('quiz_passed', true);
+
+        $this->assertDatabaseHas('lesson_user', ['user_id' => $student->id, 'lesson_id' => $lesson->id]);
+        $this->assertDatabaseHas('activity_events', ['user_id' => $student->id, 'type' => 'lesson_completed']);
+    }
+
+    public function test_timed_quiz_prestart_then_pass(): void
+    {
+        $student = User::create([
+            'name' => 'Timed', 'email' => 'timed@example.com', 'password' => bcrypt('x'), 'role' => 'learner',
+        ]);
+        $course = Course::first();
+        $lesson = $course->lessons()->with('questions.options')->first();
+        $lesson->update(['quiz_time_limit_minutes' => 10, 'quiz_max_attempts' => 2]);
+
+        // Pre-start screen is shown (not the questions yet).
+        $this->actingAs($student)->get(route('academy.lesson', [$course, $lesson]))
+            ->assertStatus(200)
+            ->assertSee('Start quiz');
+
+        // Starting creates an in-progress attempt.
+        $this->actingAs($student)->post(route('academy.quiz.start', [$course, $lesson]))->assertRedirect();
+        $this->assertDatabaseHas('quiz_attempts', [
+            'user_id' => $student->id, 'lesson_id' => $lesson->id, 'status' => 'in_progress',
+        ]);
+
+        // Correct submission passes and completes the lesson.
+        $answers = [];
+        foreach ($lesson->questions as $q) {
+            $answers[$q->id] = $q->options->firstWhere('is_correct', true)->id;
+        }
+        $this->actingAs($student)->post(route('academy.quiz', [$course, $lesson]), ['answers' => $answers])
+            ->assertSessionHas('quiz_passed', true);
+
+        $this->assertDatabaseHas('quiz_attempts', ['user_id' => $student->id, 'lesson_id' => $lesson->id, 'status' => 'passed']);
+        $this->assertDatabaseHas('lesson_user', ['user_id' => $student->id, 'lesson_id' => $lesson->id]);
+    }
+
+    public function test_quiz_time_expiry_marks_attempt_expired(): void
+    {
+        $student = User::create([
+            'name' => 'Slow', 'email' => 'slow@example.com', 'password' => bcrypt('x'), 'role' => 'learner',
+        ]);
+        $course = Course::first();
+        $lesson = $course->lessons()->with('questions.options')->first();
+        $lesson->update(['quiz_time_limit_minutes' => 1, 'quiz_max_attempts' => 3]);
+
+        $attempt = QuizAttempt::create([
+            'user_id' => $student->id, 'lesson_id' => $lesson->id,
+            'status' => 'in_progress', 'started_at' => now()->subMinutes(5),
+        ]);
+
+        $answers = [];
+        foreach ($lesson->questions as $q) {
+            $answers[$q->id] = $q->options->firstWhere('is_correct', true)->id;
+        }
+        $this->actingAs($student)->post(route('academy.quiz', [$course, $lesson]), ['answers' => $answers])
+            ->assertSessionHas('quiz_timeup', true);
+
+        $this->assertDatabaseHas('quiz_attempts', ['id' => $attempt->id, 'status' => 'expired']);
+        $this->assertDatabaseMissing('lesson_user', ['user_id' => $student->id, 'lesson_id' => $lesson->id]);
+    }
+
+    public function test_attempts_exhausted_blocks_the_quiz(): void
+    {
+        $student = User::create([
+            'name' => 'Done', 'email' => 'done@example.com', 'password' => bcrypt('x'), 'role' => 'learner',
+        ]);
+        $course = Course::first();
+        $lesson = $course->lessons()->first();
+        $lesson->update(['quiz_max_attempts' => 1]);
+
+        QuizAttempt::create([
+            'user_id' => $student->id, 'lesson_id' => $lesson->id,
+            'status' => 'failed', 'started_at' => now(), 'submitted_at' => now(),
+        ]);
+
+        $this->actingAs($student)->get(route('academy.lesson', [$course, $lesson]))
+            ->assertStatus(200)
+            ->assertSee('No attempts remaining');
+    }
+
+    public function test_lesson_uses_media_library_image_on_card(): void
+    {
+        $course = Course::first();
+        $lesson = $course->lessons()->first();
+        $media = MediaItem::create(['name' => 'Shared cover', 'path' => 'media-library/shared.jpg']);
+        $lesson->update(['media_item_id' => $media->id]);
+
+        $this->get('/')
+            ->assertStatus(200)
+            ->assertSee('media-library/shared.jpg', false);
+    }
+
+    public function test_admin_can_open_media_library(): void
+    {
+        $admin = User::firstOrCreate(['email' => 'admin@pilot.local'], [
+            'name' => 'Pilot Admin',
+            'password' => bcrypt('password'),
+            'role' => 'admin',
+        ]);
+
+        $this->actingAs($admin)->get('/admin/media-items')->assertStatus(200);
+    }
+
+    public function test_non_admin_cannot_access_admin_panel(): void
+    {
+        $student = User::create([
+            'name' => 'Partner User',
+            'email' => 'student@example.com',
+            'password' => bcrypt('secret'),
+            'role' => 'learner',
+        ]);
+
+        $this->actingAs($student)->get('/admin')->assertStatus(403);
+    }
+
+    public function test_student_can_register_and_is_logged_in(): void
+    {
+        $this->post('/register', [
+            'name' => 'New Partner',
+            'email' => 'new@partner.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ])->assertRedirect(route('academy.home'));
+
+        $this->assertAuthenticated();
+        $this->assertDatabaseHas('users', ['email' => 'new@partner.com', 'role' => 'learner']);
+    }
+
+    public function test_student_can_log_in(): void
+    {
+        User::create([
+            'name' => 'Partner',
+            'email' => 'p@partner.com',
+            'password' => bcrypt('password123'),
+            'role' => 'learner',
+        ]);
+
+        $this->post('/login', ['email' => 'p@partner.com', 'password' => 'password123'])
+            ->assertRedirect(route('academy.home'));
+
+        $this->assertAuthenticated();
+    }
+
+    public function test_sitemap_lists_published_course_and_lessons(): void
+    {
+        $course = Course::first();
+        $lesson = $course->lessons()->first();
+
+        $this->get('/sitemap.xml')
+            ->assertStatus(200)
+            ->assertHeader('Content-Type', 'application/xml')
+            ->assertSee(route('academy.home'), false)
+            ->assertSee(route('academy.course', $course), false)
+            ->assertSee(route('academy.lesson', [$course, $lesson]), false);
+    }
+
+    public function test_sitemap_excludes_unpublished_lessons(): void
+    {
+        $course = Course::first();
+        $lesson = $course->lessons()->first();
+        $lesson->unpublish();
+
+        $this->get('/sitemap.xml')
+            ->assertStatus(200)
+            ->assertDontSee(route('academy.lesson', [$course, $lesson]), false);
+    }
+
+    public function test_logged_in_quiz_completion_is_saved_to_account(): void
+    {
+        $user = User::create([
+            'name' => 'Learner',
+            'email' => 'learner@partner.com',
+            'password' => bcrypt('password123'),
+            'role' => 'learner',
+        ]);
+
+        $course = Course::first();
+        $lesson = $course->lessons()->with('questions.options')->first();
+
+        $answers = [];
+        foreach ($lesson->questions as $q) {
+            $answers[$q->id] = $q->options->firstWhere('is_correct', true)->id;
+        }
+
+        $this->actingAs($user)
+            ->post(route('academy.quiz', [$course, $lesson]), ['answers' => $answers])
+            ->assertSessionHas('quiz_passed', true);
+
+        $this->assertDatabaseHas('lesson_user', [
+            'user_id' => $user->id,
+            'lesson_id' => $lesson->id,
+        ]);
+    }
+}

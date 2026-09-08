@@ -1,0 +1,99 @@
+<?php
+
+namespace App\Filament\Resources\Lessons;
+
+use App\Filament\Resources\Lessons\Pages\CreateLesson;
+use App\Filament\Resources\Lessons\Pages\EditLesson;
+use App\Filament\Resources\Lessons\Pages\ListLessons;
+use App\Filament\Resources\Lessons\Schemas\LessonForm;
+use App\Filament\Resources\Lessons\Tables\LessonsTable;
+use App\Models\Lesson;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+
+class LessonResource extends Resource
+{
+    protected static ?string $model = Lesson::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
+
+    /** Creators only ever see lessons inside their own products' courses. */
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+        $user = auth()->user();
+
+        if ($user && $user->isCreator()) {
+            $productIds = $user->products()->pluck('products.id');
+
+            $query->whereHas('course', fn (Builder $course) => $course->whereIn('product_id', $productIds));
+        }
+
+        return $query;
+    }
+
+    /** Lessons held back from students, inside the viewer's own courses only. */
+    public static function getNavigationBadge(): ?string
+    {
+        $drafts = static::getEloquentQuery()->where('status', Lesson::STATUS_DRAFT)->count();
+
+        return $drafts > 0 ? (string) $drafts : null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'warning';
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return 'Lessons still in draft — hidden even in a published course';
+    }
+
+    protected static ?string $recordTitleAttribute = 'title';
+
+    /** @return array<int, string> */
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['title', 'slug'];
+    }
+
+    /** @return array<string, string|null> */
+    public static function getGlobalSearchResultDetails(mixed $record): array
+    {
+        return [
+            'Course' => $record->course?->title ?? '—',
+            'Status' => $record->statusLabel(),
+        ];
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return LessonForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return LessonsTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListLessons::route('/'),
+            'create' => CreateLesson::route('/create'),
+            'edit' => EditLesson::route('/{record}/edit'),
+        ];
+    }
+}

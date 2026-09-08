@@ -1,0 +1,16 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* Pilot Academy brand palette — kept in sync with the old CDN
+       tailwind.config so bg-brand / text-navy / bg-ok / from-brand … keep
+       working after the switch to a compiled bundle. */
+    --color-brand: #1463ff;
+    --color-navy: #0a2540;
+    --color-ok: #19a86b;
+}
