@@ -1,7 +1,15 @@
 # Pilot Academy — deployment
 
-A plain PHP + Laravel app. No Node build step is required for the public site
-(Tailwind is loaded from a CDN, Filament ships its own compiled assets).
+A plain PHP + Laravel app. **No Node build step runs on the server**: the Vite
+bundle is compiled in CI and committed to `public/build/`, so `git pull` brings
+the stylesheets with the code.
+
+> Both the student site and the `/admin` panel now depend on that committed
+> bundle. The panel loads its own theme (`resources/css/filament/admin/theme.css`)
+> through Vite, and a **missing or stale `public/build/manifest.json` takes the
+> whole panel down with "Unable to locate file in Vite manifest"** — not just
+> the styling. Never deploy a `public/build/` that CI has not rebuilt for the
+> commit you are shipping, and never delete it to "free space".
 
 ## Requirements on the server
 

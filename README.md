@@ -28,7 +28,10 @@ Admin features:
 - Laravel 13
 - Filament admin panel
 - PostgreSQL (a `db` service is included in `docker-compose.yml`)
-- Tailwind CSS and Vite
+- Tailwind CSS and Vite — two entries: `resources/css/app.css` for the student
+  site and `resources/css/filament/admin/theme.css`, the panel's own theme.
+  Filament's stock stylesheet has no Tailwind utility layer, so custom panel
+  pages need that theme or their classes compile to nothing.
 - DOMPDF for generating certificate PDFs
 - simple-qrcode for QR codes on certificates
 
@@ -125,8 +128,14 @@ docker compose run --rm app php artisan test
 
 ## Docs
 
-- Admin guide: `docs/admin-guide.md`
-- Change log: `docs/CHANGELOG.md`
+- Admin guide: `docs/admin-guide.md` — rendered in the panel under **Guide**
+- Change log: `docs/CHANGELOG.md` — rendered in the panel under **What's new**
+
+Both are read from disk at request time, so the panel never shows a stale copy.
+**What's new** parses the change log rather than just rendering it: `## <Month>
+<Year>` starts a release card, and `### Added` / `Changed` / `Fixed` /
+`Known limitations` categorises the bullets under it for the search and filter
+bar. Any other `### ` heading still renders and keeps its own text.
 
 ## Notes
 

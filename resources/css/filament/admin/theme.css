@@ -1,0 +1,85 @@
+/*
+ * Custom theme for the /admin panel.
+ *
+ * Why this file exists: without it the panel loads only Filament's own
+ * precompiled stylesheet (public/css/filament/filament/app.css), which carries
+ * no Tailwind utility layer at all. Any utility class written in one of our own
+ * Blade views compiles to nothing and does nothing — silently, with no error
+ * and no warning. The What's new page is the first custom page here built out
+ * of utilities, so it needs a stylesheet that knows about our markup.
+ *
+ * Filament's theme entry opens with `@import 'tailwindcss' source(none)`, which
+ * switches automatic content detection OFF. Without the @source lines below the
+ * build still succeeds and still writes a stylesheet — one that has never seen
+ * our views. Every @source line is load-bearing.
+ */
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*.php';
+@source '../../../../resources/views/filament/**/*.blade.php';
+@source '../../../../vendor/filament/**/*.blade.php';
+
+/* Filament defines no x-cloak rule of its own, so without this one x-cloak is
+   a no-op in the panel and anything relying on it flashes before Alpine boots. */
+[x-cloak] {
+    display: none !important;
+}
+
+/*
+ * Markdown rendered from docs/CHANGELOG.md. The item bodies are real markdown,
+ * so paragraphs, strong, code and links are styled here rather than left to
+ * preflight — which strips them back to unstyled inline text.
+ *
+ * Descendant selectors, not utilities: we do not control the HTML CommonMark
+ * emits. Dark mode is Filament's `.dark` class on <html>.
+ */
+.wn-body > :first-child { margin-top: 0; }
+.wn-body > :last-child { margin-bottom: 0; }
+
+.wn-body p { margin: 0.375rem 0; }
+
+.wn-body strong { font-weight: 600; color: var(--color-gray-950, #030712); }
+.dark .wn-body strong { color: var(--color-white, #fff); }
+
+.wn-body em { font-style: italic; }
+
+.wn-body a {
+    color: var(--color-primary-600, #d97706);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+.dark .wn-body a { color: var(--color-primary-400, #fbbf24); }
+
+.wn-body code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.8125em;
+    padding: 0.1em 0.35em;
+    border-radius: 0.25rem;
+    background-color: rgb(128 128 128 / 0.14);
+}
+
+/* Nested lists and quotes appear in older entries written before the
+   one-bullet-one-item convention; they still have to read as prose. */
+.wn-body ul, .wn-body ol { margin: 0.375rem 0 0.375rem 1.15rem; }
+.wn-body ul { list-style: disc; }
+.wn-body ol { list-style: decimal; }
+.wn-body li { margin: 0.15rem 0; }
+
+.wn-body blockquote {
+    margin: 0.5rem 0;
+    padding-left: 0.75rem;
+    border-left: 2px solid rgb(128 128 128 / 0.3);
+}
+
+.wn-body h1, .wn-body h2, .wn-body h3, .wn-body h4 {
+    font-weight: 600;
+    margin: 0.75rem 0 0.25rem;
+}
+
+/* A section the parser could not split into bullets renders as one block, and
+   those carry their own hr rules from the source file. */
+.wn-body hr {
+    border: 0;
+    border-top: 1px solid rgb(128 128 128 / 0.25);
+    margin: 0.75rem 0;
+}

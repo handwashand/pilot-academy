@@ -34,7 +34,7 @@ is not obvious in this repo.
 
 ## Where things stand
 
-Last updated: **2026-09-02**
+Last updated: **2026-09-08**
 
 Next release is **2.0.0** — the first version number this project has had.
 Earlier changelog entries are month-only and are deliberately *not* renumbered
@@ -51,10 +51,12 @@ The version lives in **two places that must move together**:
 
 It is shown at the bottom of the admin sidebar via the
 `PanelsRenderHook::SIDEBAR_FOOTER` hook (`resources/views/filament/sidebar-version.blade.php`),
-linked to the What's new page. **That view is styled with inline CSS on purpose**
-— the panel stylesheet has no Tailwind utility layer, so classes there do
-nothing (see the trap below). Its greys use Filament's own `--gray-*` custom
-properties, which Filament injects per page, so they work in both themes.
+linked to the What's new page. **That view is styled with inline CSS** — it was
+written before the panel had a Tailwind theme, when a class there would have
+done nothing (see the trap below; utilities *do* work in panel views now, but
+three declarations are not worth rewriting). Its greys use Filament's own
+`--gray-*` custom properties, which Filament injects per page, so they work in
+both themes.
 
 Tag the **merge commit on `laravel`**, not a feature branch: `git tag v2.0.0`.
 There are no tags in this repo yet, so `v2.0.0` will be the first.
@@ -64,6 +66,7 @@ There are no tags in this repo yet, so `v2.0.0` will be the first.
 | Branch | State |
 | --- | --- |
 | `laravel` | Main. Deploys to production by `git pull`. At the merge of PR #33. |
+| `feature/whats-new-page` | **Pushed, PR not opened** (no `gh` auth on that machine). What's new rebuilt as a filterable list, plus the panel's first Tailwind theme. Suite green, Pint clean. |
 | `feature/sqlite-postgres` | **Pushed, no PR opened.** SQLite → PostgreSQL move. Ready for review. |
 | `feature/admin-dashboard` | PR #34, open. Dashboard, branding, nudge, mobile fixes. |
 | `feature/learner-experience` | **Stacked on `feature/admin-dashboard`, not on `laravel`.** Duration, search, video controls, accessibility, quiz cost, course completion. Merge #34 first. |
@@ -80,7 +83,9 @@ There are no tags in this repo yet, so `v2.0.0` will be the first.
 - **`feature/admin-dashboard` is large** — widgets, bulk actions, an export, a
   learner-facing change, branding. Worth splitting before review; the
   content-health fix stands alone as a genuine bug fix.
-- **Two PRs still need opening**: sqlite-postgres and admin-dashboard.
+- **Three PRs still need opening**: sqlite-postgres, admin-dashboard and
+  whats-new-page. The last one is pushed and green; it was deliberately *not*
+  self-merged, per the rule above.
 - **`APP_URL` must be the real domain in production.** The certificate email
   builds its logo URL from it; a wrong value ships broken images to students.
 
@@ -89,6 +94,50 @@ There are no tags in this repo yet, so `v2.0.0` will be the first.
 ## Work log
 
 Newest first. Add to this every time.
+
+### 2026-09-08 — What's new became a filterable list (**and the panel got a theme**)
+`docs/CHANGELOG.md` was being dumped through `Str::markdown()` into
+`doc.blade.php` — one long wall of text with no way to find anything. It is now
+parsed at request time into release cards with a search box and category pills.
+The file stays the single source of truth: nothing is duplicated, so nothing can
+drift, and a new `## <Month> <Year>` heading adds a card on its own.
+
+**The real work was the stylesheet, not the page.** The panel had no Tailwind
+utility layer, so the first draft of the page rendered completely unstyled while
+the Blade source looked right — the trap below, fired again. Fixing it properly
+meant giving the panel a custom theme, which is now
+`resources/css/filament/admin/theme.css` + a Vite input + `->viteTheme(...)`.
+See the (rewritten) trap for the four things that must all stay true.
+
+Things worth knowing before touching the page:
+
+- **Visibility rolls up from the items, not down.** `itemVisible` → `sectionVisible`
+  → `releaseVisible` → `anyVisible`, over a matrix built server-side and handed
+  to Alpine. Filtering only the items is the obvious implementation and it is
+  wrong: it leaves empty category headings and empty month cards standing
+  behind the results.
+- **Most of this changelog does not use `### Added` headings.** The entries are
+  written as descriptive headings ("Videos remember where you stopped"), which
+  land in the generic `other` category and keep their own text. That is by
+  design — the plain-language headings are what admins actually read, and they
+  were not going to be rewritten into four buckets after the fact. Entries
+  written from here on *can* use the four categories and will colour and filter
+  properly; both styles render side by side.
+- **A section with no bullets still renders**, as one block. Given the point
+  above, that fallback carries most of the file — it is not an edge case.
+- The parse is cached on the file's `filemtime`, so an edit shows immediately
+  and repeated views do not re-read it.
+- Markdown is rendered with `html_input => strip` and `allow_unsafe_links =>
+  false`. The file is ours, but nothing in a changelog needs raw HTML or a
+  `javascript:` link.
+- `[x-cloak]` **is** defined now (in the theme), which is what stops the
+  "Nothing matches …" line flashing before Alpine boots. The note under
+  *App version in the sidebar* saying `x-cloak` is a no-op in the panel was true
+  when it was written and is no longer.
+- The old footer line in `docs/CHANGELOG.md` ("also shown in the admin panel
+  under **Changelog**") is gone — the label has been *What's new* for a while.
+  The authoring notes that replaced it are an HTML comment, which the parser
+  strips, so they are visible to whoever edits the file and to nobody else.
 
 ### 2026-09-02 — Video resume, transcripts, course feedback (**schema change**)
 The three migration-needing items from the learner-experience review, shipped as
@@ -412,20 +461,41 @@ absent `text-slate-900` would have inherited the card's `text-white` and rendere
 `sm:block` are), so an element hidden that way on desktop stays visible. Prefer
 the `hidden sm:block` direction, which is already compiled.
 
-**The Filament panel has no Tailwind utility layer at all.** `/admin` loads
-only `public/css/filament/filament/app.css`, never the Vite bundle, and
-Filament v5 ships semantic `fi-*` classes instead of utilities. `h-7`, `hidden`,
-`dark:block`, `text-2xl`, `mb-6` — **none of them exist there**. A utility class
-in a Blade view rendered inside the panel does nothing, silently. Check before
-relying on one:
+**The Filament panel had no Tailwind utility layer at all — it does now, and
+only because a theme was added.** Filament v5 ships semantic `fi-*` classes
+instead of utilities, and out of the box `/admin` loads only
+`public/css/filament/filament/app.css`. `h-7`, `hidden`, `dark:block`,
+`text-2xl`, `mb-6` — **none of them exist in that file**. A utility class in a
+Blade view rendered inside the panel did nothing, silently: no error, no
+warning, and source that looks perfectly correct.
 
-```bash
-grep -F '.h-12{' public/css/filament/filament/app.css || echo "not there"
-```
+Since 2026-09-08 the panel registers `resources/css/filament/admin/theme.css`
+via `->viteTheme(...)`, so utilities **do** work in panel views now. Three
+things keep that true, and removing any one of them silently unstyles every
+custom page again with nothing in the logs:
 
-Prefer Filament's own API (`brandLogoHeight()`, `->extraAttributes()`, an
-inline `style`) over utility classes anywhere inside `/admin`. This is what
-made the sign-in logo the wrong size *and* broke its dark-mode swap.
+1. the theme file exists,
+2. `vite.config.js` lists it in the `input` array,
+3. `AdminPanelProvider` calls `->viteTheme(...)`,
+4. the theme's `@source` lines name our own directories.
+
+That fourth one is the subtle one. Filament's theme entry opens with
+`@import 'tailwindcss' source(none)`, which switches automatic content
+detection **off**. Without explicit `@source` lines the build still succeeds
+and still writes a stylesheet — one that has never seen our markup, so every
+class in it is missing. `ChangelogPageTest::test_the_panel_has_a_custom_theme_that_scans_our_own_views`
+guards all four.
+
+The theme is compiled by the same CI job as everything else in `resources/`
+(`build-assets.yml`, which triggers on `resources/**`), into the committed
+`public/build/`. **A view rendered inside the panel before that job runs is
+unstyled**, same as the student site.
+
+Views written before the theme existed are still styled with inline CSS on
+purpose — `sidebar-version.blade.php`, `doc.blade.php`. They work; leave them.
+Filament's own API (`brandLogoHeight()`, `->extraAttributes()`) is still the
+better tool for anything Filament already models. This trap is what made the
+sign-in logo the wrong size *and* broke its dark-mode swap.
 
 **Tailwind preflight makes form controls transparent.** An `<input>` with no
 `bg-*` class has no background. Fine on a white card, invisible on a coloured

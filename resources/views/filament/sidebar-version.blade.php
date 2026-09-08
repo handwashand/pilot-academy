@@ -2,10 +2,11 @@
      What's new so "which version am I on?" and "what changed?" are one click
      apart.
 
-     Styled with inline CSS on purpose: the Filament panel stylesheet carries no
-     Tailwind utility layer, so h-*/text-*/dark:* classes would silently do
-     nothing here. The gray-* custom properties are injected per page by
-     Filament itself and resolve in both themes. --}}
+     Styled with inline CSS. It was written before the panel had a Tailwind
+     theme, when a utility class here would have silently done nothing; it now
+     would work, but this is three declarations and swapping them buys nothing.
+     The gray-* custom properties are injected per page by Filament itself and
+     resolve in both themes. --}}
 @php
     $version = config('app.version');
 @endphp
@@ -14,9 +15,9 @@
     <div
         @if (filament()->isSidebarCollapsibleOnDesktop())
             {{-- Hidden while the sidebar is collapsed, the same way Filament
-                 hides its own navigation labels. No x-cloak: the panel
-                 stylesheet does not define [x-cloak], so it would be a no-op
-                 that only looked like it was doing something. --}}
+                 hides its own navigation labels. No x-cloak, because the
+                 version should show while Alpine boots, not be hidden — the
+                 panel theme does define [x-cloak] now, so it would work. --}}
             x-show="$store.sidebar.isOpen"
         @endif
         style="padding: 0.25rem 0.75rem 0.75rem; text-align: center;"

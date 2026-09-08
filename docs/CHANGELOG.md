@@ -3,7 +3,35 @@
 A short log of changes to the academy, newest first, in plain language.
 Add a new entry here whenever something visible to admins or students changes.
 
+<!-- This file IS the What's new page. The panel reads and parses it on every
+     request (/admin/changelog), so there is no second copy to keep in step.
+
+     The headings are structure, not decoration:
+
+       ## <Month> <Year>   starts a release and adds a card to the page.
+       ### Added | Changed | Fixed | Known limitations
+                           sets the category of the items under it — that is
+                           what the filter pills and the coloured dots read.
+                           "Limitations" and "Known issues" mean the same thing.
+       ### Anything else   still renders, keeping its own heading text.
+
+     One `-` bullet is one entry, and its wrapped lines belong to it. A section
+     written as prose instead of bullets renders whole. Comments like this one
+     are stripped before anything is rendered, so notes to the next editor can
+     live right here. -->
+
 ## 2.0.0 — September 2026
+
+### What's new is now a filterable list
+
+**This page is built from `docs/CHANGELOG.md` itself**, read fresh on every
+visit. Whoever ships a change writes it in that one file and it appears here —
+there is no second copy to update and no way for the two to fall out of step.
+
+**Search the box** at the top to find a change by any word in it, and **click a
+category pill** to narrow to just the additions, the fixes, or the known
+limitations. Months with nothing left in them drop out of the way rather than
+sitting there empty.
 
 ### Videos remember where you stopped, and can be read instead of watched
 
@@ -365,7 +393,3 @@ quiz**. Passing (80% by default) automatically issues a **PDF certificate**
 with the student's name, the course, the date, a unique number, and a QR code.
 Certificates are emailed, available in the student's account, and can be
 checked by anyone on a public verification page.
-
----
-
-_This changelog is also shown in the admin panel under **Changelog**._

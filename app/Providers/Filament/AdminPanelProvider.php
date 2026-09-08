@@ -31,6 +31,12 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::Amber,
             ])
             ->brandName('Pilot Academy')
+            // Without a theme the panel loads only Filament's own precompiled
+            // stylesheet, which has no Tailwind utility layer: a utility class
+            // in one of our panel views compiles to nothing and does nothing,
+            // silently. The theme is built by CI into the committed bundle
+            // along with the rest of resources/ — see build-assets.yml.
+            ->viteTheme('resources/css/filament/admin/theme.css')
             // Filament's own brand API rather than a custom view: it applies the
             // height as an inline style and swaps the dark lockup through its
             // fi-logo-light/fi-logo-dark classes. The panel stylesheet carries no
