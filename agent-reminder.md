@@ -34,9 +34,12 @@ is not obvious in this repo.
 
 ## Where things stand
 
-Last updated: **2026-09-08**
+Last updated: **2026-09-10**
 
-Next release is **2.0.0** — the first version number this project has had.
+**2.0.0 is released** — tagged `v2.0.0` at `4fa98c7c`, the first version number
+this project has had. **Next release is 2.1.0** (`feature/support-engine-ports`
+moved both the changelog heading and `config/app.php`). The filterable What's
+new merged *after* the tag, so its entry moved from 2.0.0 into 2.1.0 too.
 Earlier changelog entries are month-only and are deliberately *not* renumbered
 after the fact.
 
@@ -66,7 +69,9 @@ There are no tags in this repo yet, so `v2.0.0` will be the first.
 | Branch | State |
 | --- | --- |
 | `laravel` | Main. Deploys to production by `git pull`. At the merge of PR #33. |
-| `feature/whats-new-page` | **Pushed, PR not opened** (no `gh` auth on that machine). What's new rebuilt as a filterable list, plus the panel's first Tailwind theme. Suite green, Pint clean. |
+| `feature/support-engine-ports` | Off `laravel`. Ports from support-engine: Help page, What's new PDF, profile page, Docs group, guide search, privacy-enhanced YouTube, header fit at 360px. |
+| `feature/whats-new-page` | Merged into `laravel` (e3253197). Safe to delete. |
+| `main` | **Not the deploy branch.** Carries an unrelated "Initial commit" history plus a merge of `laravel`. Branch from `laravel`, not from here. |
 | `feature/sqlite-postgres` | **Pushed, no PR opened.** SQLite → PostgreSQL move. Ready for review. |
 | `feature/admin-dashboard` | PR #34, open. Dashboard, branding, nudge, mobile fixes. |
 | `feature/learner-experience` | **Stacked on `feature/admin-dashboard`, not on `laravel`.** Duration, search, video controls, accessibility, quiz cost, course completion. Merge #34 first. |
@@ -83,9 +88,11 @@ There are no tags in this repo yet, so `v2.0.0` will be the first.
 - **`feature/admin-dashboard` is large** — widgets, bulk actions, an export, a
   learner-facing change, branding. Worth splitting before review; the
   content-health fix stands alone as a genuine bug fix.
-- **Three PRs still need opening**: sqlite-postgres, admin-dashboard and
-  whats-new-page. The last one is pushed and green; it was deliberately *not*
-  self-merged, per the rule above.
+- **PRs still need opening**: sqlite-postgres, admin-dashboard and
+  support-engine-ports.
+- **Three bigger features are waiting on decisions**, not code: refreshers,
+  video engagement, multilingual. See `docs/plans/support-engine-features.md`
+  — each has a "Decide first" list. Do not start any of them without answers.
 - **`APP_URL` must be the real domain in production.** The certificate email
   builds its logo URL from it; a wrong value ships broken images to students.
 
@@ -94,6 +101,70 @@ There are no tags in this repo yet, so `v2.0.0` will be the first.
 ## Work log
 
 Newest first. Add to this every time.
+
+### 2026-09-10 — Ports from Support Training Hub
+The sister project (`support-engine`, branch `hub-version2`, same stack) had
+grown features that apply here. Reviewed its changelog and the session that
+built it, checked each against this codebase, and ported the ones that fit.
+
+**Already here, so not ported:** its admin dashboard (the one its
+`docs/FILAMENT_DASHBOARD_PROMPT.md` describes) — overview, by-company chart,
+stalled learners, nav badges, global search, admin-only scoping via
+`ReportsOnLearners`, and the blank-password test. Its Range-request and
+proxy-cache video fixes do not apply either: those were for streaming from
+*private* storage, and uploads here are on the public disk.
+
+**Ported:**
+- **Help page** at `/help` from `docs/learner-guide.md`, linked from the header
+  (**?**) and footer, open to guests. Reuses `AdminGuide::parse()` so both
+  guides split at `##` the same way. Every claim in the guide was checked
+  against the controllers — two were wrong in the first draft (a *timed*
+  knowledge check shows only a score, not which answers were wrong; the
+  **Course complete** feedback card waits for the certificate when a course has
+  a final quiz).
+- **What's new as a PDF** — `ChangelogPdfController`, reusing the page's
+  parser. Releases now carry an `id` (slug of the heading).
+- **Profile page** — `->profile(isSimple: false)`. Creators had no way to change
+  their own password.
+- **Docs navigation group** holding Guide (1) and What's new (2).
+- **Guide contents + search** — same roll-up idea as What's new: the contents
+  entries hide with their sections, and "Nothing in the guide mentions …" shows
+  once.
+- **youtube-nocookie + `rel=0`** on YouTube embeds.
+
+**Traps hit today:**
+- **The header was already full at 375px.** Adding Help wrapped "Pilot Academy"
+  and "Log in" onto two lines. The fix sets priorities rather than squeezing:
+  phones get a smaller mark and name that may truncate; from `sm:` up the
+  brand never shrinks and the *learner's name* truncates instead. Without that,
+  a long name at 640px collapsed the brand to just the mark. Log in, Log out and
+  Register were also under the ~44px tap rule (20–32px) and now aren't.
+- **Headless Edge/Chrome ignores `--window-size` below ~500px.** It lays the page
+  out at 496px and crops the screenshot to 375, so overflow looks real when it
+  is not (and vice versa). Use puppeteer-core with `setViewport({ width: 375 })`
+  against the installed Edge — and check `document.documentElement.scrollWidth`,
+  not the picture.
+- **dompdf via the Laravel wrapper embeds whole fonts** (`enable_font_subsetting`
+  is false in its config): the changelog PDF was 1.5 MB. Per-call
+  `->setOption('isFontSubsettingEnabled', true)` brings it to ~60 KB. Certificates
+  were left alone.
+- **`AuthenticateSession` pins a test's session to the first user.** Two
+  `actingAs()` users in one test → the second request is a 302 to login. One
+  user per test.
+- **The host `vendor/` and `node_modules/` had been emptied** since the last
+  session. The panel theme `@import`s `vendor/filament/...`, so `npm run build`
+  needs at least `vendor/filament`: copy it out of the image with
+  `docker create` + `docker cp` rather than a full Composer install. Without
+  `vendor/laravel`, the pagination classes drop out of the student bundle — as
+  they do in CI, which never installs vendor. Nothing on the student site
+  paginates.
+- A method named `render()` on a Filament page collides with Livewire's — the
+  What's new parser's renderer is `renderMarkdown()` for that reason.
+
+**Version:** `v2.0.0` was already tagged (at `4fa98c7c`, before the What's new
+merge), so these entries — and the filterable What's new entry, which also
+landed after the tag — now sit under `## 2.1.0 — September 2026`, and
+`config/app.php` says `2.1.0`. Tag `v2.1.0` on the merge commit into `laravel`.
 
 ### 2026-09-08 — What's new became a filterable list (**and the panel got a theme**)
 `docs/CHANGELOG.md` was being dumped through `Str::markdown()` into

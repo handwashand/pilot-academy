@@ -3,12 +3,14 @@
 use App\Http\Controllers\AcademyController;
 use App\Http\Controllers\Auth\StudentAuthController;
 use App\Http\Controllers\CertificateController;
+use App\Http\Controllers\ChangelogPdfController;
 use App\Http\Controllers\FinalQuizController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AcademyController::class, 'home'])->name('academy.home');
 Route::post('/name', [AcademyController::class, 'setName'])->name('academy.name');
 Route::get('/search', [AcademyController::class, 'search'])->name('academy.search');
+Route::get('/help', [AcademyController::class, 'help'])->name('academy.help');
 Route::get('/sitemap.xml', [AcademyController::class, 'sitemap'])->name('sitemap');
 
 // Student authentication (public site)
@@ -47,6 +49,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/my/certificates', [CertificateController::class, 'index'])->name('certificates.index');
     Route::get('/my/certificates/{certificate}/download', [CertificateController::class, 'download'])->name('certificates.download');
 });
+
+// What's new as a PDF, one release or all of them. Panel users only — the
+// controller checks canAccessPanel(), the same rule as the page itself.
+Route::get('/admin/changelog/pdf/{release?}', ChangelogPdfController::class)
+    ->middleware('auth')
+    ->name('changelog.pdf');
 
 // Public certificate verification
 Route::get('/certificates/{number}', [CertificateController::class, 'verify'])->name('certificates.verify');

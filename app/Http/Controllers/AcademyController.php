@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Filament\Pages\AdminGuide;
 use App\Models\ActivityEvent;
 use App\Models\Course;
 use App\Models\CourseFeedback;
@@ -9,6 +10,7 @@ use App\Models\Lesson;
 use App\Models\QuizAttempt;
 use App\Models\VideoPosition;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class AcademyController extends Controller
 {
@@ -414,6 +416,27 @@ class AcademyController extends Controller
             'courses' => $courses,
             'lessons' => $lessons,
         ]);
+    }
+
+    /**
+     * The student Help page — docs/learner-guide.md, split at its `##`
+     * headings. The file is the single source of truth, as the admin guide
+     * is; this borrows that page's parser so both guides split the same way.
+     * Open to everyone, since anonymous visitors take lessons too.
+     */
+    public function help()
+    {
+        $path = base_path('docs/learner-guide.md');
+
+        $sections = is_file($path)
+            ? Cache::remember(
+                'learner-guide.'.filemtime($path),
+                now()->addDay(),
+                fn (): array => AdminGuide::parse((string) file_get_contents($path)),
+            )
+            : [];
+
+        return view('academy.help', ['sections' => $sections]);
     }
 
     public function setName(Request $request)

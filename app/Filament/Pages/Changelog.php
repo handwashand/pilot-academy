@@ -7,6 +7,7 @@ use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use UnitEnum;
 
 /**
  * What's new — docs/CHANGELOG.md, parsed at request time.
@@ -64,7 +65,11 @@ class Changelog extends Page
 
     protected static ?string $title = "What's new";
 
-    protected static ?int $navigationSort = 100;
+    // Docs sits last in the sidebar, below the screens it explains. The guide
+    // comes first inside it: you read how things work before what changed.
+    protected static string|UnitEnum|null $navigationGroup = 'Docs';
+
+    protected static ?int $navigationSort = 2;
 
     protected string $view = 'filament.pages.changelog';
 
@@ -146,7 +151,12 @@ class Changelog extends Page
             }
 
             if ($sections !== []) {
-                $releases[] = ['title' => $title, 'sections' => $sections];
+                $releases[] = [
+                    // A stable address for one release — the PDF link uses it.
+                    'id' => Str::slug($title),
+                    'title' => $title,
+                    'sections' => $sections,
+                ];
             }
         }
 

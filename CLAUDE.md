@@ -67,20 +67,22 @@ The Filament `/admin` panel is desktop-first and exempt.
 
 ## Docs & changelog
 
-Two Markdown files under `docs/` are rendered live inside the panel and must be
-kept current:
+Three Markdown files under `docs/` are rendered live and must be kept current:
 
-- `docs/admin-guide.md` — the manager guide, shown under **Guide**
+- `docs/admin-guide.md` — the manager guide, shown under **Docs → Guide**
   (`app/Filament/Pages/AdminGuide.php`, `/admin/admin-guide`).
-- `docs/CHANGELOG.md` — a plain-language change log, shown under **What's new**
-  (`app/Filament/Pages/Changelog.php`, `/admin/changelog`).
-
-Both render through `resources/views/filament/pages/partials/doc.blade.php`.
+- `docs/CHANGELOG.md` — a plain-language change log, shown under
+  **Docs → What's new** (`app/Filament/Pages/Changelog.php`, `/admin/changelog`),
+  and as a PDF. Prefer `### Added` / `Changed` / `Fixed` / `Known limitations`
+  headings for new entries — they drive the page's category filter.
+- `docs/learner-guide.md` — the student **Help** page (`/help`,
+  `AcademyController@help`). Update it whenever a learner-facing rule changes.
 
 **Whenever you change academy behaviour visible to admins or students (courses,
 lessons, the final quiz, certificates), in the same change:**
 
-1. Update `docs/admin-guide.md` if the instructions change.
+1. Update `docs/admin-guide.md` if the instructions change, and
+   `docs/learner-guide.md` if what a student sees or must do changes.
 2. Add a dated entry to `docs/CHANGELOG.md` (newest first, plain language).
 3. Update `README.md` if the stack or local setup moved, and `DEPLOY.md` if
    deployment did.

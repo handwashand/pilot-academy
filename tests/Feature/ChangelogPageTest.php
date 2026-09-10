@@ -220,6 +220,67 @@ class ChangelogPageTest extends TestCase
         $this->assertStringContainsString("@source '../../../../resources/views/filament/**/*.blade.php';", $css);
     }
 
+    public function test_whats_new_sits_in_the_docs_group(): void
+    {
+        $this->assertSame('Docs', Changelog::getNavigationGroup());
+
+        $this->actingAs($this->user('docs@pilot.local', User::ROLE_ADMIN))
+            ->get('/admin/changelog')
+            ->assertStatus(200)
+            ->assertSee('Docs');
+    }
+
+    public function test_the_page_links_to_the_pdf_of_each_release_and_of_all_of_them(): void
+    {
+        $first = Changelog::releasesFrom(Changelog::changelogPath())[0];
+
+        $this->actingAs($this->user('links@pilot.local', User::ROLE_ADMIN))
+            ->get('/admin/changelog')
+            ->assertSee(route('changelog.pdf'), false)
+            ->assertSee(route('changelog.pdf', ['release' => $first['id']]), false);
+    }
+
+    public function test_every_release_downloads_as_one_pdf(): void
+    {
+        $response = $this->actingAs($this->user('pdf@pilot.local', User::ROLE_ADMIN))
+            ->get(route('changelog.pdf'));
+
+        $response->assertStatus(200);
+        $this->assertSame('application/pdf', $response->headers->get('content-type'));
+        $this->assertStringStartsWith('%PDF', $response->getContent());
+        $this->assertStringContainsString('whats-new-', $response->headers->get('content-disposition'));
+    }
+
+    public function test_one_release_downloads_as_a_pdf_named_after_it(): void
+    {
+        $first = Changelog::releasesFrom(Changelog::changelogPath())[0];
+
+        $response = $this->actingAs($this->user('one@pilot.local', User::ROLE_CREATOR))
+            ->get(route('changelog.pdf', ['release' => $first['id']]));
+
+        $response->assertStatus(200);
+        $this->assertStringStartsWith('%PDF', $response->getContent());
+        $this->assertStringContainsString("whats-new-{$first['id']}.pdf", $response->headers->get('content-disposition'));
+    }
+
+    public function test_an_unknown_release_is_a_404_not_an_empty_pdf(): void
+    {
+        $this->actingAs($this->user('404@pilot.local', User::ROLE_ADMIN))
+            ->get(route('changelog.pdf', ['release' => 'no-such-month']))
+            ->assertStatus(404);
+    }
+
+    public function test_the_pdf_is_refused_to_students_and_guests(): void
+    {
+        $this->actingAs($this->user('learner-pdf@example.com', User::ROLE_LEARNER))
+            ->get(route('changelog.pdf'))
+            ->assertStatus(403);
+
+        auth()->logout();
+
+        $this->get(route('changelog.pdf'))->assertRedirect();
+    }
+
     private function user(string $email, string $role): User
     {
         return User::create([

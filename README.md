@@ -103,6 +103,8 @@ survive `docker compose down` — add `-v` to start from a clean slate.
 5. Start the final quiz, pass, and receive a certificate
 6. Download the certificate PDF from the student account
 
+Stuck at any step? **Help** (`/help`, the **?** in the header) explains the flow in plain language.
+
 ## Admin flow
 
 1. Log in to the Filament admin panel at `/admin`
@@ -128,10 +130,14 @@ docker compose run --rm app php artisan test
 
 ## Docs
 
-- Admin guide: `docs/admin-guide.md` — rendered in the panel under **Guide**
-- Change log: `docs/CHANGELOG.md` — rendered in the panel under **What's new**
+- Admin guide: `docs/admin-guide.md` — rendered in the panel under **Docs → Guide**,
+  with a contents list and search
+- Change log: `docs/CHANGELOG.md` — rendered in the panel under **Docs → What's new**,
+  downloadable as a PDF (`/admin/changelog/pdf`, or `/admin/changelog/pdf/{release}`)
+- Student guide: `docs/learner-guide.md` — rendered on the public site at `/help`
 
-Both are read from disk at request time, so the panel never shows a stale copy.
+All three are read from disk at request time, so nobody sees a stale copy. Each
+`## ` heading in a guide becomes a section and a contents entry.
 **What's new** parses the change log rather than just rendering it: `## <Month>
 <Year>` starts a release card, and `### Added` / `Changed` / `Fixed` /
 `Known limitations` categorises the bullets under it for the search and filter

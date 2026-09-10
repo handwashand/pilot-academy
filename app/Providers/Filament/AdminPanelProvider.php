@@ -27,6 +27,11 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            // "Profile" in the account menu: your own name, email and password.
+            // Creators have no access to Users, so without this they had no
+            // way to change their own password at all. Not the simple layout,
+            // so the page keeps the sidebar like every other panel screen.
+            ->profile(isSimple: false)
             ->colors([
                 'primary' => Color::Amber,
             ])

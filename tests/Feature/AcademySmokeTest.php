@@ -56,7 +56,11 @@ class AcademySmokeTest extends TestCase
 
         $this->get(route('academy.lesson', [$course, $lesson]))
             ->assertStatus(200)
-            ->assertSee('youtube.com/embed', false)
+            // The privacy-enhanced host, with the end screen kept off other
+            // channels' videos — never the tracking youtube.com embed.
+            ->assertSee('youtube-nocookie.com/embed', false)
+            ->assertSee('?rel=0', false)
+            ->assertDontSee('www.youtube.com/embed', false)
             ->assertSee('Knowledge check');
     }
 
@@ -88,7 +92,7 @@ class AcademySmokeTest extends TestCase
             ->assertStatus(200)
             ->assertSee('<video', false)
             ->assertSee('lesson-videos/sample.mp4', false)
-            ->assertDontSee('youtube.com/embed', false);
+            ->assertDontSee('youtube-nocookie.com/embed', false);
     }
 
     public function test_admin_can_open_lesson_edit_form_with_quiz_repeater(): void

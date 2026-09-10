@@ -20,7 +20,35 @@ Add a new entry here whenever something visible to admins or students changes.
      are stripped before anything is rendered, so notes to the next editor can
      live right here. -->
 
-## 2.0.0 — September 2026
+## 2.1.0 — September 2026
+
+### Added
+
+- **A Help page for students.** **Help** (the **?** in the top bar, on every
+  page, logged in or not) explains how the academy works: what finishes a
+  lesson, when the final quiz unlocks, where certificates are, and what to do
+  when something will not finish. It is readable on a phone, with a contents
+  list at the top.
+- **What's new downloads as a PDF** — one release from the **PDF** link on its
+  heading, or everything from **All releases (PDF)** beside the filters. For
+  sending release notes to people without a panel account. The filters on
+  screen do not change what goes into the file.
+- **Edit your own profile.** Open the account menu (your initials, top right) →
+  **Profile** to change your name, email or password. Creators could not change
+  their own password before, because they have no access to **Users**.
+- **Search the guide.** **Docs → Guide** now has a contents list beside it and a
+  search box that hides the sections that do not mention what you typed.
+
+### Changed
+
+- **Guide and What's new live under Docs**, a group at the bottom of the left
+  menu, below the screens they explain.
+- **YouTube lessons use YouTube's privacy-enhanced player.** No tracking cookie
+  is set until the student presses play, and the end of a video only suggests
+  videos from the same channel — not whatever YouTube would recommend next.
+- **The top bar fits on small phones.** With Help added, the student site's
+  header stays on one line down to 360px wide, and **Log in**, **Log out** and
+  **Register** are now comfortable to tap.
 
 ### What's new is now a filterable list
 
@@ -32,6 +60,8 @@ there is no second copy to update and no way for the two to fall out of step.
 category pill** to narrow to just the additions, the fixes, or the known
 limitations. Months with nothing left in them drop out of the way rather than
 sitting there empty.
+
+## 2.0.0 — September 2026
 
 ### Videos remember where you stopped, and can be read instead of watched
 

@@ -106,8 +106,8 @@
     <a href="#main" class="skip-link">Skip to content</a>
 
     <header class="sticky top-0 z-20 bg-white border-b border-slate-200">
-        <div class="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
-            <a href="{{ route('academy.home') }}" class="flex items-center gap-2.5">
+        <div class="max-w-6xl mx-auto px-4 sm:px-5 h-16 flex items-center justify-between gap-2">
+            <a href="{{ route('academy.home') }}" class="flex min-w-0 sm:shrink-0 items-center gap-2 sm:gap-2.5">
                 {{-- The mark plus HTML text rather than the lockup image. The
                      lockup now says "PILOT ACADEMY" so it would no longer say
                      the name twice — but this header is only 64px tall, and at
@@ -118,10 +118,24 @@
                      One ink for the wordmark: the amber mark carries the
                      colour. "Academy" used to be brand blue, which worked when
                      the mark was blue too and clashed once it turned amber. --}}
-                <img src="{{ asset('img/pilot-mark.svg') }}" alt="" class="w-9 h-9" width="36" height="36">
-                <span class="font-extrabold text-navy text-lg">Pilot Academy</span>
+                <img src="{{ asset('img/pilot-mark.svg') }}" alt="" class="w-8 h-8 sm:w-9 sm:h-9 flex-none" width="36" height="36">
+                {{-- One line, always. With Help in the bar a guest's header is
+                     full at 375px, so the mark and name drop a size below sm:
+                     and, on anything narrower, the name truncates rather than
+                     wrapping. From sm: up the brand never shrinks — a long
+                     learner name truncates instead (see below). --}}
+                <span class="font-extrabold text-navy text-base sm:text-lg truncate">Pilot Academy</span>
             </a>
-            <div class="flex items-center gap-3">
+            <div class="flex flex-none sm:flex-initial sm:min-w-0 items-center gap-0.5 sm:gap-3">
+                {{-- Help, for everyone: anonymous visitors take lessons too.
+                     Icon-only below sm: like Certificates — the header has no
+                     room for another word on a 375px phone. --}}
+                <a href="{{ route('academy.help') }}"
+                   class="flex flex-none items-center gap-2 h-11 px-1 sm:px-2 rounded-lg text-sm text-slate-600 hover:text-brand hover:bg-slate-50 active:bg-slate-100 font-medium"
+                   aria-label="Help">
+                    <span aria-hidden="true" class="w-6 h-6 rounded-full border border-slate-300 text-xs font-bold flex items-center justify-center">?</span>
+                    <span class="hidden sm:block">Help</span>
+                </a>
                 @auth
                     @php($name = auth()->user()->name)
                     {{-- Certificates has to stay reachable on a phone: the word
@@ -134,26 +148,28 @@
                          the icon on desktop would silently do nothing. Every class
                          here was checked against public/build/assets/app-*.css. --}}
                     <a href="{{ route('certificates.index') }}"
-                       class="flex items-center gap-2 h-11 px-2 rounded-lg text-sm text-slate-600 hover:text-brand hover:bg-slate-50 active:bg-slate-100 font-medium"
+                       class="flex flex-none items-center gap-2 h-11 px-2 rounded-lg text-sm text-slate-600 hover:text-brand hover:bg-slate-50 active:bg-slate-100 font-medium"
                        aria-label="My certificates">
                         <span aria-hidden="true">🎓</span>
                         <span class="hidden sm:block">Certificates</span>
                     </a>
-                    <span class="hidden sm:block text-sm text-slate-500">{{ $name }}</span>
-                    <span class="w-9 h-9 rounded-full bg-navy text-white flex items-center justify-center font-bold text-sm">
+                    <span class="hidden sm:block min-w-0 truncate text-sm text-slate-500">{{ $name }}</span>
+                    {{-- Decorative initial, not a control: dropped below sm: to give the
+                         header's real actions room on a phone. --}}
+                    <span class="hidden sm:flex flex-none w-9 h-9 rounded-full bg-navy text-white items-center justify-center font-bold text-sm">
                         {{ strtoupper(mb_substr($name, 0, 1)) }}
                     </span>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button class="text-sm text-slate-500 hover:text-brand font-medium">Log out</button>
+                        <button class="h-11 px-1 sm:px-1.5 whitespace-nowrap text-sm text-slate-500 hover:text-brand font-medium">Log out</button>
                     </form>
                 @else
                     @php($name = session('student_name'))
                     @if($name)
-                        <span class="hidden sm:block text-sm text-slate-500">{{ $name }}</span>
+                        <span class="hidden sm:block min-w-0 truncate text-sm text-slate-500">{{ $name }}</span>
                     @endif
-                    <a href="{{ route('login') }}" class="text-sm text-slate-600 hover:text-brand font-medium">Log in</a>
-                    <a href="{{ route('register') }}" class="text-sm font-semibold rounded-lg bg-brand text-white px-3.5 py-1.5 hover:bg-blue-700">Register</a>
+                    <a href="{{ route('login') }}" class="flex flex-none items-center h-11 px-1 sm:px-1.5 whitespace-nowrap text-sm text-slate-600 hover:text-brand font-medium">Log in</a>
+                    <a href="{{ route('register') }}" class="flex flex-none items-center h-10 whitespace-nowrap text-sm font-semibold rounded-lg bg-brand text-white px-3 sm:px-3.5 hover:bg-blue-700">Register</a>
                 @endauth
             </div>
         </div>
@@ -164,7 +180,8 @@
     </main>
 
     <footer class="max-w-6xl mx-auto px-5 py-10 text-center text-sm text-slate-400">
-        Pilot Academy · internal training
+        Pilot Academy · internal training ·
+        <a href="{{ route('academy.help') }}" class="hover:text-brand">Help</a>
     </footer>
 </body>
 </html>

@@ -125,6 +125,16 @@
                         <span class="tabular-nums opacity-60">{{ $total }}</span>
                     </button>
                 @endforeach
+
+                {{-- The file always holds whole releases; the filters on screen
+                     do not change what is printed. --}}
+                <a
+                    href="{{ route('changelog.pdf') }}"
+                    class="ms-auto inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-950 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white"
+                >
+                    <x-filament::icon icon="heroicon-m-arrow-down-tray" class="size-4" />
+                    All releases (PDF)
+                </a>
             </div>
 
             <p
@@ -157,6 +167,15 @@
                                     {{ $types[$type]['label'] }} {{ $count }}
                                 </span>
                             @endforeach
+
+                            <a
+                                href="{{ route('changelog.pdf', ['release' => $release['id']]) }}"
+                                class="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-950 dark:text-gray-300 dark:hover:text-white"
+                                aria-label="Download {{ $release['title'] }} as PDF"
+                            >
+                                <x-filament::icon icon="heroicon-m-arrow-down-tray" class="size-3.5" />
+                                PDF
+                            </a>
                         </span>
                     </header>
 

@@ -12,6 +12,8 @@ Open your site address in a browser and add `/admin` at the end. Sign in with yo
 
 You land on the **Dashboard** — a quick summary of how many students you have, how many lessons they finished, and how many certificates were issued. The menu on the left takes you to every part of the academy.
 
+**Change your own name, email or password** from the account menu: click your initials in the top right → **Profile**. You are asked for your current password before a new one is saved. This works for creators too, who cannot open **Users**.
+
 ---
 
 ## 2. The menu at a glance
@@ -28,8 +30,10 @@ Each item in the left menu has one job.
 | **Certificates** | Every certificate that was issued. Download, resend, or revoke them. |
 | **Media items** | A shared image library you can reuse as lesson covers. |
 | **Dashboard** | The home screen: overall numbers, progress by partner, and who has gone quiet. |
-| **Guide** | This guide. |
-| **What's new** | Everything that has changed in the academy, newest first. Search it or filter it by category. |
+| **Docs → Guide** | This guide, with a contents list and a search box. |
+| **Docs → What's new** | Everything that has changed in the academy, newest first. Search it, filter it by category, or download it as a PDF. |
+
+Students have their own guide on the public site: **Help**, the **?** in the top bar. Point a stuck student there first — it covers what finishes a lesson, when the final quiz unlocks, and where certificates are.
 
 ---
 
@@ -364,7 +368,7 @@ still in draft and invisible to students. Hover it to see what it counts.
 
 ### What changed, and when
 
-Open **What's new**. Every change to the academy is here, newest month first,
+Open **Docs → What's new**. Every change to the academy is here, newest month first,
 with the version you are on shown at the bottom of the left menu — click it to
 come straight to this page.
 
@@ -373,6 +377,11 @@ Type in the **search box** to find a change by any word in it ("certificate",
 *Fixed*, *Known limitations* — to show only that kind of change; click it again
 to let the rest back in. Months with nothing left in them drop out, so what you
 are looking at is only what matched.
+
+**Sending release notes to someone without an account?** Click **PDF** on a
+release's heading for just that release, or **All releases (PDF)** beside the
+filters for everything. The file always holds whole releases — the filters on
+screen do not change what is printed.
 
 > The page is the change log file itself, read fresh every time you open it.
 > Whoever ships a change writes it there, which is why this page is never out
@@ -455,4 +464,4 @@ Yes. Admins can open and take any course's final quiz straight away (from the co
 
 ---
 
-*This guide is also shown inside the admin panel under **Guide**. When admin features for courses, the final quiz, or certificates change, update this file (`docs/admin-guide.md`) in the same change.*
+*This guide is also shown inside the admin panel under **Docs → Guide**. When admin features for courses, the final quiz, or certificates change, update this file (`docs/admin-guide.md`) in the same change.*

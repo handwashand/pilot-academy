@@ -147,9 +147,13 @@
                     })();
                 </script>
             @elseif($lesson->youtube_id)
+                {{-- youtube-nocookie sets no tracking cookie until the viewer
+                     presses play, and rel=0 keeps the end screen to this
+                     channel's videos, so a training video is not a doorway to
+                     whatever YouTube recommends next. --}}
                 <div class="mt-6 rounded-2xl overflow-hidden border border-slate-200 shadow-sm aspect-video bg-black">
                     <iframe class="w-full h-full"
-                            src="https://www.youtube.com/embed/{{ $lesson->youtube_id }}"
+                            src="https://www.youtube-nocookie.com/embed/{{ $lesson->youtube_id }}?rel=0"
                             title="{{ $lesson->title }}"
                             frameborder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
