@@ -90,9 +90,11 @@ There are no tags in this repo yet, so `v2.0.0` will be the first.
   content-health fix stands alone as a genuine bug fix.
 - **PRs still need opening**: sqlite-postgres, admin-dashboard and
   support-engine-ports.
-- **Three bigger features are waiting on decisions**, not code: refreshers,
-  video engagement, multilingual. See `docs/plans/support-engine-features.md`
-  — each has a "Decide first" list. Do not start any of them without answers.
+- **Two bigger features are waiting on decisions**, not code: video engagement
+  and multilingual. See `docs/plans/support-engine-features.md` — each has a
+  "Decide first" list. Do not start either without answers. **Refreshers were
+  declined** (2026-09-10): the two academies serve different purposes, so
+  support-engine's competency features are not ported here by default.
 - **`APP_URL` must be the real domain in production.** The certificate email
   builds its logo URL from it; a wrong value ships broken images to students.
 

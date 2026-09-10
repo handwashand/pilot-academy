@@ -1,54 +1,21 @@
-# Plan: three bigger features from Support Training Hub
+# Plan: two bigger features from Support Training Hub
 
 Status: **for discussion — nothing here is built.** Written 2026-09-10.
 
-These three were built in the sister project (`support-engine`, branch
+These two were built in the sister project (`support-engine`, branch
 `hub-version2`). Each one changes how training works rather than how it looks,
-so each needs a decision from you before code. For every feature: what it is,
-what Pilot Academy already has to build on, the work, and the questions only you
-can answer.
+so each needs a decision before code. For every feature: what it is, what Pilot
+Academy already has to build on, the work, and the questions only the product
+owner can answer.
+
+> **Declined: refreshers** (spaced-repetition quizzes 30 and 90 days after a
+> certificate). Decided 2026-09-10: the two academies serve different purposes.
+> Support Training Hub tracks internal staff competency over time; Pilot Academy
+> certifies partners on a course. Do not propose it again without a new reason.
 
 ---
 
-## 1. Refreshers — spaced repetition after a certificate
-
-**What it is.** 30 and 90 days after someone earns a certificate, they get a
-short quiz (5 questions) drawn from that course's final-quiz bank. It measures
-whether the training *stuck*. In support-engine it grants nothing and takes
-nothing away, and wrong answers come back with explanations.
-
-**What we already have.**
-- A per-course question bank (`finalQuestions`) and the attempt machinery
-  (`QuizAttempt`, shuffle-and-take per attempt) in `FinalQuizController`.
-- `certificates.issued_at` — the clock the 30/90 days run from.
-- Email (certificate mail) and a reminder pattern (`RemindStudent`).
-
-**The work.**
-- Table `refreshers`: `user_id`, `course_id`, `certificate_id`, `due_at`,
-  `interval_days` (30/90), `status` (due / completed / lapsed), `score`,
-  `completed_at`. Created when a certificate is issued.
-- A scheduled command that emails when one falls due and marks lapsed ones.
-  **Nothing runs Laravel's scheduler today** — `DEPLOY.md` sets up no cron and
-  `routes/console.php` schedules nothing. This needs
-  `* * * * * php8.4 artisan schedule:run` on the server, which is a deploy change.
-- A learner page (mobile-first) and a "Refreshers due" card on the home page.
-- Admin: a per-course refresher score column, and a dashboard figure — "of
-  people certified 90+ days ago, what share still pass".
-- Questions need an **explanation** field to show on wrong answers — a new
-  column on the question tables and a field in the editors.
-
-**Decide first.**
-1. Do refreshers count for anything, or are they purely a measurement? (The
-   sister project chose "measurement only". Revoking a certificate on a bad
-   refresher is a much bigger policy change.)
-2. 30 and 90 days — or other intervals?
-3. Do partner companies see their people's refresher results?
-
-**Size:** about 2–3 days, including the scheduler, tests and the guides.
-
----
-
-## 2. Video engagement — how much of a video actually gets watched
+## 1. Video engagement — how much of a video actually gets watched
 
 **What it is.** Per lesson, the **median** share of an uploaded video that
 learners watch. Median, not mean: one person who opens a video and walks away
@@ -85,7 +52,7 @@ cannot answer the question as it stands.
 
 ---
 
-## 3. A multilingual academy
+## 2. A multilingual academy
 
 **What it is.** In support-engine: English, Russian, Spanish and French. A
 language switcher in both the student site and the panel, the choice saved to
@@ -128,5 +95,3 @@ project of its own and should be scoped separately.
 - Translated text runs ~40% wider than English. The student header is already
   full at 375px (see the 2026-09-10 work log): a switcher needs a menu, not
   another icon.
-- Refresher questions drawn from the final bank will be questions the learner
-  has already seen — explanations matter more than novelty.
