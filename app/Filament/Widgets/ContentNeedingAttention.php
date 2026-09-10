@@ -49,7 +49,29 @@ class ContentNeedingAttention extends Widget
             ...$this->finalQuizzesWithoutQuestions(),
             ...$this->lessonsWithoutQuestions(),
             ...$this->unpassableQuestions(),
+            ...$this->unplayableYoutubeLinks(),
         ]);
+    }
+
+    /**
+     * Saved before the lesson form checked YouTube links: a playlist, channel
+     * or other page that the lesson cannot embed, so the student gets no video.
+     * An uploaded file plays instead of the link, so those are left alone.
+     */
+    private function unplayableYoutubeLinks(): array
+    {
+        return $this->scopeLessons(Lesson::query()->published()->whereNotNull('youtube_url')->where('youtube_url', '!=', ''))
+            ->where(fn ($query) => $query->whereNull('video_path')->orWhere('video_path', ''))
+            ->with('course:id,title')
+            ->get(['id', 'course_id', 'title', 'youtube_url'])
+            ->filter(fn (Lesson $lesson): bool => Lesson::youtubeIdFrom($lesson->youtube_url) === null)
+            ->map(fn (Lesson $lesson): array => [
+                'severity' => 'danger',
+                'what' => 'YouTube link that is not a playable video',
+                'name' => $lesson->title.' — '.($lesson->course?->title ?? 'no course'),
+                'fix' => 'Open the lesson and paste the address of the video itself, not a playlist or channel.',
+                'url' => LessonResource::getUrl('edit', ['record' => $lesson]),
+            ])->values()->all();
     }
 
     /** Live, but a student opening it finds nothing to do. */

@@ -111,17 +111,46 @@ class Lesson extends Model
      */
     public function getYoutubeIdAttribute(): ?string
     {
-        if (empty($this->youtube_url)) {
+        return static::youtubeIdFrom($this->youtube_url);
+    }
+
+    /**
+     * The id of the single YouTube video a pasted link points at, or null.
+     *
+     * The one definition of "a playable YouTube link": the lesson page embeds
+     * from it, the lesson form refuses what it rejects, and the dashboard
+     * flags stored links it cannot read. A link that does not parse used to
+     * save without complaint and leave the lesson with no video at all —
+     * playlists, channels, Vimeo, and even `youtube.com/live/…` videos.
+     *
+     * Anchored, and the id must end at a boundary, so `…/ID" onload="…` or an
+     * id with extra characters is refused rather than quietly truncated.
+     */
+    public static function youtubeIdFrom(?string $url): ?string
+    {
+        $url = trim((string) $url);
+
+        if ($url === '') {
             return null;
         }
 
-        if (preg_match('~(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|shorts/))([\w-]{11})~', $this->youtube_url, $m)) {
-            return $m[1];
-        }
+        $id = '([A-Za-z0-9_-]{11})(?=[?&/#]|$)';
 
-        // Already just an id?
-        if (preg_match('~^[\w-]{11}$~', $this->youtube_url)) {
-            return $this->youtube_url;
+        $patterns = [
+            // youtu.be/ID
+            '~^(?:https?://)?(?:www\.)?youtu\.be/'.$id.'~',
+            // youtube.com/watch?v=ID, including ?feature=share&v=ID
+            '~^(?:https?://)?(?:www\.|m\.)?youtube(?:-nocookie)?\.com/watch\?(?:[^#\s]*&)?v='.$id.'~',
+            // youtube.com/embed/ID · /shorts/ID · /live/ID · /v/ID
+            '~^(?:https?://)?(?:www\.|m\.)?youtube(?:-nocookie)?\.com/(?:embed|shorts|live|v)/'.$id.'~',
+            // A bare id, as older rows may store.
+            '~^'.$id.'~',
+        ];
+
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $url, $m) === 1) {
+                return $m[1];
+            }
         }
 
         return null;

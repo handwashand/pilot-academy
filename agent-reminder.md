@@ -19,16 +19,38 @@ open. Newest first. A one-line entry beats no entry.
 what a person can now do, not which class you added. Required whenever you
 change anything an admin or student can see.
 
-**3. Always check `README.md` and `docs/admin-guide.md`.** The guide renders in
-the panel under **Guide** and goes stale silently. If you changed a screen, a
-button, or a rule someone follows, the guide is part of the change, not a
-follow-up. The README describes the stack and local setup — update it when
-either moves. `DEPLOY.md` too, if you touched deployment.
+**3. Always check `README.md`, `docs/admin-guide.md` and `docs/learner-guide.md`.**
+The admin guide renders in the panel under **Docs → Guide**, the learner guide
+is the student **Help** page, and both go stale silently. If you changed a
+screen, a button, or a rule someone follows, the guide is part of the change,
+not a follow-up. The README describes the stack and local setup — update it when
+either moves. `DEPLOY.md` too, if you touched deployment. See
+[Writing the guides](#writing-the-guides) for how to get them right.
 
 **4. Never report work as verified unless you ran it.** `php artisan test`,
 `pint`, and — for anything visible — actually load the page. If you could not
 run something, say so plainly. See [Verifying](#verifying) for how, because it
 is not obvious in this repo.
+
+---
+
+## Invariants — do not simplify these away
+
+Each of these looks like over-engineering from the outside and has a reason.
+Every one is pinned by a test; if your change makes that test fail, the change
+is wrong, not the test.
+
+| Rule | Why | Held by |
+| --- | --- | --- |
+| **A lesson is finished only by passing its knowledge check** — every answer right. Reading or watching never finishes it. | Completion unlocks the final quiz and the certificate, which is a public claim. | `AcademyController::submitQuiz` · `AcademySmokeTest` |
+| **Video position is its own table, never a column on `lesson_user`.** | `completedLessons()` and the dashboard read that pivot without filtering on `completed_at`; a row written on "play" would count as a finished lesson everywhere. | `test_watching_a_video_does_not_mark_the_lesson_complete` |
+| **Drafts and archived content never reach a student** — not in listings, not by URL, not in search, not by submitting a quiz. A lesson shows only if it *and* its course are published. | Publishing is the only gate between work in progress and partners. | `CoursePublishingTest` · `LessonPublishingTest` · `test_a_draft_lessons_transcript_is_not_searchable` |
+| **Creators reach only their own products** — lists, URLs, policies, the associate search, and dashboard warnings. | A creator is a product owner, not an admin. Scoping the record but not the list still leaks. | `CreatorRoleTest` · `CourseLessonsRelationTest` |
+| **Learner data is admin-only and counts learners only.** Every dashboard figure goes through `ReportsOnLearners`. | Staff previews issue real certificates and completions; creators have no business seeing partner data. | `test_reports_count_learners_only` · `test_learner_data_widgets_are_hidden_from_creators` |
+| **Student search uses `LOWER(…) LIKE ?`.** | SQLite's LIKE ignores case, PostgreSQL's does not — tests would pass and production search would miss. | `test_search_is_case_insensitive` (on SQLite — it cannot prove the Postgres case; the query shape does) |
+| **A YouTube link is parsed to an id and the embed is rebuilt from it** (`Lesson::youtubeIdFrom`), never pasted into the iframe. | An unparseable link left lessons silently videoless; a raw URL in `src` is a script-capable sink. | `YoutubeLinkTest` |
+| **Docs render with `html_input => strip` and `allow_unsafe_links => false`.** | The files are ours, but nothing in them needs raw HTML, and being wrong about who can edit them is costly. | `test_raw_html_and_unsafe_links_are_not_rendered` |
+| **The suite refuses any database but `:memory:` or one named `*test*`.** | With config cached, `RefreshDatabase` wipes the database the cache names — and every test still passes. Rehearsed 2026-09-10. | `tests/TestCase.php` · `TestDatabaseGuardTest` |
 
 ---
 
@@ -92,17 +114,68 @@ There are no tags in this repo yet, so `v2.0.0` will be the first.
   support-engine-ports.
 - **Two bigger features are waiting on decisions**, not code: video engagement
   and multilingual. See `docs/plans/support-engine-features.md` — each has a
-  "Decide first" list. Do not start either without answers. **Refreshers were
-  declined** (2026-09-10): the two academies serve different purposes, so
-  support-engine's competency features are not ported here by default.
+  "Decide first" list. Do not start either without answers.
 - **`APP_URL` must be the real domain in production.** The certificate email
   builds its logo URL from it; a wrong value ships broken images to students.
+
+### Decisions — do not re-litigate
+
+Decided by the product owner. Reopen one only with a new reason, and say so.
+Newest first.
+
+| Date | Decision |
+| --- | --- |
+| 2026-09-10 | **Refreshers declined.** Pilot Academy certifies partners on a course; Support Training Hub (`support-engine`) tracks staff competency over time. The two serve different purposes, so its competency features — levels, refreshers, rubric marking, trainer cohorts — are not ported here by default. |
+| 2026-09-10 | **Ported from support-engine:** Help page, What's new PDF, profile page, Docs group, guide search, privacy-enhanced YouTube, YouTube link validation, the test-database guard. **Checked and not needed:** its dashboard (already here), private-storage video fixes (uploads are on the public disk), HTML sanitising of lesson content (Filament strips it on save — proven with a tampered payload). |
+| 2026-09-08 | **No self-merge.** Branch off `laravel`, open a PR; the owner merges. Asked to merge directly, the owner chose a PR. |
+| 2026-09-02 | **Course feedback is staff-only**, one verdict per student per course. No public star ratings. |
+| 2026-09-02 | **"Add existing lesson" moves, never copies.** `lessons.course_id` is not nullable; reuse across courses is **Duplicate** on the course. |
 
 ---
 
 ## Work log
 
 Newest first. Add to this every time.
+
+### 2026-09-10 — Recheck of support-engine: two fixes, and this file's structure
+Went through all 137 commits on `support-engine`'s `hub-version2` for fixes
+that never reached its changelog, and tested each candidate here with a
+throwaway test rather than reading code and guessing.
+
+**Fixed:**
+- **YouTube links that are not one video saved silently.** Playlist, channel,
+  Vimeo and `youtube.com/live/…` links all saved with no error and left the
+  lesson with no video. `Lesson::youtubeIdFrom()` is now the single parser
+  (anchored, id must end at a boundary, `live/` understood); the lesson form
+  refuses what it rejects, and **Content needing attention** lists stored links
+  it cannot read — lessons with an uploaded file are skipped, since the file
+  plays instead.
+- **The suite could wipe a real database.** Rehearsed against a stand-in
+  "production" Postgres: with `php artisan config:cache` (which `optimize` runs
+  on every deploy), `php artisan test` ran against the cached database, and the
+  second run dropped a marker table — green throughout. Production is safe today
+  only because it installs `--no-dev`. `tests/TestCase.php` now refuses anything
+  but `:memory:` or a `*test*` database, **in `setUpTraits()`**. Note that
+  support-engine's own guard runs after `parent::setUp()`, when `RefreshDatabase`
+  has already migrated — too late. Re-run with the guard: refused, marker intact.
+
+**Checked, not a problem here:** lesson HTML is output with `{!! !!}`, and
+Filament's own source warns against exactly that — but its RichEditor strips
+`<script>`, `onerror` and `javascript:` links on save, including from a tampered
+Livewire payload. Answer keys never reach the browser. The lesson form already
+puts video above content. Certificate logos are small (support-engine's OOM came
+from a large one).
+
+**Adopted from support-engine's AGENTS.md:** an *Invariants* table (every rule
+with the test that holds it), a *Decisions* log, *Writing the guides*, and three
+traps. Writing the invariants turned up one rule with no test behind it (docs
+stripping raw HTML) — `test_raw_html_and_unsafe_links_are_not_rendered` now holds
+it. `AdminGuideMenuTest` compares the guide's menu table with the real sidebar,
+and failed on its first run: the guide said **Media items**, the sidebar says
+**Media Items**.
+
+**Offered, not taken up:** CI that runs the suite (`build-assets.yml` only builds
+CSS, so nothing tests a PR), and plans for captions / video transcoding.
 
 ### 2026-09-10 — Ports from Support Training Hub
 The sister project (`support-engine`, branch `hub-version2`, same stack) had
@@ -511,12 +584,73 @@ Notes that will save you time:
   `vendor/` and nothing works.
 - On Git Bash, Docker mounts need `MSYS_NO_PATHCONV=1` and a leading double
   slash: `-v "//c/Users/.../app:/var/www/html/app"`.
+- **The image holds the code it was built with.** `docker compose run app …`
+  without mounts tests *that* copy, not your edits — on 2026-09-08 it quietly
+  ran the old versions of tests that had just been rewritten, and passed. Mount `app`, `tests`,
+  `resources`, `docs`, `config`, `routes`, `database` and `public/build`, and
+  run `composer dump-autoload -o` inside so new classes are found.
+- The entrypoint waits for Postgres and migrates it. For the suite alone, which
+  uses SQLite in memory, skip both: `--no-deps --entrypoint ""`.
+- **Never run the suite with config cached.** It would run against the database
+  the cache names; `tests/TestCase.php` now refuses, with a message telling you
+  to `php artisan config:clear`.
+
+---
+
+## Writing the guides
+
+Three Markdown files ship inside the product — `docs/CHANGELOG.md`,
+`docs/admin-guide.md`, `docs/learner-guide.md` — and people read them expecting
+them to be true.
+
+**What counts as a change they need:** a new screen, menu item or group; a
+renamed button, field, label or status; a changed rule about who may do what; a
+step added to or removed from a workflow; anything that changes what finishes a
+lesson, unlocks the final quiz, or issues a certificate.
+
+**Quote labels exactly as the app prints them.** Check the `->label()`, the
+navigation label, or the page on screen before writing a name into a guide — the
+class name is not the label. The admin guide said **Media items**; the sidebar
+says **Media Items**. `AdminGuideMenuTest` now fails if the guide's
+menu table and the real sidebar disagree; it cannot see buttons inside screens,
+so check those by hand.
+
+**Never describe a screen or a rule you have not confirmed in the code.** Write
+from the application, not from memory or the plan. The first draft of the
+learner guide claimed a timed quiz shows which answers were wrong (it shows only
+the score) and that feedback is asked after the last lesson (with a final quiz,
+it waits for the certificate). Both read as true; both were checked and fixed.
+
+**`##` headings are addresses.** Both guides turn each one into a section and a
+contents link (`#finishing-a-lesson`). Renaming a heading breaks any link to it —
+keep headings stable, and search for the old anchor if you must rename.
+
+**Changelog entries** go under the current version heading, in `### Added` /
+`### Changed` / `### Fixed` / `### Known limitations` — those drive the category
+filter. Write for the person using the academy: if nothing anyone can see or do
+changed, it does not belong there.
 
 ---
 
 ## Traps already paid for
 
 Each of these looked like something else at first.
+
+**Do not edit application files while the suite is running.** Filament
+auto-discovers resources, pages and widgets. A half-written resource whose page
+class does not exist yet breaks every panel test in the run — which then looks
+like your change broke everything. Wait, or only add files nothing references
+yet. (Paid for twice in `support-engine`, same stack.)
+
+**Unstyled or dead student pages locally? Delete `public/hot`.** The layout uses
+`@vite` whenever `public/hot` exists, and Vite leaves it behind on an unclean
+exit — so the page asks a dev server that is not running for its CSS.
+
+**Write PHP with the Write/Edit tools, not shell heredocs or `sed`.** Git Bash
+eats backslashes (namespaces, regex) and mangles quoting. On 2026-09-08 a
+heredoc carrying a PHP class died on shell quoting; on 2026-09-10 a
+script-inserted `use` line never landed while the rest of the same script did,
+and the output said "ok".
 
 **The CSS bundle is built in CI, not locally.** Nobody here runs npm, so
 `public/build/` is committed and CI rebuilds it on push to `laravel` or

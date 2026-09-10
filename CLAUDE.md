@@ -87,6 +87,10 @@ lessons, the final quiz, certificates), in the same change:**
 3. Update `README.md` if the stack or local setup moved, and `DEPLOY.md` if
    deployment did.
 
+Quote labels in the guides exactly as the app prints them, and never describe a
+screen or rule you have not confirmed in the code — see *Writing the guides* in
+`agent-reminder.md`.
+
 **Then record the task in `agent-reminder.md`** — the running work log at the
 repo root. Read it before starting anything: it carries what is half-finished,
 which branches are still open, and the traps this codebase has already sprung
@@ -101,7 +105,8 @@ being updated.
 
 Before completion:
 
-- `php artisan test`
+- `php artisan test` — never with config cached; the suite refuses a non-test
+  database (see *Invariants* in `agent-reminder.md`)
 - `php artisan pint`
 - `php artisan optimize:clear`
 

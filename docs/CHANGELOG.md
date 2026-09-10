@@ -50,6 +50,17 @@ Add a new entry here whenever something visible to admins or students changes.
   header stays on one line down to 360px wide, and **Log in**, **Log out** and
   **Register** are now comfortable to tap.
 
+### Fixed
+
+- **A YouTube link that is not a video no longer saves silently.** A playlist,
+  channel or Vimeo link used to save without complaint and leave the lesson
+  with no video at all. The lesson form now refuses it and says what to paste
+  instead. **YouTube live links** (`youtube.com/live/…`) used to be one of the
+  casualties and now play.
+- **Links saved before this fix are listed** on the Dashboard under **Content
+  needing attention**, as *YouTube link that is not a playable video*, each
+  with a link straight to the lesson.
+
 ### What's new is now a filterable list
 
 **This page is built from `docs/CHANGELOG.md` itself**, read fresh on every

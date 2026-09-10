@@ -28,7 +28,7 @@ Each item in the left menu has one job.
 | **Users** | Everyone with an account, and their role. See each student's progress and certificates. |
 | **Companies** | Partner companies. Group students and see how many are certified. |
 | **Certificates** | Every certificate that was issued. Download, resend, or revoke them. |
-| **Media items** | A shared image library you can reuse as lesson covers. |
+| **Media Items** | A shared image library you can reuse as lesson covers. |
 | **Dashboard** | The home screen: overall numbers, progress by partner, and who has gone quiet. |
 | **Docs → Guide** | This guide, with a contents list and a search box. |
 | **Docs → What's new** | Everything that has changed in the academy, newest first. Search it, filter it by category, or download it as a PDF. |
@@ -63,6 +63,9 @@ The path is always the same: **make a course → fill it with lessons → turn o
 1. In the left menu, click **Lessons**, then **New lesson**.
 2. Choose the **Course** and give the lesson a title.
 3. Add a video: paste a link into **YouTube link**, or use **Or upload a video file**.
+   The link must be **one video** — open it on YouTube and copy the address bar.
+   Normal, Shorts and live video links all work; a playlist or channel link is
+   refused, because there would be no video to show.
 4. Write the lesson content in **Lesson text**.
 5. Set **Duration (minutes)** — how long the lesson takes. Students see this on
    the lesson card, in the lesson list and on the course page ("32 min left"),
@@ -240,7 +243,7 @@ To set one up:
    several — and save.
 
 That is it. When they sign in to `/admin` they see **Courses**, **Lessons** and
-**Media items**, holding only their own products' content. They can build
+**Media Items**, holding only their own products' content. They can build
 courses and lessons and publish them, exactly as you would.
 
 What a Creator **cannot** do:
@@ -322,6 +325,7 @@ The home screen has three panels:
 | Final quiz on, question bank empty | A **Final quiz** button that leads nowhere |
 | Published course, no published lessons | An empty course page |
 | Published lesson with no quiz | A lesson they can never mark finished |
+| YouTube link that is not a playable video | A lesson with no video, where one was meant to be |
 
 > The first one used to be easy to create by accident — forget to tick
 > **Correct** and the lesson becomes impossible. The form now refuses to save a

@@ -123,6 +123,25 @@ class ChangelogPageTest extends TestCase
         $this->assertStringNotContainsString('<!--', $html);
     }
 
+    /** Nothing in a changelog needs raw HTML or a script link, so neither renders. */
+    public function test_raw_html_and_unsafe_links_are_not_rendered(): void
+    {
+        $releases = Changelog::parse(<<<'MD'
+            ## September 2026
+
+            ### Added
+            - A change <script>alert(1)</script> with <img src=x onerror=alert(2)> in it.
+            - A [bad link](javascript:alert(3)) and a [good one](https://example.com).
+            MD);
+
+        $html = collect($releases[0]['sections'][0]['items'])->pluck('html')->implode('');
+
+        $this->assertStringNotContainsString('<script', $html);
+        $this->assertStringNotContainsString('onerror', $html);
+        $this->assertStringNotContainsString('javascript:', $html);
+        $this->assertStringContainsString('href="https://example.com"', $html);
+    }
+
     /** The trailing rule between releases is structure, not content. */
     public function test_the_release_separator_is_not_rendered_as_a_rule(): void
     {

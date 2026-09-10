@@ -101,7 +101,16 @@ class LessonForm
                             ->label('YouTube link')
                             ->url()
                             ->columnSpanFull()
-                            ->helperText('Paste the full YouTube URL, e.g. https://www.youtube.com/watch?v=XXXXXXXXXXX'),
+                            ->helperText('The address of one video, e.g. https://www.youtube.com/watch?v=XXXXXXXXXXX. Shorts and live links work too; playlists and channels do not.')
+                            // A link the lesson page cannot embed used to save
+                            // without a word and leave students with no video.
+                            ->rules([
+                                fn (): Closure => function (string $attribute, $value, Closure $fail): void {
+                                    if (filled($value) && Lesson::youtubeIdFrom($value) === null) {
+                                        $fail('This is not a link to a single YouTube video, so students would see no video. Open the video itself on YouTube and copy the address from the address bar — playlist, channel and Vimeo links cannot be played here.');
+                                    }
+                                },
+                            ]),
 
                         FileUpload::make('video_path')
                             ->label('Or upload a video file')
