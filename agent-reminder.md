@@ -137,6 +137,30 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-09-10 — Grouped sidebar and Final quiz health (uncommitted)
+From support-engine's admin panel, seen in the running app. **Left uncommitted
+for the owner.**
+
+- **Sidebar grouped by job:** Content (Courses, Lessons, Products, Media Items),
+  People (Users, Companies), Results (Certificates, Final quiz health), Docs.
+  Group order is fixed by `->navigationGroups()` in the panel provider; items set
+  `$navigationGroup` + `$navigationSort`. The admin guide's menu table now uses
+  `Group → Item`, and `AdminGuideMenuTest` passed against it first time.
+- **`FinalQuizHealth` page** (admin-only, learners only). Cards in the style of
+  support-engine's *Success metrics*: value, what it is judged against, what it
+  means, sample size.
+  - *First-time pass rate* — each learner's first submitted final attempt per
+    course. Band `PASS_BAND = [65, 80]` is **borrowed from support-engine and
+    labelled "suggested"** — nobody has agreed one for this academy. Under
+    `SMALL_SAMPLE` (10) it says "Too few to judge" instead of a verdict.
+  - *Days to certificate* — median from first finished lesson in the course to
+    the certificate. **No target**, and the page says so rather than inventing one.
+  - *Question difficulty* — shown as **Not measured**. Attempts store
+    `score`/`total`/`question_ids` only, never the chosen answers, so per-question
+    difficulty cannot be computed. Storing answers would be a schema change.
+- Checked in both themes at 1440px against seeded data (11/13 → 85%, "Above the
+  band").
+
 ### 2026-09-10 — Home page: next step and "Your progress" (uncommitted)
 From support-engine's learner dashboard. **Left uncommitted for the owner.**
 

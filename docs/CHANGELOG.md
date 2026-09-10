@@ -24,6 +24,13 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **Final quiz health** (**Results → Final quiz health**, admins only) tells you
+  whether the final quiz is doing its job. **First-time pass rate** is judged
+  against a suggested 65–80% band — above it the quiz is likely too easy, below
+  it the lessons probably don't teach what it asks — with a verdict per course,
+  and **Too few to judge** until there are 10 first tries. **Days to
+  certificate** shows the typical time from first lesson to certificate. Staff
+  previews are left out of both.
 - **The student home page always says what to do next.** The card at the top
   used to disappear the moment a student finished their last lesson — exactly
   when the final quiz unlocked, and nothing said so. It now reads **Your final
@@ -51,14 +58,22 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Changed
 
-- **Guide and What's new live under Docs**, a group at the bottom of the left
-  menu, below the screens they explain.
+- **The left menu is grouped by what you are doing**: **Content** (Courses,
+  Lessons, Products, Media Items), **People** (Users, Companies), **Results**
+  (Certificates, Final quiz health) and **Docs** (Guide, What's new). Nothing was
+  renamed and every screen keeps its address.
 - **YouTube lessons use YouTube's privacy-enhanced player.** No tracking cookie
   is set until the student presses play, and the end of a video only suggests
   videos from the same channel — not whatever YouTube would recommend next.
 - **The top bar fits on small phones.** With Help added, the student site's
   header stays on one line down to 360px wide, and **Log in**, **Log out** and
   **Register** are now comfortable to tap.
+
+### Known limitations
+
+- **Final quiz health cannot say which questions are the problem.** The academy
+  keeps each attempt's total score, not the answer given to each question, so
+  the page shows *Question difficulty* as **Not measured** rather than guessing.
 
 ### Fixed
 
