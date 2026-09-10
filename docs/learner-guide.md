@@ -20,8 +20,15 @@ link, open it — it signs you straight in, no password needed.
 ## How a course works
 
 A course is a set of **lessons, taken in order**. The course page shows how far
-you are, for example **3 / 8 lessons · 32 min left**, and the home page offers
-**Continue where you left off**.
+you are, for example **3 / 8 lessons · 32 min left**.
+
+**The card at the top of the home page is always your next step**: **Start
+here** on your first visit, **Continue where you left off** while you work
+through a course, and **Your final quiz is ready** once every lesson is done.
+
+When you are logged in, **Your progress** on the home page shows the courses
+you have in progress and completed, your certificates, and the result of your
+last final quiz — including how many attempts you have left.
 
 Looking for something? **Search** finds courses and lessons by name, and also
 by words spoken in a video that has a transcript.

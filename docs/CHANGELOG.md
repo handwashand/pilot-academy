@@ -24,6 +24,16 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **The student home page always says what to do next.** The card at the top
+  used to disappear the moment a student finished their last lesson — exactly
+  when the final quiz unlocked, and nothing said so. It now reads **Your final
+  quiz is ready**, with the pass mark and attempts left. A student who has just
+  signed up sees **Start here** and the first lesson, instead of "welcome back".
+- **Students can see their own progress.** Signed-in students get a **Your
+  progress** card on the home page: courses in progress, completed, and
+  certificates — plus their **last final quiz result**, which used to show once
+  after submitting and then vanish. A failed attempt says how many tries are
+  left, or to contact an administrator when there are none.
 - **A Help page for students.** **Help** (the **?** in the top bar, on every
   page, logged in or not) explains how the academy works: what finishes a
   lesson, when the final quiz unlocks, where certificates are, and what to do

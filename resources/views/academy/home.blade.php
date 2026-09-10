@@ -9,8 +9,15 @@
 @section('content')
     @auth
         <div class="mb-8">
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-navy">Welcome back, {{ auth()->user()->name }}</h1>
-            <p class="text-slate-500">Pick up where you left off — your progress is saved to your account.</p>
+            {{-- "Welcome back … pick up where you left off" is wrong on day one,
+                 when there is nowhere to pick up from. --}}
+            @if($next && $next['kind'] === 'start')
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-navy">Welcome, {{ auth()->user()->name }}</h1>
+                <p class="text-slate-500">Start with the first lesson below — your progress is saved to your account.</p>
+            @else
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-navy">Welcome back, {{ auth()->user()->name }}</h1>
+                <p class="text-slate-500">Pick up where you left off — your progress is saved to your account.</p>
+            @endif
         </div>
     @elseif(session('student_name'))
         <div class="mb-8">
@@ -53,34 +60,110 @@
         @include('academy.partials.search-form', ['inputId' => 'home-search'])
     </div>
 
-    @if($resume)
+    {{-- The next step: one card, one action. Which card depends on where the
+         student is — see AcademyController::nextStep(). --}}
+    @if($next)
         @php
-            $resumePct = $resume['total'] > 0 ? round($resume['done'] / $resume['total'] * 100) : 0;
+            $nextPct = $next['total'] > 0 ? round($next['done'] / $next['total'] * 100) : 0;
+
+            if ($next['kind'] === 'final_quiz') {
+                $nextUrl = route('academy.final.show', $next['course']);
+                $nextEyebrow = 'Your final quiz is ready';
+                $nextTitle = $next['course']->title;
+                $nextDetail = 'All '.$next['total'].' lessons done · '.$next['course']->pass_percent.'% to pass'
+                    .($next['attemptsLeft'] !== null ? ' · '.$next['attemptsLeft'].' '.($next['attemptsLeft'] === 1 ? 'attempt' : 'attempts').' left' : '');
+                $nextButton = 'Take the final quiz';
+            } elseif ($next['kind'] === 'start') {
+                $nextUrl = route('academy.lesson', [$next['course'], $next['lesson']]);
+                $nextEyebrow = 'Start here';
+                $nextTitle = $next['lesson']->title;
+                $nextDetail = $next['course']->title;
+                $nextButton = 'Begin';
+            } else {
+                $nextUrl = route('academy.lesson', [$next['course'], $next['lesson']]);
+                $nextEyebrow = 'Continue where you left off';
+                $nextTitle = $next['lesson']->title;
+                $nextDetail = $next['course']->title;
+                $nextButton = 'Resume';
+            }
         @endphp
-        <a href="{{ route('academy.lesson', [$resume['course'], $resume['lesson']]) }}"
-           class="group block mb-8 rounded-2xl border border-brand/30 bg-blue-50/60 p-5 sm:p-6 hover:border-brand hover:shadow-md transition">
+        <a href="{{ $nextUrl }}"
+           class="group block mb-6 rounded-2xl border border-brand/30 bg-blue-50/60 p-5 sm:p-6 hover:border-brand hover:shadow-md transition">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div class="min-w-0">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-brand">Continue where you left off</span>
+                    <span class="text-xs font-semibold uppercase tracking-wide text-brand">{{ $nextEyebrow }}</span>
                     <h2 class="mt-1 text-lg sm:text-xl font-extrabold text-navy group-hover:text-brand transition">
-                        {{ $resume['lesson']->title }}
+                        {{ $nextTitle }}
                     </h2>
-                    <p class="text-sm text-slate-500 truncate">{{ $resume['course']->title }}</p>
+                    <p class="text-sm text-slate-500">{{ $nextDetail }}</p>
                 </div>
 
                 <div class="shrink-0 sm:text-right">
-                    <div class="text-sm text-slate-500 mb-1">{{ $resume['done'] }} / {{ $resume['total'] }} lessons</div>
-                    <div class="w-full sm:w-44 h-2 rounded-full bg-white overflow-hidden"
-                         role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $resumePct }}"
-                         aria-label="Progress: {{ $resume['done'] }} of {{ $resume['total'] }} lessons complete">
-                        <div class="h-full bg-ok" style="width: {{ $resumePct }}%"></div>
-                    </div>
-                    <span class="mt-3 inline-block rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white">
-                        Resume
+                    @if($next['kind'] === 'lesson')
+                        <div class="text-sm text-slate-500 mb-1">{{ $next['done'] }} / {{ $next['total'] }} lessons</div>
+                        <div class="w-full sm:w-44 h-2 rounded-full bg-white overflow-hidden"
+                             role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $nextPct }}"
+                             aria-label="Progress: {{ $next['done'] }} of {{ $next['total'] }} lessons complete">
+                            <div class="h-full bg-ok" style="width: {{ $nextPct }}%"></div>
+                        </div>
+                    @endif
+                    <span class="mt-3 inline-flex items-center min-h-11 rounded-lg bg-brand px-4 text-sm font-semibold text-white">
+                        {{ $nextButton }}
                     </span>
                 </div>
             </div>
         </a>
+    @endif
+
+    {{-- A signed-in student's own numbers. One column on a phone, three from
+         sm: up. The last final quiz result lives here because it otherwise
+         showed once, straight after submitting, and was never seen again. --}}
+    @if($progress)
+        <section aria-labelledby="my-progress" class="mb-8 bg-white rounded-2xl border border-slate-200 shadow-sm">
+            <h2 id="my-progress" class="px-5 pt-4 text-sm font-semibold uppercase tracking-wide text-slate-500">Your progress</h2>
+
+            <dl class="divide-y divide-slate-100 sm:divide-y-0 sm:grid sm:grid-cols-3">
+                <div class="flex items-baseline justify-between gap-3 px-5 py-3 sm:block">
+                    <dt class="text-sm text-slate-500">In progress</dt>
+                    <dd class="text-2xl font-extrabold text-navy">{{ $progress['inProgress'] }}</dd>
+                </div>
+                <div class="flex items-baseline justify-between gap-3 px-5 py-3 sm:block">
+                    <dt class="text-sm text-slate-500">Completed</dt>
+                    <dd class="text-2xl font-extrabold text-navy">{{ $progress['finished'] }}</dd>
+                </div>
+                <div class="flex items-baseline justify-between gap-3 px-5 py-3 sm:block">
+                    <dt class="text-sm text-slate-500">Certificates</dt>
+                    <dd class="text-2xl font-extrabold text-navy">
+                        @if($progress['certificates'] > 0)
+                            <a href="{{ route('certificates.index') }}" class="hover:text-brand">{{ $progress['certificates'] }}</a>
+                        @else
+                            0
+                        @endif
+                    </dd>
+                </div>
+            </dl>
+
+            @if($progress['lastFinal'])
+                @php
+                    $last = $progress['lastFinal'];
+                @endphp
+                <a href="{{ route('academy.final.show', $last['course']) }}"
+                   class="flex items-center gap-3 border-t border-slate-100 px-5 py-3 min-h-11 hover:bg-slate-50 active:bg-slate-100 rounded-b-2xl">
+                    <span class="min-w-0 flex-1 text-sm">
+                        <span class="block text-slate-500">Last final quiz · {{ $last['course']->title }}</span>
+                        <span class="block font-semibold {{ $last['passed'] ? 'text-green-700' : 'text-amber-700' }}">
+                            {{ $last['percent'] }}% · {{ $last['passed'] ? 'Passed' : 'Not passed yet' }}
+                            @if(! $last['passed'] && $last['attemptsLeft'] !== null)
+                                <span class="font-normal text-slate-500">
+                                    · {{ $last['attemptsLeft'] === 0 ? 'no attempts left — contact your administrator' : $last['attemptsLeft'].' '.($last['attemptsLeft'] === 1 ? 'attempt' : 'attempts').' left' }}
+                                </span>
+                            @endif
+                        </span>
+                    </span>
+                    <span aria-hidden="true" class="text-slate-400 flex-none">&rarr;</span>
+                </a>
+            @endif
+        </section>
     @endif
 
     @forelse($courses as $course)

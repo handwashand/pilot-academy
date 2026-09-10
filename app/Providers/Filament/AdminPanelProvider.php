@@ -64,6 +64,16 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Dashboard::class,
             ])
+            // The sidebar is grouped by job — build the training, look after the
+            // people taking it, see what came of it, read how it all works —
+            // and in that order. Items declare their group by name; this fixes
+            // the order the groups appear in.
+            ->navigationGroups([
+                'Content',
+                'People',
+                'Results',
+                'Docs',
+            ])
             // The dashboard shows the academy, not the panel. Filament's
             // account and version cards are deliberately left off: signing out
             // belongs in the profile menu, top right, where people look for it.

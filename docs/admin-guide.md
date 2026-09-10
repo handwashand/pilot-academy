@@ -18,18 +18,22 @@ You land on the **Dashboard** — a quick summary of how many students you have,
 
 ## 2. The menu at a glance
 
-Each item in the left menu has one job.
+Each item in the left menu has one job. The menu is grouped by what you are
+doing: building the training (**Content**), looking after the people taking it
+(**People**), seeing what came of it (**Results**), and reading how it all works
+(**Docs**).
 
 | Menu item | What it is for |
 |---|---|
-| **Courses** | Create courses and turn on the final quiz and certificate. |
-| **Lessons** | Add lessons to a course: a video, text, and quiz questions. |
-| **Products** | The products/modules your training is about (GARM, PTM, …) and who owns each one. |
-| **Users** | Everyone with an account, and their role. See each student's progress and certificates. |
-| **Companies** | Partner companies. Group students and see how many are certified. |
-| **Certificates** | Every certificate that was issued. Download, resend, or revoke them. |
-| **Media Items** | A shared image library you can reuse as lesson covers. |
 | **Dashboard** | The home screen: overall numbers, progress by partner, and who has gone quiet. |
+| **Content → Courses** | Create courses and turn on the final quiz and certificate. |
+| **Content → Lessons** | Add lessons to a course: a video, text, and quiz questions. |
+| **Content → Products** | The products/modules your training is about (GARM, PTM, …) and who owns each one. |
+| **Content → Media Items** | A shared image library you can reuse as lesson covers. |
+| **People → Users** | Everyone with an account, and their role. See each student's progress and certificates. |
+| **People → Companies** | Partner companies. Group students and see how many are certified. |
+| **Results → Certificates** | Every certificate that was issued. Download, resend, or revoke them. |
+| **Results → Final quiz health** | Whether the final quiz is too easy, too hard, or about right. Admins only. |
 | **Docs → Guide** | This guide, with a contents list and a search box. |
 | **Docs → What's new** | Everything that has changed in the academy, newest first. Search it, filter it by category, or download it as a PDF. |
 
@@ -369,6 +373,23 @@ partner underneath, so two records with the same name are still telling apart.
 
 A number next to **Courses** or **Lessons** in the left menu means something is
 still in draft and invisible to students. Hover it to see what it counts.
+
+### Is the final quiz working?
+
+Open **Results → Final quiz health** (admins only). A certificate says someone
+knows the material; this page tells you whether the quiz behind it can tell.
+Only students are counted — your own previews are left out.
+
+| Card | What it tells you |
+|---|---|
+| **First-time pass rate** | Of everyone's *first* try at a final quiz, how many passed. The suggested band is **65–80%**. **Above the band**: the quiz is likely too easy, so passing says little. **Below the band**: the lessons probably don't teach what the quiz asks, or some questions are unclear. With fewer than 10 first tries it says **Too few to judge** instead of guessing. |
+| **Days to certificate** | The typical (median) time from a student's first finished lesson in a course to their certificate, with the fastest and slowest. No target has been set, so watch the direction. |
+| **Question difficulty** | Shows **Not measured**: the academy keeps each attempt's total score, not the answer to each question, so it cannot yet tell you which questions are the problem. |
+
+Below the cards, **First-time pass rate by course** gives the same verdict per
+course, which is where you act: a course **Below the band** is the one whose
+lessons or questions to reread. **Lessons students struggle with** on the
+Dashboard shows the same kind of problem for the lesson quizzes.
 
 ### What changed, and when
 

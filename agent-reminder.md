@@ -137,6 +137,34 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-09-10 — Home page: next step and "Your progress" (uncommitted)
+From support-engine's learner dashboard. **Left uncommitted for the owner.**
+
+- `AcademyController::nextStep()` replaces `nextLesson()`. Walks courses in
+  order and stops at the first one started but unfinished: a lesson to do, or —
+  new — **every lesson done with the final quiz still ahead** ("Your final quiz
+  is ready"). The old card vanished at exactly that moment. A signed-in learner
+  with nothing started gets **Start here** and a first-visit greeting instead of
+  "welcome back".
+- `progressSummary()`: in progress / completed / certificates, and the **last
+  final quiz result**, which was previously a one-off session flash. "Completed"
+  is the course page's rule (all lessons, plus the certificate when the course
+  has a final quiz).
+- `Course::finalQuizAttemptsLeftFor()` is now the one definition of attempts
+  left; `FinalQuizController` uses it too, so home and the quiz page agree.
+- Out of attempts → no final-quiz card (nothing to do), but the progress card
+  says "no attempts left — contact your administrator".
+- `HomeNextStepTest` (10). Two `ProgressToolsTest` names were renamed — they
+  still pass, but "nothing is offered" was no longer true.
+
+**Found, not fixed:**
+- **A guest's progress does not carry over when they sign in.** It lives in the
+  session and nothing merges it into the account, so a guest who finished every
+  lesson starts again after registering. That is why the final-quiz card is
+  never offered to guests.
+- The home page search input renders only ~22px tall on a phone (the
+  `search-form` partial), under the ~44px rule. Predates this change.
+
 ### 2026-09-10 — Recheck of support-engine: two fixes, and this file's structure
 Went through all 137 commits on `support-engine`'s `hub-version2` for fixes
 that never reached its changelog, and tested each candidate here with a
@@ -762,6 +790,9 @@ landed **with its relationships**.
 
 From `CLAUDE.md`, because they are the ones most often skipped:
 
+- **Agents do not commit or push.** Leave your changes uncommitted in the
+  working tree; the owner reviews and commits them. (Owner's instruction,
+  2026-09-10.)
 - Work on a feature branch off `laravel`; open a PR into `laravel`.
   **Do not self-merge.**
 - Prefer Laravel built-ins. No Repository / DTO / Service / Interface patterns

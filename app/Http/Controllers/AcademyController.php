@@ -25,42 +25,136 @@ class AcademyController extends Controller
             ->get();
 
         $completed = $this->completedIds($request);
+        $user = $request->user();
+
+        // Courses this student holds a valid certificate for: finished for good.
+        $certified = $user
+            ? $user->certificates()->whereNull('revoked_at')->pluck('course_id')->map(fn ($id): int => (int) $id)->unique()->values()->all()
+            : [];
 
         return view('academy.home', [
             'courses' => $courses,
             'completed' => $completed,
-            'resume' => $this->nextLesson($courses, $completed),
+            'next' => $this->nextStep($courses, $completed, $certified, $user),
+            'progress' => $user ? $this->progressSummary($courses, $completed, $certified, $user) : null,
         ]);
     }
 
     /**
-     * The first unfinished lesson in the first course still in progress, so a
-     * returning student can carry on without hunting for where they stopped.
-     * Nothing is suggested to someone who has not started, or who is done.
+     * The one thing this student should do next, so a returning student carries
+     * on without hunting for it. Walks the courses in their listed order and
+     * stops at the first one started but not finished:
+     *
+     *  - a lesson still to do → that lesson;
+     *  - every lesson done, but a final quiz still between them and the
+     *    certificate → the final quiz. Before this, the card vanished at exactly
+     *    that moment and nothing on the home page said the quiz had unlocked.
+     *
+     * Signed in with nothing started at all → "Start here", the first lesson.
+     * Anonymous visitors are never offered the final quiz: it needs an account,
+     * and their session progress does not carry over when they sign in.
+     *
+     * @return array<string, mixed>|null
      */
-    private function nextLesson($courses, array $completed): ?array
+    private function nextStep($courses, array $completed, array $certified, $user): ?array
     {
-        if (empty($completed)) {
-            return null;
-        }
-
         foreach ($courses as $course) {
             $lessons = $course->publishedLessons;
+            $done = $lessons->whereIn('id', $completed)->count();
 
-            $hasStarted = $lessons->contains(fn (Lesson $lesson): bool => in_array($lesson->id, $completed, true));
-            $next = $lessons->first(fn (Lesson $lesson): bool => ! in_array($lesson->id, $completed, true));
+            if ($done === 0) {
+                continue;
+            }
 
-            if ($hasStarted && $next) {
-                return [
-                    'course' => $course,
-                    'lesson' => $next,
-                    'done' => $lessons->whereIn('id', $completed)->count(),
-                    'total' => $lessons->count(),
-                ];
+            $nextLesson = $lessons->first(fn (Lesson $lesson): bool => ! in_array($lesson->id, $completed, true));
+
+            if ($nextLesson) {
+                return ['kind' => 'lesson', 'course' => $course, 'lesson' => $nextLesson, 'done' => $done, 'total' => $lessons->count()];
+            }
+
+            $finalQuizPending = $user
+                && $course->final_quiz_enabled
+                && ! in_array($course->id, $certified, true)
+                && $course->finalQuestions()->exists();
+
+            if ($finalQuizPending) {
+                $attemptsLeft = $course->finalQuizAttemptsLeftFor($user);
+
+                // Out of attempts: nothing the student can do from here. The
+                // progress card still shows the result and says so.
+                if ($attemptsLeft !== 0) {
+                    return ['kind' => 'final_quiz', 'course' => $course, 'done' => $done, 'total' => $lessons->count(), 'attemptsLeft' => $attemptsLeft];
+                }
+            }
+        }
+
+        if ($user && empty($completed)) {
+            $first = $courses->first(fn (Course $course): bool => $course->publishedLessons->isNotEmpty());
+
+            if ($first) {
+                return ['kind' => 'start', 'course' => $first, 'lesson' => $first->publishedLessons->first(), 'done' => 0, 'total' => $first->publishedLessons->count()];
             }
         }
 
         return null;
+    }
+
+    /**
+     * A signed-in student's own numbers, and their latest final quiz result —
+     * which otherwise showed once, on the page after submitting, and was never
+     * seen again. Null when there is nothing yet to summarise.
+     *
+     * "Completed" uses the course page's rule: every lesson done, and the
+     * certificate too where the course has a final quiz.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function progressSummary($courses, array $completed, array $certified, $user): ?array
+    {
+        $inProgress = 0;
+        $finished = 0;
+
+        foreach ($courses as $course) {
+            $total = $course->publishedLessons->count();
+            $done = $course->publishedLessons->whereIn('id', $completed)->count();
+
+            if ($done === 0) {
+                continue;
+            }
+
+            $isFinished = $done === $total
+                && (! $course->final_quiz_enabled || in_array($course->id, $certified, true));
+
+            $isFinished ? $finished++ : $inProgress++;
+        }
+
+        $lastFinal = QuizAttempt::where('user_id', $user->id)
+            ->whereNotNull('course_id')
+            ->whereIn('status', [QuizAttempt::STATUS_PASSED, QuizAttempt::STATUS_FAILED])
+            ->whereHas('course', fn ($query) => $query->published())
+            ->with('course')
+            ->latest('submitted_at')
+            ->first();
+
+        if ($inProgress === 0 && $finished === 0 && $certified === [] && ! $lastFinal) {
+            return null;
+        }
+
+        return [
+            'inProgress' => $inProgress,
+            'finished' => $finished,
+            'certificates' => count($certified),
+            'lastFinal' => $lastFinal ? [
+                'course' => $lastFinal->course,
+                'percent' => $lastFinal->scorePercent(),
+                'passed' => $lastFinal->status === QuizAttempt::STATUS_PASSED,
+                'at' => $lastFinal->submitted_at,
+                // Only worth saying when they have not passed and can still try.
+                'attemptsLeft' => $lastFinal->status === QuizAttempt::STATUS_PASSED
+                    ? null
+                    : $lastFinal->course->finalQuizAttemptsLeftFor($user),
+            ] : null,
+        ];
     }
 
     public function course(Request $request, Course $course)

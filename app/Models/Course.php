@@ -170,6 +170,26 @@ class Course extends Model
     }
 
     /**
+     * Final-quiz attempts this user has left, or null for unlimited. Only
+     * submitted attempts count — one still in progress has not been used yet.
+     * Shared by the final quiz page and the home page, so the two never
+     * disagree about whether someone can still try.
+     */
+    public function finalQuizAttemptsLeftFor(User $user): ?int
+    {
+        if (! $this->final_quiz_max_attempts) {
+            return null;
+        }
+
+        $used = QuizAttempt::where('user_id', $user->id)
+            ->where('course_id', $this->id)
+            ->whereIn('status', [QuizAttempt::STATUS_PASSED, QuizAttempt::STATUS_FAILED])
+            ->count();
+
+        return max(0, $this->final_quiz_max_attempts - $used);
+    }
+
+    /**
      * May this user open the final quiz? Students must finish every published
      * lesson; admins can always open it (to preview or test the certificate).
      */
