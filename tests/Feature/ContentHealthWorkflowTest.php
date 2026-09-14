@@ -171,7 +171,7 @@ class ContentHealthWorkflowTest extends TestCase
         Livewire::actingAs($this->admin())
             ->test(ListLessons::class)
             ->mountAction(TestAction::make('unpublish')->table($lesson))
-            ->assertSee('leaves students an empty course');
+            ->assertMountedActionModalSee('leaves students an empty course');
     }
 
     // --- The owner is told --------------------------------------------------

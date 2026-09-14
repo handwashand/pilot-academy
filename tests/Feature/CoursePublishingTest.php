@@ -52,7 +52,7 @@ class CoursePublishingTest extends TestCase
             'sort_order' => 5,
         ]);
 
-        $course->lessons()->create([
+        $lesson = $course->lessons()->create([
             'title' => 'Leading a team',
             'slug' => 'leading-a-team',
             'summary' => 'First steps.',
@@ -60,6 +60,10 @@ class CoursePublishingTest extends TestCase
             'status' => Lesson::STATUS_PUBLISHED,
             'sort_order' => 1,
         ]);
+
+        // A lesson students can finish: publishing refuses one with no quiz.
+        $question = $lesson->questions()->create(['prompt' => 'Which one?', 'type' => 'single', 'sort_order' => 1]);
+        $question->options()->create(['text' => 'Right', 'is_correct' => true, 'sort_order' => 1]);
 
         return $course->fresh();
     }

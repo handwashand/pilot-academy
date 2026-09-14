@@ -118,6 +118,9 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Fixed
 
+- **The admin panel opens on PostgreSQL again when the notification bell is on.**
+  The notification payload is now stored as JSON, so Filament can count unread
+  alerts without a database error.
 - **A YouTube link that is not a video no longer saves silently.** A playlist,
   channel or Vimeo link used to save without complaint and leave the lesson
   with no video at all. The lesson form now refuses it and says what to paste

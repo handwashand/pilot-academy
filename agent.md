@@ -906,6 +906,15 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-09-14 — PostgreSQL notification bell fix (uncommitted)
+- Fixed `/admin` 500 on PostgreSQL after enabling Filament database
+  notifications. `notifications.data` was created as `text`, but Filament's
+  unread count queries it with `data->>'format'`, which requires JSON on
+  PostgreSQL. Fresh installs now create it as `json`; existing installs get a
+  migration that converts `text` to `json`.
+- Verified in Docker: `notifications.data` is `json`, the `data->>'format'`
+  query runs, and `DashboardTest` passes.
+
 ### 2026-09-14 — Profiles, content health, quiz attempts, feedback, mail (uncommitted)
 From support-engine's profile, account menu and sidebar, filtered for a partner
 academy. **Left uncommitted for the owner.** Built alongside another session's

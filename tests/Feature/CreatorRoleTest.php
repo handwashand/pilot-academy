@@ -56,12 +56,16 @@ class CreatorRoleTest extends TestCase
             'status' => Course::STATUS_PUBLISHED,
         ]);
 
-        $course->lessons()->create([
+        $lesson = $course->lessons()->create([
             'title' => "{$title} — lesson one",
             'slug' => "{$slug}-lesson-one",
             'content' => '<p>Body.</p>',
             'sort_order' => 1,
         ]);
+
+        // A lesson students can finish: publishing refuses one with no quiz.
+        $question = $lesson->questions()->create(['prompt' => 'Which one?', 'type' => 'single', 'sort_order' => 1]);
+        $question->options()->create(['text' => 'Right', 'is_correct' => true, 'sort_order' => 1]);
 
         return $course->fresh();
     }

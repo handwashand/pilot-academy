@@ -98,6 +98,10 @@ class LessonPublishingTest extends TestCase
         $lesson = $this->draftLesson();
         $course = Course::first();
 
+        // Its course is live, so publishing needs a quiz students can pass.
+        $question = $lesson->questions()->create(['prompt' => 'Which one?', 'type' => 'single', 'sort_order' => 1]);
+        $question->options()->create(['text' => 'Right', 'is_correct' => true, 'sort_order' => 1]);
+
         Livewire::actingAs($this->admin())
             ->test(ListLessons::class)
             ->callAction(TestAction::make('publish')->table($lesson))
