@@ -35,7 +35,11 @@ class AccountMenuTest extends TestCase
             // Who you are signed in as.
             ->assertSee('Ana Pereira')
             ->assertSee('learner@partner.com')
-            ->assertSee('href="'.route('academy.profile').'"', false)
+            ->assertSeeInOrder([
+                'data-account-menu',
+                'href="'.route('academy.profile').'"',
+                'href="'.route('certificates.index').'"',
+            ], false)
             ->assertSee('action="'.route('logout').'"', false)
             // Students have no panel to go to.
             ->assertDontSee('href="'.url('/admin').'"', false);
@@ -51,7 +55,7 @@ class AccountMenuTest extends TestCase
     public function test_a_guest_has_no_account_menu(): void
     {
         $this->get(route('academy.home'))
-            ->assertDontSee('data-account-menu', false)
+            ->assertDontSee('<details class="relative flex-none" data-account-menu>', false)
             ->assertSee('href="'.route('login').'"', false);
     }
 

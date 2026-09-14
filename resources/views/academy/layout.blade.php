@@ -186,6 +186,11 @@
                                 {{ __t('nav.profile') }}
                             </a>
 
+                            <a href="{{ route('certificates.index') }}"
+                               class="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-brand">
+                                {{ __t('nav.certificates') }}
+                            </a>
+
                             @if($account->isAdmin() || $account->isCreator())
                                 {{-- A full page load: the panel is a different app. --}}
                                 <a href="{{ url('/admin') }}"
