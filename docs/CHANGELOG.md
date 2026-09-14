@@ -55,6 +55,33 @@ Add a new entry here whenever something visible to admins or students changes.
   their own password before, because they have no access to **Users**.
 - **Search the guide.** **Docs → Guide** now has a contents list beside it and a
   search box that hides the sections that do not mention what you typed.
+- **Students have a profile.** The account menu — their initials, top right —
+  opens **Profile**, where students change their name and email and set the
+  **name printed on their certificates**. Students who signed in with a personal
+  link have no password yet and can **set one** there; changing an existing
+  password asks for the current one.
+- **Content health** (**Content → Content health**) lists everything broken for
+  students right now, each with a **Fix it** link, with a red count in the menu
+  on every screen. The same problems are flagged in an **Attention** column and a
+  **Needs attention** filter on Courses and Lessons, and under the title of the
+  course or lesson itself.
+- **The bell tells content owners when something breaks.** When a change leaves
+  a course broken for students, the product's creators — or the admins, if nobody
+  owns the product — get an alert with a link to fix it. It clears itself once
+  the problem is fixed.
+- **Give one student another attempt.** **Results → Quiz attempts** lists every
+  student's attempts, with a filter for students out of attempts who have not
+  passed and **Grant another attempt** for one person. A count in the menu shows
+  how many are waiting. Before, the only option was raising Max attempts for
+  everyone.
+- **All student feedback in one list** — **Results → Student feedback**, with
+  filters by verdict, course and partner.
+- **Settings → Mail** says plainly whether the academy is really sending email —
+  the default setting only writes it to a log — and sends you a test email.
+- **Correct the name on a certificate.** **Certificates → Edit name** reprints
+  the PDF with the same number, and can save the corrected name for the student's
+  future certificates. This used to need a developer.
+- **Guide is in the admin account menu too** (your initials, top right).
 
 ### Changed
 
@@ -68,12 +95,26 @@ Add a new entry here whenever something visible to admins or students changes.
 - **The top bar fits on small phones.** With Help added, the student site's
   header stays on one line down to 360px wide, and **Log in**, **Log out** and
   **Register** are now comfortable to tap.
+- **Content needing attention is no longer on the Dashboard.** It moved to
+  **Content health**, where its menu count is visible from every screen.
+- **Publishing checks for problems first.** **Publish** on a course — and on a
+  lesson going into a live course — refuses anything students would get stuck on
+  and says what, in bulk too. Unpublishing the last lesson of a live course warns
+  first.
+- **The student site shows the full PILOT ACADEMY logo** in its top bar, the
+  same as the admin panel, and a student's name and **Log out** moved into the
+  account menu.
+- **Certificates has no count in the menu any more.** It showed the total issued,
+  which nobody needed to act on.
 
 ### Known limitations
 
 - **Final quiz health cannot say which questions are the problem.** The academy
   keeps each attempt's total score, not the answer given to each question, so
   the page shows *Question difficulty* as **Not measured** rather than guessing.
+- **The bell does not notice changes to a final quiz's question bank** made with
+  Attach or Detach on the Final questions tab. Content health still lists the
+  problem.
 
 ### Fixed
 
@@ -82,9 +123,9 @@ Add a new entry here whenever something visible to admins or students changes.
   with no video at all. The lesson form now refuses it and says what to paste
   instead. **YouTube live links** (`youtube.com/live/…`) used to be one of the
   casualties and now play.
-- **Links saved before this fix are listed** on the Dashboard under **Content
-  needing attention**, as *YouTube link that is not a playable video*, each
-  with a link straight to the lesson.
+- **Links saved before this fix are listed** under **Content → Content health**,
+  as *YouTube link that is not a playable video*, each with a link straight to
+  the lesson.
 
 ### What's new is now a filterable list
 

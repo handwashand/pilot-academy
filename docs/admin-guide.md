@@ -20,8 +20,8 @@ You land on the **Dashboard** — a quick summary of how many students you have,
 
 Each item in the left menu has one job. The menu is grouped by what you are
 doing: building the training (**Content**), looking after the people taking it
-(**People**), seeing what came of it (**Results**), and reading how it all works
-(**Docs**).
+(**People**), seeing what came of it (**Results**), reading how it all works
+(**Docs**), and the academy's own setup (**Settings**).
 
 | Menu item | What it is for |
 |---|---|
@@ -30,12 +30,16 @@ doing: building the training (**Content**), looking after the people taking it
 | **Content → Lessons** | Add lessons to a course: a video, text, and quiz questions. |
 | **Content → Products** | The products/modules your training is about (GARM, PTM, …) and who owns each one. |
 | **Content → Media Items** | A shared image library you can reuse as lesson covers. |
+| **Content → Content health** | Everything broken for students right now, each with a link to fix it. A red number beside it means something needs fixing. |
 | **People → Users** | Everyone with an account, and their role. See each student's progress and certificates. |
 | **People → Companies** | Partner companies. Group students and see how many are certified. |
-| **Results → Certificates** | Every certificate that was issued. Download, resend, or revoke them. |
+| **Results → Certificates** | Every certificate that was issued. Download, resend, correct the name, or revoke them. |
 | **Results → Final quiz health** | Whether the final quiz is too easy, too hard, or about right. Admins only. |
+| **Results → Quiz attempts** | Every student's quiz attempts. Give one student another attempt when they have run out. Admins only. |
+| **Results → Student feedback** | What students said about every course, in one list. Admins only. |
 | **Docs → Guide** | This guide, with a contents list and a search box. |
 | **Docs → What's new** | Everything that has changed in the academy, newest first. Search it, filter it by category, or download it as a PDF. |
+| **Settings → Mail** | Whether the academy really sends email, and a button to send yourself a test. Admins only. |
 
 Students have their own guide on the public site: **Help**, the **?** in the top bar. Point a stuck student there first — it covers what finishes a lesson, when the final quiz unlocks, and where certificates are.
 
@@ -167,6 +171,10 @@ The course is live for students straight away. Two things to know:
 - A course needs at least one **published lesson** before it can be published —
   otherwise students would open an empty course. If **Publish** says *"Add a
   lesson first"*, go to **Lessons** and publish one.
+- **Publish also checks for anything students would get stuck on** — a lesson
+  with no quiz questions, a question with no correct answer, a final quiz with
+  no questions, a YouTube link that will not play. The confirmation box lists
+  what is wrong, and the course stays a draft until it is fixed.
 - Changed your mind? Click **Unpublish**. The course goes back to Draft and
   disappears from the student site. Nothing is deleted — lessons, questions,
   progress and certificates all stay exactly as they were.
@@ -185,8 +193,13 @@ The course is live for students straight away. Two things to know:
 
 > **Doing several at once:** tick the checkboxes on the left of **Courses** or
 > **Lessons**, then pick **Publish** or **Unpublish** from the bulk menu that
-> appears. A course with no published lesson is skipped rather than published
-> empty, and you are told which ones by name.
+> appears. Anything students would get stuck on is skipped rather than
+> published, and you are told which ones by name, with the reason.
+
+> **Lessons get the same check.** Publishing a lesson into a course that is
+> already live refuses a lesson students could not finish. Unpublishing the only
+> published lesson of a live course warns you first, because students would find
+> the course empty.
 
 ### Step 5 · Try it as a student
 
@@ -294,10 +307,12 @@ Go to **Users** and open a student. The **Completed lessons** tab lists every le
 
 ### What students thought of a course
 
-Open the course (**Courses** → **Edit**) and go to **Student feedback**. Once a
-student finishes every lesson they are asked whether the course was useful, and
-can add a sentence. You see the verdict, who said it, their partner company and
-their comment. Use the **Verdict** filter to read just the complaints.
+Open **Results → Student feedback** to read every course's feedback in one list
+(admins only), or open one course (**Courses** → **Edit**) and go to its
+**Student feedback** tab. Once a student finishes a course they are asked
+whether it was useful, and can add a sentence. You see the verdict, who said it,
+their partner company and their comment. Use the **Verdict** filter to read just
+the complaints, and **Course** or **Partner** to narrow it down.
 
 > This is the one report that tells you a course is *bad* rather than *hard*.
 > **Lessons students struggle with** on the Dashboard shows where people fail;
@@ -309,11 +324,10 @@ their comment. Use the **Verdict** filter to read just the complaints.
 
 ### Read the Dashboard
 
-The home screen has three panels:
+The home screen has these panels:
 
 | Panel | What it tells you |
 |---|---|
-| **Content needing attention** | Only appears when something is broken for students. Each row links straight to the fix. |
 | The numbers along the top | Students and how many are active, lesson completions, published courses and lessons, certificates issued with the average score. |
 | **Progress by partner company** | How much of the published material each partner's students have worked through. A partner with no students yet reads as 0. |
 | **Students who have gone quiet** | Started a course, completed nothing for two weeks, and no certificate. The one list here worth acting on — **Send reminder** emails them a link straight back to their next lesson, or **Open** to see the person. |
@@ -321,9 +335,21 @@ The home screen has three panels:
 | **Student activity** | Lessons finished and sign-ins per day over the last 30 days — whether use is picking up or going quiet. |
 | **Most opened courses** | What students opened in the last 90 days, finished or not. |
 
-**What "content needing attention" catches:**
+> **Lessons students struggle with** is usually telling you a question is
+> unclear, not that the students are weak. A lesson needs at least three graded
+> attempts before it appears, and attempts still in progress do not count
+> against it.
 
-| Warning | What the student sees |
+### Fix content students are stuck on
+
+Open **Content → Content health**. It lists everything that is broken for
+students right now, worst first, each with a **Fix it** link. A red number beside
+**Content health** in the menu tells you there is something to fix, whichever
+screen you are on. Creators see their own products only.
+
+**What it catches:**
+
+| Problem | What the student sees |
 |---|---|
 | Question with no correct answer | A quiz they can never pass, however they answer |
 | Final quiz on, question bank empty | A **Final quiz** button that leads nowhere |
@@ -331,15 +357,22 @@ The home screen has three panels:
 | Published lesson with no quiz | A lesson they can never mark finished |
 | YouTube link that is not a playable video | A lesson with no video, where one was meant to be |
 
-> The first one used to be easy to create by accident — forget to tick
-> **Correct** and the lesson becomes impossible. The form now refuses to save a
-> question without a correct answer, and this panel lists any that slipped
-> through before.
+You also see these problems where you work on the content:
 
-> **Lessons students struggle with** is usually telling you a question is
-> unclear, not that the students are weak. A lesson needs at least three graded
-> attempts before it appears, and attempts still in progress do not count
-> against it.
+- **Courses** and **Lessons** have an **Attention** column, and a **Needs
+  attention** filter that shows only the broken ones.
+- A broken course or lesson says, under its title on its edit page, what
+  students hit.
+- **Publish** refuses a course or lesson students would get stuck on — see
+  Step 4.
+- **The bell** in the top right tells the product's creators — or the admins, if
+  nobody owns the product — when a change breaks something. Whoever made the
+  change is not told; they can already see it. The alert clears itself once the
+  problem is fixed.
+
+> A question with no correct answer used to be easy to create by accident —
+> forget to tick **Correct** and the lesson becomes impossible. The form now
+> refuses to save one, and Content health lists any that slipped through before.
 
 ### Chase a student who stopped
 
@@ -433,13 +466,16 @@ Open your site address + `/certificates/` + the certificate number (or scan the 
 | The student didn't get the email | **Certificates** → the row → **Resend email**. They can also download it from their account. |
 | A certificate was issued by mistake | **Certificates** → **Revoke**. Public check shows "Revoked". Changed your mind? **Restore**. |
 | The PDF is empty or won't download | **Certificates** → **Regenerate PDF**, then **Download** again. |
+| The name on a certificate is wrong | **Certificates** → the row → **Edit name**. The PDF is reprinted with the same number. Use **Resend email** if the student should get the corrected copy. |
+| Certificate emails never arrive | **Settings → Mail** says whether the academy is really sending email. **Send test email** to check. |
 | You need a list for a report | **Certificates** → **Export CSV** (open in Excel or Google Sheets). |
 | You need everyone's progress, not just certificates | **Users** → **Export learner progress**. One row per student: lessons done, certificates, last activity. |
-| A student ran out of attempts | Open the course → **Final quiz & certificate** → raise **Max attempts**, or clear it for unlimited. |
+| A student ran out of attempts | **Results → Quiz attempts** → turn on the **Out of attempts, not passed** filter → **Grant another attempt** on their row. Only that student gets one more try. To change it for everyone, raise **Max attempts** on the course or lesson. |
 | Students can't find a course | Check the **Status** column in **Courses**. Only **Published** courses appear on the student site — click **Publish** on the row. |
 | One lesson is missing from a live course | **Lessons** → check its **Status** → **Publish**. A lesson shows up only if both it *and* its course are published. |
 | A creator says their course is missing | Check the course's **Product / module** field. A creator only sees courses filed under a product assigned to them in **Users**. |
 | You need to take a course or lesson offline | The row → **Unpublish**. Nothing is lost; publish it again whenever you like. |
+| Something is broken for students | **Content → Content health** → **Fix it** on the row. |
 
 ---
 
@@ -452,7 +488,7 @@ No. They are permanent and are never removed when a course changes.
 No. Once they pass, the certificate is issued and the final quiz is locked for them.
 
 **Where does the name on the certificate come from?**
-The student types their full name when they start the final quiz, and it is printed exactly as typed. It can't be edited in the admin panel, so if it is wrong, ask your developer to correct it.
+The student types their full name when they start the final quiz, and it is printed exactly as typed — they can also set it beforehand under **Profile** on the student site. If a certificate already has the wrong name, open **Certificates** → **Edit name**: the PDF is reprinted with the same number, and you can save the corrected name for their future certificates too.
 
 **What if email isn't set up on the server?**
 The certificate is still created. The student can download it from their account, and you can use **Download** or **Resend email** from Certificates once email works.

@@ -73,6 +73,7 @@ class LanguageSeeder extends Seeder
             $this->auth(),
             $this->fields(),
             $this->locale(),
+            $this->guides(),
             $this->admin(),
             $this->mail(),
         );
@@ -131,6 +132,55 @@ class LanguageSeeder extends Seeder
         return [
             'locale.choose' => ['en' => 'Choose language', 'ru' => 'Выберите язык', 'es' => 'Elegir idioma', 'fr' => 'Choisir la langue', 'pt' => 'Escolher idioma'],
             'locale.invalid' => ['en' => 'Choose an active language.', 'ru' => 'Выберите активный язык.', 'es' => 'Elige un idioma activo.', 'fr' => 'Choisissez une langue active.', 'pt' => 'Escolha um idioma ativo.'],
+        ];
+    }
+
+    private function guides(): array
+    {
+        return [
+            'help.title' => ['en' => 'Help - Pilot Academy', 'ru' => 'Помощь - Pilot Academy', 'es' => 'Ayuda - Pilot Academy', 'fr' => 'Aide - Pilot Academy', 'pt' => 'Ajuda - Pilot Academy'],
+            'help.meta' => [
+                'en' => 'How Pilot Academy works: lessons, knowledge checks, the final quiz and certificates.',
+                'ru' => 'Как работает Pilot Academy: уроки, проверки знаний, финальный тест и сертификаты.',
+                'es' => 'Cómo funciona Pilot Academy: lecciones, comprobaciones de conocimiento, examen final y certificados.',
+                'fr' => 'Fonctionnement de Pilot Academy : leçons, contrôles de connaissances, quiz final et certificats.',
+                'pt' => 'Como a Pilot Academy funciona: aulas, verificações de conhecimento, teste final e certificados.',
+            ],
+            'help.heading' => ['en' => 'Help', 'ru' => 'Помощь', 'es' => 'Ayuda', 'fr' => 'Aide', 'pt' => 'Ajuda'],
+            'help.unavailable' => [
+                'en' => 'The help guide is not available right now.',
+                'ru' => 'Справка сейчас недоступна.',
+                'es' => 'La guía de ayuda no está disponible en este momento.',
+                'fr' => 'Le guide d’aide n’est pas disponible pour le moment.',
+                'pt' => 'O guia de ajuda não está disponível no momento.',
+            ],
+            'help.contents_aria' => ['en' => 'Help contents', 'ru' => 'Содержание справки', 'es' => 'Contenido de la ayuda', 'fr' => 'Sommaire de l’aide', 'pt' => 'Conteúdo da ajuda'],
+            'help.still_stuck' => [
+                'en' => 'Still stuck? Contact your academy administrator.',
+                'ru' => 'Все еще нужна помощь? Свяжитесь с администратором академии.',
+                'es' => '¿Sigues atascado? Contacta con el administrador de tu academia.',
+                'fr' => 'Encore bloqué ? Contactez l’administrateur de votre académie.',
+                'pt' => 'Ainda com dificuldade? Fale com o administrador da academia.',
+            ],
+            'help.back_to_courses' => ['en' => 'Back to courses', 'ru' => 'Назад к курсам', 'es' => 'Volver a los cursos', 'fr' => 'Retour aux cours', 'pt' => 'Voltar aos cursos'],
+            'guide.admin.unavailable' => [
+                'en' => 'The guide file docs/admin-guide.md was not found.',
+                'ru' => 'Файл руководства docs/admin-guide.md не найден.',
+                'es' => 'No se encontró el archivo de guía docs/admin-guide.md.',
+                'fr' => 'Le fichier de guide docs/admin-guide.md est introuvable.',
+                'pt' => 'O arquivo do guia docs/admin-guide.md não foi encontrado.',
+            ],
+            'guide.search_label' => ['en' => 'Search the guide', 'ru' => 'Искать в руководстве', 'es' => 'Buscar en la guía', 'fr' => 'Rechercher dans le guide', 'pt' => 'Pesquisar no guia'],
+            'guide.search_placeholder' => ['en' => 'Search the guide...', 'ru' => 'Искать в руководстве...', 'es' => 'Buscar en la guía...', 'fr' => 'Rechercher dans le guide...', 'pt' => 'Pesquisar no guia...'],
+            'guide.contents' => ['en' => 'Contents', 'ru' => 'Содержание', 'es' => 'Contenido', 'fr' => 'Sommaire', 'pt' => 'Conteúdo'],
+            'guide.contents_aria' => ['en' => 'Guide contents', 'ru' => 'Содержание руководства', 'es' => 'Contenido de la guía', 'fr' => 'Sommaire du guide', 'pt' => 'Conteúdo do guia'],
+            'guide.no_results_prefix' => [
+                'en' => 'Nothing in the guide mentions',
+                'ru' => 'В руководстве ничего не найдено по запросу',
+                'es' => 'Nada en la guía menciona',
+                'fr' => 'Rien dans le guide ne mentionne',
+                'pt' => 'Nada no guia menciona',
+            ],
         ];
     }
 

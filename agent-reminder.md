@@ -51,6 +51,8 @@ is wrong, not the test.
 | **A YouTube link is parsed to an id and the embed is rebuilt from it** (`Lesson::youtubeIdFrom`), never pasted into the iframe. | An unparseable link left lessons silently videoless; a raw URL in `src` is a script-capable sink. | `YoutubeLinkTest` |
 | **Docs render with `html_input => strip` and `allow_unsafe_links => false`.** | The files are ours, but nothing in them needs raw HTML, and being wrong about who can edit them is costly. | `test_raw_html_and_unsafe_links_are_not_rendered` |
 | **The suite refuses any database but `:memory:` or one named `*test*`.** | With config cached, `RefreshDatabase` wipes the database the cache names — and every test still passes. Rehearsed 2026-09-10. | `tests/TestCase.php` · `TestDatabaseGuardTest` |
+| **Attempts left are counted only by `Course::finalQuizAttempts…For` and `Lesson::quizAttempts…For`.** | They add admin grants (`attempt_grants`). Counting attempts anywhere else silently ignores a grant and locks the student out again. | `QuizAttemptGrantTest` |
+| **Broken content has one definition: `App\Actions\FindContentProblems`.** | Content health, its badge, the list flags, edit-page banners, publish checks and owner alerts all read it; a second copy would disagree with the rest. | `ContentHealthTest` · `ContentHealthWorkflowTest` |
 
 ---
 
@@ -125,6 +127,8 @@ Newest first.
 
 | Date | Decision |
 | --- | --- |
+| 2026-09-14 | **Content problems are not dashboard material.** The card moved to Content → Content health (menu badge), with flags on the Courses/Lessons lists and edit pages, checks before publishing, and bell alerts to the content's owner. |
+| 2026-09-14 | **The student header uses the PILOT ACADEMY lockup** at the panel's 1.75rem — owner's request, replacing the earlier mark-plus-text choice. |
 | 2026-09-10 | **Refreshers declined.** Pilot Academy certifies partners on a course; Support Training Hub (`support-engine`) tracks staff competency over time. The two serve different purposes, so its competency features — levels, refreshers, rubric marking, trainer cohorts — are not ported here by default. |
 | 2026-09-10 | **Ported from support-engine:** Help page, What's new PDF, profile page, Docs group, guide search, privacy-enhanced YouTube, YouTube link validation, the test-database guard. **Checked and not needed:** its dashboard (already here), private-storage video fixes (uploads are on the public disk), HTML sanitising of lesson content (Filament strips it on save — proven with a tampered payload). |
 | 2026-09-08 | **No self-merge.** Branch off `laravel`, open a PR; the owner merges. Asked to merge directly, the owner chose a PR. |
