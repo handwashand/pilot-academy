@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasContentTranslations;
 use App\Models\Concerns\HasDuration;
 use App\Models\Concerns\HasPublishStatus;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,7 +13,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Course extends Model
 {
-    use HasDuration, HasPublishStatus;
+    use HasContentTranslations, HasDuration, HasPublishStatus;
+
+    protected array $translatable = ['title', 'description'];
 
     protected $fillable = [
         'product_id',

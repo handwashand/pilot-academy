@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Http\Middleware\SetLocale;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -73,6 +74,7 @@ class AdminPanelProvider extends PanelProvider
                 'People',
                 'Results',
                 'Docs',
+                'Settings',
             ])
             // The dashboard shows the academy, not the panel. Filament's
             // account and version cards are deliberately left off: signing out
@@ -95,6 +97,7 @@ class AdminPanelProvider extends PanelProvider
                 ShareErrorsFromSession::class,
                 PreventRequestForgery::class,
                 SubstituteBindings::class,
+                SetLocale::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])

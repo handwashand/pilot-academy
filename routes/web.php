@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\StudentAuthController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\ChangelogPdfController;
 use App\Http\Controllers\FinalQuizController;
+use App\Http\Controllers\LocaleController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AcademyController::class, 'home'])->name('academy.home');
@@ -12,6 +13,7 @@ Route::post('/name', [AcademyController::class, 'setName'])->name('academy.name'
 Route::get('/search', [AcademyController::class, 'search'])->name('academy.search');
 Route::get('/help', [AcademyController::class, 'help'])->name('academy.help');
 Route::get('/sitemap.xml', [AcademyController::class, 'sitemap'])->name('sitemap');
+Route::post('/locale', LocaleController::class)->name('locale.switch');
 
 // Student authentication (public site)
 Route::middleware('guest')->group(function () {

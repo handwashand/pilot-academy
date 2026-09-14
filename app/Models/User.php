@@ -6,6 +6,7 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,9 +18,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 
-#[Fillable(['name', 'certificate_name', 'email', 'password', 'company_id', 'role', 'login_token'])]
+#[Fillable(['name', 'certificate_name', 'email', 'password', 'company_id', 'role', 'login_token', 'locale'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser, HasLocalePreference
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
@@ -38,6 +39,9 @@ class User extends Authenticatable implements FilamentUser
         self::ROLE_CREATOR => 'Creator',
         self::ROLE_LEARNER => 'Learner',
     ];
+
+    public const PERMISSION_LANGUAGES_MANAGE = 'languages.manage';
+    public const PERMISSION_TRANSLATIONS_MANAGE = 'translations.manage';
 
     /** New accounts are partners until an admin says otherwise. */
     protected $attributes = [
@@ -71,6 +75,21 @@ class User extends Authenticatable implements FilamentUser
     public function roleLabel(): string
     {
         return self::ROLE_LABELS[$this->role] ?? $this->role;
+    }
+
+    public function preferredLocale(): ?string
+    {
+        return $this->locale;
+    }
+
+    public function hasPermission(string $permission): bool
+    {
+        return $this->permissions()->where('permission', $permission)->exists();
+    }
+
+    public function permissions(): HasMany
+    {
+        return $this->hasMany(UserPermission::class);
     }
 
     /** Everyone who takes courses — the only people who belong in reports. */

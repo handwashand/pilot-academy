@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="{{ $locale['current'] ?? app()->getLocale() }}" dir="{{ $locale['direction'] ?? 'ltr' }}" class="h-full">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -103,7 +103,7 @@
     </style>
 </head>
 <body class="h-full bg-slate-50 text-slate-800">
-    <a href="#main" class="skip-link">Skip to content</a>
+    <a href="#main" class="skip-link">{{ __t('nav.skip') }}</a>
 
     <header class="sticky top-0 z-20 bg-white border-b border-slate-200">
         <div class="max-w-6xl mx-auto px-4 sm:px-5 h-16 flex items-center justify-between gap-2">
@@ -132,10 +132,21 @@
                      room for another word on a 375px phone. --}}
                 <a href="{{ route('academy.help') }}"
                    class="flex flex-none items-center gap-2 h-11 px-1 sm:px-2 rounded-lg text-sm text-slate-600 hover:text-brand hover:bg-slate-50 active:bg-slate-100 font-medium"
-                   aria-label="Help">
+                   aria-label="{{ __t('nav.help') }}">
                     <span aria-hidden="true" class="w-6 h-6 rounded-full border border-slate-300 text-xs font-bold flex items-center justify-center">?</span>
-                    <span class="hidden sm:block">Help</span>
+                    <span class="hidden sm:block">{{ __t('nav.help') }}</span>
                 </a>
+                @if(($locale['available'] ?? collect())->count() > 1)
+                    <form method="POST" action="{{ route('locale.switch') }}" class="hidden sm:block">
+                        @csrf
+                        <label class="vh" for="locale-switcher">{{ __t('locale.choose') }}</label>
+                        <select id="locale-switcher" name="locale" onchange="this.form.submit()" class="h-10 rounded-lg border border-slate-200 bg-white px-2 text-sm text-slate-600">
+                            @foreach($locale['available'] as $language)
+                                <option value="{{ $language->code }}" @selected($language->code === ($locale['current'] ?? app()->getLocale()))>{{ $language->native_name }}</option>
+                            @endforeach
+                        </select>
+                    </form>
+                @endif
                 @auth
                     @php($name = auth()->user()->name)
                     {{-- Certificates has to stay reachable on a phone: the word
@@ -149,9 +160,9 @@
                          here was checked against public/build/assets/app-*.css. --}}
                     <a href="{{ route('certificates.index') }}"
                        class="flex flex-none items-center gap-2 h-11 px-2 rounded-lg text-sm text-slate-600 hover:text-brand hover:bg-slate-50 active:bg-slate-100 font-medium"
-                       aria-label="My certificates">
+                       aria-label="{{ __t('nav.certificates') }}">
                         <span aria-hidden="true">🎓</span>
-                        <span class="hidden sm:block">Certificates</span>
+                        <span class="hidden sm:block">{{ __t('nav.certificates') }}</span>
                     </a>
                     <span class="hidden sm:block min-w-0 truncate text-sm text-slate-500">{{ $name }}</span>
                     {{-- Decorative initial, not a control: dropped below sm: to give the
@@ -161,15 +172,15 @@
                     </span>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button class="h-11 px-1 sm:px-1.5 whitespace-nowrap text-sm text-slate-500 hover:text-brand font-medium">Log out</button>
+                        <button class="h-11 px-1 sm:px-1.5 whitespace-nowrap text-sm text-slate-500 hover:text-brand font-medium">{{ __t('nav.logout') }}</button>
                     </form>
                 @else
                     @php($name = session('student_name'))
                     @if($name)
                         <span class="hidden sm:block min-w-0 truncate text-sm text-slate-500">{{ $name }}</span>
                     @endif
-                    <a href="{{ route('login') }}" class="flex flex-none items-center h-11 px-1 sm:px-1.5 whitespace-nowrap text-sm text-slate-600 hover:text-brand font-medium">Log in</a>
-                    <a href="{{ route('register') }}" class="flex flex-none items-center h-10 whitespace-nowrap text-sm font-semibold rounded-lg bg-brand text-white px-3 sm:px-3.5 hover:bg-blue-700">Register</a>
+                    <a href="{{ route('login') }}" class="flex flex-none items-center h-11 px-1 sm:px-1.5 whitespace-nowrap text-sm text-slate-600 hover:text-brand font-medium">{{ __t('auth.login') }}</a>
+                    <a href="{{ route('register') }}" class="flex flex-none items-center h-10 whitespace-nowrap text-sm font-semibold rounded-lg bg-brand text-white px-3 sm:px-3.5 hover:bg-blue-700">{{ __t('auth.register') }}</a>
                 @endauth
             </div>
         </div>
@@ -180,8 +191,8 @@
     </main>
 
     <footer class="max-w-6xl mx-auto px-5 py-10 text-center text-sm text-slate-400">
-        Pilot Academy · internal training ·
-        <a href="{{ route('academy.help') }}" class="hover:text-brand">Help</a>
+        Pilot Academy · {{ __t('footer.internal_training') }} ·
+        <a href="{{ route('academy.help') }}" class="hover:text-brand">{{ __t('nav.help') }}</a>
     </footer>
 </body>
 </html>

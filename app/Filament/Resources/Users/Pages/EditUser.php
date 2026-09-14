@@ -16,4 +16,15 @@ class EditUser extends EditRecord
             DeleteAction::make(),
         ];
     }
+
+    protected function afterSave(): void
+    {
+        $permissions = $this->form->getRawState()['permission_names'] ?? [];
+
+        $this->record->permissions()->delete();
+
+        foreach ($permissions as $permission) {
+            $this->record->permissions()->create(['permission' => $permission]);
+        }
+    }
 }

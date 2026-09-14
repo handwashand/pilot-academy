@@ -26,7 +26,7 @@ class CourseReminder extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Pick up where you left off — Pilot Academy',
+            subject: __t('mail.course_reminder.subject', [], $this->student->preferredLocale()),
         );
     }
 

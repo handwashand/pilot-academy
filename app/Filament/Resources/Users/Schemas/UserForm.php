@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Users\Schemas;
 
 use App\Models\User;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -60,6 +61,20 @@ class UserForm
                     ->columnSpanFull()
                     ->visible(fn ($get): bool => $get('role') === User::ROLE_CREATOR)
                     ->helperText('The products this creator owns the training for. They cannot see any other product\'s courses.'),
+
+                CheckboxList::make('permission_names')
+                    ->label('Extra permissions')
+                    ->options([
+                        User::PERMISSION_LANGUAGES_MANAGE => 'Manage languages',
+                        User::PERMISSION_TRANSLATIONS_MANAGE => 'Manage translations',
+                    ])
+                    ->helperText('Granted per account. These are not included in the Admin or Creator roles by default.')
+                    ->dehydrated(false)
+                    ->afterStateHydrated(function (CheckboxList $component, ?User $record): void {
+                        $component->state($record?->permissions()->pluck('permission')->all() ?? []);
+                    })
+                    ->visible(fn (): bool => (bool) auth()->user()?->isAdmin())
+                    ->columnSpanFull(),
             ]);
     }
 }
