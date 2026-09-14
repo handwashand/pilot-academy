@@ -17,6 +17,10 @@ computer and it is gone.
 **Log in** or **Register** in the top bar. If your company sent you a personal
 link, open it — it signs you straight in, no password needed.
 
+**The academy follows your browser’s language:** English, Russian, Spanish,
+French or Portuguese. To choose another, use the language menu in the top bar
+on a computer or tablet. Course and lesson text is shown as it was written.
+
 ## How a course works
 
 A course is a set of **lessons, taken in order**. The course page shows how far

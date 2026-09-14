@@ -1,6 +1,6 @@
 @extends('academy.layout')
 
-@section('title', 'Final quiz — ' . $course->title)
+@section('title', __t('academy.meta.final_title', ['course' => $course->title]))
 
 @section('content')
     @php
@@ -12,17 +12,17 @@
     <a href="{{ route('academy.course', $course) }}" class="text-sm text-brand font-semibold">&larr; {{ $course->title }}</a>
 
     <div class="max-w-2xl">
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-navy mt-2">Final quiz</h1>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-navy mt-2">{{ __t('academy.final.heading') }}</h1>
         <p class="text-slate-500 mt-1">{{ $course->title }}</p>
 
         {{-- Result banner (after a submitted attempt) --}}
         @if($result)
             <div class="mt-5 rounded-2xl border px-5 py-4 {{ $result['passed'] ? 'bg-green-50 border-green-200 text-green-800' : 'bg-amber-50 border-amber-200 text-amber-900' }}">
-                <div class="font-bold text-lg">{{ $result['passed'] ? 'Passed 🎉' : 'Not passed yet' }}</div>
+                <div class="font-bold text-lg">{{ $result['passed'] ? __t('academy.final.passed') : __t('academy.final.not_passed') }}</div>
                 <p class="text-sm mt-1">
-                    You answered <strong>{{ $result['score'] }} of {{ $result['total'] }}</strong> correctly ({{ $result['percent'] }}%).
+                    {{ __t('academy.final.you_answered', ['score' => $result['score'], 'total' => $result['total'], 'percent' => $result['percent']]) }}
                     @unless($result['passed'])
-                        To pass you need <strong>{{ $needed }} correct</strong> ({{ $course->pass_percent }}%).
+                        {{ __t('academy.final.to_pass', ['needed' => $needed, 'percent' => $course->pass_percent]) }}
                     @endunless
                 </p>
             </div>
@@ -33,19 +33,19 @@
             @php($certificate = $state['certificate'])
             <div class="mt-5 bg-white rounded-2xl border border-slate-200 shadow-sm p-6 text-center">
                 <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-brand to-navy text-white flex items-center justify-center text-3xl">🎓</div>
-                <h2 class="text-xl font-extrabold text-navy mt-4">You're certified!</h2>
+                <h2 class="text-xl font-extrabold text-navy mt-4">{{ __t('academy.final.certified') }}</h2>
                 <p class="text-slate-500 text-sm mt-1">
-                    Certificate No. <strong>{{ $certificate->number }}</strong> · {{ $certificate->score_percent }}%
-                    · issued {{ $certificate->issued_at->format('M j, Y') }}
+                    {{ __t('academy.final.certificate_number', ['number' => $certificate->number]) }} · {{ $certificate->score_percent }}%
+                    · {{ __t('academy.final.issued', ['date' => $certificate->issued_at->isoFormat('ll')]) }}
                 </p>
                 <div class="mt-5 flex flex-col sm:flex-row gap-3 justify-center">
                     <a href="{{ route('certificates.download', $certificate) }}"
                        class="inline-flex justify-center rounded-lg bg-ok text-white font-semibold px-6 py-3 hover:bg-green-700">
-                        Download PDF
+                        {{ __t('academy.final.download_pdf') }}
                     </a>
                     <a href="{{ route('certificates.index') }}"
                        class="inline-flex justify-center rounded-lg border border-slate-300 text-slate-600 font-semibold px-6 py-3 hover:bg-slate-50">
-                        My certificates
+                        {{ __t('academy.common.my_certificates') }}
                     </a>
                 </div>
             </div>
@@ -59,7 +59,7 @@
                     <fieldset class="bg-white border border-slate-200 rounded-2xl shadow-sm p-5">
                         <legend class="px-2 font-semibold text-navy">{{ $qn + 1 }}. {{ $question->prompt }}</legend>
                         @if($multiple)
-                            <p class="px-2 text-xs text-slate-400 mb-1">Select all that apply.</p>
+                            <p class="px-2 text-xs text-slate-400 mb-1">{{ __t('academy.common.select_all') }}</p>
                         @endif
                         <div class="space-y-2 mt-2">
                             @foreach($question->options->shuffle() as $option)
@@ -77,7 +77,7 @@
                 @endforeach
 
                 <button class="w-full sm:w-auto rounded-lg bg-brand text-white font-semibold px-6 py-3 hover:bg-blue-700">
-                    Submit final quiz
+                    {{ __t('academy.final.submit') }}
                 </button>
             </form>
 
@@ -85,8 +85,8 @@
         @elseif($mode === 'exhausted')
             <div class="mt-5 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
                 <div class="rounded-xl bg-slate-100 border border-slate-200 text-slate-600 px-5 py-4">
-                    <strong>No attempts remaining.</strong> You've used all {{ $state['maxAttempts'] }} attempts for this final quiz.
-                    Please contact your administrator if you need another attempt.
+                    <strong>{{ __t('academy.common.no_attempts_remaining') }}</strong> {{ __t('academy.final.used_all_attempts', ['count' => $state['maxAttempts']]) }}
+                    {{ __t('academy.final.contact_admin') }}
                 </div>
             </div>
 
@@ -94,29 +94,29 @@
         @elseif($mode === 'locked')
             <div class="mt-5 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
                 <div class="rounded-xl bg-amber-50 border border-amber-200 text-amber-900 px-5 py-4">
-                    🔒 Complete all lessons to unlock the final quiz.
+                    🔒 {{ __t('academy.course.final_locked') }}
                 </div>
-                <a href="{{ route('academy.course', $course) }}" class="mt-4 inline-block text-brand font-semibold">&larr; Back to the course</a>
+                <a href="{{ route('academy.course', $course) }}" class="mt-4 inline-block text-brand font-semibold">&larr; {{ __t('academy.final.back_to_course') }}</a>
             </div>
 
         {{-- UNAVAILABLE --}}
         @elseif($mode === 'unavailable')
             <div class="mt-5 bg-white rounded-2xl border border-slate-200 shadow-sm p-6 text-slate-500">
-                The final quiz for this course isn't available yet.
+                {{ __t('academy.final.unavailable') }}
             </div>
 
         {{-- PRESTART --}}
         @else
             <div class="mt-5 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
                 <div class="rounded-xl bg-blue-50 border border-blue-100 text-navy px-5 py-4 mb-5">
-                    <div class="font-semibold mb-1">Before you start</div>
+                    <div class="font-semibold mb-1">{{ __t('academy.common.before_you_start') }}</div>
                     <ul class="text-sm space-y-1 list-disc pl-5 text-slate-600">
-                        <li>{{ $state['questionCount'] }} question(s), drawn at random.</li>
-                        <li>You need <strong>{{ $state['passPercent'] }}%</strong> or higher to pass.</li>
+                        <li>{{ __tc('academy.final.question_count', $state['questionCount']) }}</li>
+                        <li>{{ __t('academy.final.pass_needed', ['percent' => $state['passPercent']]) }}</li>
                         @if($state['attemptsRemaining'] !== null)
-                            <li>You have <strong>{{ $state['attemptsRemaining'] }}</strong> attempt(s) left.</li>
+                            <li>{{ __tc('academy.common.you_have_attempts', $state['attemptsRemaining']) }}</li>
                         @else
-                            <li>Unlimited attempts — each draws a fresh set of questions.</li>
+                            <li>{{ __t('academy.final.unlimited') }}</li>
                         @endif
                     </ul>
                 </div>
@@ -124,7 +124,7 @@
                 @auth
                     @if(auth()->user()->canManageCourse($course))
                         <div class="rounded-xl bg-violet-50 border border-violet-200 text-violet-800 px-5 py-3 mb-4 text-sm">
-                            <strong>Staff preview.</strong> Because you manage this course you can take its final quiz without finishing the lessons. A real certificate will be issued to your account.
+                            <strong>{{ __t('academy.final.staff_preview') }}</strong> {{ __t('academy.final.staff_preview_body') }}
                         </div>
                     @endif
                 @endauth
@@ -132,17 +132,17 @@
                 <form method="POST" action="{{ route('academy.final.start', $course) }}" class="space-y-4">
                     @csrf
                     <div>
-                        <label for="certificate_name" class="block text-sm font-semibold text-navy mb-1">Full name for your certificate</label>
+                        <label for="certificate_name" class="block text-sm font-semibold text-navy mb-1">{{ __t('academy.final.certificate_name') }}</label>
                         <input type="text" id="certificate_name" name="certificate_name" required maxlength="255"
                                value="{{ old('certificate_name', $state['certificateName']) }}"
                                class="w-full rounded-lg border border-slate-300 px-4 py-3 focus:border-brand focus:ring-brand @error('certificate_name') border-red-400 @enderror">
-                        <p class="text-xs text-slate-400 mt-1">This exact name will be printed on your certificate.</p>
+                        <p class="text-xs text-slate-400 mt-1">{{ __t('academy.final.certificate_name_help') }}</p>
                         @error('certificate_name')
                             <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
                         @enderror
                     </div>
                     <button class="w-full sm:w-auto rounded-lg bg-brand text-white font-semibold px-6 py-3 hover:bg-blue-700">
-                        Start final quiz
+                        {{ __t('academy.final.start') }}
                     </button>
                 </form>
             </div>

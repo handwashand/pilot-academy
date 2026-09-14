@@ -1,19 +1,17 @@
 @extends('academy.layout')
 
-@section('title', 'Verify certificate — Pilot Academy')
+@section('title', __t('academy.meta.verify_title'))
 
 @section('content')
     <div class="max-w-xl mx-auto">
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-navy text-center">Certificate verification</h1>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-navy text-center">{{ __t('academy.certificates.verify_heading') }}</h1>
 
         @if(! $certificate)
             <div class="mt-6 bg-white rounded-2xl border border-slate-200 shadow-sm p-8 text-center">
                 <div class="text-4xl">🔍</div>
-                <h2 class="text-lg font-bold text-navy mt-3">No certificate found</h2>
+                <h2 class="text-lg font-bold text-navy mt-3">{{ __t('academy.certificates.not_found') }}</h2>
                 <p class="text-slate-500 mt-1">
-                    We couldn't find a certificate with the number
-                    <strong class="text-slate-700">{{ $number }}</strong>.
-                    Please check the number and try again.
+                    {{ __t('academy.certificates.not_found_body', ['number' => $number]) }}
                 </p>
             </div>
         @else
@@ -25,36 +23,36 @@
                         </span>
                         <div>
                             <div class="font-bold {{ $certificate->isValid() ? 'text-green-800' : 'text-red-700' }}">
-                                {{ $certificate->isValid() ? 'Valid certificate' : 'Certificate revoked' }}
+                                {{ $certificate->isValid() ? __t('academy.certificates.valid_certificate') : __t('academy.certificates.certificate_revoked') }}
                             </div>
-                            <div class="text-sm {{ $certificate->isValid() ? 'text-green-700' : 'text-red-600' }}">No. {{ $certificate->number }}</div>
+                            <div class="text-sm {{ $certificate->isValid() ? 'text-green-700' : 'text-red-600' }}">{{ __t('academy.certificates.number', ['number' => $certificate->number]) }}</div>
                         </div>
                     </div>
                 </div>
 
                 <dl class="divide-y divide-slate-100">
                     <div class="flex justify-between gap-4 px-6 py-4">
-                        <dt class="text-slate-500">Issued to</dt>
+                        <dt class="text-slate-500">{{ __t('academy.certificates.issued_to') }}</dt>
                         <dd class="font-semibold text-navy text-right">{{ $certificate->name }}</dd>
                     </div>
                     <div class="flex justify-between gap-4 px-6 py-4">
-                        <dt class="text-slate-500">Course</dt>
+                        <dt class="text-slate-500">{{ __t('academy.certificates.course') }}</dt>
                         <dd class="font-semibold text-navy text-right">{{ $certificate->course->title }}</dd>
                     </div>
                     <div class="flex justify-between gap-4 px-6 py-4">
-                        <dt class="text-slate-500">Issued on</dt>
-                        <dd class="font-semibold text-navy text-right">{{ $certificate->issued_at->format('F j, Y') }}</dd>
+                        <dt class="text-slate-500">{{ __t('academy.certificates.issued_on') }}</dt>
+                        <dd class="font-semibold text-navy text-right">{{ $certificate->issued_at->isoFormat('LL') }}</dd>
                     </div>
                     @unless($certificate->isValid())
                         <div class="flex justify-between gap-4 px-6 py-4">
-                            <dt class="text-slate-500">Revoked on</dt>
-                            <dd class="font-semibold text-red-600 text-right">{{ $certificate->revoked_at->format('F j, Y') }}</dd>
+                            <dt class="text-slate-500">{{ __t('academy.certificates.revoked_on') }}</dt>
+                            <dd class="font-semibold text-red-600 text-right">{{ $certificate->revoked_at->isoFormat('LL') }}</dd>
                         </div>
                     @endunless
                 </dl>
             </div>
         @endif
 
-        <p class="text-center text-xs text-slate-400 mt-6">Pilot Academy · certificate verification</p>
+        <p class="text-center text-xs text-slate-400 mt-6">{{ __t('academy.certificates.verify_footer') }}</p>
     </div>
 @endsection

@@ -25,7 +25,7 @@ class StudentAuthController extends Controller
 
         if (! Auth::attempt($data, $request->boolean('remember'))) {
             throw ValidationException::withMessages([
-                'email' => 'These credentials do not match our records.',
+                'email' => __t('academy.signup.failed'),
             ]);
         }
 
@@ -82,7 +82,7 @@ class StudentAuthController extends Controller
 
         if ($user && ! $user->isLearner()) {
             throw ValidationException::withMessages([
-                'email' => 'This email belongs to a staff account — please use Log in.',
+                'email' => __t('academy.signup.staff_email'),
             ]);
         }
 

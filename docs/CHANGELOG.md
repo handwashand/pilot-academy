@@ -84,6 +84,13 @@ Add a new entry here whenever something visible to admins or students changes.
   the PDF with the same number, and can save the corrected name for the student's
   future certificates. This used to need a developer.
 - **Guide is in the admin account menu too** (your initials, top right).
+- **The whole student site reads in the student's language.** Home, courses,
+  lessons, the final quiz, certificates, search, profile, sign-up and invite
+  pages now follow the language chosen in the top bar, or the browser's
+  language: English, Russian, Spanish, French or Portuguese (Brazil). Before,
+  only the top bar, sign-in and Help changed. Counts read naturally in each
+  language ("5 уроков", not "5 урок"). Course and lesson text is still shown as
+  written.
 
 ### Changed
 
@@ -120,6 +127,8 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Fixed
 
+- **Brazilian browsers get Portuguese.** A browser set only to Portuguese
+  (Brazil) was shown English, because its language code was not recognised.
 - **The browser icon now keeps the existing Pilot mark while refreshing after
   deploy.** The public site and admin panel point to versioned favicon URLs so
   cached old icons are refreshed without changing the logo artwork.

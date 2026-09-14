@@ -98,7 +98,7 @@ class QuizAttemptGrantTest extends TestCase
 
         $this->actingAs($learner)
             ->get(route('academy.final.show', $this->course))
-            ->assertSee('1</strong> attempt(s) left', false);
+            ->assertSee('You have 1 attempt left.');
     }
 
     public function test_a_lesson_knowledge_check_can_be_granted_another_attempt_too(): void

@@ -1,6 +1,6 @@
 @extends('academy.layout')
 
-@section('title', 'Your profile — Pilot Academy')
+@section('title', __t('academy.meta.profile_title'))
 
 @php
     // Shared by every field: bg-white is load-bearing (preflight makes form
@@ -13,19 +13,19 @@
 
 @section('content')
     <div class="max-w-2xl mx-auto">
-        <a href="{{ route('academy.home') }}" class="text-sm text-brand font-semibold">&larr; All courses</a>
+        <a href="{{ route('academy.home') }}" class="text-sm text-brand font-semibold">&larr; {{ __t('academy.common.all_courses') }}</a>
 
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-navy mt-2">Your profile</h1>
-        <p class="text-slate-500 mt-1">Your name, the name on your certificates, and how you sign in.</p>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-navy mt-2">{{ __t('academy.profile.heading') }}</h1>
+        <p class="text-slate-500 mt-1">{{ __t('academy.profile.intro') }}</p>
 
         {{-- Set about you by an administrator: shown, never editable here. --}}
         <section aria-labelledby="set-by-admin" class="mt-6 bg-slate-100 rounded-2xl p-5">
-            <h2 id="set-by-admin" class="text-xs font-semibold uppercase tracking-wide text-slate-500">Set by your administrator</h2>
+            <h2 id="set-by-admin" class="text-xs font-semibold uppercase tracking-wide text-slate-500">{{ __t('academy.profile.set_by_admin') }}</h2>
             <dl class="mt-3">
-                <dt class="text-sm text-slate-500">Partner company</dt>
-                <dd class="font-semibold text-navy">{{ $user->company?->name ?? 'Not set' }}</dd>
+                <dt class="text-sm text-slate-500">{{ __t('academy.profile.company') }}</dt>
+                <dd class="font-semibold text-navy">{{ $user->company?->name ?? __t('academy.profile.not_set') }}</dd>
             </dl>
-            <p class="mt-3 text-sm text-slate-500">To change it, contact your academy administrator.</p>
+            <p class="mt-3 text-sm text-slate-500">{{ __t('academy.profile.contact_to_change') }}</p>
         </section>
 
         {{-- Your details --}}
@@ -34,14 +34,14 @@
             @csrf
             @method('PUT')
 
-            <h2 class="text-lg font-extrabold text-navy">Your details</h2>
+            <h2 class="text-lg font-extrabold text-navy">{{ __t('academy.profile.details') }}</h2>
 
             @if($saved === 'details')
-                <p role="status" class="mt-3 rounded-lg bg-green-50 border border-green-200 text-green-800 px-4 py-3 text-sm">Your details are saved.</p>
+                <p role="status" class="mt-3 rounded-lg bg-green-50 border border-green-200 text-green-800 px-4 py-3 text-sm">{{ __t('academy.profile.details_saved') }}</p>
             @endif
 
             <div class="mt-4">
-                <label for="name" class="{{ $label }}">Name</label>
+                <label for="name" class="{{ $label }}">{{ __t('academy.profile.name') }}</label>
                 <input type="text" id="name" name="name" required maxlength="255" autocomplete="name"
                        value="{{ old('name', $user->name) }}" class="{{ $field }}">
                 @error('name')
@@ -50,7 +50,7 @@
             </div>
 
             <div class="mt-4">
-                <label for="email" class="{{ $label }}">Email</label>
+                <label for="email" class="{{ $label }}">{{ __t('academy.profile.email') }}</label>
                 <input type="email" id="email" name="email" required maxlength="255" autocomplete="email"
                        value="{{ old('email', $user->email) }}" class="{{ $field }}">
                 @error('email')
@@ -59,21 +59,19 @@
             </div>
 
             <div class="mt-4">
-                <label for="certificate_name" class="{{ $label }}">Name on certificates</label>
+                <label for="certificate_name" class="{{ $label }}">{{ __t('academy.profile.certificate_name') }}</label>
                 <input type="text" id="certificate_name" name="certificate_name" maxlength="255"
                        value="{{ old('certificate_name', $user->certificate_name) }}" placeholder="{{ $user->name }}"
                        aria-describedby="certificate_name_help" class="{{ $field }}">
                 <p id="certificate_name_help" class="mt-1 text-sm text-slate-500">
-                    Printed on the certificates you earn from now on — leave empty to use your name.
-                    Certificates you already have keep the name they were printed with; to correct one,
-                    contact your academy administrator.
+                    {{ __t('academy.profile.certificate_name_help') }}
                 </p>
                 @error('certificate_name')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
 
-            <button type="submit" class="{{ $button }} mt-5">Save details</button>
+            <button type="submit" class="{{ $button }} mt-5">{{ __t('academy.profile.save_details') }}</button>
         </form>
 
         {{-- Password: "set" for invite-link accounts, "change" once one exists. --}}
@@ -83,22 +81,21 @@
             @method('PUT')
 
             @if($user->hasOwnPassword())
-                <h2 class="text-lg font-extrabold text-navy">Change password</h2>
+                <h2 class="text-lg font-extrabold text-navy">{{ __t('academy.profile.change_password') }}</h2>
             @else
-                <h2 class="text-lg font-extrabold text-navy">Set a password</h2>
+                <h2 class="text-lg font-extrabold text-navy">{{ __t('academy.profile.set_a_password') }}</h2>
                 <p class="mt-1 text-sm text-slate-500">
-                    You sign in with your personal link, so your account has no password yet.
-                    Set one to also log in with your email and password.
+                    {{ __t('academy.profile.no_password_yet') }}
                 </p>
             @endif
 
             @if($saved === 'password')
-                <p role="status" class="mt-3 rounded-lg bg-green-50 border border-green-200 text-green-800 px-4 py-3 text-sm">Your password is saved.</p>
+                <p role="status" class="mt-3 rounded-lg bg-green-50 border border-green-200 text-green-800 px-4 py-3 text-sm">{{ __t('academy.profile.password_saved') }}</p>
             @endif
 
             @if($user->hasOwnPassword())
                 <div class="mt-4">
-                    <label for="current_password" class="{{ $label }}">Current password</label>
+                    <label for="current_password" class="{{ $label }}">{{ __t('academy.profile.current_password') }}</label>
                     <input type="password" id="current_password" name="current_password" required autocomplete="current-password" class="{{ $field }}">
                     @error('current_password', 'password')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -107,22 +104,22 @@
             @endif
 
             <div class="mt-4">
-                <label for="new_password" class="{{ $label }}">New password</label>
+                <label for="new_password" class="{{ $label }}">{{ __t('academy.profile.new_password') }}</label>
                 <input type="password" id="new_password" name="password" required minlength="8" autocomplete="new-password"
                        aria-describedby="new_password_help" class="{{ $field }}">
-                <p id="new_password_help" class="mt-1 text-sm text-slate-500">At least 8 characters.</p>
+                <p id="new_password_help" class="mt-1 text-sm text-slate-500">{{ __t('academy.profile.min_8') }}</p>
                 @error('password', 'password')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
 
             <div class="mt-4">
-                <label for="password_confirmation" class="{{ $label }}">Confirm new password</label>
+                <label for="password_confirmation" class="{{ $label }}">{{ __t('academy.profile.confirm_new_password') }}</label>
                 <input type="password" id="password_confirmation" name="password_confirmation" required autocomplete="new-password" class="{{ $field }}">
             </div>
 
             <button type="submit" class="{{ $button }} mt-5">
-                {{ $user->hasOwnPassword() ? 'Change password' : 'Set password' }}
+                {{ $user->hasOwnPassword() ? __t('academy.profile.change_password') : __t('academy.profile.set_password') }}
             </button>
         </form>
     </div>

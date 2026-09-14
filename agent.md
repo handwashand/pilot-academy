@@ -289,6 +289,7 @@ is wrong, not the test.
 | **The suite refuses any database but `:memory:` or one named `*test*`.** | With config cached, `RefreshDatabase` wipes the database the cache names — and every test still passes. Rehearsed 2026-09-10. | `tests/TestCase.php` · `TestDatabaseGuardTest` |
 | **Attempts left are counted only by `Course::finalQuizAttempts…For` and `Lesson::quizAttempts…For`.** | They add admin grants (`attempt_grants`). Counting attempts anywhere else silently ignores a grant and locks the student out again. | `QuizAttemptGrantTest` |
 | **Broken content has one definition: `App\Actions\FindContentProblems`.** | Content health, its badge, the list flags, edit-page banners, publish checks and owner alerts all read it; a second copy would disagree with the rest. | `ContentHealthTest` · `ContentHealthWorkflowTest` |
+| **Student-site words ship in `lang/{code}/academy.php`, with the same keys in every language.** New text goes in all five files. | The deploy never seeds, so text that only exists in `LanguageSeeder` shows as a key name in production. A key missing from one language quietly falls back to English. | `StudentSiteTranslationTest` |
 
 ---
 
@@ -376,6 +377,43 @@ Newest first.
 ## Work log
 
 Newest first. Add to this every time.
+
+### 2026-09-14 — Student site translated: page text now follows the language (uncommitted)
+Reported as "the contents do not change on the pages". The header, sign-in and
+Help were translated; every other student page was hard-coded English.
+- **Where the words live:** `lang/{en,ru,es,fr,pt}/academy.php`, read through
+  `__t('academy.…')`. `__tc()` handles plural lines: `one|many`, or
+  `one|few|many` for Russian.
+- **`Translator::line()` fallback order:**
+  1. the translations table for this language (admin overrides)
+  2. the shipped file for this language
+  3. the same two for the default language
+  4. the key made readable
+- **Why files, not only the seeder:** the deploy never seeds. Keys that exist
+  only in `LanguageSeeder` show up in production as "Hero Title"-style
+  headlines, including in English. Shipped files work straight after
+  `git pull`.
+- **Not seeded into the database on purpose.** A seeded row never updates
+  (`firstOrCreate`), so it would hide later fixes made in the file.
+- **Wording that changed slightly:**
+  - Bold was dropped inside a few sentences, such as "You have 1 attempt
+    left.", so translations can reorder words.
+  - "Create an account to save your progress." is now one link.
+- **Durations** (`HasDuration::formatMinutes`) are translated too, so the panel
+  uses them.
+- **Certificate dates** use `isoFormat('ll'/'LL')`, which is locale-aware and
+  the same in English.
+- **Fixed on the way:** `SetLocale` ignored a browser sending only `pt-BR`,
+  because Symfony reports it as `pt_BR`.
+- **Not done:**
+  - Course and lesson content: no page calls `translated()`, and there is no
+    admin UI to enter content translations.
+  - The certificate PDF and emails.
+  - The older DB-only keys (`nav.*`, `auth.*`, `help.*`) still rely on
+    `LanguageSeeder` having been run.
+- Pinned by `StudentSiteTranslationTest`: key and placeholder parity across
+  languages, every key used in the code exists, English with no seeding,
+  pages in ru, es and pt, Russian plurals, and DB override.
 
 ### 2026-09-14 — Agent rules tightened: read first, preserve brand assets (uncommitted)
 - Added a top-level working-order rule: **read first, every time**. Future

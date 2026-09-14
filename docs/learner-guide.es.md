@@ -8,6 +8,8 @@ Cómo funciona Pilot Academy, desde tu primera lección hasta tu certificado.
 
 **Inicia sesión para conservar tu progreso en todos tus dispositivos** y para hacer el examen final. Usa **Iniciar sesión** o **Registrarse**. Si tu empresa te envió un enlace personal, ábrelo: te inicia sesión directamente.
 
+**La academia usa el idioma de tu navegador:** inglés, ruso, español, francés o portugués. Para elegir otro, usa el menú de idioma de la barra superior en una computadora o tableta. El texto de los cursos y las lecciones se muestra tal como está escrito.
+
 ## Cómo funciona un curso
 
 Un curso es un conjunto de **lecciones en orden**. La página del curso muestra tu avance, por ejemplo **3 / 8 lecciones · 32 min restantes**.

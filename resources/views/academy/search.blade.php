@@ -1,40 +1,40 @@
 @extends('academy.layout')
 
-@section('title', $term ? 'Search: '.$term.' — Pilot Academy' : 'Search — Pilot Academy')
+@section('title', $term ? __t('academy.meta.search_term_title', ['term' => $term]) : __t('academy.meta.search_title'))
 
 @php
-    $metaDescription = 'Search Pilot Academy courses and lessons on the Pilot vehicle monitoring platform.';
+    $metaDescription = __t('academy.meta.search_description');
 @endphp
 
 @section('content')
-    <h1 class="text-2xl sm:text-3xl font-extrabold text-navy">Search</h1>
-    <p class="text-slate-500 mt-1">Find a course or a lesson by name.</p>
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-navy">{{ __t('academy.search.heading') }}</h1>
+    <p class="text-slate-500 mt-1">{{ __t('academy.search.intro') }}</p>
 
     <div class="mt-4 mb-8">
         @include('academy.partials.search-form', ['term' => $term, 'inputId' => 'q'])
     </div>
 
     @if($term === '')
-        <p class="text-slate-500">Type something above to search.</p>
+        <p class="text-slate-500">{{ __t('academy.search.type_something') }}</p>
     @else
         @php($resultCount = $courses->count() + $lessons->count())
 
         <p class="text-sm text-slate-500 mb-6" role="status">
-            {{ $resultCount }} {{ $resultCount === 1 ? 'result' : 'results' }} for &ldquo;{{ $term }}&rdquo;
+            {{ __tc('academy.search.results_for', $resultCount, ['term' => $term]) }}
         </p>
 
         @if($resultCount === 0)
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-                <p class="text-slate-600 font-semibold">Nothing matched that.</p>
+                <p class="text-slate-600 font-semibold">{{ __t('academy.search.nothing') }}</p>
                 <p class="text-slate-500 text-sm mt-1">
-                    Try a shorter word, or
-                    <a href="{{ route('academy.home') }}" class="text-brand font-semibold">browse all courses</a>.
+                    {{ __t('academy.search.try_shorter') }}
+                    <a href="{{ route('academy.home') }}" class="text-brand font-semibold">{{ __t('academy.search.browse_all') }}</a>.
                 </p>
             </div>
         @endif
 
         @if($courses->isNotEmpty())
-            <h2 class="text-xl font-extrabold text-navy mb-2">Courses</h2>
+            <h2 class="text-xl font-extrabold text-navy mb-2">{{ __t('academy.search.courses') }}</h2>
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm mb-8 divide-y divide-slate-100">
                 @foreach($courses as $course)
                     <a href="{{ route('academy.course', $course) }}"
@@ -53,7 +53,7 @@
         @endif
 
         @if($lessons->isNotEmpty())
-            <h2 class="text-xl font-extrabold text-navy mb-2">Lessons</h2>
+            <h2 class="text-xl font-extrabold text-navy mb-2">{{ __t('academy.search.lessons') }}</h2>
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm divide-y divide-slate-100">
                 @foreach($lessons as $lesson)
                     <a href="{{ route('academy.lesson', [$lesson->course, $lesson]) }}"

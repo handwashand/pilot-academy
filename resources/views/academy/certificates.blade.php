@@ -1,17 +1,17 @@
 @extends('academy.layout')
 
-@section('title', 'My certificates — Pilot Academy')
+@section('title', __t('academy.meta.certificates_title'))
 
 @section('content')
-    <a href="{{ route('academy.home') }}" class="text-sm text-brand font-semibold">&larr; All courses</a>
+    <a href="{{ route('academy.home') }}" class="text-sm text-brand font-semibold">&larr; {{ __t('academy.common.all_courses') }}</a>
 
-    <h1 class="text-2xl sm:text-3xl font-extrabold text-navy mt-2">My certificates</h1>
-    <p class="text-slate-500 mt-1">Certificates you've earned by passing course final quizzes.</p>
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-navy mt-2">{{ __t('academy.certificates.heading') }}</h1>
+    <p class="text-slate-500 mt-1">{{ __t('academy.certificates.intro') }}</p>
 
     @if($certificates->isEmpty())
         <div class="mt-6 bg-white rounded-2xl border border-slate-200 shadow-sm p-8 text-center text-slate-500">
             <div class="text-4xl">🎓</div>
-            <p class="mt-3">No certificates yet. Complete a course and pass its final quiz to earn one.</p>
+            <p class="mt-3">{{ __t('academy.certificates.empty') }}</p>
         </div>
     @else
         <div class="mt-6 space-y-4">
@@ -22,25 +22,25 @@
                         <div class="flex items-center gap-2 flex-wrap">
                             <h2 class="font-bold text-navy">{{ $certificate->course->title }}</h2>
                             @if($certificate->isValid())
-                                <span class="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-full bg-green-50 text-ok">Valid</span>
+                                <span class="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-full bg-green-50 text-ok">{{ __t('academy.certificates.valid') }}</span>
                             @else
-                                <span class="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-full bg-red-50 text-red-600">Revoked</span>
+                                <span class="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-full bg-red-50 text-red-600">{{ __t('academy.certificates.revoked') }}</span>
                             @endif
                         </div>
                         <p class="text-sm text-slate-500 mt-0.5">
-                            No. {{ $certificate->number }} · {{ $certificate->score_percent }}% · {{ $certificate->issued_at->format('M j, Y') }}
+                            {{ __t('academy.certificates.number', ['number' => $certificate->number]) }} · {{ $certificate->score_percent }}% · {{ $certificate->issued_at->isoFormat('ll') }}
                         </p>
                     </div>
                     <div class="flex gap-2 flex-none">
                         @if($certificate->isValid() && $certificate->pdf_path)
                             <a href="{{ route('certificates.download', $certificate) }}"
                                class="inline-flex justify-center rounded-lg bg-ok text-white font-semibold px-4 py-2.5 text-sm hover:bg-green-700">
-                                Download
+                                {{ __t('academy.certificates.download') }}
                             </a>
                         @endif
                         <a href="{{ route('certificates.verify', $certificate->number) }}"
                            class="inline-flex justify-center rounded-lg border border-slate-300 text-slate-600 font-semibold px-4 py-2.5 text-sm hover:bg-slate-50">
-                            Verify
+                            {{ __t('academy.certificates.verify') }}
                         </a>
                     </div>
                 </div>

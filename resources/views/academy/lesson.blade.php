@@ -1,10 +1,10 @@
 @extends('academy.layout')
 
-@section('title', $lesson->title . ' — Pilot Academy')
+@section('title', __t('academy.meta.lesson_title', ['lesson' => $lesson->title]))
 
 @php
     $metaDescription = \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags($lesson->summary ?: $lesson->content))), 155)
-        ?: $lesson->title.' — a lesson from '.$course->title.' on Pilot Academy.';
+        ?: __t('academy.meta.lesson_description', ['lesson' => $lesson->title, 'course' => $course->title]);
 @endphp
 
 @section('content')
@@ -23,8 +23,8 @@
             @if(! $course->isPublished() || ! $lesson->isPublished())
                 {{-- Only admins ever reach this page for unpublished content. --}}
                 <div class="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                    <strong>{{ ! $lesson->isPublished() ? 'Lesson: '.$lesson->statusLabel() : 'Course: '.$course->statusLabel() }}</strong>
-                    — students cannot see this. You are previewing it as an admin.
+                    <strong>{{ ! $lesson->isPublished() ? __t('academy.lesson.preview_lesson', ['status' => $lesson->statusLabel()]) : __t('academy.lesson.preview_course', ['status' => $course->statusLabel()]) }}</strong>
+                    {{ __t('academy.lesson.admin_preview') }}
                 </div>
             @endif
 
@@ -41,7 +41,7 @@
                 <div class="mt-6 rounded-2xl overflow-hidden border border-slate-200 shadow-sm aspect-video bg-black">
                     <video id="lesson-video" class="w-full h-full" controls playsinline preload="metadata">
                         <source src="{{ $lesson->video_url }}">
-                        Your browser does not support the video tag.
+                        {{ __t('academy.lesson.no_video_support') }}
                     </video>
                 </div>
 
@@ -49,10 +49,10 @@
                      YouTube lesson comes with speed control. People re-watch
                      training to revise, so speed is worth having on both. --}}
                 <div class="mt-2 flex flex-wrap items-center gap-2">
-                    <span class="text-xs text-slate-400" id="speed-label">Playback speed</span>
+                    <span class="text-xs text-slate-400" id="speed-label">{{ __t('academy.lesson.playback_speed') }}</span>
                     {{-- Pairs, not a keyed array: PHP casts float keys to int,
                          so 1.25 and 1.5 would collide into a single entry. --}}
-                    @foreach([['1', 'Normal'], ['1.25', '1.25×'], ['1.5', '1.5×'], ['2', '2×']] as [$rate, $caption])
+                    @foreach([['1', __t('academy.lesson.speed_normal')], ['1.25', '1.25×'], ['1.5', '1.5×'], ['2', '2×']] as [$rate, $caption])
                         <button type="button" data-speed="{{ $rate }}" aria-describedby="speed-label"
                                 class="inline-flex items-center h-11 px-3 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 active:bg-slate-100">
                             {{ $caption }}
@@ -167,8 +167,8 @@
             @if($lesson->transcript)
                 <details class="mt-6 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
                     <summary class="font-bold text-navy cursor-pointer">
-                        Transcript
-                        <span class="text-sm font-medium text-slate-500">— read instead of watching</span>
+                        {{ __t('academy.lesson.transcript') }}
+                        <span class="text-sm font-medium text-slate-500">{{ __t('academy.lesson.transcript_hint') }}</span>
                     </summary>
                     <div class="transcript mt-4 text-slate-700">{{ $lesson->transcript }}</div>
                 </details>
@@ -186,9 +186,9 @@
                 <div class="mt-6 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
                     <div class="flex items-center gap-2 mb-1">
                         <span class="text-brand text-xl">📖</span>
-                        <h2 class="text-xl font-extrabold text-navy">Documentation</h2>
+                        <h2 class="text-xl font-extrabold text-navy">{{ __t('academy.lesson.documentation') }}</h2>
                     </div>
-                    <p class="text-slate-500 text-sm mb-4">Read more in the Pilot user guide.</p>
+                    <p class="text-slate-500 text-sm mb-4">{{ __t('academy.lesson.documentation_intro') }}</p>
                     <ul class="space-y-2">
                         @foreach($lesson->doc_links as $link)
                             @if(! empty($link['url']) && ! empty($link['title']))
@@ -217,7 +217,7 @@
                     <div class="flex items-center justify-between gap-2 mb-1 flex-wrap">
                         <div class="flex items-center gap-2">
                             <span class="text-violet-600 text-xl">❓</span>
-                            <h2 class="text-xl font-extrabold text-navy">Knowledge check</h2>
+                            <h2 class="text-xl font-extrabold text-navy">{{ __t('academy.lesson.knowledge_check') }}</h2>
                         </div>
                         @if($mode === 'active' && $secondsRemaining !== null)
                             <span id="quiz-timer" class="text-sm font-bold px-3 py-1.5 rounded-lg bg-slate-100 text-navy">
@@ -225,7 +225,7 @@
                             </span>
                         @endif
                     </div>
-                    <p class="text-slate-500 text-sm mb-2">Answer all questions correctly to complete this lesson.</p>
+                    <p class="text-slate-500 text-sm mb-2">{{ __t('academy.lesson.knowledge_intro') }}</p>
 
                     {{-- What the quiz costs, before it starts rather than after.
                          Attempts remaining is only known once someone is logged
@@ -237,17 +237,17 @@
                         $questionCount = $lesson->questions->count();
                     @endphp
                     <div class="flex flex-wrap items-center gap-2 text-sm text-slate-500 mb-5">
-                        <span>{{ $questionCount }} {{ $questionCount === 1 ? 'question' : 'questions' }}</span>
+                        <span>{{ __tc('academy.lesson.questions', $questionCount) }}</span>
                         @if($lesson->quiz_time_limit_minutes)
                             <span aria-hidden="true">·</span>
-                            <span>{{ $lesson->quiz_time_limit_minutes }} min limit</span>
+                            <span>{{ __t('academy.lesson.time_limit_short', ['minutes' => $lesson->quiz_time_limit_minutes]) }}</span>
                         @endif
                         @if(($quiz['attemptsRemaining'] ?? null) !== null)
                             <span aria-hidden="true">·</span>
-                            <span>{{ $quiz['attemptsRemaining'] }} {{ $quiz['attemptsRemaining'] === 1 ? 'attempt' : 'attempts' }} left</span>
+                            <span>{{ __tc('academy.common.attempts_left', $quiz['attemptsRemaining']) }}</span>
                         @elseif($lesson->quiz_max_attempts)
                             <span aria-hidden="true">·</span>
-                            <span>{{ $lesson->quiz_max_attempts }} attempts</span>
+                            <span>{{ __tc('academy.lesson.max_attempts', $lesson->quiz_max_attempts) }}</span>
                         @endif
                     </div>
 
@@ -257,25 +257,25 @@
                         <div role="status" class="rounded-xl bg-green-50 border border-green-200 text-green-800 px-5 py-4 mb-5 flex items-center gap-3">
                             <span aria-hidden="true" class="w-8 h-8 rounded-full bg-ok text-white flex items-center justify-center flex-none">✓</span>
                             <div>
-                                <div class="font-bold">Lesson complete!</div>
-                                <div class="text-sm text-green-700">Nice work. {{ $next ? 'Continue to the next lesson.' : 'You\'ve finished the course.' }}</div>
+                                <div class="font-bold">{{ __t('academy.lesson.complete') }}</div>
+                                <div class="text-sm text-green-700">{{ $next ? __t('academy.lesson.nice_work_next') : __t('academy.lesson.nice_work_done') }}</div>
                             </div>
                         </div>
                     @elseif($timeup)
                         <div role="status" class="rounded-xl bg-red-50 border border-red-200 text-red-700 px-5 py-4 mb-5">
-                            ⏱ <strong>Time's up.</strong> This attempt was not counted as successful.
+                            ⏱ <strong>{{ __t('academy.lesson.times_up') }}</strong> {{ __t('academy.lesson.times_up_body') }}
                         </div>
                     @elseif($failed)
                         <div role="status" class="rounded-xl bg-amber-50 border border-amber-200 text-amber-800 px-5 py-4 mb-5">
-                            Attempt unsuccessful
+                            {{ __t('academy.lesson.unsuccessful') }}
                             @if(session('quiz_score'))
-                                (score {{ session('quiz_score') }})
+                                {{ __t('academy.lesson.score', ['score' => session('quiz_score')]) }}
                             @endif
                             —
                             @if($mode === 'open')
-                                corrected items are marked below. Try again.
+                                {{ __t('academy.lesson.marked_below') }}
                             @else
-                                review the lesson and try again.
+                                {{ __t('academy.lesson.review_and_retry') }}
                             @endif
                         </div>
                     @endif
@@ -284,26 +284,26 @@
                         @if($mode === 'prestart')
                             {{-- Pre-start: warn about time and attempts --}}
                             <div class="rounded-xl bg-amber-50 border border-amber-200 text-amber-900 px-5 py-4 mb-5">
-                                <div class="font-semibold mb-1">Before you start</div>
+                                <div class="font-semibold mb-1">{{ __t('academy.common.before_you_start') }}</div>
                                 <ul class="text-sm space-y-1 list-disc pl-5">
                                     @if($quiz['timeLimit'])
-                                        <li><strong>Time limit: {{ $quiz['timeLimit'] }} min.</strong> The countdown starts when you press Start and can't be paused.</li>
+                                        <li><strong>{{ __t('academy.lesson.time_limit', ['minutes' => $quiz['timeLimit']]) }}</strong> {{ __t('academy.lesson.time_limit_body') }}</li>
                                     @endif
                                     @if($quiz['attemptsRemaining'] !== null)
-                                        <li>You have <strong>{{ $quiz['attemptsRemaining'] }}</strong> attempt(s) left.</li>
+                                        <li>{{ __tc('academy.common.you_have_attempts', $quiz['attemptsRemaining']) }}</li>
                                     @endif
-                                    <li>Make sure you have enough time to finish. If not, it's better to come back later.</li>
+                                    <li>{{ __t('academy.lesson.enough_time') }}</li>
                                 </ul>
                             </div>
                             <form method="POST" action="{{ route('academy.quiz.start', [$course, $lesson]) }}">
                                 @csrf
                                 <button class="w-full sm:w-auto rounded-lg bg-brand text-white font-semibold px-6 py-3 hover:bg-blue-700">
-                                    Start quiz
+                                    {{ __t('academy.lesson.start_quiz') }}
                                 </button>
                             </form>
                         @elseif($mode === 'exhausted')
                             <div class="rounded-xl bg-slate-100 border border-slate-200 text-slate-600 px-5 py-4">
-                                <strong>No attempts remaining.</strong> You've used all {{ $quiz['maxAttempts'] }} attempts for this quiz.
+                                <strong>{{ __t('academy.common.no_attempts_remaining') }}</strong> {{ __t('academy.lesson.used_all_attempts', ['count' => $quiz['maxAttempts']]) }}
                             </div>
                         @endif
 
@@ -320,13 +320,13 @@
                                             {{ $qn + 1 }}. {{ $question->prompt }}
                                             {{-- Correctness was carried by colour and a glyph alone. --}}
                                             @if($qResult === true)
-                                                <span class="text-ok" aria-hidden="true">✓</span><span class="vh">Correct</span>
+                                                <span class="text-ok" aria-hidden="true">✓</span><span class="vh">{{ __t('academy.lesson.correct') }}</span>
                                             @elseif($qResult === false)
-                                                <span class="text-red-500" aria-hidden="true">✗</span><span class="vh">Incorrect</span>
+                                                <span class="text-red-500" aria-hidden="true">✗</span><span class="vh">{{ __t('academy.lesson.incorrect') }}</span>
                                             @endif
                                         </legend>
                                         @if($multiple)
-                                            <p class="px-2 text-xs text-slate-400 mb-1">Select all that apply.</p>
+                                            <p class="px-2 text-xs text-slate-400 mb-1">{{ __t('academy.common.select_all') }}</p>
                                         @endif
                                         <div class="space-y-2 mt-2">
                                             @foreach($question->options as $option)
@@ -349,7 +349,7 @@
                                 @endforeach
 
                                 <button class="w-full sm:w-auto rounded-lg bg-brand text-white font-semibold px-6 py-3 hover:bg-blue-700">
-                                    Submit answers
+                                    {{ __t('academy.lesson.submit') }}
                                 </button>
                             </form>
 
@@ -383,7 +383,7 @@
                     @if($prev)
                         <a href="{{ route('academy.lesson', [$course, $prev]) }}"
                            class="inline-block rounded-lg border border-slate-300 px-5 py-2.5 font-semibold text-slate-600 hover:bg-white">
-                            &larr; Previous
+                            &larr; {{ __t('academy.lesson.previous') }}
                         </a>
                     @endif
                 </div>
@@ -391,25 +391,25 @@
                     @if($next && ($passed || $isDone))
                         <a href="{{ route('academy.lesson', [$course, $next]) }}"
                            class="inline-block rounded-lg bg-navy text-white px-5 py-2.5 font-semibold hover:bg-slate-800">
-                            Next lesson &rarr;
+                            {{ __t('academy.lesson.next_lesson') }} &rarr;
                         </a>
                     @elseif(! $next && ($passed || $isDone))
                         @if($course->final_quiz_enabled && $certificate)
                             <a href="{{ route('certificates.index') }}"
                                class="inline-block rounded-lg bg-ok text-white px-5 py-2.5 font-semibold hover:bg-green-700">
-                                View certificate ✓
+                                {{ __t('academy.lesson.view_certificate') }} ✓
                             </a>
                         @elseif($course->final_quiz_enabled && $finalUnlocked)
                             <a href="{{ route('academy.final.show', $course) }}"
                                class="inline-block rounded-lg bg-brand text-white px-5 py-2.5 font-semibold hover:bg-blue-700">
-                                Take the final quiz &rarr;
+                                {{ __t('academy.home.take_final') }} &rarr;
                             </a>
                         @else
                             {{-- The course page, not the home page: it shows what
                                  they finished and what to take next. --}}
                             <a href="{{ route('academy.course', $course) }}"
                                class="inline-block rounded-lg bg-ok text-white px-5 py-2.5 font-semibold hover:bg-green-700">
-                                Finish course ✓
+                                {{ __t('academy.lesson.finish_course') }} ✓
                             </a>
                         @endif
                     @endif
@@ -420,7 +420,7 @@
         {{-- Sidebar: lesson list --}}
         <aside class="lg:sticky lg:top-20 self-start">
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
-                <div class="text-xs font-semibold uppercase tracking-wide text-slate-400 px-2 mb-2">Lessons</div>
+                <div class="text-xs font-semibold uppercase tracking-wide text-slate-400 px-2 mb-2">{{ __t('academy.lesson.lessons') }}</div>
                 <ol class="space-y-1">
                     @foreach($lessons as $i => $l)
                         @php($lDone = in_array($l->id, $completed, true))
@@ -431,7 +431,7 @@
                                 <span class="w-6 h-6 flex-none rounded-full flex items-center justify-center text-xs {{ $lDone ? 'bg-ok text-white' : 'bg-slate-100 text-slate-500' }}">
                                     <span aria-hidden="true">{{ $lDone ? '✓' : $i + 1 }}</span>
                                     @if($lDone)
-                                        <span class="vh">Completed</span>
+                                        <span class="vh">{{ __t('academy.common.completed') }}</span>
                                     @endif
                                 </span>
                                 <span class="min-w-0 flex-1">
@@ -454,25 +454,25 @@
                                 <a href="{{ route('certificates.index') }}"
                                    class="flex items-center gap-3 px-2 py-2.5 rounded-lg text-sm text-ok font-semibold hover:bg-green-50">
                                     <span class="w-6 h-6 flex-none rounded-full bg-ok text-white flex items-center justify-center text-xs">🎓</span>
-                                    <span class="truncate">Certificate ready</span>
+                                    <span class="truncate">{{ __t('academy.lesson.certificate_ready') }}</span>
                                 </a>
                             @elseif($finalUnlocked)
                                 <a href="{{ route('academy.final.show', $course) }}"
                                    class="flex items-center gap-3 px-2 py-2.5 rounded-lg text-sm text-brand font-semibold bg-blue-50 hover:bg-blue-100">
                                     <span class="w-6 h-6 flex-none rounded-full bg-brand text-white flex items-center justify-center text-xs">★</span>
-                                    <span class="truncate">Final quiz — start</span>
+                                    <span class="truncate">{{ __t('academy.lesson.final_start') }}</span>
                                 </a>
                             @else
                                 <div class="flex items-center gap-3 px-2 py-2.5 rounded-lg text-sm text-slate-400">
                                     <span class="w-6 h-6 flex-none rounded-full bg-slate-100 flex items-center justify-center text-xs">🔒</span>
-                                    <span class="min-w-0">Final quiz · <span class="text-slate-500 font-medium">{{ $remaining }} lesson{{ $remaining === 1 ? '' : 's' }} left</span></span>
+                                    <span class="min-w-0">{{ __t('academy.common.final_quiz') }} · <span class="text-slate-500 font-medium">{{ __tc('academy.lesson.final_lessons_left', $remaining) }}</span></span>
                                 </div>
                             @endif
                         @else
                             <a href="{{ route('login') }}"
                                class="flex items-center gap-3 px-2 py-2.5 rounded-lg text-sm text-slate-500 hover:bg-slate-50">
                                 <span class="w-6 h-6 flex-none rounded-full bg-slate-100 flex items-center justify-center text-xs">🔒</span>
-                                <span class="truncate">Final quiz · log in to take it</span>
+                                <span class="truncate">{{ __t('academy.lesson.final_login') }}</span>
                             </a>
                         @endauth
                     </div>

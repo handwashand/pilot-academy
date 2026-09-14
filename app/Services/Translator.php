@@ -104,7 +104,7 @@ class Translator
             ->map(fn (Language $language): array => $language->getAttributes())
             ->all());
 
-        return collect($languages)->map(fn (array $attributes): Language => (new Language())->newFromBuilder($attributes));
+        return collect($languages)->map(fn (array $attributes): Language => (new Language)->newFromBuilder($attributes));
     }
 
     public function defaultCode(): string

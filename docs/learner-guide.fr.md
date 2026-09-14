@@ -8,6 +8,8 @@ Comment fonctionne Pilot Academy, de votre première leçon à votre certificat.
 
 **Connectez-vous pour conserver votre progression partout** et passer le quiz final. Utilisez **Connexion** ou **S’inscrire**. Si votre entreprise vous a envoyé un lien personnel, ouvrez-le : il vous connecte directement.
 
+**L’académie s’affiche dans la langue de votre navigateur :** anglais, russe, espagnol, français ou portugais. Pour en choisir une autre, utilisez le menu des langues dans la barre du haut sur ordinateur ou tablette. Le texte des cours et des leçons s’affiche tel qu’il a été rédigé.
+
 ## Fonctionnement d'un cours
 
 Un cours est une série de **leçons à suivre dans l'ordre**. La page du cours affiche votre progression, par exemple **3 / 8 leçons · 32 min restantes**.

@@ -20,7 +20,8 @@ class SetLocale
             $locale = $request->session()->get('locale');
         } else {
             foreach ($request->getLanguages() as $browserLocale) {
-                $code = str($browserLocale)->before('-')->lower()->value();
+                // Symfony hands "pt-BR" over as "pt_BR", so split on both.
+                $code = str($browserLocale)->before('_')->before('-')->lower()->value();
                 if ($translator->isActiveCode($code)) {
                     $locale = $code;
                     break;

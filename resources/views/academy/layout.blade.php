@@ -166,7 +166,7 @@
                          closes it on an outside tap or Escape. --}}
                     <details class="relative flex-none" data-account-menu>
                         <summary class="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-full [&::-webkit-details-marker]:hidden"
-                                 aria-label="{{ __t('nav.account') }}" title="{{ $account->name }}">
+                                 aria-label="{{ __t('academy.nav.account') }}" title="{{ $account->name }}">
                             <span aria-hidden="true" class="flex h-9 w-9 items-center justify-center rounded-full bg-navy text-sm font-bold text-white">{{ $initials }}</span>
                         </summary>
 
@@ -178,7 +178,7 @@
 
                             <a href="{{ route('academy.profile') }}"
                                class="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-brand">
-                                {{ __t('nav.profile') }}
+                                {{ __t('academy.nav.profile') }}
                             </a>
 
                             <a href="{{ route('certificates.index') }}"
@@ -190,7 +190,7 @@
                                 {{-- A full page load: the panel is a different app. --}}
                                 <a href="{{ url('/admin') }}"
                                    class="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-brand">
-                                    {{ __t('nav.admin_panel') }}
+                                    {{ __t('academy.nav.admin_panel') }}
                                 </a>
                             @endif
 

@@ -228,6 +228,6 @@ class HomeNextStepTest extends TestCase
 
         $this->actingAs($learner)
             ->get(route('academy.final.show', $this->course))
-            ->assertSee('1</strong> attempt(s) left', false);
+            ->assertSee('You have 1 attempt left.');
     }
 }
