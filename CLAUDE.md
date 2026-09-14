@@ -89,9 +89,9 @@ lessons, the final quiz, certificates), in the same change:**
 
 Quote labels in the guides exactly as the app prints them, and never describe a
 screen or rule you have not confirmed in the code — see *Writing the guides* in
-`agent-reminder.md`.
+`agent.md`.
 
-**Then record the task in `agent-reminder.md`** — the running work log at the
+**Then record the task in `agent.md`** — the running work log at the
 repo root. Read it before starting anything: it carries what is half-finished,
 which branches are still open, and the traps this codebase has already sprung
 on people (the CI-built CSS bundle, Blade `@php()`, Livewire root elements).
@@ -106,7 +106,7 @@ being updated.
 Before completion:
 
 - `php artisan test` — never with config cached; the suite refuses a non-test
-  database (see *Invariants* in `agent-reminder.md`)
+  database (see *Invariants* in `agent.md`)
 - `php artisan pint`
 - `php artisan optimize:clear`
 
