@@ -259,7 +259,7 @@ class ChangelogPageTest extends TestCase
             ->assertSee(route('changelog.pdf', ['release' => $first['id']]), false);
     }
 
-    public function test_every_release_downloads_as_one_pdf(): void
+    public function test_every_release_opens_as_one_pdf(): void
     {
         $response = $this->actingAs($this->user('pdf@pilot.local', User::ROLE_ADMIN))
             ->get(route('changelog.pdf'));
@@ -267,10 +267,12 @@ class ChangelogPageTest extends TestCase
         $response->assertStatus(200);
         $this->assertSame('application/pdf', $response->headers->get('content-type'));
         $this->assertStringStartsWith('%PDF', $response->getContent());
+        // Inline, so the browser previews it rather than dropping it in downloads.
+        $this->assertStringStartsWith('inline', $response->headers->get('content-disposition'));
         $this->assertStringContainsString('whats-new-', $response->headers->get('content-disposition'));
     }
 
-    public function test_one_release_downloads_as_a_pdf_named_after_it(): void
+    public function test_one_release_opens_as_a_pdf_named_after_it(): void
     {
         $first = Changelog::releasesFrom(Changelog::changelogPath())[0];
 
@@ -279,7 +281,24 @@ class ChangelogPageTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertStringStartsWith('%PDF', $response->getContent());
+        $this->assertStringStartsWith('inline', $response->headers->get('content-disposition'));
         $this->assertStringContainsString("whats-new-{$first['id']}.pdf", $response->headers->get('content-disposition'));
+    }
+
+    public function test_the_pdf_links_open_in_a_new_tab(): void
+    {
+        $this->actingAs($this->user('tabs@pilot.local', User::ROLE_ADMIN))
+            ->get('/admin/changelog')
+            ->assertSeeInOrder(['href="'.route('changelog.pdf').'"', 'target="_blank"', 'rel="noopener"'], false);
+    }
+
+    public function test_the_top_bar_has_a_whats_new_shortcut_on_every_panel_page(): void
+    {
+        $this->actingAs($this->user('topbar@pilot.local', User::ROLE_CREATOR))
+            ->get('/admin')
+            ->assertStatus(200)
+            ->assertSee('data-whats-new-shortcut', false)
+            ->assertSee('href="'.Changelog::getUrl().'"', false);
     }
 
     public function test_an_unknown_release_is_a_404_not_an_empty_pdf(): void

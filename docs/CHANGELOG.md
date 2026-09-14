@@ -46,10 +46,12 @@ Add a new entry here whenever something visible to admins or students changes.
   lesson, when the final quiz unlocks, where certificates are, and what to do
   when something will not finish. It is readable on a phone, with a contents
   list at the top.
-- **What's new downloads as a PDF** — one release from the **PDF** link on its
-  heading, or everything from **All releases (PDF)** beside the filters. For
-  sending release notes to people without a panel account. The filters on
-  screen do not change what goes into the file.
+- **What's new as a PDF** — one release from the **PDF** link on its heading, or
+  everything from **All releases (PDF)** beside the filters. It opens in a new
+  tab to read, print or save. For sending release notes to people without a
+  panel account. The filters on screen do not change what goes into the file.
+- **What's new is one click from any page.** A megaphone icon beside the search
+  box at the top of the panel opens it. It is still under **Docs** too.
 - **Edit your own profile.** Open the account menu (your initials, top right) →
   **Profile** to change your name, email or password. Creators could not change
   their own password before, because they have no access to **Users**.
@@ -118,6 +120,9 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Fixed
 
+- **The browser icon now updates reliably after deploy.** The empty stock
+  `favicon.ico` has been replaced with real icon files, and the public site and
+  admin panel point to versioned favicon URLs so cached old icons are refreshed.
 - **The admin panel opens on PostgreSQL again when the notification bell is on.**
   The notification payload is now stored as JSON, so Filament can count unread
   alerts without a database error.

@@ -9,14 +9,11 @@
         <meta name="description" content="{{ $metaDescription }}">
     @endisset
 
-    {{-- public/favicon.ico is the empty stock file, so it is deliberately not
-         linked — an SVG icon covers every current browser. Drop a real .ico in
-         and add a fallback link here if very old browsers ever matter. --}}
-    <link rel="icon" type="image/svg+xml" href="{{ asset('img/pilot-mark.svg') }}">
-    {{-- NOTE: iOS ignores an SVG apple-touch-icon, so "Add to Home Screen"
-         currently falls back to a screenshot. Fixing it needs a square PNG
-         mark (180x180) in public/img/ — there isn't one yet. --}}
-    <link rel="apple-touch-icon" href="{{ asset('img/pilot-mark.svg') }}">
+    {{-- Versioned so browsers replace an old cached favicon after deploy. --}}
+    <link rel="icon" href="{{ asset('favicon.ico') }}?v={{ config('app.version') }}" sizes="any">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('img/pilot-mark.svg') }}?v={{ config('app.version') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}?v={{ config('app.version') }}">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}?v={{ config('app.version') }}">
     {{-- Navy, the brand's dark ink. This was #0284c7 — the blue the mark used
          before it turned amber — which is no longer in the palette at all. --}}
     <meta name="theme-color" content="#0a2540">

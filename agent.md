@@ -369,6 +369,48 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-09-14 — Why today's deploy showed old code and the old favicon
+Nothing here was broken. The server pulls `laravel`, and `origin/laravel` was
+still at `e3253197` (2026-09-08, version 2.0.0).
+- **Unmerged work:** everything since is on `feature/support-engine-ports`,
+  13 commits ahead and not merged: profiles, content health, the 2.1.0 changelog
+  and more.
+- **Favicon fix not committed:** it is a real `favicon.ico` (the stock one is
+  0 bytes), plus `favicon-32x32.png`, `apple-touch-icon.png` and `?v=` URLs in
+  the layout. Merging the branch alone would not bring it.
+- **To ship:**
+  1. Commit, including `public/`.
+  2. Push, and let CI rebuild `public/build`.
+  3. Open a PR into `laravel` and merge it.
+  4. Deploy as in `DEPLOY.md`, including `filament:assets` and `optimize`.
+- **If PHP changes still do not show after that,** reload PHP-FPM. OPcache may
+  be holding the old files.
+
+### 2026-09-14 — Deployment visibility and favicon check (uncommitted)
+- Investigated why changes from earlier today were not showing after deploy.
+  Current checkout is on `feature/support-engine-ports`, while `DEPLOY.md` says
+  production pulls `laravel`; `laravel`/`origin/laravel` are still at
+  `e3253197`, and the feature branch has the 2.1.0 work ahead of it. A deploy
+  from `laravel` will not show those branch-only changes until they are merged
+  or the server is intentionally pointed at the feature branch.
+- Fixed the stale favicon path: `public/favicon.ico` was a zero-byte stock file,
+  and browsers request it directly even when Blade links an SVG. Added real
+  `favicon.ico`, `favicon-32x32.png`, and `apple-touch-icon.png`; updated the
+  public layout and Filament panel favicon to versioned URLs. Verified locally:
+  `/favicon.ico` returns `image/vnd.microsoft.icon`, and `/login` plus
+  `/admin/login` render versioned favicon links.
+
+### 2026-09-14 — What's new: top-bar shortcut, PDFs open in a tab (uncommitted)
+The only two pieces of support-engine's What's new that Pilot Academy lacked.
+The page itself (search, category filters, PDFs, Latest) was already here.
+- **Top-bar shortcut:** `resources/views/filament/topbar-whats-new.blade.php`,
+  registered on `PanelsRenderHook::GLOBAL_SEARCH_AFTER`. It is a megaphone icon,
+  matching the sidebar item, and it shows only if `Changelog::canAccess()`.
+- **PDFs** are served with `->stream()`, so `Content-Disposition` is `inline`,
+  and both links use `target="_blank" rel="noopener"`. Before, the file dropped
+  into the downloads folder with nothing on screen.
+- Pinned in `ChangelogPageTest`.
+
 ### 2026-09-14 — One guide: CLAUDE.md merged into agent.md (uncommitted)
 Owner's request: keep `agent.md` as the single file. Its top is now the whole
 rulebook: Project, How to work, and Standing instructions.
@@ -1131,4 +1173,3 @@ lower it.
 Submit at least one form per feature:
 `->fillForm([...])->call('create')->assertHasNoFormErrors()`, then assert the row
 landed **with its relationships**.
-

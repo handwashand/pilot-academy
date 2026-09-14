@@ -70,7 +70,7 @@ class AdminPanelProvider extends PanelProvider
             // sidebar size it sat below the 24px "Sign in" heading in the visual
             // hierarchy — the utility label out-ranking the brand.
             ->brandLogoHeight(fn (): string => request()->routeIs('filament.*.auth.*') ? '3rem' : '1.75rem')
-            ->favicon(asset('img/pilot-mark.svg'))
+            ->favicon(asset('favicon.ico').'?v='.config('app.version'))
             // The bell, top right. First use: telling a course's owner when a
             // change leaves it broken for students (App\Actions\NotifyContentOwners).
             ->databaseNotifications()
@@ -99,6 +99,11 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::SIDEBAR_FOOTER,
                 fn (): string => view('filament.sidebar-version')->render(),
+            )
+            // What's new, one click from any page: an icon beside search.
+            ->renderHook(
+                PanelsRenderHook::GLOBAL_SEARCH_AFTER,
+                fn (): string => view('filament.topbar-whats-new')->render(),
             )
             ->sidebarCollapsibleOnDesktop()
             ->maxContentWidth('full')

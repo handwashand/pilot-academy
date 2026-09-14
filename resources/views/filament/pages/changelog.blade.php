@@ -127,12 +127,15 @@
                 @endforeach
 
                 {{-- The file always holds whole releases; the filters on screen
-                     do not change what is printed. --}}
+                     do not change what is printed. Opens in a new tab: the PDF
+                     is served inline, so the browser previews it. --}}
                 <a
                     href="{{ route('changelog.pdf') }}"
+                    target="_blank"
+                    rel="noopener"
                     class="ms-auto inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-950 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white"
                 >
-                    <x-filament::icon icon="heroicon-m-arrow-down-tray" class="size-4" />
+                    <x-filament::icon icon="heroicon-m-arrow-top-right-on-square" class="size-4" />
                     All releases (PDF)
                 </a>
             </div>
@@ -170,10 +173,12 @@
 
                             <a
                                 href="{{ route('changelog.pdf', ['release' => $release['id']]) }}"
+                                target="_blank"
+                                rel="noopener"
                                 class="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-950 dark:text-gray-300 dark:hover:text-white"
-                                aria-label="Download {{ $release['title'] }} as PDF"
+                                aria-label="Open {{ $release['title'] }} as a PDF in a new tab"
                             >
-                                <x-filament::icon icon="heroicon-m-arrow-down-tray" class="size-3.5" />
+                                <x-filament::icon icon="heroicon-m-arrow-top-right-on-square" class="size-3.5" />
                                 PDF
                             </a>
                         </span>

@@ -49,6 +49,9 @@ class ChangelogPdfController extends Controller
             // DejaVu Sans: 1.5 MB for a few pages of text. Subset, and it is
             // a size you can attach to an email.
             ->setOption('isFontSubsettingEnabled', true)
-            ->download($filename);
+            // Inline, not an attachment: the browser previews it in the new tab
+            // the link opens, and the reader decides whether to keep it. The
+            // filename still names the file if they save it.
+            ->stream($filename);
     }
 }

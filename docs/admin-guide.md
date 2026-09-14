@@ -38,7 +38,7 @@ doing: building the training (**Content**), looking after the people taking it
 | **Results → Quiz attempts** | Every student's quiz attempts. Give one student another attempt when they have run out. Admins only. |
 | **Results → Student feedback** | What students said about every course, in one list. Admins only. |
 | **Docs → Guide** | This guide, with a contents list and a search box. |
-| **Docs → What's new** | Everything that has changed in the academy, newest first. Search it, filter it by category, or download it as a PDF. |
+| **Docs → What's new** | Everything that has changed in the academy, newest first. Search it, filter it by category, or open it as a PDF. |
 | **Settings → Mail** | Whether the academy really sends email, and a button to send yourself a test. Admins only. |
 
 Students have their own guide on the public site: **Help**, the **?** in the top bar. Point a stuck student there first — it covers what finishes a lesson, when the final quiz unlocks, and where certificates are.
@@ -426,7 +426,8 @@ Dashboard shows the same kind of problem for the lesson quizzes.
 
 ### What changed, and when
 
-Open **Docs → What's new**. Every change to the academy is here, newest month first,
+Open **Docs → What's new**, or click the megaphone icon beside the search box at
+the top of any page. Every change to the academy is here, newest month first,
 with the version you are on shown at the bottom of the left menu — click it to
 come straight to this page.
 
@@ -438,8 +439,9 @@ are looking at is only what matched.
 
 **Sending release notes to someone without an account?** Click **PDF** on a
 release's heading for just that release, or **All releases (PDF)** beside the
-filters for everything. The file always holds whole releases — the filters on
-screen do not change what is printed.
+filters for everything. The PDF opens in a new tab, where you can read it, print
+it or save it. The file always holds whole releases — the filters on screen do
+not change what is printed.
 
 > The page is the change log file itself, read fresh every time you open it.
 > Whoever ships a change writes it there, which is why this page is never out
