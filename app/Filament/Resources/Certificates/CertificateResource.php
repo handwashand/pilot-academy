@@ -27,10 +27,9 @@ class CertificateResource extends Resource
         return parent::getEloquentQuery()->with(['user.company', 'course']);
     }
 
-    public static function getNavigationBadge(): ?string
-    {
-        return (string) static::getModel()::whereNull('revoked_at')->count();
-    }
+    // No navigation badge. It showed the total number of valid certificates,
+    // which nobody acts on; a badge in this sidebar means something is waiting
+    // for a person.
 
     public static function table(Table $table): Table
     {

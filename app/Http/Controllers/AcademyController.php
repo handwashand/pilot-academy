@@ -417,7 +417,8 @@ class AcademyController extends Controller
         }
 
         $timeLimit = $lesson->quiz_time_limit_minutes;
-        $maxAttempts = $lesson->quiz_max_attempts;
+        // Includes any extra attempts an admin granted this student.
+        $maxAttempts = $lesson->quizAttemptsAllowedFor($user);
 
         $base = QuizAttempt::where('user_id', $user->id)->where('lesson_id', $lesson->id);
         $used = (clone $base)->whereIn('status', [
@@ -426,7 +427,7 @@ class AcademyController extends Controller
             QuizAttempt::STATUS_EXPIRED,
         ])->count();
         $inProgress = (clone $base)->where('status', QuizAttempt::STATUS_IN_PROGRESS)->latest()->first();
-        $attemptsRemaining = $maxAttempts ? max(0, $maxAttempts - $used) : null;
+        $attemptsRemaining = $lesson->quizAttemptsLeftFor($user);
 
         if ($inProgress) {
             $secondsRemaining = null;

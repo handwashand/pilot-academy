@@ -180,7 +180,9 @@ class Course extends Model
      */
     public function finalQuizAttemptsLeftFor(User $user): ?int
     {
-        if (! $this->final_quiz_max_attempts) {
+        $allowed = $this->finalQuizAttemptsAllowedFor($user);
+
+        if ($allowed === null) {
             return null;
         }
 
@@ -189,7 +191,32 @@ class Course extends Model
             ->whereIn('status', [QuizAttempt::STATUS_PASSED, QuizAttempt::STATUS_FAILED])
             ->count();
 
-        return max(0, $this->final_quiz_max_attempts - $used);
+        return max(0, $allowed - $used);
+    }
+
+    /**
+     * Max attempts for this student, including any extra attempts an admin
+     * granted them from Quiz attempts. Null means unlimited.
+     */
+    public function finalQuizAttemptsAllowedFor(User $user): ?int
+    {
+        if (! $this->final_quiz_max_attempts) {
+            return null;
+        }
+
+        return $this->final_quiz_max_attempts + AttemptGrant::where('user_id', $user->id)
+            ->where('course_id', $this->id)
+            ->count();
+    }
+
+    /**
+     * Tell the course's owners when a change leaves it broken for students.
+     * After the request, not now: a form saves the course before its lessons,
+     * and judging it half-saved would report problems that are not there.
+     */
+    protected static function booted(): void
+    {
+        static::saved(fn (Course $course) => \App\Actions\NotifyContentOwners::afterRequest($course->id));
     }
 
     /**

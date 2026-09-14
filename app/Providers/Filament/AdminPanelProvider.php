@@ -33,6 +33,14 @@ class AdminPanelProvider extends PanelProvider
             // way to change their own password at all. Not the simple layout,
             // so the page keeps the sidebar like every other panel screen.
             ->profile(isSimple: false)
+            // The guide in the account menu as well as under Docs: someone who
+            // is stuck reaches for the menu with their own name on it.
+            ->userMenuItems([
+                'guide' => \Filament\Actions\Action::make('guide')
+                    ->label('Guide')
+                    ->icon(\Filament\Support\Icons\Heroicon::OutlinedBookOpen)
+                    ->url(fn (): string => \App\Filament\Pages\AdminGuide::getUrl()),
+            ])
             ->colors([
                 'primary' => Color::Amber,
             ])

@@ -201,6 +201,31 @@ class User extends Authenticatable implements FilamentUser, HasLocalePreference
     }
 
     /**
+     * Does this person know their password? False for a student who joined by
+     * invite link: they were given a random one and sign in with their personal
+     * link, so the profile offers "Set a password" instead of asking for it.
+     */
+    public function hasOwnPassword(): bool
+    {
+        return $this->password_set_at !== null;
+    }
+
+    /**
+     * Any password saved through the normal paths — registering, an admin
+     * setting one, the profile pages — is one somebody chose, so it is stamped.
+     * The invite-link join is the exception and says so by setting
+     * password_set_at to null explicitly, which this leaves alone.
+     */
+    protected static function booted(): void
+    {
+        static::saving(function (User $user): void {
+            if ($user->isDirty('password') && ! $user->isDirty('password_set_at')) {
+                $user->password_set_at = now();
+            }
+        });
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -210,6 +235,7 @@ class User extends Authenticatable implements FilamentUser, HasLocalePreference
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'password_set_at' => 'datetime',
             'last_login_at' => 'datetime',
         ];
     }

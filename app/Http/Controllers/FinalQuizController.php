@@ -140,7 +140,8 @@ class FinalQuizController extends Controller
             return ['mode' => 'locked'];
         }
 
-        $maxAttempts = $course->final_quiz_max_attempts;
+        // Includes any extra attempts an admin granted this student.
+        $maxAttempts = $course->finalQuizAttemptsAllowedFor($user);
         $attemptsRemaining = $course->finalQuizAttemptsLeftFor($user);
 
         $inProgress = QuizAttempt::where('user_id', $user->id)

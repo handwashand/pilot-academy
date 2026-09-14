@@ -50,6 +50,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/my/certificates', [CertificateController::class, 'index'])->name('certificates.index');
     Route::get('/my/certificates/{certificate}/download', [CertificateController::class, 'download'])->name('certificates.download');
+
+    Route::get('/my/profile', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('academy.profile');
+    Route::put('/my/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('academy.profile.update');
+    Route::put('/my/profile/password', [\App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('academy.profile.password');
 });
 
 // What's new as a PDF, one release or all of them. Panel users only — the

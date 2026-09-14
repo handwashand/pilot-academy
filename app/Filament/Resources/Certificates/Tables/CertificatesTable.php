@@ -132,6 +132,42 @@ class CertificatesTable
                         Notification::make()->title('PDF regenerated')->success()->send();
                     }),
 
+                // A certificate stores the name it was printed with, and
+                // Regenerate PDF reprints that same name — so a misspelling used
+                // to need a developer. The number, date and score never change.
+                Action::make('editName')
+                    ->label('Edit name')
+                    ->icon('heroicon-o-pencil-square')
+                    ->color('gray')
+                    ->modalHeading('Correct the name on this certificate')
+                    ->modalDescription('The PDF is reprinted with the new name, and the public verification page shows it straight away. The number, date and score stay the same. Use Resend email afterwards if the student should get the corrected copy.')
+                    ->fillForm(fn (Certificate $record): array => [
+                        'name' => $record->name,
+                        'update_profile' => true,
+                    ])
+                    ->schema([
+                        \Filament\Forms\Components\TextInput::make('name')
+                            ->label('Name on the certificate')
+                            ->required()
+                            ->maxLength(255),
+                        \Filament\Forms\Components\Toggle::make('update_profile')
+                            ->label("Also use this name on the student's future certificates")
+                            ->helperText('Saves it as the certificate name on their profile, where they can change it too.'),
+                    ])
+                    ->action(function (Certificate $record, array $data, IssueCertificate $issue): void {
+                        $name = trim($data['name']);
+
+                        $record->forceFill(['name' => $name])->save();
+
+                        if (($data['update_profile'] ?? false) && $record->user) {
+                            $record->user->forceFill(['certificate_name' => $name])->save();
+                        }
+
+                        $issue->renderPdf($record);
+
+                        Notification::make()->title('Name corrected and PDF reprinted')->success()->send();
+                    }),
+
                 Action::make('revoke')
                     ->label('Revoke')
                     ->icon('heroicon-o-x-circle')

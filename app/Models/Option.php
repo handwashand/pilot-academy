@@ -22,4 +22,23 @@ class Option extends Model
     {
         return $this->belongsTo(Question::class);
     }
+
+    /**
+     * Unticking the only correct answer breaks a question, so options count
+     * too — see Course::booted(). Many options save in one form; the check
+     * itself still runs once per course, after the request.
+     */
+    protected static function booted(): void
+    {
+        $check = function (Option $option): void {
+            $lessonId = Question::whereKey($option->question_id)->value('lesson_id');
+
+            if ($lessonId) {
+                \App\Actions\NotifyContentOwners::afterRequest(Lesson::whereKey($lessonId)->value('course_id'));
+            }
+        };
+
+        static::saved($check);
+        static::deleted($check);
+    }
 }

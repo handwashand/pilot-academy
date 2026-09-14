@@ -107,24 +107,16 @@
 
     <header class="sticky top-0 z-20 bg-white border-b border-slate-200">
         <div class="max-w-6xl mx-auto px-4 sm:px-5 h-16 flex items-center justify-between gap-2">
-            <a href="{{ route('academy.home') }}" class="flex min-w-0 sm:shrink-0 items-center gap-2 sm:gap-2.5">
-                {{-- The mark plus HTML text rather than the lockup image. The
-                     lockup now says "PILOT ACADEMY" so it would no longer say
-                     the name twice — but this header is only 64px tall, and at
-                     the 36px the mark allows the lockup's stacked "ACADEMY"
-                     renders about 6px high and cannot be read. The auth pages
-                     have room and do use the real lockup.
-
-                     One ink for the wordmark: the amber mark carries the
-                     colour. "Academy" used to be brand blue, which worked when
-                     the mark was blue too and clashed once it turned amber. --}}
-                <img src="{{ asset('img/pilot-mark.svg') }}" alt="" class="w-8 h-8 sm:w-9 sm:h-9 flex-none" width="36" height="36">
-                {{-- One line, always. With Help in the bar a guest's header is
-                     full at 375px, so the mark and name drop a size below sm:
-                     and, on anything narrower, the name truncates rather than
-                     wrapping. From sm: up the brand never shrinks — a long
-                     learner name truncates instead (see below). --}}
-                <span class="font-extrabold text-navy text-base sm:text-lg truncate">Pilot Academy</span>
+            <a href="{{ route('academy.home') }}" class="flex min-w-0 sm:shrink-0 items-center">
+                {{-- The same PILOT ACADEMY lockup as the admin panel, at the same
+                     1.75rem, so both sides of the academy read as one product.
+                     It replaced the mark plus HTML text on 2026-09-14 at the
+                     owner's request. The stacked "ACADEMY" is small at this
+                     height; the alt text and page titles carry the name for
+                     anyone who cannot read it. About 89px wide — narrower than
+                     the mark and text were, which gives the header room back. --}}
+                <img src="{{ asset('img/pilot-logo.png') }}" alt="Pilot Academy"
+                     class="h-7 w-auto max-w-full flex-none" width="89" height="28">
             </a>
             <div class="flex flex-none sm:flex-initial sm:min-w-0 items-center gap-0.5 sm:gap-3">
                 {{-- Help, for everyone: anonymous visitors take lessons too.
@@ -148,7 +140,14 @@
                     </form>
                 @endif
                 @auth
-                    @php($name = auth()->user()->name)
+                    @php
+                        $account = auth()->user();
+                        $initials = collect(preg_split('/\s+/', trim($account->name)))
+                            ->filter()
+                            ->take(2)
+                            ->map(fn ($part) => mb_strtoupper(mb_substr($part, 0, 1)))
+                            ->implode('');
+                    @endphp
                     {{-- Certificates has to stay reachable on a phone: the word
                          alone overflows the header below sm:, so the 🎓 used for
                          certificates elsewhere in the academy carries it there and

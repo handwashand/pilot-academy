@@ -61,10 +61,14 @@ class Translator
             return collect();
         }
 
-        return Cache::remember('translations.languages.active', now()->addDay(), fn () => Language::active()
+        $languages = Cache::remember('translations.languages.active', now()->addDay(), fn (): array => Language::active()
             ->orderBy('position')
             ->orderBy('name')
-            ->get());
+            ->get()
+            ->map(fn (Language $language): array => $language->getAttributes())
+            ->all());
+
+        return collect($languages)->map(fn (array $attributes): Language => (new Language())->newFromBuilder($attributes));
     }
 
     public function defaultCode(): string

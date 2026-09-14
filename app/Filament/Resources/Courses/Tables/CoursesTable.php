@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Courses\Tables;
 
 use App\Actions\DuplicateCourse;
+use App\Actions\FindContentProblems;
 use App\Models\Course;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
@@ -11,9 +12,12 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class CoursesTable
 {
@@ -27,6 +31,23 @@ class CoursesTable
                     ->searchable()
                     ->sortable()
                     ->weight('bold'),
+
+                // Flagged where the work happens, not only on Content health.
+                TextColumn::make('attention')
+                    ->label('Attention')
+                    ->state(function (Course $record): ?string {
+                        $count = FindContentProblems::forCurrentUser()->where('course_id', $record->id)->count();
+
+                        return $count > 0 ? $count.' '.Str::plural('problem', $count) : null;
+                    })
+                    ->badge()
+                    ->color('danger')
+                    ->icon('heroicon-m-exclamation-triangle')
+                    ->tooltip(fn (Course $record): ?string => FindContentProblems::forCurrentUser()
+                        ->where('course_id', $record->id)
+                        ->pluck('what')
+                        ->unique()
+                        ->implode(' · ') ?: null),
 
                 TextColumn::make('product.name')
                     ->label('Product')
@@ -71,6 +92,13 @@ class CoursesTable
                     ->sortable(),
             ])
             ->filters([
+                Filter::make('needs_attention')
+                    ->label('Needs attention')
+                    ->query(fn (Builder $query): Builder => $query->whereIn(
+                        'id',
+                        FindContentProblems::forCurrentUser()->pluck('course_id')->unique()->values()->all(),
+                    )),
+
                 SelectFilter::make('status')
                     ->options(Course::STATUS_LABELS),
 
@@ -86,15 +114,35 @@ class CoursesTable
                     ->color('success')
                     ->requiresConfirmation()
                     ->modalHeading('Publish course')
-                    ->modalDescription(fn (Course $record): string => "\"{$record->title}\" becomes visible to students straight away.")
+                    // Say what is wrong before anyone presses the button.
+                    ->modalDescription(function (Course $record, FindContentProblems $find): string {
+                        $problems = $find->forCourse($record);
+
+                        return $problems->isEmpty()
+                            ? "\"{$record->title}\" becomes visible to students straight away."
+                            : 'This course cannot go live yet. Fix these first: '.FindContentProblems::plainList($problems).'.';
+                    })
                     ->visible(fn (Course $record): bool => $record->status === Course::STATUS_DRAFT)
                     ->authorize(fn (Course $record): bool => auth()->user()->canManageCourse($record))
-                    ->action(function (Course $record): void {
+                    ->action(function (Course $record, FindContentProblems $find): void {
                         if (! $record->canBePublished()) {
                             Notification::make()
                                 ->title('Add a lesson first')
                                 ->body('A course needs at least one published lesson before students can open it.')
                                 ->danger()
+                                ->send();
+
+                            return;
+                        }
+
+                        $problems = $find->forCourse($record);
+
+                        if ($problems->isNotEmpty()) {
+                            Notification::make()
+                                ->title('Fix these before publishing')
+                                ->body(FindContentProblems::plainList($problems))
+                                ->danger()
+                                ->persistent()
                                 ->send();
 
                             return;
@@ -147,7 +195,7 @@ class CoursesTable
                         ->icon('heroicon-o-rocket-launch')
                         ->color('success')
                         ->requiresConfirmation()
-                        ->modalDescription('Only courses with at least one published lesson go live; the rest are skipped and listed back to you.')
+                        ->modalDescription('Only courses students could use go live — with at least one published lesson, and nothing broken in them. The rest are skipped and listed back to you.')
                         ->deselectRecordsAfterCompletion()
                         ->action(fn (Collection $records) => static::publishAll($records)),
 
@@ -173,14 +221,33 @@ class CoursesTable
     }
 
     /**
-     * Publishing in bulk still respects the one rule that protects students:
-     * an empty course never goes live. Skipped ones are named, because a bulk
-     * action that silently does less than you asked is worse than one that
-     * refuses.
+     * Publishing in bulk still respects the rules that protect students: an
+     * empty course never goes live, and neither does one with something broken
+     * in it. Skipped ones are named with the reason, because a bulk action that
+     * silently does less than you asked is worse than one that refuses.
      */
     protected static function publishAll(Collection $records): void
     {
-        [$ready, $empty] = $records->partition(fn (Course $course): bool => $course->canBePublished());
+        $find = app(FindContentProblems::class);
+        $skipped = [];
+
+        $ready = $records->filter(function (Course $course) use ($find, &$skipped): bool {
+            if (! $course->canBePublished()) {
+                $skipped[] = "{$course->title} (no published lesson yet)";
+
+                return false;
+            }
+
+            $problems = $find->forCourse($course);
+
+            if ($problems->isNotEmpty()) {
+                $skipped[] = "{$course->title} ({$problems->pluck('what')->unique()->implode('; ')})";
+
+                return false;
+            }
+
+            return true;
+        });
 
         $ready->each->publish();
 
@@ -188,10 +255,10 @@ class CoursesTable
             Notification::make()->title($ready->count().' course(s) published')->success()->send();
         }
 
-        if ($empty->isNotEmpty()) {
+        if ($skipped !== []) {
             Notification::make()
-                ->title($empty->count().' course(s) skipped')
-                ->body('No published lesson yet: '.$empty->pluck('title')->join(', '))
+                ->title(count($skipped).' course(s) skipped')
+                ->body(implode('; ', $skipped))
                 ->danger()
                 ->persistent()
                 ->send();

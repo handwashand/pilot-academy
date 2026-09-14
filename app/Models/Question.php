@@ -31,6 +31,19 @@ class Question extends Model
         return $this->belongsTo(Lesson::class);
     }
 
+    /** Tell the owners if a change leaves the course broken — see Course::booted(). */
+    protected static function booted(): void
+    {
+        $check = function (Question $question): void {
+            if ($question->lesson_id) {
+                \App\Actions\NotifyContentOwners::afterRequest(Lesson::whereKey($question->lesson_id)->value('course_id'));
+            }
+        };
+
+        static::saved($check);
+        static::deleted($check);
+    }
+
     /**
      * Nothing ticked as correct. isAnsweredCorrectly() can then never return
      * true, so the student is stuck on that lesson however they answer.

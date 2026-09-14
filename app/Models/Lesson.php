@@ -158,4 +158,51 @@ class Lesson extends Model
 
         return null;
     }
+
+    /**
+     * Knowledge-check attempts this student has left, or null for unlimited.
+     * Timed-out attempts count as used; one still in progress does not.
+     */
+    public function quizAttemptsLeftFor(User $user): ?int
+    {
+        $allowed = $this->quizAttemptsAllowedFor($user);
+
+        if ($allowed === null) {
+            return null;
+        }
+
+        $used = QuizAttempt::where('user_id', $user->id)
+            ->where('lesson_id', $this->id)
+            ->whereIn('status', [QuizAttempt::STATUS_PASSED, QuizAttempt::STATUS_FAILED, QuizAttempt::STATUS_EXPIRED])
+            ->count();
+
+        return max(0, $allowed - $used);
+    }
+
+    /** Max attempts for this student, including extra attempts an admin granted. */
+    public function quizAttemptsAllowedFor(User $user): ?int
+    {
+        if (! $this->quiz_max_attempts) {
+            return null;
+        }
+
+        return $this->quiz_max_attempts + AttemptGrant::where('user_id', $user->id)
+            ->where('lesson_id', $this->id)
+            ->count();
+    }
+
+    /** Tell the owners if a change leaves the course broken — see Course::booted(). */
+    protected static function booted(): void
+    {
+        static::saved(function (Lesson $lesson): void {
+            \App\Actions\NotifyContentOwners::afterRequest($lesson->course_id);
+
+            // Moved out of a course: the course it left may now be empty.
+            if ($lesson->wasChanged('course_id')) {
+                \App\Actions\NotifyContentOwners::afterRequest($lesson->getPrevious()['course_id'] ?? null);
+            }
+        });
+
+        static::deleted(fn (Lesson $lesson) => \App\Actions\NotifyContentOwners::afterRequest($lesson->course_id));
+    }
 }

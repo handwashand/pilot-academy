@@ -90,6 +90,30 @@ class LocalizationTest extends TestCase
         $this->assertSame('Soporte', $translation->fresh()->value);
     }
 
+    public function test_language_seeder_includes_brazilian_portuguese_for_every_key(): void
+    {
+        $this->seed(LanguageSeeder::class);
+
+        $this->assertDatabaseHas('languages', [
+            'code' => 'pt',
+            'name' => 'Portuguese (Brazil)',
+            'native_name' => 'Português (Brasil)',
+            'direction' => 'ltr',
+        ]);
+
+        $keyCount = Translation::query()->distinct('key')->count('key');
+
+        foreach (Language::pluck('code') as $code) {
+            $this->assertSame(
+                $keyCount,
+                Translation::whereHas('language', fn ($query) => $query->where('code', $code))->count(),
+                "Every seeded key should exist for {$code}."
+            );
+        }
+
+        $this->assertSame('Entrar', __t('auth.login', [], 'pt'));
+    }
+
     public function test_localization_resources_require_explicit_permissions(): void
     {
         $admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
