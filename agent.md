@@ -406,6 +406,18 @@ The three items left from the translation work.
   so the layout footer now lists every language as buttons at all widths.
   Blade: no block PHP section there, because the layout has an inline one
   above it.
+- **Verified:** the full suite passed. One test then failed for the right reason
+  (Russian now ships, so blanking a Russian row gives Russian, not English), was
+  updated, and passed.
+- **Checked by fetching pages** from a throwaway preview container (SQLite,
+  migrate --seed, port 8010):
+  - Russian home: `lang="ru"`, the Russian text, and all five footer language
+    buttons.
+  - Russian lesson page, Portuguese search, French Help.
+- **Not seen on screen:** headless Edge would not launch from this environment
+  on 2026-09-15, with or without the sandbox. Neither the student pages at
+  375px nor the Translate window and Translations page in the panel have been
+  looked at yet.
 
 ### 2026-09-14 — Up to five videos per lesson: checked and fixed (uncommitted)
 Owner asked for each video to be YouTube or an upload, with a button to add

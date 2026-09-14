@@ -21,9 +21,18 @@ class LocalizationTest extends TestCase
         $this->seed(LanguageSeeder::class);
 
         $russian = Language::where('code', 'ru')->firstOrFail();
-        Translation::where('key', 'nav.help')->where('language_id', $russian->id)->update(['value' => '']);
+        $english = Language::where('code', 'en')->firstOrFail();
 
-        $this->assertSame('Help', __t('nav.help', [], 'ru'));
+        // An emptied saved row gives way to the Russian shipped in lang/ru/.
+        Translation::where('key', 'nav.help')->where('language_id', $russian->id)->update(['value' => '']);
+        $this->assertSame('Помощь', __t('nav.help', [], 'ru'));
+
+        // Nothing in Russian at all: the default language's text.
+        (new Translation)->forceFill(['key' => 'custom.only_english', 'language_id' => $english->id, 'value' => 'Only in English', 'module' => 'custom'])->save();
+        app(\App\Services\Translator::class)->clearBundleCache('en');
+        $this->assertSame('Only in English', __t('custom.only_english', [], 'ru'));
+
+        // Nowhere: the key made readable.
         $this->assertSame('Add', __t('course.add', [], 'ru'));
     }
 
