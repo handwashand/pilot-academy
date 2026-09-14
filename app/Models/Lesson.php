@@ -174,18 +174,29 @@ class Lesson extends Model
         $entries = $this->video_sources ?? [];
 
         if (! is_array($entries) || $entries === []) {
-            $entries = [];
+            // Saved before the Videos list existed: one video, as it always
+            // played — an uploaded file instead of the link, never both.
+            $upload = $this->attributes['video_path'] ?? null;
+            $youtube = $this->attributes['youtube_url'] ?? null;
 
-            if (filled($this->getRawOriginal('youtube_url') ?? $this->attributes['youtube_url'] ?? null)) {
-                $entries[] = ['type' => 'youtube', 'youtube_url' => $this->getRawOriginal('youtube_url') ?? $this->attributes['youtube_url'] ?? null];
-            }
-
-            if (filled($this->getRawOriginal('video_path') ?? $this->attributes['video_path'] ?? null)) {
-                $entries[] = ['type' => 'upload', 'video_path' => $this->getRawOriginal('video_path') ?? $this->attributes['video_path'] ?? null];
-            }
+            $entries = match (true) {
+                filled($upload) => [['type' => 'upload', 'video_path' => $upload]],
+                filled($youtube) => [['type' => 'youtube', 'youtube_url' => $youtube]],
+                default => [],
+            };
         }
 
         return array_values(array_filter($entries, fn (mixed $entry): bool => is_array($entry) && (filled($entry['youtube_url'] ?? null) || filled($entry['video_path'] ?? null))));
+    }
+
+    /** A YouTube video in the list whose link is not one playable video. */
+    public function hasUnplayableYoutubeLink(): bool
+    {
+        return collect($this->videoEntries())->contains(
+            fn (array $entry): bool => ($entry['type'] ?? 'youtube') === 'youtube'
+                && filled($entry['youtube_url'] ?? null)
+                && static::youtubeIdFrom($entry['youtube_url']) === null,
+        );
     }
 
     /**
@@ -273,6 +284,16 @@ class Lesson extends Model
     /** Tell the owners if a change leaves the course broken — see Course::booted(). */
     protected static function booted(): void
     {
+        // Once the Videos list is saved it is the only source: the old
+        // single-video columns are emptied, so a video removed from the list
+        // cannot come back through them.
+        static::saving(function (Lesson $lesson): void {
+            if ($lesson->isDirty('video_sources') && is_array($lesson->video_sources)) {
+                $lesson->attributes['youtube_url'] = null;
+                $lesson->attributes['video_path'] = null;
+            }
+        });
+
         static::saved(function (Lesson $lesson): void {
             // A lesson is always in its home course.
             if ($lesson->course_id && ! $lesson->courses()->whereKey($lesson->course_id)->exists()) {

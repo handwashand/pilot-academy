@@ -156,19 +156,11 @@ class LessonForm
                             ->collapsed()
                             ->columns(1)
                             ->helperText('Add up to five videos. Each one can be a YouTube link or an uploaded file.')
+                            // A lesson saved before the Videos list: show the video
+                            // students see now, so the next save carries it over.
                             ->afterStateHydrated(function (callable $set, $state, $record): void {
-                                if (empty($state) && $record && (filled($record->youtube_url) || filled($record->video_path))) {
-                                    $items = [];
-
-                                    if (filled($record->youtube_url)) {
-                                        $items[] = ['type' => 'youtube', 'youtube_url' => $record->youtube_url];
-                                    }
-
-                                    if (filled($record->video_path)) {
-                                        $items[] = ['type' => 'upload', 'video_path' => $record->video_path];
-                                    }
-
-                                    $set('video_sources', $items);
+                                if (empty($state) && $record && $record->videoEntries() !== []) {
+                                    $set('video_sources', $record->videoEntries());
                                 }
                             })
                             ->schema([
@@ -179,12 +171,16 @@ class LessonForm
                                         'upload' => 'Upload',
                                     ])
                                     ->default('youtube')
-                                    ->required(),
+                                    ->required()
+                                    // Swap the link box and the file box as soon
+                                    // as the source changes.
+                                    ->live(),
 
                                 TextInput::make('youtube_url')
                                     ->label('YouTube link')
                                     ->url()
-                                    ->visible(fn ($get) => ($get('type') ?? 'youtube') === 'youtube')
+                                    ->visible(fn ($get): bool => ($get('type') ?? 'youtube') === 'youtube')
+                                    ->required(fn ($get): bool => ($get('type') ?? 'youtube') === 'youtube')
                                     ->helperText('One video only, e.g. https://www.youtube.com/watch?v=XXXXXXXXXXX.')
                                     ->rules([
                                         fn (): Closure => function (string $attribute, $value, Closure $fail): void {
@@ -201,7 +197,8 @@ class LessonForm
                                     ->visibility('public')
                                     ->acceptedFileTypes(['video/mp4', 'video/webm', 'video/quicktime'])
                                     ->maxSize(204800) // 200 MB (server upload limits raised to match)
-                                    ->visible(fn ($get) => ($get('type') ?? 'upload') === 'upload')
+                                    ->visible(fn ($get): bool => ($get('type') ?? 'youtube') === 'upload')
+                                    ->required(fn ($get): bool => ($get('type') ?? 'youtube') === 'upload')
                                     ->helperText('MP4 up to 200 MB.'),
                             ]),
 

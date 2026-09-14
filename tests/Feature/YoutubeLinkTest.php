@@ -60,11 +60,11 @@ class YoutubeLinkTest extends TestCase
 
         Livewire::actingAs($admin)
             ->test(EditLesson::class, ['record' => $lesson->getRouteKey()])
-            ->fillForm(['youtube_url' => 'https://www.youtube.com/playlist?list=PLx0sYbCqOb8TBPRdmBHs5Iftvv9TPboYG'])
+            ->fillForm(['video_sources' => [['type' => 'youtube', 'youtube_url' => 'https://www.youtube.com/playlist?list=PLx0sYbCqOb8TBPRdmBHs5Iftvv9TPboYG']]])
             ->call('save')
-            ->assertHasFormErrors(['youtube_url']);
+            ->assertHasFormErrors();
 
-        $this->assertNotSame('https://www.youtube.com/playlist?list=PLx0sYbCqOb8TBPRdmBHs5Iftvv9TPboYG', $lesson->fresh()->youtube_url);
+        $this->assertSame([], $lesson->fresh()->videoEntries());
     }
 
     public function test_a_live_link_saves_and_plays_on_the_lesson_page(): void
@@ -73,7 +73,7 @@ class YoutubeLinkTest extends TestCase
 
         Livewire::actingAs($admin)
             ->test(EditLesson::class, ['record' => $lesson->getRouteKey()])
-            ->fillForm(['youtube_url' => 'https://www.youtube.com/live/aqz-KE-bpKQ'])
+            ->fillForm(['video_sources' => [['type' => 'youtube', 'youtube_url' => 'https://www.youtube.com/live/aqz-KE-bpKQ']]])
             ->call('save')
             ->assertHasNoFormErrors();
 

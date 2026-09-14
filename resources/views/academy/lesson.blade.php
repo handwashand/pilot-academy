@@ -36,14 +36,27 @@
                 <p class="text-sm text-slate-400 mt-1">{{ $lesson->durationLabel() }}</p>
             @endif
 
-            {{-- Videos: uploaded files take priority in the player, then any YouTube videos. --}}
-            @php($videoEntries = $lesson->videoEntries())
+            {{-- Videos, up to five, in the order the lesson lists them. Only
+                 block-form PHP sections here — see the Blade trap in agent.md.
+                 (Never write the directive's name in a Blade comment: the
+                 compiler matches it before comments are removed.) --}}
+            @php
+                $videoEntries = $lesson->videoEntries();
+                // One saved position per lesson, so only the first uploaded
+                // video resumes where the student left off and remembers it.
+                $resumeIndex = collect($videoEntries)->search(fn (array $entry): bool => ($entry['type'] ?? '') === 'upload' && filled($entry['video_path'] ?? null));
+            @endphp
             @if(! empty($videoEntries))
                 @foreach($videoEntries as $videoIndex => $video)
-                    @php($type = $video['type'] ?? (filled($video['youtube_url'] ?? null) ? 'youtube' : 'upload'))
+                    @php
+                        $type = $video['type'] ?? (filled($video['youtube_url'] ?? null) ? 'youtube' : 'upload');
+                    @endphp
 
                     @if($type === 'upload' && filled($video['video_path'] ?? null))
-                        @php($videoUrl = Storage::disk('public')->url($video['video_path']))
+                        @php
+                            $videoUrl = \Illuminate\Support\Facades\Storage::disk('public')->url($video['video_path']);
+                            $remembersPosition = $videoIndex === $resumeIndex;
+                        @endphp
                         <div class="mt-6 rounded-2xl overflow-hidden border border-slate-200 shadow-sm aspect-video bg-black">
                             <video id="lesson-video-{{ $videoIndex }}" class="w-full h-full" controls playsinline preload="metadata">
                                 <source src="{{ $videoUrl }}">
@@ -66,8 +79,8 @@
                                 var video = document.getElementById('lesson-video-{{ $videoIndex }}');
                                 if (!video) return;
 
-                                var startAt = {{ (int) ($videoPosition ?? 0) }};
-                                var saveUrl = @json(route('academy.lesson.position', [$course, $lesson]));
+                                var startAt = {{ $remembersPosition ? (int) ($videoPosition ?? 0) : 0 }};
+                                var saveUrl = @json($remembersPosition ? route('academy.lesson.position', [$course, $lesson]) : null);
                                 var token = document.querySelector('meta[name="csrf-token"]');
 
                                 if (startAt > 0) {
@@ -138,7 +151,9 @@
                             })();
                         </script>
                     @elseif($type === 'youtube' && filled($video['youtube_url'] ?? null))
-                        @php($youtubeId = App\Models\Lesson::youtubeIdFrom($video['youtube_url']))
+                        @php
+                            $youtubeId = \App\Models\Lesson::youtubeIdFrom($video['youtube_url']);
+                        @endphp
                         @if($youtubeId)
                             <div class="mt-6 rounded-2xl overflow-hidden border border-slate-200 shadow-sm aspect-video bg-black">
                                 <iframe class="w-full h-full"

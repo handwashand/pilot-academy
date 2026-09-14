@@ -261,7 +261,7 @@ class LessonsTable
             $problems->push(['what' => 'A question with no correct answer', 'name' => $lesson->title]);
         }
 
-        if (filled($lesson->youtube_url) && blank($lesson->video_path) && Lesson::youtubeIdFrom($lesson->youtube_url) === null) {
+        if ($lesson->hasUnplayableYoutubeLink()) {
             $problems->push(['what' => 'A YouTube link that is not a playable video', 'name' => $lesson->title]);
         }
 

@@ -17,7 +17,10 @@
     @if($term === '')
         <p class="text-slate-500">{{ __t('academy.search.type_something') }}</p>
     @else
-        @php($resultCount = $courses->count() + $lessons->count())
+        {{-- Block form only — see the Blade trap in agent.md. --}}
+        @php
+            $resultCount = $courses->count() + $lessons->count();
+        @endphp
 
         <p class="text-sm text-slate-500 mb-6" role="status">
             {{ __tc('academy.search.results_for', $resultCount, ['term' => $term]) }}

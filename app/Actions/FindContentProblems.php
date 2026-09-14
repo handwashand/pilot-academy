@@ -242,12 +242,9 @@ class FindContentProblems
      */
     private function unplayableYoutubeLinks(array $courseIds): array
     {
-        $lessons = Lesson::query()->published()
-            ->whereNotNull('youtube_url')->where('youtube_url', '!=', '')
-            ->where(fn (Builder $query) => $query->whereNull('video_path')->orWhere('video_path', ''));
-
-        return $this->lessonsIn($courseIds, $lessons)
-            ->filter(fn (Lesson $lesson): bool => Lesson::youtubeIdFrom($lesson->youtube_url) === null)
+        // Read in PHP: a lesson's videos are a JSON list, up to five of them.
+        return $this->lessonsIn($courseIds, Lesson::query()->published())
+            ->filter(fn (Lesson $lesson): bool => $lesson->hasUnplayableYoutubeLink())
             ->map(function (Lesson $lesson): array {
                 $place = $this->placeOf($lesson);
 
