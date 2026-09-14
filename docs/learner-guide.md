@@ -26,6 +26,9 @@ on a computer or tablet. Course and lesson text is shown as it was written.
 A course is a set of **lessons, taken in order**. The course page shows how far
 you are, for example **3 / 8 lessons · 32 min left**.
 
+Some lessons are part of more than one course. You only take them once: finish
+one and it counts as done in every course it is in.
+
 **The card at the top of the home page is always your next step**: **Start
 here** on your first visit, **Continue where you left off** while you work
 through a course, and **Your final quiz is ready** once every lesson is done.

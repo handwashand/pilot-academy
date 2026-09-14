@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Actions\NotifyContentOwners;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -36,9 +35,8 @@ class Question extends Model
     protected static function booted(): void
     {
         $check = function (Question $question): void {
-            if ($question->lesson_id) {
-                NotifyContentOwners::afterRequest(Lesson::whereKey($question->lesson_id)->value('course_id'));
-            }
+            // Every course the lesson is in — it can be shared.
+            Lesson::notifyOwnersOf($question->lesson_id);
         };
 
         static::saved($check);

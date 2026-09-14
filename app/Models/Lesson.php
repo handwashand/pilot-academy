@@ -9,6 +9,7 @@ use App\Models\Concerns\HasPublishStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 
@@ -27,6 +28,7 @@ class Lesson extends Model
         'media_item_id',
         'youtube_url',
         'video_path',
+        'video_sources',
         'content',
         'transcript',
         'doc_links',
@@ -39,6 +41,7 @@ class Lesson extends Model
 
     protected $casts = [
         'doc_links' => 'array',
+        'video_sources' => 'array',
     ];
 
     /**
@@ -49,9 +52,33 @@ class Lesson extends Model
         'status' => self::STATUS_PUBLISHED,
     ];
 
+    /**
+     * The home course: the one that owns the lesson and decides who may edit
+     * it. The lesson can be in other courses too — see courses().
+     */
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);
+    }
+
+    /** Every course this lesson is in, its home course included. */
+    public function courses(): BelongsToMany
+    {
+        return $this->belongsToMany(Course::class)
+            ->using(CourseLesson::class)
+            ->withPivot('sort_order')
+            ->withTimestamps();
+    }
+
+    /** Tell the owners of every course this lesson is in to look again. */
+    public static function notifyOwnersOf(mixed $lessonId): void
+    {
+        if (! $lessonId) {
+            return;
+        }
+
+        CourseLesson::query()->where('lesson_id', $lessonId)->pluck('course_id')
+            ->each(fn ($courseId) => NotifyContentOwners::afterRequest($courseId));
     }
 
     /**
@@ -105,9 +132,60 @@ class Lesson extends Model
      */
     public function getVideoUrlAttribute(): ?string
     {
-        return $this->video_path
-            ? Storage::disk('public')->url($this->video_path)
+        $videoPath = $this->video_path;
+
+        return $videoPath
+            ? Storage::disk('public')->url($videoPath)
             : null;
+    }
+
+    public function getVideoPathAttribute(?string $value): ?string
+    {
+        if ($value !== null && $value !== '') {
+            return $value;
+        }
+
+        foreach ($this->videoEntries() as $entry) {
+            if (($entry['type'] ?? 'upload') === 'upload' && filled($entry['video_path'] ?? null)) {
+                return $entry['video_path'];
+            }
+        }
+
+        return null;
+    }
+
+    public function getYoutubeUrlAttribute(?string $value): ?string
+    {
+        if ($value !== null && $value !== '') {
+            return $value;
+        }
+
+        foreach ($this->videoEntries() as $entry) {
+            if (($entry['type'] ?? 'youtube') === 'youtube' && filled($entry['youtube_url'] ?? null)) {
+                return $entry['youtube_url'];
+            }
+        }
+
+        return null;
+    }
+
+    public function videoEntries(): array
+    {
+        $entries = $this->video_sources ?? [];
+
+        if (! is_array($entries) || $entries === []) {
+            $entries = [];
+
+            if (filled($this->getRawOriginal('youtube_url') ?? $this->attributes['youtube_url'] ?? null)) {
+                $entries[] = ['type' => 'youtube', 'youtube_url' => $this->getRawOriginal('youtube_url') ?? $this->attributes['youtube_url'] ?? null];
+            }
+
+            if (filled($this->getRawOriginal('video_path') ?? $this->attributes['video_path'] ?? null)) {
+                $entries[] = ['type' => 'upload', 'video_path' => $this->getRawOriginal('video_path') ?? $this->attributes['video_path'] ?? null];
+            }
+        }
+
+        return array_values(array_filter($entries, fn (mixed $entry): bool => is_array($entry) && (filled($entry['youtube_url'] ?? null) || filled($entry['video_path'] ?? null))));
     }
 
     /**
@@ -196,14 +274,20 @@ class Lesson extends Model
     protected static function booted(): void
     {
         static::saved(function (Lesson $lesson): void {
-            NotifyContentOwners::afterRequest($lesson->course_id);
+            // A lesson is always in its home course.
+            if ($lesson->course_id && ! $lesson->courses()->whereKey($lesson->course_id)->exists()) {
+                $lesson->courses()->attach($lesson->course_id, ['sort_order' => (int) $lesson->sort_order]);
+            }
 
-            // Moved out of a course: the course it left may now be empty.
+            NotifyContentOwners::afterRequest($lesson->course_id);
+            static::notifyOwnersOf($lesson->id);
+
             if ($lesson->wasChanged('course_id')) {
                 NotifyContentOwners::afterRequest($lesson->getPrevious()['course_id'] ?? null);
             }
         });
 
-        static::deleted(fn (Lesson $lesson) => NotifyContentOwners::afterRequest($lesson->course_id));
+        // Before, not after: the course links go with the lesson.
+        static::deleting(fn (Lesson $lesson) => static::notifyOwnersOf($lesson->id));
     }
 }

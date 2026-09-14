@@ -14,6 +14,8 @@ Comment fonctionne Pilot Academy, de votre première leçon à votre certificat.
 
 Un cours est une série de **leçons à suivre dans l'ordre**. La page du cours affiche votre progression, par exemple **3 / 8 leçons · 32 min restantes**.
 
+Certaines leçons font partie de plusieurs cours. Vous ne les suivez qu’une fois : une leçon terminée compte comme terminée dans tous les cours où elle apparaît.
+
 La carte en haut de l'accueil indique toujours la prochaine étape : commencer, reprendre où vous vous êtes arrêté ou ouvrir le quiz final lorsqu'il est prêt.
 
 La recherche trouve les cours et les leçons par nom, ainsi que les mots prononcés dans une vidéo lorsqu'une transcription existe.

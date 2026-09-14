@@ -104,6 +104,23 @@ class YoutubeLinkTest extends TestCase
         );
     }
 
+    public function test_a_lesson_can_store_up_to_five_video_sources(): void
+    {
+        [$lesson, $admin] = $this->lessonAndAdmin();
+
+        $lesson->forceFill([
+            'video_sources' => [
+                ['type' => 'youtube', 'youtube_url' => 'https://www.youtube.com/watch?v=aqz-KE-bpKQ'],
+                ['type' => 'upload', 'video_path' => 'lesson-videos/sample.mp4'],
+                ['type' => 'youtube', 'youtube_url' => 'https://www.youtube.com/live/aqz-KE-bpKQ'],
+            ],
+        ])->save();
+
+        $this->assertCount(3, $lesson->fresh()->video_sources);
+        $this->assertSame('youtube', $lesson->fresh()->video_sources[0]['type']);
+        $this->assertSame('upload', $lesson->fresh()->video_sources[1]['type']);
+    }
+
     /** @return array{0: Lesson, 1: User} */
     private function lessonAndAdmin(): array
     {

@@ -36,7 +36,10 @@ class CoursesTable
                 TextColumn::make('attention')
                     ->label('Attention')
                     ->state(function (Course $record): ?string {
-                        $count = FindContentProblems::forCurrentUser()->where('course_id', $record->id)->count();
+                        // course_ids: a problem in a shared lesson flags every course it is in.
+                        $count = FindContentProblems::forCurrentUser()
+                            ->filter(fn (array $problem): bool => in_array($record->id, $problem['course_ids'], true))
+                            ->count();
 
                         return $count > 0 ? $count.' '.Str::plural('problem', $count) : null;
                     })
@@ -44,7 +47,7 @@ class CoursesTable
                     ->color('danger')
                     ->icon('heroicon-m-exclamation-triangle')
                     ->tooltip(fn (Course $record): ?string => FindContentProblems::forCurrentUser()
-                        ->where('course_id', $record->id)
+                        ->filter(fn (array $problem): bool => in_array($record->id, $problem['course_ids'], true))
                         ->pluck('what')
                         ->unique()
                         ->implode(' · ') ?: null),
@@ -96,7 +99,7 @@ class CoursesTable
                     ->label('Needs attention')
                     ->query(fn (Builder $query): Builder => $query->whereIn(
                         'id',
-                        FindContentProblems::forCurrentUser()->pluck('course_id')->unique()->values()->all(),
+                        FindContentProblems::forCurrentUser()->pluck('course_ids')->flatten()->unique()->values()->all(),
                     )),
 
                 SelectFilter::make('status')

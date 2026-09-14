@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Language;
 use App\Models\Translation;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Lang;
@@ -12,7 +13,43 @@ use Illuminate\Support\Str;
 
 class Translator
 {
+    /** Files in lang/{code}/ that __t() reads, and admins may correct. */
+    public const SHIPPED_GROUPS = ['academy'];
+
     private array $bundles = [];
+
+    /** @var array<string, array<string, string>> */
+    private array $shipped = [];
+
+    /**
+     * The lines shipped for one language, as "academy.home.hero_title" => text.
+     *
+     * @return array<string, string>
+     */
+    public function shipped(string $code): array
+    {
+        if (isset($this->shipped[$code])) {
+            return $this->shipped[$code];
+        }
+
+        $lines = [];
+
+        foreach (self::SHIPPED_GROUPS as $group) {
+            $path = lang_path("{$code}/{$group}.php");
+
+            if (! is_file($path)) {
+                continue;
+            }
+
+            foreach (Arr::dot(require $path) as $key => $line) {
+                if (is_string($line)) {
+                    $lines["{$group}.{$key}"] = $line;
+                }
+            }
+        }
+
+        return $this->shipped[$code] = $lines;
+    }
 
     public function translate(string $key, array $replace = [], ?string $locale = null): string
     {

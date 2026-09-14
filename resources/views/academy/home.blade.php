@@ -227,7 +227,7 @@
                         <div class="p-5">
                             <div class="flex items-center gap-2 mb-2">
                                 <span class="text-[11px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded bg-slate-100 text-slate-500">{{ $course->level ? __t('academy.common.level.'.$course->level) : '' }}</span>
-                                @if($lesson->youtube_url)
+                                @if(! empty($lesson->videoEntries()))
                                     <span class="text-[11px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded bg-blue-50 text-brand">{{ __t('academy.common.video') }}</span>
                                 @endif
                                 <span class="text-[11px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded bg-violet-50 text-violet-600">{{ __t('academy.common.quiz') }}</span>

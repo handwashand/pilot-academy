@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Lessons\Tables;
 
 use App\Actions\FindContentProblems;
 use App\Models\Course;
+use App\Models\CourseLesson;
 use App\Models\Lesson;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
@@ -34,9 +35,8 @@ class LessonsTable
                     ->height(36)
                     ->state(fn ($record) => $record->media_item_id ? $record->mediaItem?->path : $record->image_path),
 
-                TextColumn::make('course.title')
-                    ->label('Course')
-                    ->sortable()
+                TextColumn::make('courses.title')
+                    ->label('Courses')
                     ->badge(),
 
                 TextColumn::make('sort_order')
@@ -73,7 +73,7 @@ class LessonsTable
                 IconColumn::make('has_video')
                     ->label('Video')
                     ->boolean()
-                    ->state(fn ($record) => filled($record->youtube_url) || filled($record->video_path)),
+                    ->state(fn ($record) => ! empty($record->videoEntries())),
 
                 TextColumn::make('status')
                     ->badge()
@@ -97,7 +97,7 @@ class LessonsTable
                     ->options(Lesson::STATUS_LABELS),
 
                 SelectFilter::make('course')
-                    ->relationship('course', 'title', function ($query) {
+                    ->relationship('courses', 'title', function ($query) {
                         $user = auth()->user();
 
                         return $user?->isCreator()
@@ -152,8 +152,10 @@ class LessonsTable
                     ->modalDescription(function (Lesson $record): string {
                         $description = 'The lesson goes back to draft and disappears from the student site. Nothing is deleted — its text, video, questions and student progress all stay.';
 
-                        return static::isLastLiveLesson($record)
-                            ? "This is the only published lesson in \"{$record->course->title}\", which is live — unpublishing it leaves students an empty course. Publish another lesson first, or unpublish the course too. {$description}"
+                        $emptied = static::liveCoursesItIsLastIn($record);
+
+                        return $emptied->isNotEmpty()
+                            ? 'This is the only published lesson in "'.$emptied->implode('", "').'", which '.($emptied->count() === 1 ? 'is' : 'are')." live — unpublishing it leaves students an empty course. Publish another lesson first, or unpublish the course too. {$description}"
                             : $description;
                     })
                     ->visible(fn (Lesson $record): bool => $record->isPublished())
@@ -220,7 +222,7 @@ class LessonsTable
 
                             $emptied = Course::query()
                                 ->publishedButEmpty()
-                                ->whereIn('id', $records->pluck('course_id')->unique())
+                                ->whereIn('id', CourseLesson::query()->whereIn('lesson_id', $records->pluck('id'))->pluck('course_id')->unique())
                                 ->pluck('title');
 
                             if ($emptied->isNotEmpty()) {
@@ -245,7 +247,7 @@ class LessonsTable
      */
     protected static function problemsIfPublished(Lesson $lesson): Collection
     {
-        if (! $lesson->course?->isPublished()) {
+        if (! $lesson->courses()->published()->exists()) {
             return collect();
         }
 
@@ -266,10 +268,15 @@ class LessonsTable
         return $problems;
     }
 
-    protected static function isLastLiveLesson(Lesson $lesson): bool
+    /** Titles of the live courses this lesson is the only published lesson in. */
+    protected static function liveCoursesItIsLastIn(Lesson $lesson): Collection
     {
-        return $lesson->isPublished()
-            && (bool) $lesson->course?->isPublished()
-            && $lesson->course->publishedLessons()->count() === 1;
+        if (! $lesson->isPublished()) {
+            return collect();
+        }
+
+        return $lesson->courses()->published()->withCount('publishedLessons')->get()
+            ->filter(fn (Course $course): bool => $course->published_lessons_count === 1)
+            ->pluck('title');
     }
 }

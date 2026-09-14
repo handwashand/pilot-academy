@@ -6,6 +6,7 @@ use App\Actions\NotifyContentOwners;
 use App\Models\Concerns\HasContentTranslations;
 use App\Models\Concerns\HasDuration;
 use App\Models\Concerns\HasPublishStatus;
+use App\Models\Relations\CourseLessons;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -98,14 +99,38 @@ class Course extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function lessons(): HasMany
+    /**
+     * The lessons in this course, in this course's order. A lesson can be in
+     * several courses, each with its own order (course_lesson.sort_order).
+     */
+    public function lessons(): BelongsToMany
     {
-        return $this->hasMany(Lesson::class)->orderBy('sort_order');
+        return $this->belongsToMany(Lesson::class)
+            ->using(CourseLesson::class)
+            ->withPivot('sort_order')
+            ->withTimestamps()
+            ->orderByPivot('sort_order')
+            ->orderBy('lessons.id');
     }
 
-    public function publishedLessons(): HasMany
+    public function publishedLessons(): BelongsToMany
     {
         return $this->lessons()->published();
+    }
+
+    public function hasLesson(Lesson $lesson): bool
+    {
+        return $this->lessons()->whereKey($lesson->getKey())->exists();
+    }
+
+    /** Course::lessons() is a CourseLessons relation — see its create(). */
+    protected function newBelongsToMany(Builder $query, Model $parent, $table, $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey, $relationName = null)
+    {
+        if ($relationName === 'lessons') {
+            return new CourseLessons($query, $parent, $table, $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey, $relationName);
+        }
+
+        return parent::newBelongsToMany($query, $parent, $table, $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey, $relationName);
     }
 
     /**
@@ -218,6 +243,23 @@ class Course extends Model
     protected static function booted(): void
     {
         static::saved(fn (Course $course) => NotifyContentOwners::afterRequest($course->id));
+
+        // Deleting a course deletes the lessons it is home to. One that is also
+        // in another course moves its home there instead of disappearing.
+        static::deleting(function (Course $course): void {
+            foreach (Lesson::query()->where('course_id', $course->id)->get() as $lesson) {
+                $other = CourseLesson::query()
+                    ->where('lesson_id', $lesson->id)
+                    ->where('course_id', '!=', $course->id)
+                    ->orderBy('created_at')
+                    ->value('course_id');
+
+                if ($other) {
+                    $lesson->course_id = $other;
+                    $lesson->saveQuietly();
+                }
+            }
+        });
     }
 
     /**

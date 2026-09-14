@@ -13,7 +13,9 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 class LessonForm
@@ -25,33 +27,64 @@ class LessonForm
                 Section::make('Lesson')
                     ->columns(2)
                     ->schema([
-                        Select::make('course_id')
-                            ->label('Course')
-                            ->relationship('course', 'title', function ($query) {
-                                $user = auth()->user();
-
-                                // A creator may only add lessons to their own courses.
-                                return $user?->isCreator()
-                                    ? $query->whereIn('product_id', $user->products()->pluck('products.id'))
-                                    : $query;
-                            })
+                        // Saved by CreateLesson / EditLesson: the first course is
+                        // the lesson's home, and the list is synced to course_lesson.
+                        Select::make('course_ids')
+                            ->label('Courses')
+                            ->multiple()
                             ->required()
                             ->searchable()
                             ->preload()
+                            ->options(function (?Lesson $record): array {
+                                $user = auth()->user();
+
+                                return Course::query()
+                                    // A creator may only add lessons to their own
+                                    // courses. Courses it is already in stay listed,
+                                    // so saving never drops one they cannot see.
+                                    ->when($user?->isCreator(), fn (Builder $query) => $query->where(fn (Builder $courses) => $courses
+                                        ->whereIn('product_id', $user->products()->pluck('products.id'))
+                                        ->orWhereIn('id', $record?->courses()->pluck('courses.id') ?? [])))
+                                    ->orderBy('title')
+                                    ->pluck('title', 'id')
+                                    ->all();
+                            })
+                            ->afterStateHydrated(function (Select $component, ?Lesson $record): void {
+                                if ($record) {
+                                    // The home course first: it owns the lesson.
+                                    $component->state($record->courses()->pluck('courses.id')
+                                        ->map(fn ($id): int => (int) $id)
+                                        ->sortBy(fn (int $id): int => $id === (int) $record->course_id ? 0 : 1)
+                                        ->values()
+                                        ->all());
+                                }
+                            })
+                            ->helperText('A lesson can be in more than one course. It is the same lesson in each: a change shows everywhere, and a student who finishes it in one course has it finished in all of them. The first course owns the lesson.')
                             ->rules([
-                                fn (): Closure => function (string $attribute, $value, Closure $fail): void {
+                                fn (?Lesson $record): Closure => function (string $attribute, $value, Closure $fail) use ($record): void {
                                     $user = auth()->user();
 
-                                    if ($user && $user->isCreator() && ! $user->canManageCourse(Course::find($value))) {
-                                        $fail('You can only add lessons to a course for a product assigned to you.');
+                                    if (! $user?->isCreator()) {
+                                        return;
+                                    }
+
+                                    $current = $record?->courses()->pluck('courses.id')->map(fn ($id): int => (int) $id)->all() ?? [];
+
+                                    foreach ((array) $value as $courseId) {
+                                        if (! in_array((int) $courseId, $current, true) && ! $user->canManageCourse(Course::find($courseId))) {
+                                            $fail('You can only add lessons to a course for a product assigned to you.');
+
+                                            return;
+                                        }
                                     }
                                 },
                             ]),
 
                         TextInput::make('sort_order')
-                            ->label('Order in course')
+                            ->label('Order')
                             ->numeric()
-                            ->default(0),
+                            ->default(0)
+                            ->helperText('Where it goes in its first course. Drag lessons on a course’s Lessons tab to order each course.'),
 
                         TextInput::make('title')
                             ->required()
@@ -66,7 +99,22 @@ class LessonForm
                         TextInput::make('slug')
                             ->required()
                             ->maxLength(255)
-                            ->helperText('Unique within the course.'),
+                            ->helperText('Part of the lesson’s web address. No two lessons in the same course may share it.')
+                            // The student URL finds a lesson by this inside its
+                            // course; a second one with the same slug is unreachable.
+                            ->rules([
+                                fn (Get $get, ?Lesson $record): Closure => function (string $attribute, $value, Closure $fail) use ($get, $record): void {
+                                    $taken = Lesson::query()
+                                        ->where('slug', $value)
+                                        ->when($record, fn (Builder $query) => $query->whereKeyNot($record->getKey()))
+                                        ->whereHas('courses', fn (Builder $courses) => $courses->whereIn('courses.id', (array) $get('course_ids')))
+                                        ->exists();
+
+                                    if ($taken) {
+                                        $fail('Another lesson in one of these courses already uses this address. Choose a different one.');
+                                    }
+                                },
+                            ]),
 
                         Textarea::make('summary')
                             ->label('Short summary')
@@ -97,30 +145,65 @@ class LessonForm
                                     ->required(),
                             ]),
 
-                        TextInput::make('youtube_url')
-                            ->label('YouTube link')
-                            ->url()
-                            ->columnSpanFull()
-                            ->helperText('The address of one video, e.g. https://www.youtube.com/watch?v=XXXXXXXXXXX. Shorts and live links work too; playlists and channels do not.')
-                            // A link the lesson page cannot embed used to save
-                            // without a word and leave students with no video.
-                            ->rules([
-                                fn (): Closure => function (string $attribute, $value, Closure $fail): void {
-                                    if (filled($value) && Lesson::youtubeIdFrom($value) === null) {
-                                        $fail('This is not a link to a single YouTube video, so students would see no video. Open the video itself on YouTube and copy the address from the address bar — playlist, channel and Vimeo links cannot be played here.');
-                                    }
-                                },
-                            ]),
+                        Repeater::make('video_sources')
+                            ->label('Videos')
+                            ->defaultItems(0)
+                            ->minItems(0)
+                            ->maxItems(5)
+                            ->addActionLabel('Add video')
+                            ->itemLabel(fn (array $state): ?string => (($state['type'] ?? 'youtube') === 'upload' ? 'Uploaded video' : 'YouTube video'))
+                            ->collapsible()
+                            ->collapsed()
+                            ->columns(1)
+                            ->helperText('Add up to five videos. Each one can be a YouTube link or an uploaded file.')
+                            ->afterStateHydrated(function (callable $set, $state, $record): void {
+                                if (empty($state) && $record && (filled($record->youtube_url) || filled($record->video_path))) {
+                                    $items = [];
 
-                        FileUpload::make('video_path')
-                            ->label('Or upload a video file')
-                            ->disk('public')
-                            ->directory('lesson-videos')
-                            ->visibility('public')
-                            ->acceptedFileTypes(['video/mp4', 'video/webm', 'video/quicktime'])
-                            ->maxSize(204800) // 200 MB (server upload limits raised to match)
-                            ->columnSpanFull()
-                            ->helperText('MP4 up to 200 MB. If a file is uploaded it is used instead of the YouTube link.'),
+                                    if (filled($record->youtube_url)) {
+                                        $items[] = ['type' => 'youtube', 'youtube_url' => $record->youtube_url];
+                                    }
+
+                                    if (filled($record->video_path)) {
+                                        $items[] = ['type' => 'upload', 'video_path' => $record->video_path];
+                                    }
+
+                                    $set('video_sources', $items);
+                                }
+                            })
+                            ->schema([
+                                Select::make('type')
+                                    ->label('Source')
+                                    ->options([
+                                        'youtube' => 'YouTube',
+                                        'upload' => 'Upload',
+                                    ])
+                                    ->default('youtube')
+                                    ->required(),
+
+                                TextInput::make('youtube_url')
+                                    ->label('YouTube link')
+                                    ->url()
+                                    ->visible(fn ($get) => ($get('type') ?? 'youtube') === 'youtube')
+                                    ->helperText('One video only, e.g. https://www.youtube.com/watch?v=XXXXXXXXXXX.')
+                                    ->rules([
+                                        fn (): Closure => function (string $attribute, $value, Closure $fail): void {
+                                            if (filled($value) && Lesson::youtubeIdFrom($value) === null) {
+                                                $fail('This is not a link to a single YouTube video, so students would see no video. Open the video itself on YouTube and copy the address from the address bar — playlist, channel and Vimeo links cannot be played here.');
+                                            }
+                                        },
+                                    ]),
+
+                                FileUpload::make('video_path')
+                                    ->label('Uploaded video file')
+                                    ->disk('public')
+                                    ->directory('lesson-videos')
+                                    ->visibility('public')
+                                    ->acceptedFileTypes(['video/mp4', 'video/webm', 'video/quicktime'])
+                                    ->maxSize(204800) // 200 MB (server upload limits raised to match)
+                                    ->visible(fn ($get) => ($get('type') ?? 'upload') === 'upload')
+                                    ->helperText('MP4 up to 200 MB.'),
+                            ]),
 
                         TextInput::make('duration_minutes')
                             ->label('Duration (minutes)')

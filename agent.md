@@ -293,6 +293,7 @@ is wrong, not the test.
 | **Attempts left are counted only by `Course::finalQuizAttempts…For` and `Lesson::quizAttempts…For`.** | They add admin grants (`attempt_grants`). Counting attempts anywhere else silently ignores a grant and locks the student out again. | `QuizAttemptGrantTest` |
 | **Broken content has one definition: `App\Actions\FindContentProblems`.** | Content health, its badge, the list flags, edit-page banners, publish checks and owner alerts all read it; a second copy would disagree with the rest. | `ContentHealthTest` · `ContentHealthWorkflowTest` |
 | **Student-site words ship in `lang/{code}/academy.php`, with the same keys in every language.** New text goes in all five files. | The deploy never seeds, so text that only exists in `LanguageSeeder` shows as a key name in production. A key missing from one language quietly falls back to English. | `StudentSiteTranslationTest` |
+| **Which courses a lesson is in is `course_lesson`. `lessons.course_id` is only its home (who may edit it).** Query a course's lessons through `Course::lessons()` or the pivot, never `where('course_id')`. | A lesson can be shared. Anything reading `lessons.course_id` misses it in every other course: empty course pages, wrong completion, missed problems. | `SharedLessonTest` · `CourseLessonsRelationTest` |
 
 ---
 
@@ -381,6 +382,62 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-09-14 — Lessons shared between courses; Translations for every admin (uncommitted)
+Owner's requests: "one lesson should be able to be associated or selected from
+more than one course without any problems", and a Translations page in the
+sidebar "so that other admins can make corrections".
+
+**Shared lessons**
+- **`course_lesson`** (course_id, lesson_id, sort_order) says which courses a
+  lesson is in, and its order in each. The migration backfills it from
+  `lessons.course_id`.
+- **`lessons.course_id` stays** as the lesson's home course. It is used only for
+  ownership (`LessonPolicy`, creator scoping), so a creator cannot edit another
+  product's lesson that was shared into their course.
+- **`Course::lessons()`** is a `CourseLessons` BelongsToMany ordered by the
+  pivot. Its `create()` sets the home course, and `Lesson::saved()` always
+  attaches the home.
+  - The pivot has no `id` on purpose: `$course->lessons()->pluck('id')` would
+    become ambiguous.
+  - Never `orderBy('sort_order')` on the relation. Both tables have that column.
+- **`CourseLesson` pivot events:**
+  - An attach with no order goes to the end of the course.
+  - Detaching the home hands ownership to the next course.
+  - Both notify owners.
+  - Deleting a course re-homes the lessons it shares instead of cascading them
+    away.
+- **One lesson everywhere:** text, questions, status, attempts and completion
+  (`lesson_user`) are shared. Finishing it in one course counts in all.
+- **Admin changes:**
+  - **Lessons tab:** Attach ("Add existing lesson") with a slug-clash guard, a
+    Detach hidden on a lesson's last course, and reorder by
+    `course_lesson.sort_order`.
+  - **Lesson form:** a multi `course_ids` field, saved in
+    `CreateLesson` / `EditLesson`. A creator's save never drops courses they
+    cannot manage.
+  - **Slug rule:** unique among lessons in the chosen courses, because the
+    student URL is scoped by course.
+- **Now read the link table:**
+  - `FindContentProblems`: one problem per lesson, carrying `course_ids`
+  - the Courses table attention flag and filter
+  - Final questions, the Quiz attempts course filter, Final quiz health
+  - student search and the sitemap
+  - owner notifications for questions and options
+
+**Translations**
+- **Access:** `TranslationResource` is now open to every admin (creators still
+  need `translations.manage`). Languages still needs its permission.
+- **Shipped text is listed:** opening the list runs `SyncShippedTranslations`,
+  which inserts an empty row per shipped key per language. An empty row changes
+  nothing, because the Translator skips blanks.
+- **Correcting:** a saved value overrides the shipped line, and clearing it
+  restores the shipped line.
+- **Search** covers the key, the correction, and any language's shipped text.
+- `Translator::shipped()` reads `lang/{code}/academy.php`.
+- Tests: `SharedLessonTest`, `TranslationsPageTest`, a rewritten
+  `CourseLessonsRelationTest`, and `LocalizationTest` updated for the new
+  access rule.
+
 ### 2026-09-14 — Panel language button, Student site in the account menu (uncommitted)
 Owner's request: a language button in the panel, "not the long dropdown", and a
 way from the admin account menu to the learner interface.
@@ -396,6 +453,16 @@ way from the admin account menu to the learner interface.
   is visible to admins and creators. Filament keys user menu items by action
   name, so the array key must match `Action::make()`.
 - Pinned in `AccountMenuTest`.
+
+### 2026-09-14 — Multiple lesson videos, up to five sources (uncommitted)
+- Added a lesson-video repeater with a **Source** selector for **YouTube** or
+  **Upload**, and a **Add video** action that stops at five entries. Each item
+  can hold one valid YouTube link or one uploaded video.
+- The student lesson page now renders each saved video source in order so
+  lessons can carry more than one approved clip without losing older single-video
+  lessons.
+- Stored single-video lessons still keep working because they are mapped into the
+  repeater format when opened for editing.
 
 ### 2026-09-14 — Student site translated: page text now follows the language (uncommitted)
 Reported as "the contents do not change on the pages". The header, sign-in and

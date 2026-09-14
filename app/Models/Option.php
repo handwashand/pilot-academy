@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Actions\NotifyContentOwners;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -32,11 +31,8 @@ class Option extends Model
     protected static function booted(): void
     {
         $check = function (Option $option): void {
-            $lessonId = Question::whereKey($option->question_id)->value('lesson_id');
-
-            if ($lessonId) {
-                NotifyContentOwners::afterRequest(Lesson::whereKey($lessonId)->value('course_id'));
-            }
+            // Every course the lesson is in — it can be shared.
+            Lesson::notifyOwnersOf(Question::whereKey($option->question_id)->value('lesson_id'));
         };
 
         static::saved($check);

@@ -114,18 +114,23 @@ class LocalizationTest extends TestCase
         $this->assertSame('Entrar', __t('auth.login', [], 'pt'));
     }
 
-    public function test_localization_resources_require_explicit_permissions(): void
+    public function test_languages_need_a_permission_and_translations_are_open_to_every_admin(): void
     {
         $admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
 
         $this->actingAs($admin);
         $this->assertFalse(LanguageResource::canAccess());
-        $this->assertFalse(TranslationResource::canAccess());
+        // Owner's request (2026-09-14): any admin can correct wording.
+        $this->assertTrue(TranslationResource::canAccess());
 
         $admin->permissions()->create(['permission' => User::PERMISSION_LANGUAGES_MANAGE]);
-        $admin->permissions()->create(['permission' => User::PERMISSION_TRANSLATIONS_MANAGE]);
-
         $this->assertTrue(LanguageResource::canAccess());
+
+        $creator = User::factory()->create(['role' => User::ROLE_CREATOR]);
+        $this->actingAs($creator);
+        $this->assertFalse(TranslationResource::canAccess());
+
+        $creator->permissions()->create(['permission' => User::PERMISSION_TRANSLATIONS_MANAGE]);
         $this->assertTrue(TranslationResource::canAccess());
     }
 }

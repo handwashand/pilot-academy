@@ -24,6 +24,17 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **One lesson in several courses.** On a course's **Lessons** tab, **Add
+  existing lesson** now shares the lesson instead of moving it out of its old
+  course, and the lesson form has a **Courses** field. It is the same lesson in
+  each course — one set of questions, and a student who finishes it once has it
+  finished everywhere — while each course keeps its own order. **Remove from
+  course** takes it out of one course only.
+- **Every admin can correct translations** under **Settings → Translations**.
+  Search for the words students see, in any language, type the correction and
+  save; it shows on the student site straight away. Clear it to go back to the
+  original text. Before, the page needed a special permission and did not list
+  the student site's text at all.
 - **Final quiz health** (**Results → Final quiz health**, admins only) tells you
   whether the final quiz is doing its job. **First-time pass rate** is judged
   against a suggested 65–80% band — above it the quiz is likely too easy, below
@@ -96,6 +107,9 @@ Add a new entry here whenever something visible to admins or students changes.
   only the top bar, sign-in and Help changed. Counts read naturally in each
   language ("5 уроков", not "5 урок"). Course and lesson text is still shown as
   written.
+- **Lessons can carry several videos.** In the lesson editor, each video has a
+  **YouTube** or **Upload** source selector, and you can add up to five video
+  entries. The student lesson page renders each saved video in order.
 
 ### Changed
 

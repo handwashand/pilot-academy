@@ -97,7 +97,7 @@ class QuizAttemptsTable
                         $data['value'] ?? null,
                         fn (Builder $query, $courseId) => $query->where(fn (Builder $where) => $where
                             ->where('course_id', $courseId)
-                            ->orWhereHas('lesson', fn (Builder $lesson) => $lesson->where('course_id', $courseId))),
+                            ->orWhereHas('lesson.courses', fn (Builder $courses) => $courses->whereKey($courseId))),
                     )),
 
                 SelectFilter::make('partner')

@@ -25,7 +25,8 @@ use Illuminate\Support\Str;
  * the notification to the content's owner.
  *
  * A problem is an array: `key` (stable, so the same problem is never notified
- * twice), `severity`, `what`, `name`, `fix`, `url`, `course_id`, `lesson_id`.
+ * twice), `severity`, `what`, `name`, `fix`, `url`, `course_id`, `course_ids`
+ * (every course it affects — a lesson can be in several), `lesson_id`.
  */
 class FindContentProblems
 {
@@ -69,11 +70,13 @@ class FindContentProblems
     /** Problems in one lesson: its own, and its questions'. */
     public function forLesson(Lesson $lesson): Collection
     {
-        if (! $lesson->course) {
+        $courseIds = $lesson->courses()->pluck('courses.id')->all();
+
+        if ($courseIds === []) {
             return collect();
         }
 
-        return $this->forCourse($lesson->course)
+        return $this->find(fn (Builder $courses): Builder => $courses->whereIn('id', $courseIds))
             ->filter(fn (array $problem): bool => $problem['lesson_id'] === $lesson->getKey())
             ->values();
     }
@@ -139,6 +142,7 @@ class FindContentProblems
                 'fix' => 'Publish a lesson, or unpublish the course.',
                 'url' => CourseResource::getUrl('edit', ['record' => $course]),
                 'course_id' => $course->id,
+                'course_ids' => [$course->id],
                 'lesson_id' => null,
             ])->all();
     }
@@ -156,26 +160,54 @@ class FindContentProblems
                 'fix' => 'Open the course, then Final questions → Add all lesson questions.',
                 'url' => CourseResource::getUrl('edit', ['record' => $course]),
                 'course_id' => $course->id,
+                'course_ids' => [$course->id],
                 'lesson_id' => null,
             ])->all();
+    }
+
+    /**
+     * Lessons in any of these courses, each carrying the ones among them it is
+     * in. A lesson shared by two courses is one problem, not two.
+     */
+    private function lessonsIn(array $courseIds, Builder $lessons): Collection
+    {
+        return $lessons
+            ->whereHas('courses', fn (Builder $courses) => $courses->whereIn('courses.id', $courseIds))
+            ->with(['courses' => fn ($courses) => $courses->whereIn('courses.id', $courseIds)])
+            ->get();
+    }
+
+    /** Where a lesson problem belongs: its home course if in view, else the first it is in. */
+    private function placeOf(Lesson $lesson): array
+    {
+        $ids = $lesson->courses->pluck('id')->map(fn ($id): int => (int) $id)->all();
+
+        return [
+            'course_id' => in_array((int) $lesson->course_id, $ids, true) ? (int) $lesson->course_id : ($ids[0] ?? null),
+            'course_ids' => $ids,
+            'courses' => $lesson->courses->pluck('title')->implode(', ') ?: 'no course',
+        ];
     }
 
     /** No knowledge check means the lesson can never be marked finished. */
     private function lessonsWithoutQuestions(array $courseIds): array
     {
-        return Lesson::query()->published()->withoutQuestions()->whereIn('course_id', $courseIds)
-            ->with('course:id,title')
-            ->get(['id', 'course_id', 'title'])
-            ->map(fn (Lesson $lesson): array => [
-                'key' => "lesson-{$lesson->id}-no-questions",
-                'severity' => 'warning',
-                'what' => 'Published lesson with no quiz questions',
-                'name' => $lesson->title.' — '.($lesson->course?->title ?? 'no course'),
-                'fix' => 'Add at least one question, or unpublish the lesson.',
-                'url' => LessonResource::getUrl('edit', ['record' => $lesson]),
-                'course_id' => $lesson->course_id,
-                'lesson_id' => $lesson->id,
-            ])->all();
+        return $this->lessonsIn($courseIds, Lesson::query()->published()->withoutQuestions())
+            ->map(function (Lesson $lesson): array {
+                $place = $this->placeOf($lesson);
+
+                return [
+                    'key' => "lesson-{$lesson->id}-no-questions",
+                    'severity' => 'warning',
+                    'what' => 'Published lesson with no quiz questions',
+                    'name' => $lesson->title.' — '.$place['courses'],
+                    'fix' => 'Add at least one question, or unpublish the lesson.',
+                    'url' => LessonResource::getUrl('edit', ['record' => $lesson]),
+                    'course_id' => $place['course_id'],
+                    'course_ids' => $place['course_ids'],
+                    'lesson_id' => $lesson->id,
+                ];
+            })->all();
     }
 
     /** The one that traps people: no right answer, so nobody can ever pass. */
@@ -183,19 +215,24 @@ class FindContentProblems
     {
         return Question::query()
             ->withoutCorrectAnswer()
-            ->whereHas('lesson', fn (Builder $lesson) => $lesson->whereIn('course_id', $courseIds))
-            ->with('lesson:id,course_id,title')
+            ->whereHas('lesson.courses', fn (Builder $courses) => $courses->whereIn('courses.id', $courseIds))
+            ->with(['lesson.courses' => fn ($courses) => $courses->whereIn('courses.id', $courseIds)])
             ->get(['id', 'lesson_id', 'prompt'])
-            ->map(fn (Question $question): array => [
-                'key' => "question-{$question->id}-no-correct-answer",
-                'severity' => 'danger',
-                'what' => 'Question with no correct answer — impossible to pass',
-                'name' => Str::limit($question->prompt, 70).' — '.$question->lesson->title,
-                'fix' => 'Open the lesson and tick the right answer.',
-                'url' => LessonResource::getUrl('edit', ['record' => $question->lesson]),
-                'course_id' => $question->lesson->course_id,
-                'lesson_id' => $question->lesson_id,
-            ])->all();
+            ->map(function (Question $question): array {
+                $place = $this->placeOf($question->lesson);
+
+                return [
+                    'key' => "question-{$question->id}-no-correct-answer",
+                    'severity' => 'danger',
+                    'what' => 'Question with no correct answer — impossible to pass',
+                    'name' => Str::limit($question->prompt, 70).' — '.$question->lesson->title,
+                    'fix' => 'Open the lesson and tick the right answer.',
+                    'url' => LessonResource::getUrl('edit', ['record' => $question->lesson]),
+                    'course_id' => $place['course_id'],
+                    'course_ids' => $place['course_ids'],
+                    'lesson_id' => $question->lesson_id,
+                ];
+            })->all();
     }
 
     /**
@@ -205,22 +242,26 @@ class FindContentProblems
      */
     private function unplayableYoutubeLinks(array $courseIds): array
     {
-        return Lesson::query()->published()
-            ->whereIn('course_id', $courseIds)
+        $lessons = Lesson::query()->published()
             ->whereNotNull('youtube_url')->where('youtube_url', '!=', '')
-            ->where(fn (Builder $query) => $query->whereNull('video_path')->orWhere('video_path', ''))
-            ->with('course:id,title')
-            ->get(['id', 'course_id', 'title', 'youtube_url'])
+            ->where(fn (Builder $query) => $query->whereNull('video_path')->orWhere('video_path', ''));
+
+        return $this->lessonsIn($courseIds, $lessons)
             ->filter(fn (Lesson $lesson): bool => Lesson::youtubeIdFrom($lesson->youtube_url) === null)
-            ->map(fn (Lesson $lesson): array => [
-                'key' => "lesson-{$lesson->id}-unplayable-youtube",
-                'severity' => 'danger',
-                'what' => 'YouTube link that is not a playable video',
-                'name' => $lesson->title.' — '.($lesson->course?->title ?? 'no course'),
-                'fix' => 'Open the lesson and paste the address of the video itself, not a playlist or channel.',
-                'url' => LessonResource::getUrl('edit', ['record' => $lesson]),
-                'course_id' => $lesson->course_id,
-                'lesson_id' => $lesson->id,
-            ])->values()->all();
+            ->map(function (Lesson $lesson): array {
+                $place = $this->placeOf($lesson);
+
+                return [
+                    'key' => "lesson-{$lesson->id}-unplayable-youtube",
+                    'severity' => 'danger',
+                    'what' => 'YouTube link that is not a playable video',
+                    'name' => $lesson->title.' — '.$place['courses'],
+                    'fix' => 'Open the lesson and paste the address of the video itself, not a playlist or channel.',
+                    'url' => LessonResource::getUrl('edit', ['record' => $lesson]),
+                    'course_id' => $place['course_id'],
+                    'course_ids' => $place['course_ids'],
+                    'lesson_id' => $lesson->id,
+                ];
+            })->values()->all();
     }
 }

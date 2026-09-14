@@ -190,7 +190,7 @@ class AcademyController extends Controller
     public function lesson(Request $request, Course $course, Lesson $lesson)
     {
         abort_unless($course->isVisibleTo($request->user()) && $lesson->isVisibleTo($request->user()), 404);
-        abort_unless($lesson->course_id === $course->id, 404);
+        abort_unless($course->hasLesson($lesson), 404);
 
         $lesson->load('questions.options');
         $lessons = $course->publishedLessons()->get();
@@ -228,7 +228,7 @@ class AcademyController extends Controller
      */
     public function saveVideoPosition(Request $request, Course $course, Lesson $lesson)
     {
-        abort_unless($lesson->course_id === $course->id, 404);
+        abort_unless($course->hasLesson($lesson), 404);
         abort_unless($course->isVisibleTo($request->user()) && $lesson->isVisibleTo($request->user()), 404);
 
         $data = $request->validate([
@@ -274,7 +274,7 @@ class AcademyController extends Controller
      */
     public function startQuiz(Request $request, Course $course, Lesson $lesson)
     {
-        abort_unless($lesson->course_id === $course->id, 404);
+        abort_unless($course->hasLesson($lesson), 404);
         abort_unless($course->isVisibleTo($request->user()) && $lesson->isVisibleTo($request->user()), 404);
         $user = $request->user();
         abort_unless($user && $lesson->hasQuizLimits(), 403);
@@ -298,7 +298,7 @@ class AcademyController extends Controller
 
     public function submitQuiz(Request $request, Course $course, Lesson $lesson)
     {
-        abort_unless($lesson->course_id === $course->id, 404);
+        abort_unless($course->hasLesson($lesson), 404);
         abort_unless($course->isVisibleTo($request->user()) && $lesson->isVisibleTo($request->user()), 404);
         $lesson->load('questions.options');
 
@@ -493,14 +493,15 @@ class AcademyController extends Controller
                 ->get();
 
             $lessons = Lesson::published()
-                ->whereHas('course', fn ($query) => $query->published())
+                ->whereHas('courses', fn ($query) => $query->published())
                 ->where(fn ($query) => $query
                     ->whereRaw('LOWER(lessons.title) LIKE ?', [$like])
                     ->orWhereRaw('LOWER(lessons.summary) LIKE ?', [$like])
                     // The transcript is what makes a video findable at all —
                     // until it existed, spoken content matched nothing.
                     ->orWhereRaw('LOWER(lessons.transcript) LIKE ?', [$like]))
-                ->with('course')
+                // Listed once, under the first live course it is in.
+                ->with(['courses' => fn ($query) => $query->published()->orderBy('courses.sort_order')])
                 ->orderBy('sort_order')
                 ->limit(30)
                 ->get();
@@ -547,7 +548,7 @@ class AcademyController extends Controller
     public function sitemap()
     {
         $courses = Course::published()
-            ->with(['publishedLessons' => fn ($query) => $query->orderBy('sort_order')])
+            ->with('publishedLessons')
             ->orderBy('sort_order')
             ->get();
 

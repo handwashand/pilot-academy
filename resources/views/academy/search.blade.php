@@ -56,11 +56,15 @@
             <h2 class="text-xl font-extrabold text-navy mb-2">{{ __t('academy.search.lessons') }}</h2>
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm divide-y divide-slate-100">
                 @foreach($lessons as $lesson)
-                    <a href="{{ route('academy.lesson', [$lesson->course, $lesson]) }}"
+                    @php
+                        // A lesson in several courses opens in the first live one.
+                        $lessonCourse = $lesson->courses->first();
+                    @endphp
+                    <a href="{{ route('academy.lesson', [$lessonCourse, $lesson]) }}"
                        class="flex items-center gap-3 px-5 py-4 hover:bg-slate-50 active:bg-slate-100">
                         <span class="min-w-0 flex-1">
                             <span class="block font-bold text-navy">{{ $lesson->title }}</span>
-                            <span class="block text-sm text-slate-500">{{ $lesson->course->title }}</span>
+                            <span class="block text-sm text-slate-500">{{ $lesson->courses->pluck('title')->implode(' · ') }}</span>
                             @if($lesson->durationLabel())
                                 <span class="block text-xs text-slate-400 mt-1">{{ $lesson->durationLabel() }}</span>
                             @endif

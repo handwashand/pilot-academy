@@ -26,8 +26,9 @@ class PilotQuickStartSeeder extends Seeder
             ],
         );
 
-        // Start clean so re-seeding is idempotent.
-        $course->lessons()->delete();
+        // Start clean so re-seeding is idempotent. Only the lessons this course
+        // owns — one shared in from another course is not this seeder's to delete.
+        Lesson::query()->where('course_id', $course->id)->delete();
 
         $lessons = [
             [

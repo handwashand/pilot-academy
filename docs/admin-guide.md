@@ -18,6 +18,8 @@ You land on the **Dashboard** — a quick summary of how many students you have,
 
 **Change the language** with the language button at the far right of the top bar — it shows the current code, such as **EN**. Pick a language from its menu; the whole panel reloads in it, and your choice is saved to your account, so the student site follows it too.
 
+**Correct a translation** under **Settings → Translations**. Search for the words you saw on the student site, in any language, click **Correct**, type the new wording in **Correction** and save — students see it straight away. Keep words that start with a colon, such as `:name`, as they are. To go back to the original text, empty **Correction** and save.
+
 ---
 
 ## 2. The menu at a glance
@@ -44,6 +46,7 @@ doing: building the training (**Content**), looking after the people taking it
 | **Docs → Guide** | This guide, with a contents list and a search box. |
 | **Docs → What's new** | Everything that has changed in the academy, newest first. Search it, filter it by category, or open it as a PDF. |
 | **Settings → Mail** | Whether the academy really sends email, and a button to send yourself a test. Admins only. |
+| **Settings → Translations** | The wording students see, in every language — correct any of it without waiting for a developer. Admins only. |
 
 Students have their own guide on the public site: **Help**, the **?** in the top bar. Point a stuck student there first — it covers what finishes a lesson, when the final quiz unlocks, and where certificates are.
 
@@ -73,7 +76,7 @@ The path is always the same: **make a course → fill it with lessons → turn o
 ### Step 2 · Add lessons
 
 1. In the left menu, click **Lessons**, then **New lesson**.
-2. Choose the **Course** and give the lesson a title.
+2. Choose the **Courses** the lesson belongs in — one or more — and give it a title.
 3. Add a video: paste a link into **YouTube link**, or use **Or upload a video file**.
    The link must be **one video** — open it on YouTube and copy the address bar.
    Normal, Shorts and live video links all work; a playlist or channel link is
@@ -110,14 +113,20 @@ lists every lesson in that course.
 - **To change the order**, drag a row by the handle on its left. The order you
   set here is the order students work through, on the course page, in the lesson
   sidebar and in "Continue where you left off". There is nothing to save.
-- **To reuse a lesson that already exists**, click **Add existing lesson**,
-  search for it and move it across. The search shows which course each lesson is
-  in now.
+- **To reuse a lesson that already exists**, click **Add existing lesson** and
+  search for it. The search shows which course each lesson comes from.
+- **To take a lesson out of this course**, click **Remove from course** on its
+  row. It stays in its other courses. A lesson's only course cannot be removed —
+  delete the lesson under **Lessons** instead.
 
-> **A lesson lives in one course only.** Adding an existing lesson to this course
-> takes it *out* of the course it is in now — it is a move, not a copy. Its
-> video, text, questions and students' progress all travel with it. If you want
-> the same material in two courses, use **Duplicate** on the course instead.
+> **A lesson can be in more than one course.** Adding an existing lesson shares
+> it: it stays in the courses it is already in. It is the same lesson
+> everywhere — changing its text, video or questions changes it in every course,
+> and a student who finished it in one course has it finished in all of them.
+> Each course keeps its own order. The course a lesson was first written in owns
+> it, so only people who can edit that course can edit the lesson. You can also
+> pick several courses in the lesson's own **Courses** field. If you want a
+> separate copy to change on its own, use **Duplicate** on the course instead.
 
 > You can only do this once the course exists, so on a brand-new course finish
 > **Create** first and the **Lessons** tab appears.

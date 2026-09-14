@@ -15,6 +15,10 @@ use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
 
+/**
+ * A course's Lessons tab. Sharing a lesson with more courses is covered in
+ * depth by SharedLessonTest; this is the tab itself.
+ */
 class CourseLessonsRelationTest extends TestCase
 {
     use RefreshDatabase;
@@ -32,6 +36,18 @@ class CourseLessonsRelationTest extends TestCase
             'password' => bcrypt('password'),
             'role' => 'admin',
         ]);
+    }
+
+    private function creator(Product $product): User
+    {
+        $creator = User::firstOrCreate(['email' => 'creator@pilot.local'], [
+            'name' => 'Creator',
+            'password' => bcrypt('secret'),
+            'role' => 'creator',
+        ]);
+        $creator->products()->sync([$product->id]);
+
+        return $creator;
     }
 
     private function newCourse(string $title, array $overrides = []): Course
@@ -80,26 +96,28 @@ class CourseLessonsRelationTest extends TestCase
             ->assertCanNotSeeTableRecords([$theirs]);
     }
 
-    public function test_an_existing_lesson_can_be_moved_into_the_course(): void
+    public function test_adding_an_existing_lesson_shares_it_rather_than_moving_it(): void
     {
         $from = $this->newCourse('Source course');
         $to = $this->newCourse('Target course');
-        $lesson = $this->lessonIn($from, 'Movable lesson');
+        $lesson = $this->lessonIn($from, 'Shared lesson');
 
         $this->manager($to)
-            ->callAction(TestAction::make('associate')->table(), [
+            ->callAction(TestAction::make('attach')->table(), [
                 'recordId' => [$lesson->id],
             ])
             ->assertHasNoActionErrors();
 
-        $this->assertSame($to->id, $lesson->fresh()->course_id);
+        $this->assertTrue($to->hasLesson($lesson));
+        $this->assertTrue($from->hasLesson($lesson), 'It stays in the course it was in.');
+        $this->assertSame($from->id, $lesson->fresh()->course_id);
     }
 
-    public function test_moving_a_lesson_keeps_its_content_and_student_progress(): void
+    public function test_sharing_a_lesson_keeps_its_content_and_student_progress(): void
     {
         $from = $this->newCourse('Source course');
         $to = $this->newCourse('Target course');
-        $lesson = $this->lessonIn($from, 'Movable lesson', ['content' => '<p>Keep me.</p>']);
+        $lesson = $this->lessonIn($from, 'Shared lesson', ['content' => '<p>Keep me.</p>']);
 
         $student = User::firstOrCreate(['email' => 'mover@partner.com'], [
             'name' => 'Mover',
@@ -108,13 +126,13 @@ class CourseLessonsRelationTest extends TestCase
         ]);
         $student->completedLessons()->syncWithoutDetaching([$lesson->id => ['completed_at' => now()]]);
 
-        $this->manager($to)->callAction(TestAction::make('associate')->table(), [
+        $this->manager($to)->callAction(TestAction::make('attach')->table(), [
             'recordId' => [$lesson->id],
         ]);
 
-        $fresh = $lesson->fresh();
-        $this->assertSame('<p>Keep me.</p>', $fresh->content);
+        $this->assertSame('<p>Keep me.</p>', $lesson->fresh()->content);
         $this->assertTrue($student->completedLessons()->whereKey($lesson->id)->exists());
+        $this->assertTrue($to->fresh()->isCompletedBy($student), 'Finished once, finished in the new course too.');
     }
 
     public function test_lessons_can_be_reordered(): void
@@ -127,9 +145,7 @@ class CourseLessonsRelationTest extends TestCase
         // Drag the third lesson to the top.
         $this->manager($course)->call('reorderTable', [$third->id, $first->id, $second->id]);
 
-        $order = $course->lessons()->orderBy('sort_order')->pluck('title')->all();
-
-        $this->assertSame(['Third', 'First', 'Second'], $order);
+        $this->assertSame(['Third', 'First', 'Second'], $course->lessons()->pluck('title')->all());
     }
 
     public function test_the_new_order_is_what_students_see(): void
@@ -155,19 +171,12 @@ class CourseLessonsRelationTest extends TestCase
         $otherCourse = $this->newCourse('Their course', ['product_id' => $theirs->id]);
         $offLimits = $this->lessonIn($otherCourse, 'Off limits');
 
-        $creator = User::firstOrCreate(['email' => 'creator@pilot.local'], [
-            'name' => 'Creator',
-            'password' => bcrypt('secret'),
-            'role' => 'creator',
-        ]);
-        $creator->products()->sync([$mine->id]);
-
-        $this->manager($ownCourse, $creator)
-            ->callAction(TestAction::make('associate')->table(), [
+        $this->manager($ownCourse, $this->creator($mine))
+            ->callAction(TestAction::make('attach')->table(), [
                 'recordId' => [$offLimits->id],
             ]);
 
-        // The lesson must not have moved out of the product they do not own.
+        $this->assertFalse($ownCourse->hasLesson($offLimits));
         $this->assertSame($otherCourse->id, $offLimits->fresh()->course_id);
     }
 
@@ -175,7 +184,7 @@ class CourseLessonsRelationTest extends TestCase
      * The control for the test above: without this, that one could pass simply
      * because a creator cannot work the action at all, and would prove nothing.
      */
-    public function test_a_creator_can_move_a_lesson_between_their_own_courses(): void
+    public function test_a_creator_can_share_a_lesson_between_their_own_courses(): void
     {
         $mine = Product::create(['name' => 'GARM', 'slug' => 'garm']);
 
@@ -183,19 +192,13 @@ class CourseLessonsRelationTest extends TestCase
         $to = $this->newCourse('My second course', ['product_id' => $mine->id]);
         $lesson = $this->lessonIn($from, 'My lesson');
 
-        $creator = User::firstOrCreate(['email' => 'creator@pilot.local'], [
-            'name' => 'Creator',
-            'password' => bcrypt('secret'),
-            'role' => 'creator',
-        ]);
-        $creator->products()->sync([$mine->id]);
-
-        $this->manager($to, $creator)
-            ->callAction(TestAction::make('associate')->table(), [
+        $this->manager($to, $this->creator($mine))
+            ->callAction(TestAction::make('attach')->table(), [
                 'recordId' => [$lesson->id],
             ])
             ->assertHasNoActionErrors();
 
-        $this->assertSame($to->id, $lesson->fresh()->course_id);
+        $this->assertTrue($to->hasLesson($lesson));
+        $this->assertTrue($from->hasLesson($lesson));
     }
 }

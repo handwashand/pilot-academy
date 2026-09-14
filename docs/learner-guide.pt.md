@@ -14,6 +14,8 @@ Como a Pilot Academy funciona, da primeira aula até o certificado.
 
 Um curso é um conjunto de **aulas em ordem**. A página do curso mostra seu progresso, por exemplo **3 / 8 aulas · 32 min restantes**.
 
+Algumas aulas fazem parte de mais de um curso. Você só precisa fazê-las uma vez: ao concluir, ela conta como concluída em todos os cursos em que aparece.
+
 O cartão no topo da página inicial sempre mostra o próximo passo: começar, continuar de onde parou ou abrir o teste final quando ele estiver pronto.
 
 A busca encontra cursos e aulas pelo nome, e também palavras faladas em um vídeo quando há transcrição.

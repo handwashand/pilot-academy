@@ -111,12 +111,14 @@ class FinalQuizHealth extends Page
             ->whereIn('user_id', User::query()->learners()->select('id'))
             ->get(['user_id', 'course_id', 'issued_at']);
 
+        // Through course_lesson, not lessons.course_id: a lesson shared with
+        // this course counts towards it wherever it lives.
         $firstLesson = DB::table('lesson_user')
-            ->join('lessons', 'lessons.id', '=', 'lesson_user.lesson_id')
+            ->join('course_lesson', 'course_lesson.lesson_id', '=', 'lesson_user.lesson_id')
             ->whereNotNull('lesson_user.completed_at')
             ->whereIn('lesson_user.user_id', $certificates->pluck('user_id')->unique())
-            ->groupBy('lesson_user.user_id', 'lessons.course_id')
-            ->selectRaw('lesson_user.user_id as user_id, lessons.course_id as course_id, min(lesson_user.completed_at) as first_at')
+            ->groupBy('lesson_user.user_id', 'course_lesson.course_id')
+            ->selectRaw('lesson_user.user_id as user_id, course_lesson.course_id as course_id, min(lesson_user.completed_at) as first_at')
             ->get()
             ->keyBy(fn ($row): string => $row->user_id.'-'.$row->course_id);
 

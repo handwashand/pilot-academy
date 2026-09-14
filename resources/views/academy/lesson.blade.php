@@ -36,129 +36,121 @@
                 <p class="text-sm text-slate-400 mt-1">{{ $lesson->durationLabel() }}</p>
             @endif
 
-            {{-- Video: uploaded file takes priority, otherwise YouTube embed --}}
-            @if($lesson->video_url)
-                <div class="mt-6 rounded-2xl overflow-hidden border border-slate-200 shadow-sm aspect-video bg-black">
-                    <video id="lesson-video" class="w-full h-full" controls playsinline preload="metadata">
-                        <source src="{{ $lesson->video_url }}">
-                        {{ __t('academy.lesson.no_video_support') }}
-                    </video>
-                </div>
+            {{-- Videos: uploaded files take priority in the player, then any YouTube videos. --}}
+            @php($videoEntries = $lesson->videoEntries())
+            @if(! empty($videoEntries))
+                @foreach($videoEntries as $videoIndex => $video)
+                    @php($type = $video['type'] ?? (filled($video['youtube_url'] ?? null) ? 'youtube' : 'upload'))
 
-                {{-- An uploaded file only gets the browser's bare player, while a
-                     YouTube lesson comes with speed control. People re-watch
-                     training to revise, so speed is worth having on both. --}}
-                <div class="mt-2 flex flex-wrap items-center gap-2">
-                    <span class="text-xs text-slate-400" id="speed-label">{{ __t('academy.lesson.playback_speed') }}</span>
-                    {{-- Pairs, not a keyed array: PHP casts float keys to int,
-                         so 1.25 and 1.5 would collide into a single entry. --}}
-                    @foreach([['1', __t('academy.lesson.speed_normal')], ['1.25', '1.25×'], ['1.5', '1.5×'], ['2', '2×']] as [$rate, $caption])
-                        <button type="button" data-speed="{{ $rate }}" aria-describedby="speed-label"
-                                class="inline-flex items-center h-11 px-3 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 active:bg-slate-100">
-                            {{ $caption }}
-                        </button>
-                    @endforeach
-                </div>
+                    @if($type === 'upload' && filled($video['video_path'] ?? null))
+                        @php($videoUrl = Storage::disk('public')->url($video['video_path']))
+                        <div class="mt-6 rounded-2xl overflow-hidden border border-slate-200 shadow-sm aspect-video bg-black">
+                            <video id="lesson-video-{{ $videoIndex }}" class="w-full h-full" controls playsinline preload="metadata">
+                                <source src="{{ $videoUrl }}">
+                                {{ __t('academy.lesson.no_video_support') }}
+                            </video>
+                        </div>
 
-                <script>
-                    (function () {
-                        var video = document.getElementById('lesson-video');
-                        if (!video) return;
+                        <div class="mt-2 flex flex-wrap items-center gap-2">
+                            <span class="text-xs text-slate-400" id="speed-label-{{ $videoIndex }}">{{ __t('academy.lesson.playback_speed') }}</span>
+                            @foreach([['1', __t('academy.lesson.speed_normal')], ['1.25', '1.25×'], ['1.5', '1.5×'], ['2', '2×']] as [$rate, $caption])
+                                <button type="button" data-speed="{{ $rate }}" data-video-index="{{ $videoIndex }}" aria-describedby="speed-label-{{ $videoIndex }}"
+                                        class="inline-flex items-center h-11 px-3 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 active:bg-slate-100">
+                                    {{ $caption }}
+                                </button>
+                            @endforeach
+                        </div>
 
-                        // Pick the video up where it was left. Sent back to the
-                        // server every 10s of playback and on the way out, so an
-                        // interrupted 25-minute video does not restart.
-                        var startAt = {{ (int) ($videoPosition ?? 0) }};
-                        var saveUrl = @json($lesson->video_url ? route('academy.lesson.position', [$course, $lesson]) : null);
-                        var token = document.querySelector('meta[name="csrf-token"]');
+                        <script>
+                            (function () {
+                                var video = document.getElementById('lesson-video-{{ $videoIndex }}');
+                                if (!video) return;
 
-                        if (startAt > 0) {
-                            video.addEventListener('loadedmetadata', function () {
-                                // Never resume within the last 15s: that is
-                                // "finished", and reopening should start again.
-                                if (isFinite(video.duration) && startAt < video.duration - 15) {
-                                    video.currentTime = startAt;
+                                var startAt = {{ (int) ($videoPosition ?? 0) }};
+                                var saveUrl = @json(route('academy.lesson.position', [$course, $lesson]));
+                                var token = document.querySelector('meta[name="csrf-token"]');
+
+                                if (startAt > 0) {
+                                    video.addEventListener('loadedmetadata', function () {
+                                        if (isFinite(video.duration) && startAt < video.duration - 15) {
+                                            video.currentTime = startAt;
+                                        }
+                                    }, { once: true });
                                 }
-                            }, { once: true });
-                        }
 
-                        if (saveUrl && token) {
-                            var lastSaved = -1;
-                            var save = function () {
-                                var at = Math.floor(video.currentTime || 0);
-                                if (at === lastSaved) return;
-                                lastSaved = at;
-                                // keepalive so the last write survives the page
-                                // being closed mid-lesson.
-                                fetch(saveUrl, {
-                                    method: 'POST',
-                                    keepalive: true,
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-TOKEN': token.content,
-                                    },
-                                    body: JSON.stringify({ seconds: at }),
-                                }).catch(function () { /* losing a position is not worth an error */ });
-                            };
+                                if (saveUrl && token) {
+                                    var lastSaved = -1;
+                                    var save = function () {
+                                        var at = Math.floor(video.currentTime || 0);
+                                        if (at === lastSaved) return;
+                                        lastSaved = at;
+                                        fetch(saveUrl, {
+                                            method: 'POST',
+                                            keepalive: true,
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': token.content,
+                                            },
+                                            body: JSON.stringify({ seconds: at }),
+                                        }).catch(function () { /* losing a position is not worth an error */ });
+                                    };
 
-                            video.addEventListener('timeupdate', function () {
-                                if (Math.floor(video.currentTime) % 10 === 0) save();
-                            });
-                            video.addEventListener('pause', save);
-                            window.addEventListener('pagehide', save);
-                        }
+                                    video.addEventListener('timeupdate', function () {
+                                        if (Math.floor(video.currentTime) % 10 === 0) save();
+                                    });
+                                    video.addEventListener('pause', save);
+                                    window.addEventListener('pagehide', save);
+                                }
 
-                        // Volume and speed are remembered across lessons, so a
-                        // student sets them once. Storage can throw in private
-                        // windows, so every access is guarded.
-                        function read(key) { try { return window.localStorage.getItem(key); } catch (e) { return null; } }
-                        function write(key, value) { try { window.localStorage.setItem(key, value); } catch (e) {} }
+                                function read(key) { try { return window.localStorage.getItem(key); } catch (e) { return null; } }
+                                function write(key, value) { try { window.localStorage.setItem(key, value); } catch (e) {} }
 
-                        var savedVolume = parseFloat(read('pa.video.volume'));
-                        if (!isNaN(savedVolume) && savedVolume >= 0 && savedVolume <= 1) video.volume = savedVolume;
-                        if (read('pa.video.muted') === '1') video.muted = true;
+                                var savedVolume = parseFloat(read('pa.video.volume'));
+                                if (!isNaN(savedVolume) && savedVolume >= 0 && savedVolume <= 1) video.volume = savedVolume;
+                                if (read('pa.video.muted') === '1') video.muted = true;
 
-                        var savedRate = parseFloat(read('pa.video.rate'));
-                        if (!isNaN(savedRate) && savedRate >= 0.5 && savedRate <= 2) video.playbackRate = savedRate;
+                                var savedRate = parseFloat(read('pa.video.rate'));
+                                if (!isNaN(savedRate) && savedRate >= 0.5 && savedRate <= 2) video.playbackRate = savedRate;
 
-                        video.addEventListener('volumechange', function () {
-                            write('pa.video.volume', video.volume);
-                            write('pa.video.muted', video.muted ? '1' : '0');
-                        });
+                                video.addEventListener('volumechange', function () {
+                                    write('pa.video.volume', video.volume);
+                                    write('pa.video.muted', video.muted ? '1' : '0');
+                                });
 
-                        var buttons = document.querySelectorAll('[data-speed]');
-                        function mark() {
-                            buttons.forEach(function (button) {
-                                var on = parseFloat(button.dataset.speed) === video.playbackRate;
-                                button.setAttribute('aria-pressed', on ? 'true' : 'false');
-                                button.classList.toggle('bg-slate-100', on);
-                                button.classList.toggle('text-navy', on);
-                            });
-                        }
-                        buttons.forEach(function (button) {
-                            button.addEventListener('click', function () {
-                                video.playbackRate = parseFloat(button.dataset.speed);
-                                write('pa.video.rate', video.playbackRate);
+                                var buttons = document.querySelectorAll('[data-video-index="{{ $videoIndex }}"][data-speed]');
+                                function mark() {
+                                    buttons.forEach(function (button) {
+                                        var on = parseFloat(button.dataset.speed) === video.playbackRate;
+                                        button.setAttribute('aria-pressed', on ? 'true' : 'false');
+                                        button.classList.toggle('bg-slate-100', on);
+                                        button.classList.toggle('text-navy', on);
+                                    });
+                                }
+                                buttons.forEach(function (button) {
+                                    button.addEventListener('click', function () {
+                                        video.playbackRate = parseFloat(button.dataset.speed);
+                                        write('pa.video.rate', video.playbackRate);
+                                        mark();
+                                    });
+                                });
+                                video.addEventListener('ratechange', mark);
                                 mark();
-                            });
-                        });
-                        video.addEventListener('ratechange', mark);
-                        mark();
-                    })();
-                </script>
-            @elseif($lesson->youtube_id)
-                {{-- youtube-nocookie sets no tracking cookie until the viewer
-                     presses play, and rel=0 keeps the end screen to this
-                     channel's videos, so a training video is not a doorway to
-                     whatever YouTube recommends next. --}}
-                <div class="mt-6 rounded-2xl overflow-hidden border border-slate-200 shadow-sm aspect-video bg-black">
-                    <iframe class="w-full h-full"
-                            src="https://www.youtube-nocookie.com/embed/{{ $lesson->youtube_id }}?rel=0"
-                            title="{{ $lesson->title }}"
-                            frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowfullscreen></iframe>
-                </div>
+                            })();
+                        </script>
+                    @elseif($type === 'youtube' && filled($video['youtube_url'] ?? null))
+                        @php($youtubeId = App\Models\Lesson::youtubeIdFrom($video['youtube_url']))
+                        @if($youtubeId)
+                            <div class="mt-6 rounded-2xl overflow-hidden border border-slate-200 shadow-sm aspect-video bg-black">
+                                <iframe class="w-full h-full"
+                                        src="https://www.youtube-nocookie.com/embed/{{ $youtubeId }}?rel=0"
+                                        title="{{ $lesson->title }}"
+                                        frameborder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowfullscreen></iframe>
+                            </div>
+                        @endif
+                    @endif
+                @endforeach
             @endif
 
             {{-- Transcript. Collapsed so it never buries the lesson, but present

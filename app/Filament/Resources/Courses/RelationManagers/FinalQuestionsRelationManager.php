@@ -107,7 +107,7 @@ class FinalQuestionsRelationManager extends RelationManager
                     ->modalDescription('Adds every question from this course\'s lessons to the final quiz bank. Already-added questions are left as they are.')
                     ->action(function () {
                         $course = $this->getOwnerRecord();
-                        $ids = Question::whereHas('lesson', fn (Builder $q) => $q->where('course_id', $course->id))
+                        $ids = Question::whereHas('lesson.courses', fn (Builder $q) => $q->whereKey($course->id))
                             ->pluck('id')
                             ->all();
                         $course->finalQuestions()->syncWithoutDetaching($ids);
@@ -118,8 +118,8 @@ class FinalQuestionsRelationManager extends RelationManager
                     ->recordSelectSearchColumns(['prompt'])
                     ->recordTitle(fn (Question $record): string => Str::limit($record->prompt, 70))
                     ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereHas(
-                        'lesson',
-                        fn (Builder $q) => $q->where('course_id', $this->getOwnerRecord()->id)
+                        'lesson.courses',
+                        fn (Builder $q) => $q->whereKey($this->getOwnerRecord()->id)
                     )),
 
                 CreateAction::make()
