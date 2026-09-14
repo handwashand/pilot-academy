@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Filament\Pages\AdminGuide;
 use App\Models\User;
+use Database\Seeders\LanguageSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -86,6 +87,18 @@ class AdminGuidePageTest extends TestCase
             ->assertSee('<label for="guide-search"', false)
             ->assertSee('href="#'.$chapter['id'].'"', false)
             ->assertSee('id="'.$chapter['id'].'"', false);
+    }
+
+    public function test_the_guide_uses_the_current_language_file_when_available(): void
+    {
+        $this->seed(LanguageSeeder::class);
+
+        $this->actingAs($this->user('pt-guide@pilot.local', 'admin'))
+            ->withHeader('Accept-Language', 'pt-BR,pt;q=0.9,en;q=0.8')
+            ->get('/admin/admin-guide')
+            ->assertStatus(200)
+            ->assertSee('Guia do administrador')
+            ->assertSee('Início rápido');
     }
 
     private function user(string $email, string $role): User

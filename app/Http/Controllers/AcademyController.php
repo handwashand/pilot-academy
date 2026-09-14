@@ -521,11 +521,13 @@ class AcademyController extends Controller
      */
     public function help()
     {
-        $path = base_path('docs/learner-guide.md');
+        $locale = app()->getLocale();
+        $localized = base_path("docs/learner-guide.{$locale}.md");
+        $path = is_file($localized) ? $localized : base_path('docs/learner-guide.md');
 
         $sections = is_file($path)
             ? Cache::remember(
-                'learner-guide.'.filemtime($path),
+                'learner-guide.'.$locale.'.'.basename($path).'.'.filemtime($path),
                 now()->addDay(),
                 fn (): array => AdminGuide::parse((string) file_get_contents($path)),
             )

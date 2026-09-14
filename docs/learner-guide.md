@@ -84,6 +84,22 @@ is one — the **Course complete** card on the course page asks whether it was
 useful — a thumbs up or down and, if you like, a sentence. Only the
 academy team reads it; other students never see it.
 
+## Your profile
+
+Open the **account menu** — your initials in the top right — and choose
+**Profile**. There you can change your name and email, and set the name printed
+on your certificates.
+
+- **Name on certificates** is used for the certificates you earn from now on.
+  Leave it empty to use your name. A certificate you already have keeps the name
+  it was printed with; to correct one, contact your academy administrator.
+- **Signed in with a personal link?** Your account has no password yet. Use
+  **Set a password** to also log in with your email and password.
+- **Changing your password** asks for your current one first.
+
+Your partner company is set by your academy administrator, so it is shown but
+cannot be changed there.
+
 ## If something is not working
 
 **My progress has disappeared.** You were probably not logged in, or you are in
@@ -96,10 +112,12 @@ correct — nearly right is not enough. Review the lesson and try again.
 **The final quiz is still locked.** One lesson is not finished yet. Open the
 course page — a finished lesson has a tick, so look for the one without.
 
-**I have no attempts left.** Contact your academy administrator; they can give
-you more.
+**I have no attempts left.** Contact your academy administrator: they can give
+you another attempt.
 
-**The name on my certificate is wrong.** Contact your academy administrator.
+**The name on my certificate is wrong.** Contact your academy administrator —
+they can correct it and reprint the certificate. To get your name right on the
+certificates you earn later, set **Name on certificates** in your profile.
 
 **I did not get the certificate email.** Download it from **🎓 Certificates**
 instead.

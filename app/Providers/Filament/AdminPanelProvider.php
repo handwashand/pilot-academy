@@ -68,6 +68,9 @@ class AdminPanelProvider extends PanelProvider
             // hierarchy — the utility label out-ranking the brand.
             ->brandLogoHeight(fn (): string => request()->routeIs('filament.*.auth.*') ? '3rem' : '1.75rem')
             ->favicon(asset('img/pilot-mark.svg'))
+            // The bell, top right. First use: telling a course's owner when a
+            // change leaves it broken for students (App\Actions\NotifyContentOwners).
+            ->databaseNotifications()
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([

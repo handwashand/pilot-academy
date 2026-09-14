@@ -1,19 +1,19 @@
 @extends('academy.layout')
 
-@section('title', 'Help — Pilot Academy')
+@section('title', __t('help.title'))
 
 @php
-    $metaDescription = 'How Pilot Academy works: lessons, knowledge checks, the final quiz and certificates.';
+    $metaDescription = __t('help.meta');
     $intro = collect($sections)->firstWhere('heading', '');
     $chapters = collect($sections)->where('heading', '!=', '')->values();
 @endphp
 
 @section('content')
     <div class="max-w-3xl mx-auto">
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-navy">Help</h1>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-navy">{{ __t('help.heading') }}</h1>
 
         @if($chapters->isEmpty())
-            <p class="text-slate-500 mt-2">The help guide is not available right now.</p>
+            <p class="text-slate-500 mt-2">{{ __t('help.unavailable') }}</p>
         @else
             @if($intro)
                 <div class="prose-lesson mt-1 text-slate-500">{!! $intro['html'] !!}</div>
@@ -22,7 +22,7 @@
             {{-- Contents. Full-width rows so each one is a comfortable tap target
                  on a phone; the sticky header is 64px, hence scroll-mt-20 on the
                  sections it jumps to. --}}
-            <nav aria-label="Help contents" class="bg-white rounded-2xl border border-slate-200 shadow-sm mt-6 mb-8 divide-y divide-slate-100">
+            <nav aria-label="{{ __t('help.contents_aria') }}" class="bg-white rounded-2xl border border-slate-200 shadow-sm mt-6 mb-8 divide-y divide-slate-100">
                 @foreach($chapters as $chapter)
                     <a href="#{{ $chapter['id'] }}"
                        class="flex items-center gap-3 px-5 min-h-11 py-2.5 text-slate-700 hover:bg-slate-50 active:bg-slate-100 font-medium">
@@ -40,8 +40,8 @@
             @endforeach
 
             <p class="text-sm text-slate-500 mt-8">
-                Still stuck? Contact your academy administrator.
-                <a href="{{ route('academy.home') }}" class="text-brand font-semibold">Back to courses</a>
+                {{ __t('help.still_stuck') }}
+                <a href="{{ route('academy.home') }}" class="text-brand font-semibold">{{ __t('help.back_to_courses') }}</a>
             </p>
         @endif
     </div>

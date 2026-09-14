@@ -163,16 +163,46 @@
                         <span aria-hidden="true">🎓</span>
                         <span class="hidden sm:block">{{ __t('nav.certificates') }}</span>
                     </a>
-                    <span class="hidden sm:block min-w-0 truncate text-sm text-slate-500">{{ $name }}</span>
-                    {{-- Decorative initial, not a control: dropped below sm: to give the
-                         header's real actions room on a phone. --}}
-                    <span class="hidden sm:flex flex-none w-9 h-9 rounded-full bg-navy text-white items-center justify-center font-bold text-sm">
-                        {{ strtoupper(mb_substr($name, 0, 1)) }}
-                    </span>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button class="h-11 px-1 sm:px-1.5 whitespace-nowrap text-sm text-slate-500 hover:text-brand font-medium">{{ __t('nav.logout') }}</button>
-                    </form>
+                    {{-- The account menu: who you are signed in as, your profile, the
+                         panel for staff, and the way out. It replaced the name, a
+                         decorative initial and a Log out button, which also gives the
+                         header room back on a phone. A native <details>, so it works
+                         with no JavaScript; the script at the foot of the page only
+                         closes it on an outside tap or Escape. --}}
+                    <details class="relative flex-none" data-account-menu>
+                        <summary class="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-full [&::-webkit-details-marker]:hidden"
+                                 aria-label="{{ __t('nav.account') }}" title="{{ $account->name }}">
+                            <span aria-hidden="true" class="flex h-9 w-9 items-center justify-center rounded-full bg-navy text-sm font-bold text-white">{{ $initials }}</span>
+                        </summary>
+
+                        <div class="absolute right-0 top-full z-30 mt-2 w-64 max-w-[calc(100vw-2rem)] rounded-xl border border-slate-200 bg-white p-1 shadow-lg">
+                            <div class="border-b border-slate-100 px-3 py-2.5">
+                                <p class="truncate text-sm font-bold text-navy">{{ $account->name }}</p>
+                                <p class="truncate text-xs text-slate-500">{{ $account->email }}</p>
+                            </div>
+
+                            <a href="{{ route('academy.profile') }}"
+                               class="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-brand">
+                                {{ __t('nav.profile') }}
+                            </a>
+
+                            @if($account->isAdmin() || $account->isCreator())
+                                {{-- A full page load: the panel is a different app. --}}
+                                <a href="{{ url('/admin') }}"
+                                   class="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-brand">
+                                    {{ __t('nav.admin_panel') }}
+                                </a>
+                            @endif
+
+                            <form method="POST" action="{{ route('logout') }}" class="mt-1 border-t border-slate-100 pt-1">
+                                @csrf
+                                <button type="submit"
+                                        class="flex min-h-11 w-full items-center rounded-lg px-3 text-left text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-brand">
+                                    {{ __t('nav.logout') }}
+                                </button>
+                            </form>
+                        </div>
+                    </details>
                 @else
                     @php($name = session('student_name'))
                     @if($name)
@@ -193,5 +223,24 @@
         Pilot Academy · {{ __t('footer.internal_training') }} ·
         <a href="{{ route('academy.help') }}" class="hover:text-brand">{{ __t('nav.help') }}</a>
     </footer>
+
+    {{-- Closes the account menu on a tap outside it or on Escape. The menu
+         works without this — it just stays open until toggled again. --}}
+    <script>
+        document.addEventListener('click', function (event) {
+            document.querySelectorAll('details[data-account-menu][open]').forEach(function (menu) {
+                if (! menu.contains(event.target)) {
+                    menu.removeAttribute('open');
+                }
+            });
+        });
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                document.querySelectorAll('details[data-account-menu][open]').forEach(function (menu) {
+                    menu.removeAttribute('open');
+                });
+            }
+        });
+    </script>
 </body>
 </html>

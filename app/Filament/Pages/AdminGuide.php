@@ -31,9 +31,12 @@ class AdminGuide extends Page
 
     protected string $view = 'filament.pages.admin-guide';
 
-    public static function guidePath(): string
+    public static function guidePath(?string $locale = null): string
     {
-        return base_path('docs/admin-guide.md');
+        $locale ??= app()->getLocale();
+        $localized = base_path("docs/admin-guide.{$locale}.md");
+
+        return is_file($localized) ? $localized : base_path('docs/admin-guide.md');
     }
 
     /**
@@ -44,14 +47,15 @@ class AdminGuide extends Page
      */
     public function sections(): array
     {
-        $path = static::guidePath();
+        $locale = app()->getLocale();
+        $path = static::guidePath($locale);
 
         if (! is_file($path)) {
             return [];
         }
 
         return Cache::remember(
-            'admin-guide.'.filemtime($path),
+            'admin-guide.'.$locale.'.'.basename($path).'.'.filemtime($path),
             now()->addDay(),
             fn (): array => static::parse((string) file_get_contents($path)),
         );

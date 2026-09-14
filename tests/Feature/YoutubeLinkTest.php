@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Actions\FindContentProblems;
 use App\Filament\Resources\Lessons\Pages\EditLesson;
-use App\Filament\Widgets\ContentNeedingAttention;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\User;
@@ -84,24 +84,23 @@ class YoutubeLinkTest extends TestCase
             ->assertSee('youtube-nocookie.com/embed/aqz-KE-bpKQ?rel=0', false);
     }
 
-    public function test_a_stored_link_that_cannot_play_is_flagged_on_the_dashboard(): void
+    public function test_a_stored_link_that_cannot_play_is_reported(): void
     {
         [$lesson, $admin] = $this->lessonAndAdmin();
 
         // Saved before the form checked links.
         $lesson->forceFill(['youtube_url' => 'https://www.youtube.com/@PilotTelematics'])->save();
 
-        $this->actingAs($admin);
         $this->assertContains(
             'YouTube link that is not a playable video',
-            (new ContentNeedingAttention)->getProblems()->pluck('what'),
+            app(FindContentProblems::class)->forViewer($admin)->pluck('what'),
         );
 
         // An uploaded video plays instead of the link, so it is not a problem.
         $lesson->forceFill(['video_path' => 'lesson-videos/sample.mp4'])->save();
         $this->assertNotContains(
             'YouTube link that is not a playable video',
-            (new ContentNeedingAttention)->getProblems()->pluck('what'),
+            app(FindContentProblems::class)->forViewer($admin)->pluck('what'),
         );
     }
 

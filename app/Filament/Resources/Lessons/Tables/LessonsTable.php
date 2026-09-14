@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Lessons\Tables;
 
+use App\Actions\FindContentProblems;
+use App\Models\Course;
 use App\Models\Lesson;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
@@ -12,9 +14,12 @@ use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class LessonsTable
 {
@@ -43,6 +48,23 @@ class LessonsTable
                     ->sortable()
                     ->weight('bold'),
 
+                // Flagged where the work happens, not only on Content health.
+                TextColumn::make('attention')
+                    ->label('Attention')
+                    ->state(function (Lesson $record): ?string {
+                        $count = FindContentProblems::forCurrentUser()->where('lesson_id', $record->id)->count();
+
+                        return $count > 0 ? $count.' '.Str::plural('problem', $count) : null;
+                    })
+                    ->badge()
+                    ->color('danger')
+                    ->icon('heroicon-m-exclamation-triangle')
+                    ->tooltip(fn (Lesson $record): ?string => FindContentProblems::forCurrentUser()
+                        ->where('lesson_id', $record->id)
+                        ->pluck('what')
+                        ->unique()
+                        ->implode(' · ') ?: null),
+
                 TextColumn::make('questions_count')
                     ->label('Quiz Qs')
                     ->counts('questions')
@@ -64,6 +86,13 @@ class LessonsTable
                     ->sortable(),
             ])
             ->filters([
+                Filter::make('needs_attention')
+                    ->label('Needs attention')
+                    ->query(fn (Builder $query): Builder => $query->whereIn(
+                        'id',
+                        FindContentProblems::forCurrentUser()->pluck('lesson_id')->filter()->unique()->values()->all(),
+                    )),
+
                 SelectFilter::make('status')
                     ->options(Lesson::STATUS_LABELS),
 
@@ -85,10 +114,30 @@ class LessonsTable
                     ->color('success')
                     ->requiresConfirmation()
                     ->modalHeading('Publish lesson')
-                    ->modalDescription(fn (Lesson $record): string => "\"{$record->title}\" becomes visible to students in a published course straight away.")
+                    // Say what is wrong before anyone presses the button.
+                    ->modalDescription(function (Lesson $record): string {
+                        $problems = static::problemsIfPublished($record);
+
+                        return $problems->isEmpty()
+                            ? "\"{$record->title}\" becomes visible to students in a published course straight away."
+                            : 'Students would hit this straight away, so it cannot go live yet: '.FindContentProblems::plainList($problems).'.';
+                    })
                     ->visible(fn (Lesson $record): bool => $record->status === Lesson::STATUS_DRAFT)
                     ->authorize(fn (Lesson $record): bool => auth()->user()->canManageCourse($record->course))
                     ->action(function (Lesson $record): void {
+                        $problems = static::problemsIfPublished($record);
+
+                        if ($problems->isNotEmpty()) {
+                            Notification::make()
+                                ->title('Fix these before publishing')
+                                ->body(FindContentProblems::plainList($problems))
+                                ->danger()
+                                ->persistent()
+                                ->send();
+
+                            return;
+                        }
+
                         $record->publish();
 
                         Notification::make()->title('Lesson published')->body('Students can see it now.')->success()->send();
@@ -100,7 +149,13 @@ class LessonsTable
                     ->color('gray')
                     ->requiresConfirmation()
                     ->modalHeading('Unpublish lesson')
-                    ->modalDescription('The lesson goes back to draft and disappears from the student site. Nothing is deleted — its text, video, questions and student progress all stay.')
+                    ->modalDescription(function (Lesson $record): string {
+                        $description = 'The lesson goes back to draft and disappears from the student site. Nothing is deleted — its text, video, questions and student progress all stay.';
+
+                        return static::isLastLiveLesson($record)
+                            ? "This is the only published lesson in \"{$record->course->title}\", which is live — unpublishing it leaves students an empty course. Publish another lesson first, or unpublish the course too. {$description}"
+                            : $description;
+                    })
                     ->visible(fn (Lesson $record): bool => $record->isPublished())
                     ->authorize(fn (Lesson $record): bool => auth()->user()->canManageCourse($record->course))
                     ->action(function (Lesson $record): void {
@@ -113,18 +168,42 @@ class LessonsTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    // No prerequisite here: a lesson has nothing to be empty of,
-                    // and its course still gates whether students see it.
                     BulkAction::make('publish')
                         ->label('Publish')
                         ->icon('heroicon-o-rocket-launch')
                         ->color('success')
                         ->requiresConfirmation()
+                        ->modalDescription('Lessons students could not finish — no questions, a question with no right answer, a YouTube link that will not play — are skipped when their course is live, and listed back to you.')
                         ->deselectRecordsAfterCompletion()
                         ->action(function (Collection $records): void {
-                            $records->each->publish();
+                            $skipped = [];
 
-                            Notification::make()->title($records->count().' lesson(s) published')->success()->send();
+                            $ready = $records->filter(function (Lesson $lesson) use (&$skipped): bool {
+                                $problems = static::problemsIfPublished($lesson);
+
+                                if ($problems->isNotEmpty()) {
+                                    $skipped[] = "{$lesson->title} ({$problems->pluck('what')->implode('; ')})";
+
+                                    return false;
+                                }
+
+                                return true;
+                            });
+
+                            $ready->each->publish();
+
+                            if ($ready->isNotEmpty()) {
+                                Notification::make()->title($ready->count().' lesson(s) published')->success()->send();
+                            }
+
+                            if ($skipped !== []) {
+                                Notification::make()
+                                    ->title(count($skipped).' lesson(s) skipped')
+                                    ->body(implode('; ', $skipped))
+                                    ->danger()
+                                    ->persistent()
+                                    ->send();
+                            }
                         }),
 
                     BulkAction::make('unpublish')
@@ -132,16 +211,65 @@ class LessonsTable
                         ->icon('heroicon-o-eye-slash')
                         ->color('gray')
                         ->requiresConfirmation()
-                        ->modalDescription('The selected lessons disappear from their courses. Text, video, questions and student progress all stay.')
+                        ->modalDescription('The selected lessons disappear from their courses. Text, video, questions and student progress all stay. A live course left with no published lessons is named afterwards.')
                         ->deselectRecordsAfterCompletion()
                         ->action(function (Collection $records): void {
                             $records->each->unpublish();
 
                             Notification::make()->title($records->count().' lesson(s) unpublished')->warning()->send();
+
+                            $emptied = Course::query()
+                                ->publishedButEmpty()
+                                ->whereIn('id', $records->pluck('course_id')->unique())
+                                ->pluck('title');
+
+                            if ($emptied->isNotEmpty()) {
+                                Notification::make()
+                                    ->title('Students now see an empty course')
+                                    ->body('No published lessons left in: '.$emptied->implode(', ').'. Publish a lesson, or unpublish the course.')
+                                    ->danger()
+                                    ->persistent()
+                                    ->send();
+                            }
                         }),
 
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    /**
+     * What a student would hit if this lesson went live now. Only a live course
+     * matters — in a draft course nobody sees the lesson yet, and it stays
+     * editable in peace.
+     */
+    protected static function problemsIfPublished(Lesson $lesson): Collection
+    {
+        if (! $lesson->course?->isPublished()) {
+            return collect();
+        }
+
+        $problems = collect();
+
+        if (! $lesson->questions()->exists()) {
+            $problems->push(['what' => 'No quiz questions, so students could never finish it', 'name' => $lesson->title]);
+        }
+
+        if ($lesson->questions()->withoutCorrectAnswer()->exists()) {
+            $problems->push(['what' => 'A question with no correct answer', 'name' => $lesson->title]);
+        }
+
+        if (filled($lesson->youtube_url) && blank($lesson->video_path) && Lesson::youtubeIdFrom($lesson->youtube_url) === null) {
+            $problems->push(['what' => 'A YouTube link that is not a playable video', 'name' => $lesson->title]);
+        }
+
+        return $problems;
+    }
+
+    protected static function isLastLiveLesson(Lesson $lesson): bool
+    {
+        return $lesson->isPublished()
+            && (bool) $lesson->course?->isPublished()
+            && $lesson->course->publishedLessons()->count() === 1;
     }
 }

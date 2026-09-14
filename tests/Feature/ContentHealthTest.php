@@ -2,8 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Actions\FindContentProblems;
+use App\Filament\Pages\ContentHealth;
 use App\Filament\Resources\Lessons\Pages\EditLesson;
-use App\Filament\Widgets\ContentNeedingAttention;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Product;
@@ -125,21 +126,21 @@ class ContentHealthTest extends TestCase
         $this->assertContains($lesson->id, Lesson::published()->withoutQuestions()->pluck('id')->all());
     }
 
-    // --- the widget -------------------------------------------------------
+    // --- Content health ---------------------------------------------------
 
-    public function test_the_widget_stays_quiet_when_everything_is_healthy(): void
+    public function test_a_healthy_academy_has_nothing_on_content_health(): void
     {
         $this->actingAs($this->admin());
 
-        $this->assertCount(0, (new ContentNeedingAttention)->getProblems());
+        $this->assertCount(0, FindContentProblems::forCurrentUser());
+        $this->assertNull(ContentHealth::getNavigationBadge());
 
-        Livewire::actingAs($this->admin())
-            ->test(ContentNeedingAttention::class)
-            ->assertSuccessful()
-            ->assertDontSee('Content needing attention');
+        $this->get(ContentHealth::getUrl())
+            ->assertOk()
+            ->assertSee('Nothing is broken for students.');
     }
 
-    public function test_the_widget_reports_each_kind_of_breakage(): void
+    public function test_each_kind_of_breakage_is_reported_with_a_badge(): void
     {
         $course = Course::first();
         $course->update(['final_quiz_enabled' => true]);
@@ -147,17 +148,18 @@ class ContentHealthTest extends TestCase
         Question::first()->options()->update(['is_correct' => false]);
         Lesson::orderByDesc('id')->first()->questions()->delete();
 
-        $this->actingAs($this->admin());
-        $problems = (new ContentNeedingAttention)->getProblems();
+        $problems = app(FindContentProblems::class)->forViewer($this->admin());
 
         $this->assertContains('Final quiz is on but its question bank is empty', $problems->pluck('what'));
         $this->assertContains('Question with no correct answer — impossible to pass', $problems->pluck('what'));
         $this->assertContains('Published lesson with no quiz questions', $problems->pluck('what'));
 
-        Livewire::actingAs($this->admin())
-            ->test(ContentNeedingAttention::class)
-            ->assertSuccessful()
-            ->assertSee('Content needing attention');
+        $this->actingAs($this->admin());
+        $this->assertSame((string) $problems->count(), ContentHealth::getNavigationBadge());
+
+        $this->get(ContentHealth::getUrl())
+            ->assertOk()
+            ->assertSee('Question with no correct answer — impossible to pass');
     }
 
     public function test_a_creator_is_shown_only_their_own_products_problems(): void
@@ -179,35 +181,35 @@ class ContentHealthTest extends TestCase
         ]);
         $creator->products()->attach($mine);
 
-        $this->actingAs($creator);
-        $names = (new ContentNeedingAttention)->getProblems()->pluck('name');
+        $names = app(FindContentProblems::class)->forViewer($creator)->pluck('name');
 
         $this->assertContains('Broken broken-garm', $names);
         $this->assertNotContains('Broken broken-ptm', $names);
     }
 
-    public function test_a_learner_never_sees_the_widget(): void
+    public function test_a_learner_never_sees_content_problems(): void
     {
-        // Break something, so the widget has a reason to appear at all.
+        // Break something, so there is something to hide.
         Question::first()->options()->update(['is_correct' => false]);
-
-        $this->actingAs($this->admin());
-        $this->assertTrue(ContentNeedingAttention::canView());
+        $this->assertNotEmpty(app(FindContentProblems::class)->forViewer($this->admin()));
 
         $learner = User::create([
             'name' => 'Learner', 'email' => 'l@partner.com',
             'password' => bcrypt('x'), 'role' => User::ROLE_LEARNER,
         ]);
 
-        $this->actingAs($learner);
-        $this->assertFalse(ContentNeedingAttention::canView());
+        $this->assertCount(0, app(FindContentProblems::class)->forViewer($learner));
+        $this->actingAs($learner)->get(ContentHealth::getUrl())->assertForbidden();
     }
 
-    /** Healthy academy, nothing to say — the card should not take up space. */
-    public function test_the_widget_is_absent_from_a_healthy_dashboard(): void
+    /** It moved off the dashboard: no card there, even when something is broken. */
+    public function test_the_dashboard_no_longer_carries_a_content_card(): void
     {
-        $this->actingAs($this->admin());
+        Question::first()->options()->update(['is_correct' => false]);
 
-        $this->assertFalse(ContentNeedingAttention::canView());
+        $this->actingAs($this->admin())
+            ->get('/admin')
+            ->assertOk()
+            ->assertDontSee('Content needing attention');
     }
 }

@@ -11,7 +11,7 @@
 <x-filament-panels::page>
     @if ($sections === [])
         <div class="rounded-xl border border-gray-200 bg-white p-8 text-center text-sm text-gray-500 shadow-sm dark:border-white/10 dark:bg-gray-900 dark:text-gray-400">
-            The guide file <code>docs/admin-guide.md</code> was not found.
+            {{ __t('guide.admin.unavailable') }}
         </div>
     @else
         @include('filament.pages.partials.doc-styles')
@@ -28,20 +28,20 @@
         >
             <aside class="lg:sticky lg:top-20 lg:w-64 lg:shrink-0">
                 <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-gray-900">
-                    <label for="guide-search" class="sr-only">Search the guide</label>
+                    <label for="guide-search" class="sr-only">{{ __t('guide.search_label') }}</label>
                     <input
                         id="guide-search"
                         type="search"
                         x-model="q"
-                        placeholder="Search the guide…"
+                        placeholder="{{ __t('guide.search_placeholder') }}"
                         class="mb-4 w-full rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-950 placeholder-gray-400 shadow-sm outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder-gray-500"
                     >
 
                     <p class="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400">
-                        Contents
+                        {{ __t('guide.contents') }}
                     </p>
 
-                    <nav class="flex flex-col gap-0.5" aria-label="Guide contents">
+                    <nav class="flex flex-col gap-0.5" aria-label="{{ __t('guide.contents_aria') }}">
                         @foreach ($sections as $i => $section)
                             @if ($section['heading'] !== '')
                                 <a
@@ -63,7 +63,7 @@
                     x-show="! anyVisible"
                     class="rounded-xl border border-gray-200 bg-white px-4 py-8 text-center text-sm text-gray-500 shadow-sm dark:border-white/10 dark:bg-gray-900 dark:text-gray-400"
                 >
-                    Nothing in the guide mentions “<span x-text="q.trim()"></span>”.
+                    {{ __t('guide.no_results_prefix') }} "<span x-text="q.trim()"></span>".
                 </p>
 
                 @foreach ($sections as $i => $section)

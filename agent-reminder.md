@@ -137,6 +137,71 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-09-14 — Profiles, content health, quiz attempts, feedback, mail (uncommitted)
+From support-engine's profile, account menu and sidebar, filtered for a partner
+academy. **Left uncommitted for the owner.** Built alongside another session's
+uncommitted language work, which touches some of the same files (`User.php`,
+`routes/web.php`, the panel provider, `layout.blade.php`) — every edit here was
+anchored to exact current lines, and nothing of that work was changed.
+
+**Student side**
+- **Profile** at `/my/profile` (`ProfileController`): name, email, name on
+  certificates; partner company shown read-only. Password section is **Set a
+  password** for invite-link accounts and **Change password** (needs the current
+  one) once a known password exists — `users.password_set_at`, stamped by a
+  `User::saving` hook whenever a password is saved, except the join flow, which
+  sets it `null` explicitly. The migration backfills staff and learners without a
+  login token; learners *with* a token are left unset (may have joined by link).
+- **Account menu** replaces name + decorative initial + Log out in the header: a
+  native `<details>` (works without JS; a tiny script closes it on outside tap /
+  Escape). Labels use `__t('nav.*')` like the rest of the translated header; the
+  translator's fallback prints "Profile", "Admin Panel", "Account" until keys are
+  seeded.
+- **Header logo** is now the PILOT ACADEMY lockup at 1.75rem, same as the panel
+  (owner's request) — replacing mark + text.
+
+**Panel**
+- **Content health replaced the dashboard card** (`ContentNeedingAttention`
+  widget deleted). One definition, `App\Actions\FindContentProblems`, feeds:
+  Content → Content health page + red badge; an **Attention** column and **Needs
+  attention** filter on Courses and Lessons; the edit page's subheading;
+  **publish checks** (course Publish, bulk publish, the course form's status
+  change, lesson Publish into a live course) and a warning before unpublishing a
+  live course's last lesson; and **owner notifications**.
+- **Owner notifications** (`NotifyContentOwners`, Filament database notifications,
+  new `notifications` table, `->databaseNotifications()`): model events on
+  Course/Lesson/Question/Option call `afterRequest()`, a **named `defer()`** — so a
+  form's dozens of saves become one check, run *after* the request. Checking at
+  save time would see a new lesson before its questions exist. Owners = the
+  product's creators, else admins; the actor is skipped; one alert per problem
+  while unread; alerts for fixed problems are marked read. Not covered: changes
+  to a course's final question bank via attach/detach (no model event).
+- **Results → Quiz attempts** (learners only, admins only) with **Grant another
+  attempt** → `attempt_grants` row. Grants are counted in
+  `Course::finalQuizAttemptsAllowedFor/LeftFor` and
+  `Lesson::quizAttemptsAllowedFor/LeftFor`, which the quiz pages now use — never
+  count attempts anywhere else. Badge = students out of attempts without a pass
+  (`QuizAttempt::stuckLearners()`, container-memoised per request).
+- **Results → Student feedback**, admins only. Access is checked on the resource
+  (`canViewAny`), not a model policy, so creators keep the course's feedback tab.
+- **Settings → Mail** (`MailCheck`): says whether mail is really delivered (log /
+  array are not), shows server, sender and `APP_URL`, sends a test email.
+  Read-only — no mail passwords in the panel.
+- **Guide** added to the panel's account menu; **Edit name** on Certificates
+  reprints the PDF with a corrected name (optionally saving it to the student's
+  profile). The Certificates badge (a total nobody acts on) is gone.
+
+**Traps hit today**
+- **The panel theme only scans `app/Filament`.** The subheading HTML is built in
+  `app/Actions`, so `text-danger-600` silently failed to compile. Added an
+  `@source` for `app/Actions`. Any class written outside those two folders needs
+  the same.
+- **Filament's notification payload is a text column** — PostgreSQL refuses JSON
+  operators on text. Dedupe reads `viewData` in PHP.
+- **Baseline suite before today's edits: 282 pass, 6 fail** — the theme test
+  (my run forgot to mount `vite.config.js`) and five `CopyToPgsqlTest`, which only
+  run when Postgres is reachable and someone had started the dev database.
+
 ### 2026-09-10 — Grouped sidebar and Final quiz health (uncommitted)
 From support-engine's admin panel, seen in the running app. **Left uncommitted
 for the owner.**

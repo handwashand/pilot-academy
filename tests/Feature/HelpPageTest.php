@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Filament\Pages\AdminGuide;
 use App\Models\User;
+use Database\Seeders\LanguageSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -63,5 +64,16 @@ class HelpPageTest extends TestCase
         $this->get(route('academy.home'))
             ->assertSee('href="'.route('academy.help').'"', false)
             ->assertSee('aria-label="Help"', false);
+    }
+
+    public function test_help_uses_the_current_language_file_when_available(): void
+    {
+        $this->seed(LanguageSeeder::class);
+
+        $this->withHeader('Accept-Language', 'pt-BR,pt;q=0.9,en;q=0.8')
+            ->get(route('academy.help'))
+            ->assertOk()
+            ->assertSee('Como a Pilot Academy funciona')
+            ->assertSee('Primeiros passos');
     }
 }
