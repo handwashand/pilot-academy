@@ -20,7 +20,7 @@
                     <span class="w-12 h-12 flex-none rounded-xl bg-gradient-to-br from-brand to-navy text-white flex items-center justify-center text-2xl">🎓</span>
                     <div class="min-w-0 flex-1">
                         <div class="flex items-center gap-2 flex-wrap">
-                            <h2 class="font-bold text-navy">{{ $certificate->course->title }}</h2>
+                            <h2 class="font-bold text-navy">{{ $certificate->course->translated('title') }}</h2>
                             @if($certificate->isValid())
                                 <span class="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-full bg-green-50 text-ok">{{ __t('academy.certificates.valid') }}</span>
                             @else

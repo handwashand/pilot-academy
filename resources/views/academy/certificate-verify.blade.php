@@ -37,7 +37,7 @@
                     </div>
                     <div class="flex justify-between gap-4 px-6 py-4">
                         <dt class="text-slate-500">{{ __t('academy.certificates.course') }}</dt>
-                        <dd class="font-semibold text-navy text-right">{{ $certificate->course->title }}</dd>
+                        <dd class="font-semibold text-navy text-right">{{ $certificate->course->translated('title') }}</dd>
                     </div>
                     <div class="flex justify-between gap-4 px-6 py-4">
                         <dt class="text-slate-500">{{ __t('academy.certificates.issued_on') }}</dt>

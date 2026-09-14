@@ -29,12 +29,24 @@ trait HasContentTranslations
             return $original;
         }
 
-        $value = $this->contentTranslations()
-            ->where('language_id', $language->id)
-            ->where('field', $field)
-            ->value('value');
+        // Loaded up front by the student pages, so a page of titles is not a
+        // query per title; otherwise asked for directly.
+        $value = $this->relationLoaded('contentTranslations')
+            ? $this->contentTranslations->first(
+                fn (ContentTranslation $translation): bool => (int) $translation->language_id === (int) $language->id && $translation->field === $field,
+            )?->value
+            : $this->contentTranslations()
+                ->where('language_id', $language->id)
+                ->where('field', $field)
+                ->value('value');
 
         return filled($value) ? $value : $original;
+    }
+
+    /** The fields students see that can be written in other languages. */
+    public function translatableFields(): array
+    {
+        return $this->translatable ?? [];
     }
 
     public function setTranslation(string $field, string $code, ?string $value): void
@@ -49,12 +61,16 @@ trait HasContentTranslations
             return;
         }
 
+        // Whatever was loaded is out of date after this.
+        $this->unsetRelation('contentTranslations');
+
         $query = $this->contentTranslations()
             ->where('language_id', $language->id)
             ->where('field', $field);
 
         if (blank($value)) {
             $query->delete();
+
             return;
         }
 

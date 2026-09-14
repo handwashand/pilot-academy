@@ -20,6 +20,8 @@ You land on the **Dashboard** — a quick summary of how many students you have,
 
 **Correct a translation** under **Settings → Translations**. Search for the words you saw on the student site, in any language, click **Correct**, type the new wording in **Correction** and save — students see it straight away. Keep words that start with a colon, such as `:name`, as they are. To go back to the original text, empty **Correction** and save.
 
+**Translate a course or a lesson** with **Translate** at the top of its edit page. There is a tab for each language: the title and description of a course, or the title, summary, lesson text and video transcript of a lesson. Students see the translation in their language; wherever a box is empty they see the English. Certificates and emails stay in English.
+
 ---
 
 ## 2. The menu at a glance

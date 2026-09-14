@@ -382,6 +382,31 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-09-15 — Content translations, all UI strings shipped, language on phones (uncommitted)
+The three items left from the translation work.
+- **Course and lesson content:**
+  - `App\Filament\Actions\TranslateContentAction` sits on EditCourse and
+    EditLesson, with one tab per non-default active language. It saves through
+    `setTranslation()`, where a blank deletes.
+  - Student views (home, course, lesson, final, search, certificates, verify)
+    call `translated()`.
+  - Controllers eager-load `contentTranslations`, and `translated()` reads the
+    loaded relation when present, so there is no query per title.
+  - **Certificate PDF and emails stay English** on purpose: they record what
+    was issued.
+- **Every `__t()` key now ships:**
+  - `lang/{code}/{nav,footer,auth,field,locale,help,guide,admin,core,mail}.php`
+    were generated from LanguageSeeder's arrays, and the seeder now reads them
+    back. The files are the single source.
+  - `auth.php` merges with Laravel's own (FileLoader does
+    `array_replace_recursive` over the framework and app paths).
+  - `StudentSiteTranslationTest` checks every `__t()` key in `app/` and
+    `resources/views`, and key/placeholder parity across all shipped groups.
+- **Language on phones:** the header language `<select>` is `hidden sm:block`,
+  so the layout footer now lists every language as buttons at all widths.
+  Blade: no block PHP section there, because the layout has an inline one
+  above it.
+
 ### 2026-09-14 — Up to five videos per lesson: checked and fixed (uncommitted)
 Owner asked for each video to be YouTube or an upload, with a button to add
 more, up to five, and to "check if this is ok and has no fails". The Videos

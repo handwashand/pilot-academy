@@ -9,7 +9,6 @@ use App\Services\Translator;
 use Database\Seeders\LanguageSeeder;
 use Database\Seeders\PilotQuickStartSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Lang;
 use Tests\TestCase;
@@ -26,10 +25,13 @@ class StudentSiteTranslationTest extends TestCase
 
     public function test_every_language_has_exactly_the_english_keys_and_placeholders(): void
     {
-        $english = Arr::dot(require lang_path('en/academy.php'));
+        $translator = app(Translator::class);
+        $english = $translator->shipped('en');
+
+        $this->assertArrayHasKey('nav.help', $english, 'The header and sign-in strings ship with the code too.');
 
         foreach (self::OTHER_LANGUAGES as $code) {
-            $other = Arr::dot(require lang_path("{$code}/academy.php"));
+            $other = $translator->shipped($code);
 
             $this->assertSame([], array_values(array_diff(array_keys($english), array_keys($other))), "Missing from {$code}.");
             $this->assertSame([], array_values(array_diff(array_keys($other), array_keys($english))), "Not in English, but in {$code}.");
@@ -47,14 +49,16 @@ class StudentSiteTranslationTest extends TestCase
     public function test_every_academy_key_the_code_uses_exists(): void
     {
         $files = array_merge(
-            File::allFiles(resource_path('views/academy')),
+            File::allFiles(resource_path('views')),
             File::allFiles(app_path()),
         );
 
         $used = [];
 
         foreach ($files as $file) {
-            preg_match_all("/__tc?\\('(academy\\.[a-z0-9_.]+)'/", $file->getContents(), $matches);
+            // Every key, not only the student site's: a key that exists only in
+            // the database reads as its own name on a server nobody seeded.
+            preg_match_all("/__tc?\\('([a-z_]+\\.[a-z0-9_.]+)'/", $file->getContents(), $matches);
             $used = [...$used, ...$matches[1]];
         }
 
@@ -64,7 +68,7 @@ class StudentSiteTranslationTest extends TestCase
         $this->assertNotEmpty($used);
 
         foreach ($used as $key) {
-            $this->assertTrue(Lang::hasForLocale($key, 'en'), "{$key} is used but not in lang/en/academy.php.");
+            $this->assertTrue(Lang::hasForLocale($key, 'en'), "{$key} is used but not shipped in lang/en/.");
         }
     }
 
@@ -104,6 +108,15 @@ class StudentSiteTranslationTest extends TestCase
             ->get(route('academy.search', ['q' => 'zzz-nothing']))
             ->assertOk()
             ->assertSee('Nada encontrado.');
+    }
+
+    public function test_the_language_choice_is_in_the_footer_where_a_phone_can_reach_it(): void
+    {
+        $this->seed(LanguageSeeder::class);
+
+        $this->get(route('academy.home'))
+            ->assertOk()
+            ->assertSeeInOrder(['<footer', 'name="locale" value="ru"', 'Русский', '</footer>'], false);
     }
 
     public function test_plural_forms_follow_the_language(): void

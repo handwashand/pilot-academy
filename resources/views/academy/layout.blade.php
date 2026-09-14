@@ -220,6 +220,20 @@
     </main>
 
     <footer class="max-w-6xl mx-auto px-5 py-10 text-center text-sm text-slate-400">
+        {{-- The language choice at every width. The header menu only fits from
+             tablet up, and a student on a phone must still be able to pick. --}}
+        @if(($locale['available'] ?? collect())->count() > 1)
+            <form method="POST" action="{{ route('locale.switch') }}" class="mb-4 flex flex-wrap items-center justify-center gap-1" aria-label="{{ __t('locale.choose') }}">
+                @csrf
+                @foreach($locale['available'] as $language)
+                    <button type="submit" name="locale" value="{{ $language->code }}" lang="{{ $language->code }}"
+                            @if($language->code === ($locale['current'] ?? app()->getLocale())) aria-current="true" @endif
+                            class="inline-flex items-center min-h-11 px-3 rounded-lg {{ $language->code === ($locale['current'] ?? app()->getLocale()) ? 'font-semibold text-navy bg-slate-100' : 'text-slate-500 hover:text-brand hover:bg-slate-50' }}">
+                        {{ $language->native_name }}
+                    </button>
+                @endforeach
+            </form>
+        @endif
         Pilot Academy · {{ __t('footer.internal_training') }} ·
         <a href="{{ route('academy.help') }}" class="hover:text-brand">{{ __t('nav.help') }}</a>
     </footer>

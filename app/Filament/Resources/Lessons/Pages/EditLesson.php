@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Lessons\Pages;
 
 use App\Actions\FindContentProblems;
+use App\Filament\Actions\TranslateContentAction;
 use App\Filament\Resources\Lessons\LessonResource;
 use App\Models\Course;
 use Filament\Actions\DeleteAction;
@@ -23,6 +24,7 @@ class EditLesson extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            TranslateContentAction::make(),
             DeleteAction::make(),
         ];
     }

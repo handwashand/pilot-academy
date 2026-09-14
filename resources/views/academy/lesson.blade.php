@@ -1,10 +1,10 @@
 @extends('academy.layout')
 
-@section('title', __t('academy.meta.lesson_title', ['lesson' => $lesson->title]))
+@section('title', __t('academy.meta.lesson_title', ['lesson' => $lesson->translated('title')]))
 
 @php
-    $metaDescription = \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags($lesson->summary ?: $lesson->content))), 155)
-        ?: __t('academy.meta.lesson_description', ['lesson' => $lesson->title, 'course' => $course->title]);
+    $metaDescription = \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags($lesson->translated('summary') ?: $lesson->translated('content')))), 155)
+        ?: __t('academy.meta.lesson_description', ['lesson' => $lesson->translated('title'), 'course' => $course->translated('title')]);
 @endphp
 
 @section('content')
@@ -18,7 +18,7 @@
     <div class="grid lg:grid-cols-[1fr_280px] gap-6 lg:gap-8">
         {{-- Main column --}}
         <div>
-            <a href="{{ route('academy.course', $course) }}" class="text-sm text-brand font-semibold">&larr; {{ $course->title }}</a>
+            <a href="{{ route('academy.course', $course) }}" class="text-sm text-brand font-semibold">&larr; {{ $course->translated('title') }}</a>
 
             @if(! $course->isPublished() || ! $lesson->isPublished())
                 {{-- Only admins ever reach this page for unpublished content. --}}
@@ -28,9 +28,9 @@
                 </div>
             @endif
 
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-navy mt-2">{{ $lesson->title }}</h1>
-            @if($lesson->summary)
-                <p class="text-slate-500 mt-1">{{ $lesson->summary }}</p>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-navy mt-2">{{ $lesson->translated('title') }}</h1>
+            @if($lesson->translated('summary'))
+                <p class="text-slate-500 mt-1">{{ $lesson->translated('summary') }}</p>
             @endif
             @if($lesson->durationLabel())
                 <p class="text-sm text-slate-400 mt-1">{{ $lesson->durationLabel() }}</p>
@@ -158,7 +158,7 @@
                             <div class="mt-6 rounded-2xl overflow-hidden border border-slate-200 shadow-sm aspect-video bg-black">
                                 <iframe class="w-full h-full"
                                         src="https://www.youtube-nocookie.com/embed/{{ $youtubeId }}?rel=0"
-                                        title="{{ $lesson->title }}"
+                                        title="{{ $lesson->translated('title') }}"
                                         frameborder="0"
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                         allowfullscreen></iframe>
@@ -171,20 +171,20 @@
             {{-- Transcript. Collapsed so it never buries the lesson, but present
                  in the page for anyone who cannot use the audio, wants to skim
                  rather than scrub, or uses Ctrl+F. --}}
-            @if($lesson->transcript)
+            @if($lesson->translated('transcript'))
                 <details class="mt-6 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
                     <summary class="font-bold text-navy cursor-pointer">
                         {{ __t('academy.lesson.transcript') }}
                         <span class="text-sm font-medium text-slate-500">{{ __t('academy.lesson.transcript_hint') }}</span>
                     </summary>
-                    <div class="transcript mt-4 text-slate-700">{{ $lesson->transcript }}</div>
+                    <div class="transcript mt-4 text-slate-700">{{ $lesson->translated('transcript') }}</div>
                 </details>
             @endif
 
             {{-- Lesson text --}}
-            @if($lesson->content)
+            @if($lesson->translated('content'))
                 <div class="prose-lesson mt-6 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-                    {!! $lesson->content !!}
+                    {!! $lesson->translated('content') !!}
                 </div>
             @endif
 
@@ -442,7 +442,7 @@
                                     @endif
                                 </span>
                                 <span class="min-w-0 flex-1">
-                                    <span class="block truncate">{{ $l->title }}</span>
+                                    <span class="block truncate">{{ $l->translated('title') }}</span>
                                     @if($l->durationLabel())
                                         <span class="block text-xs text-slate-400">{{ $l->durationLabel() }}</span>
                                     @endif

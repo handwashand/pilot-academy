@@ -43,8 +43,8 @@
                     <a href="{{ route('academy.course', $course) }}"
                        class="flex items-center gap-3 px-5 py-4 hover:bg-slate-50 active:bg-slate-100">
                         <span class="min-w-0 flex-1">
-                            <span class="block font-bold text-navy">{{ $course->title }}</span>
-                            <span class="block text-sm text-slate-500 line-clamp-2">{{ $course->description }}</span>
+                            <span class="block font-bold text-navy">{{ $course->translated('title') }}</span>
+                            <span class="block text-sm text-slate-500 line-clamp-2">{{ $course->translated('description') }}</span>
                             @if($course->durationLabel())
                                 <span class="block text-xs text-slate-400 mt-1">{{ $course->durationLabel() }}</span>
                             @endif
@@ -66,8 +66,8 @@
                     <a href="{{ route('academy.lesson', [$lessonCourse, $lesson]) }}"
                        class="flex items-center gap-3 px-5 py-4 hover:bg-slate-50 active:bg-slate-100">
                         <span class="min-w-0 flex-1">
-                            <span class="block font-bold text-navy">{{ $lesson->title }}</span>
-                            <span class="block text-sm text-slate-500">{{ $lesson->courses->pluck('title')->implode(' · ') }}</span>
+                            <span class="block font-bold text-navy">{{ $lesson->translated('title') }}</span>
+                            <span class="block text-sm text-slate-500">{{ $lesson->courses->map->translated('title')->implode(' · ') }}</span>
                             @if($lesson->durationLabel())
                                 <span class="block text-xs text-slate-400 mt-1">{{ $lesson->durationLabel() }}</span>
                             @endif

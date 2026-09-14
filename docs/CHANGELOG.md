@@ -24,6 +24,12 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **Courses and lessons in other languages.** **Translate** on a course's or
+  lesson's edit page has a tab for each language — title and description, or
+  title, summary, lesson text and transcript. Students see the translation in
+  their language, and the English wherever none has been written.
+- **Choose a language on a phone.** The languages are listed at the foot of
+  every student page; the menu in the top bar only fits on larger screens.
 - **One lesson in several courses.** On a course's **Lessons** tab, **Add
   existing lesson** now shares the lesson instead of moving it out of its old
   course, and the lesson form has a **Courses** field. It is the same lesson in

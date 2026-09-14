@@ -20,7 +20,8 @@ class AcademyController extends Controller
     {
         $courses = Course::published()
             ->withCount('publishedLessons')
-            ->with('publishedLessons.mediaItem')
+            // Translations up front: the page shows every title in the visitor's language.
+            ->with(['contentTranslations', 'publishedLessons.mediaItem', 'publishedLessons.contentTranslations'])
             ->orderBy('sort_order')
             ->get();
 
@@ -160,7 +161,7 @@ class AcademyController extends Controller
     public function course(Request $request, Course $course)
     {
         abort_unless($course->isVisibleTo($request->user()), 404);
-        $course->load('publishedLessons.mediaItem');
+        $course->load(['contentTranslations', 'publishedLessons.mediaItem', 'publishedLessons.contentTranslations']);
 
         ActivityEvent::record($request->user(), ActivityEvent::TYPE_COURSE_OPENED, $course->title, $request->path());
 
@@ -192,8 +193,9 @@ class AcademyController extends Controller
         abort_unless($course->isVisibleTo($request->user()) && $lesson->isVisibleTo($request->user()), 404);
         abort_unless($course->hasLesson($lesson), 404);
 
-        $lesson->load('questions.options');
-        $lessons = $course->publishedLessons()->get();
+        $lesson->load(['questions.options', 'contentTranslations']);
+        $course->loadMissing('contentTranslations');
+        $lessons = $course->publishedLessons()->with('contentTranslations')->get();
         $currentIndex = $lessons->search(fn ($l) => $l->id === $lesson->id);
         $next = $currentIndex !== false ? $lessons->get($currentIndex + 1) : null;
         $prev = $currentIndex !== false && $currentIndex > 0 ? $lessons->get($currentIndex - 1) : null;
@@ -485,6 +487,7 @@ class AcademyController extends Controller
             $like = '%'.mb_strtolower($term).'%';
 
             $courses = Course::published()
+                ->with('contentTranslations')
                 ->where(fn ($query) => $query
                     ->whereRaw('LOWER(title) LIKE ?', [$like])
                     ->orWhereRaw('LOWER(description) LIKE ?', [$like]))
@@ -501,7 +504,7 @@ class AcademyController extends Controller
                     // until it existed, spoken content matched nothing.
                     ->orWhereRaw('LOWER(lessons.transcript) LIKE ?', [$like]))
                 // Listed once, under the first live course it is in.
-                ->with(['courses' => fn ($query) => $query->published()->orderBy('courses.sort_order')])
+                ->with(['contentTranslations', 'courses' => fn ($query) => $query->published()->orderBy('courses.sort_order')->with('contentTranslations')])
                 ->orderBy('sort_order')
                 ->limit(30)
                 ->get();

@@ -1,6 +1,6 @@
 @extends('academy.layout')
 
-@section('title', __t('academy.meta.final_title', ['course' => $course->title]))
+@section('title', __t('academy.meta.final_title', ['course' => $course->translated('title')]))
 
 @section('content')
     @php
@@ -9,11 +9,11 @@
         $needed = isset($result) ? (int) ceil($course->pass_percent / 100 * $result['total']) : null;
     @endphp
 
-    <a href="{{ route('academy.course', $course) }}" class="text-sm text-brand font-semibold">&larr; {{ $course->title }}</a>
+    <a href="{{ route('academy.course', $course) }}" class="text-sm text-brand font-semibold">&larr; {{ $course->translated('title') }}</a>
 
     <div class="max-w-2xl">
         <h1 class="text-2xl sm:text-3xl font-extrabold text-navy mt-2">{{ __t('academy.final.heading') }}</h1>
-        <p class="text-slate-500 mt-1">{{ $course->title }}</p>
+        <p class="text-slate-500 mt-1">{{ $course->translated('title') }}</p>
 
         {{-- Result banner (after a submitted attempt) --}}
         @if($result)

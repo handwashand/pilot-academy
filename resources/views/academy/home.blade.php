@@ -71,21 +71,21 @@
             if ($next['kind'] === 'final_quiz') {
                 $nextUrl = route('academy.final.show', $next['course']);
                 $nextEyebrow = __t('academy.home.next_final');
-                $nextTitle = $next['course']->title;
+                $nextTitle = $next['course']->translated('title');
                 $nextDetail = __tc('academy.home.next_final_detail', $next['total'], ['percent' => $next['course']->pass_percent])
                     .($next['attemptsLeft'] !== null ? ' · '.__tc('academy.common.attempts_left', $next['attemptsLeft']) : '');
                 $nextButton = __t('academy.home.take_final');
             } elseif ($next['kind'] === 'start') {
                 $nextUrl = route('academy.lesson', [$next['course'], $next['lesson']]);
                 $nextEyebrow = __t('academy.home.next_start');
-                $nextTitle = $next['lesson']->title;
-                $nextDetail = $next['course']->title;
+                $nextTitle = $next['lesson']->translated('title');
+                $nextDetail = $next['course']->translated('title');
                 $nextButton = __t('academy.home.begin');
             } else {
                 $nextUrl = route('academy.lesson', [$next['course'], $next['lesson']]);
                 $nextEyebrow = __t('academy.home.next_continue');
-                $nextTitle = $next['lesson']->title;
-                $nextDetail = $next['course']->title;
+                $nextTitle = $next['lesson']->translated('title');
+                $nextDetail = $next['course']->translated('title');
                 $nextButton = __t('academy.home.resume');
             }
         @endphp
@@ -152,7 +152,7 @@
                 <a href="{{ route('academy.final.show', $last['course']) }}"
                    class="flex items-center gap-3 border-t border-slate-100 px-5 py-3 min-h-11 hover:bg-slate-50 active:bg-slate-100 rounded-b-2xl">
                     <span class="min-w-0 flex-1 text-sm">
-                        <span class="block text-slate-500">{{ __t('academy.home.last_final', ['course' => $last['course']->title]) }}</span>
+                        <span class="block text-slate-500">{{ __t('academy.home.last_final', ['course' => $last['course']->translated('title')]) }}</span>
                         <span class="block font-semibold {{ $last['passed'] ? 'text-green-700' : 'text-amber-700' }}">
                             {{ $last['percent'] }}% · {{ $last['passed'] ? __t('academy.home.passed') : __t('academy.home.not_passed_yet') }}
                             @if(! $last['passed'] && $last['attemptsLeft'] !== null)
@@ -185,8 +185,8 @@
                                 <span class="text-[11px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full bg-blue-50 text-brand">{{ __t('academy.common.for_audience', ['audience' => __t('academy.common.audience.'.$course->audience)]) }}</span>
                             @endif
                         </div>
-                        <h2 class="text-xl font-extrabold text-navy">{{ $course->title }}</h2>
-                        <p class="text-slate-500 mt-1 max-w-2xl">{{ $course->description }}</p>
+                        <h2 class="text-xl font-extrabold text-navy">{{ $course->translated('title') }}</h2>
+                        <p class="text-slate-500 mt-1 max-w-2xl">{{ $course->translated('description') }}</p>
                         <div class="mt-2 flex flex-wrap items-center gap-2 text-sm text-slate-500">
                             <span>{{ __tc('academy.common.lessons', $total) }}</span>
                             @if($course->durationLabel())
@@ -199,7 +199,7 @@
                         <div class="text-sm text-slate-500 mb-1">{{ __t('academy.common.lessons_done', ['done' => $done, 'total' => $total]) }}</div>
                         <div class="w-44 h-2 rounded-full bg-slate-100 overflow-hidden"
                              role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $pct }}"
-                             aria-label="{{ __t('academy.common.course_progress_aria', ['course' => $course->title, 'done' => $done, 'total' => $total]) }}">
+                             aria-label="{{ __t('academy.common.course_progress_aria', ['course' => $course->translated('title'), 'done' => $done, 'total' => $total]) }}">
                             <div class="h-full bg-ok" style="width: {{ $pct }}%"></div>
                         </div>
                     </div>
@@ -213,7 +213,7 @@
                        class="group bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition">
                         <div class="h-28 relative flex items-center justify-center bg-gradient-to-br from-brand to-navy overflow-hidden">
                             @if($lesson->image_url)
-                                <img src="{{ $lesson->image_url }}" alt="{{ $lesson->title }}" class="absolute inset-0 w-full h-full object-cover">
+                                <img src="{{ $lesson->image_url }}" alt="{{ $lesson->translated('title') }}" class="absolute inset-0 w-full h-full object-cover">
                             @else
                                 <span class="text-white/90 text-4xl font-extrabold">{{ $i + 1 }}</span>
                             @endif
@@ -232,8 +232,8 @@
                                 @endif
                                 <span class="text-[11px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded bg-violet-50 text-violet-600">{{ __t('academy.common.quiz') }}</span>
                             </div>
-                            <h3 class="font-bold text-navy group-hover:text-brand transition">{{ $lesson->title }}</h3>
-                            <p class="text-sm text-slate-500 mt-1 line-clamp-2">{{ $lesson->summary }}</p>
+                            <h3 class="font-bold text-navy group-hover:text-brand transition">{{ $lesson->translated('title') }}</h3>
+                            <p class="text-sm text-slate-500 mt-1 line-clamp-2">{{ $lesson->translated('summary') }}</p>
                             @if($lesson->durationLabel())
                                 <p class="text-xs text-slate-400 mt-2">{{ $lesson->durationLabel() }}</p>
                             @endif

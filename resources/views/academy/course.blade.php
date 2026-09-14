@@ -1,10 +1,10 @@
 @extends('academy.layout')
 
-@section('title', __t('academy.meta.course_title', ['course' => $course->title]))
+@section('title', __t('academy.meta.course_title', ['course' => $course->translated('title')]))
 
 @php
-    $metaDescription = \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags($course->description))), 155)
-        ?: __t('academy.meta.course_description', ['course' => $course->title]);
+    $metaDescription = \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags($course->translated('description')))), 155)
+        ?: __t('academy.meta.course_description', ['course' => $course->translated('title')]);
 @endphp
 
 @section('content')
@@ -36,8 +36,8 @@
                 <span class="text-[11px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full bg-blue-50 text-brand">{{ __t('academy.common.for_audience', ['audience' => __t('academy.common.audience.'.$course->audience)]) }}</span>
             @endif
         </div>
-        <h1 class="text-2xl font-extrabold text-navy">{{ $course->title }}</h1>
-        <p class="text-slate-500 mt-1 max-w-2xl">{{ $course->description }}</p>
+        <h1 class="text-2xl font-extrabold text-navy">{{ $course->translated('title') }}</h1>
+        <p class="text-slate-500 mt-1 max-w-2xl">{{ $course->translated('description') }}</p>
 
         {{-- What the course costs in time, before anyone commits to it. --}}
         <div class="mt-3 flex flex-wrap items-center gap-2 text-sm text-slate-500">
@@ -80,7 +80,7 @@
                 <div class="min-w-0 flex-1">
                     <h2 class="text-xl font-extrabold text-navy">{{ __t('academy.course.complete') }}</h2>
                     <p class="text-slate-500 text-sm mt-1">
-                        {{ __tc('academy.course.finished_all', $total, ['course' => $course->title]) }}
+                        {{ __tc('academy.course.finished_all', $total, ['course' => $course->translated('title')]) }}
                         @if($courseDuration)
                             {{ __t('academy.course.training_done', ['duration' => $courseDuration]) }}
                         @endif
@@ -96,7 +96,7 @@
                         @if($nextCourse)
                             <a href="{{ route('academy.course', $nextCourse) }}"
                                class="inline-flex justify-center rounded-lg bg-brand text-white font-semibold px-6 py-3 hover:bg-blue-700">
-                                {{ __t('academy.course.next_course', ['course' => $nextCourse->title]) }} &rarr;
+                                {{ __t('academy.course.next_course', ['course' => $nextCourse->translated('title')]) }} &rarr;
                             </a>
                         @else
                             <a href="{{ route('academy.home') }}"
@@ -157,7 +157,7 @@
                class="group bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition">
                 <div class="h-28 relative flex items-center justify-center bg-gradient-to-br from-brand to-navy overflow-hidden">
                     @if($lesson->image_url)
-                        <img src="{{ $lesson->image_url }}" alt="{{ $lesson->title }}" class="absolute inset-0 w-full h-full object-cover">
+                        <img src="{{ $lesson->image_url }}" alt="{{ $lesson->translated('title') }}" class="absolute inset-0 w-full h-full object-cover">
                     @else
                         <span class="text-white/90 text-4xl font-extrabold">{{ $i + 1 }}</span>
                     @endif
@@ -169,8 +169,8 @@
                     @endif
                 </div>
                 <div class="p-5">
-                    <h3 class="font-bold text-navy group-hover:text-brand transition">{{ $lesson->title }}</h3>
-                    <p class="text-sm text-slate-500 mt-1 line-clamp-2">{{ $lesson->summary }}</p>
+                    <h3 class="font-bold text-navy group-hover:text-brand transition">{{ $lesson->translated('title') }}</h3>
+                    <p class="text-sm text-slate-500 mt-1 line-clamp-2">{{ $lesson->translated('summary') }}</p>
                     @if($lesson->durationLabel())
                         <p class="text-xs text-slate-400 mt-2">{{ $lesson->durationLabel() }}</p>
                     @endif
