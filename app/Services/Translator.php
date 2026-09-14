@@ -6,6 +6,7 @@ use App\Models\Language;
 use App\Models\Translation;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
@@ -15,20 +16,55 @@ class Translator
 
     public function translate(string $key, array $replace = [], ?string $locale = null): string
     {
+        return $this->replace($this->line($key, $locale), $replace);
+    }
+
+    /**
+     * A line with plural forms, separated by `|` ("урок|урока|уроков"). The
+     * form is picked by Laravel's own rules for the language, so Russian gets
+     * three forms and English two. `:count` is filled in.
+     */
+    public function choice(string $key, int $count, array $replace = [], ?string $locale = null): string
+    {
         $locale ??= App::getLocale();
-        $default = $this->defaultCode();
 
-        $value = $this->bundle($locale)[$key] ?? null;
+        $line = app('translator')->getSelector()->choose($this->line($key, $locale), $count, $locale);
 
-        if (blank($value) && $locale !== $default) {
-            $value = $this->bundle($default)[$key] ?? null;
+        return $this->replace($line, ['count' => $count, ...$replace]);
+    }
+
+    /**
+     * The raw line, first match wins:
+     * - text saved for this language in the translations table, where admins
+     *   override;
+     * - the text shipped in lang/{code}/*.php;
+     * - the same two for the default language;
+     * - the key made readable.
+     *
+     * Shipped text means a page reads correctly straight after `git pull`.
+     * The deploy runs no seeders.
+     */
+    private function line(string $key, ?string $locale): string
+    {
+        $locale ??= App::getLocale();
+
+        foreach (array_unique([$locale, $this->defaultCode()]) as $code) {
+            $saved = $this->bundle($code)[$key] ?? null;
+
+            if (filled($saved)) {
+                return (string) $saved;
+            }
+
+            if (Lang::hasForLocale($key, $code)) {
+                $shipped = Lang::get($key, [], $code, false);
+
+                if (is_string($shipped) && filled($shipped)) {
+                    return $shipped;
+                }
+            }
         }
 
-        if (blank($value)) {
-            $value = Str::headline(Str::afterLast($key, '.'));
-        }
-
-        return $this->replace((string) $value, $replace);
+        return Str::headline(Str::afterLast($key, '.'));
     }
 
     public function bundle(?string $locale = null): array

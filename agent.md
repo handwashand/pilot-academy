@@ -66,18 +66,21 @@ would have designed it differently.
 
 ### Working order
 
-1. **Inspect.** Find the models, controllers, actions, traits, Filament
+1. **Read first, every time.** Before making any change, open and read the
+   files, assets, migrations, docs and tests that the request touches. Do not
+   edit from memory, from filenames alone, or from a guessed pattern.
+2. **Inspect.** Find the models, controllers, actions, traits, Filament
    resources, routes, migrations and tests that the change touches. Search for
    similar functionality before creating anything new.
-2. **Trace.** Follow the feature from the screen through the backend to the
+3. **Trace.** Follow the feature from the screen through the backend to the
    database. Note what depends on it.
-3. **Plan.** Choose the smallest reliable change. For anything non-trivial, say
+4. **Plan.** Choose the smallest reliable change. For anything non-trivial, say
    which files you expect to touch.
-4. **Implement.** Make focused changes in the architecture already used.
-5. **Verify.** Run the tests and checks (see [Verifying](#verifying)).
-6. **Review.** Read the final diff for regressions, security holes and needless
+5. **Implement.** Make focused changes in the architecture already used.
+6. **Verify.** Run the tests and checks (see [Verifying](#verifying)).
+7. **Review.** Read the final diff for regressions, security holes and needless
    complexity. Every changed line should have a reason.
-7. **Report.** Say what changed and what was verified.
+8. **Report.** Say what changed and what was verified.
 
 ### Simplicity and existing code first
 
@@ -150,6 +153,11 @@ Security is part of the implementation.
 ### Frontend and UX
 
 - Respect the existing visual language, and do not redesign unrelated screens.
+- **Never change the design of the logo, favicon, lockup, mark, colours or any
+  brand artwork unless the owner explicitly asks for that specific design
+  change or supplies replacement assets.** Fixing references, cache-busting,
+  sizing, file paths or deployment issues must preserve the existing artwork
+  exactly.
 - Build more than the happy path: loading, empty, error, success and disabled
   states, plus long content and double submits.
 - Check what happens with no data, hundreds of records, a deleted record, or
@@ -369,15 +377,24 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-09-14 — Agent rules tightened: read first, preserve brand assets (uncommitted)
+- Added a top-level working-order rule: **read first, every time**. Future
+  agents must open the relevant files/assets/tests before editing, not work from
+  memory or guessed patterns.
+- Added an explicit brand rule: do not change the design of the logo, favicon,
+  lockup, mark, colours or any brand artwork unless the owner specifically asks
+  for that design change or supplies replacement assets. Reference/cache/path
+  fixes must preserve the existing artwork exactly.
+
 ### 2026-09-14 — Why today's deploy showed old code and the old favicon
 Nothing here was broken. The server pulls `laravel`, and `origin/laravel` was
 still at `e3253197` (2026-09-08, version 2.0.0).
 - **Unmerged work:** everything since is on `feature/support-engine-ports`,
   13 commits ahead and not merged: profiles, content health, the 2.1.0 changelog
   and more.
-- **Favicon fix not committed:** it is a real `favicon.ico` (the stock one is
-  0 bytes), plus `favicon-32x32.png`, `apple-touch-icon.png` and `?v=` URLs in
-  the layout. Merging the branch alone would not bring it.
+- **Favicon cache behavior:** keep the existing Pilot mark artwork. The app may
+  version favicon URLs so browsers refresh them, but do not redraw, simplify or
+  regenerate the logo/favicon unless the owner supplies replacement assets.
 - **To ship:**
   1. Commit, including `public/`.
   2. Push, and let CI rebuild `public/build`.
@@ -393,12 +410,11 @@ still at `e3253197` (2026-09-08, version 2.0.0).
   `e3253197`, and the feature branch has the 2.1.0 work ahead of it. A deploy
   from `laravel` will not show those branch-only changes until they are merged
   or the server is intentionally pointed at the feature branch.
-- Fixed the stale favicon path: `public/favicon.ico` was a zero-byte stock file,
-  and browsers request it directly even when Blade links an SVG. Added real
-  `favicon.ico`, `favicon-32x32.png`, and `apple-touch-icon.png`; updated the
-  public layout and Filament panel favicon to versioned URLs. Verified locally:
-  `/favicon.ico` returns `image/vnd.microsoft.icon`, and `/login` plus
-  `/admin/login` render versioned favicon links.
+- Fixed the stale favicon references without changing the logo artwork. The
+  public layout and Filament panel now use the existing `img/pilot-mark.svg`
+  with a version query so browser caches refresh while the design stays the
+  same. Do not redraw or simplify the Pilot mark/favicon; use the existing brand
+  asset unless the owner supplies a replacement.
 
 ### 2026-09-14 — What's new: top-bar shortcut, PDFs open in a tab (uncommitted)
 The only two pieces of support-engine's What's new that Pilot Academy lacked.

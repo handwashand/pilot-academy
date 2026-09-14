@@ -120,9 +120,9 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Fixed
 
-- **The browser icon now updates reliably after deploy.** The empty stock
-  `favicon.ico` has been replaced with real icon files, and the public site and
-  admin panel point to versioned favicon URLs so cached old icons are refreshed.
+- **The browser icon now keeps the existing Pilot mark while refreshing after
+  deploy.** The public site and admin panel point to versioned favicon URLs so
+  cached old icons are refreshed without changing the logo artwork.
 - **The admin panel opens on PostgreSQL again when the notification bell is on.**
   The notification payload is now stored as JSON, so Filament can count unread
   alerts without a database error.

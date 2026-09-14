@@ -10,10 +10,8 @@
     @endisset
 
     {{-- Versioned so browsers replace an old cached favicon after deploy. --}}
-    <link rel="icon" href="{{ asset('favicon.ico') }}?v={{ config('app.version') }}" sizes="any">
     <link rel="icon" type="image/svg+xml" href="{{ asset('img/pilot-mark.svg') }}?v={{ config('app.version') }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}?v={{ config('app.version') }}">
-    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}?v={{ config('app.version') }}">
+    <link rel="apple-touch-icon" href="{{ asset('img/pilot-mark.svg') }}?v={{ config('app.version') }}">
     {{-- Navy, the brand's dark ink. This was #0284c7 — the blue the mark used
          before it turned amber — which is no longer in the palette at all. --}}
     <meta name="theme-color" content="#0a2540">

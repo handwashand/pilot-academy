@@ -70,7 +70,7 @@ class AdminPanelProvider extends PanelProvider
             // sidebar size it sat below the 24px "Sign in" heading in the visual
             // hierarchy — the utility label out-ranking the brand.
             ->brandLogoHeight(fn (): string => request()->routeIs('filament.*.auth.*') ? '3rem' : '1.75rem')
-            ->favicon(asset('favicon.ico').'?v='.config('app.version'))
+            ->favicon(asset('img/pilot-mark.svg').'?v='.config('app.version'))
             // The bell, top right. First use: telling a course's owner when a
             // change leaves it broken for students (App\Actions\NotifyContentOwners).
             ->databaseNotifications()
