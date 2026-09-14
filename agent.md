@@ -382,6 +382,30 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-09-14 — Up to five videos per lesson: checked and fixed (uncommitted)
+Owner asked for each video to be YouTube or an upload, with a button to add
+more, up to five, and to "check if this is ok and has no fails". The Videos
+repeater (`lessons.video_sources`, JSON) had been committed in `4df569a6`.
+**It was broken:**
+- **Every lesson page returned 500, and search too.** Inline PHP directives were
+  placed above block ones. See the Blade trap under Traps.
+- **Deleted videos came back.** Emptying the list fell back to the old
+  `youtube_url` / `video_path` columns. Now `Lesson::saving` empties those
+  columns whenever `video_sources` is saved.
+- **Old lessons played both videos.** The fallback now shows one video, as
+  before: the upload if there is one, otherwise the link. The form loads that
+  same video.
+- **Choosing a Source did nothing until the next request.** It is now `live()`.
+- **Empty videos saved.** Each item's link or file is now required for its
+  type.
+- **Two uploads overwrote each other's saved position.** Only the first uploaded
+  video resumes and saves it.
+- **Broken links inside the list were never flagged.** Content health and the
+  publish check use `Lesson::hasUnplayableYoutubeLink()` over all entries.
+- **Tests:** `YoutubeLinkTest` form tests moved to the list, and a new
+  `LessonVideoListTest` covers order, the limit of five, required fields,
+  removal, old lessons, and broken links.
+
 ### 2026-09-14 — Lessons shared between courses; Translations for every admin (uncommitted)
 Owner's requests: "one lesson should be able to be associated or selected from
 more than one course without any problems", and a Translations page in the
@@ -1271,6 +1295,17 @@ only ternaries: `@php($questionCount = $lesson->questions->count())` also emitte
 a raw, unterminated `<?php(` and swallowed the rest of the template, while other
 `@php(...)` lines in the *same file* compiled fine. The page 500s and
 `view:cache` still reports success. Always use the block form.
+
+Why, paid for again on 2026-09-14 (every lesson page, and search, returned 500):
+Blade stores block PHP sections *first*, with a lazy match from the directive
+to the next `@endphp`, before it compiles anything else or removes comments.
+- **An inline form placed above a block** is taken as the start of a block. It
+  swallows every line down to that block's end marker.
+- **The directive's name written inside a Blade comment** does exactly the
+  same, because comments are still there when this match runs. Describe it in
+  words instead.
+
+Grep a view for the directive before calling it done.
 
 **A Blade directive glued to the preceding word is not compiled.**
 `...lessons@if($x)` leaves `@if` as literal text while its `@endif` compiles, so

@@ -77,7 +77,7 @@ The path is always the same: **make a course → fill it with lessons → turn o
 
 1. In the left menu, click **Lessons**, then **New lesson**.
 2. Choose the **Courses** the lesson belongs in — one or more — and give it a title.
-3. Add a video: paste a link into **YouTube link**, or use **Or upload a video file**.
+3. Add videos under **Videos**: click **Add video**, then choose the **Source** — **YouTube** to paste a link, or **Upload** to add a video file. Click **Add video** again for another, up to five. Students see them in the order listed; drag to reorder, or remove one with its bin icon.
    The link must be **one video** — open it on YouTube and copy the address bar.
    Normal, Shorts and live video links all work; a playlist or channel link is
    refused, because there would be no video to show.
