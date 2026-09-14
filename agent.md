@@ -135,6 +135,8 @@ Security is part of the implementation.
 - **Always consider:**
   - authorisation both server-side and in the query (policies *and* scoped
     lists)
+  - sanitise all untrusted input before using it, including request data,
+    URL/query parameters, file metadata and text fields; never trust raw input
   - input validation, and output escaping and XSS
   - CSRF and mass assignment
   - file uploads and rate limiting
@@ -143,7 +145,8 @@ Security is part of the implementation.
 
 ### Backend
 
-- Validate input.
+- Validate input and sanitise untrusted values before storing, querying or
+  rendering them.
 - Handle realistic failures.
 - Avoid N+1 queries and repeated queries per request. For example, navigation
   badges run on every panel page.

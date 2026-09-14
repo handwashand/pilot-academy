@@ -134,7 +134,7 @@ return [
         'transcript_hint' => '— léela en lugar de ver el video',
         'documentation' => 'Documentación',
         'documentation_intro' => 'Más información en la guía del usuario de Pilot.',
-        'knowledge_check' => 'Comprobación de conocimientos',
+        'knowledge_check' => 'Prueba de conocimiento',
         'knowledge_intro' => 'Responde correctamente todas las preguntas para completar esta lección.',
         'questions' => ':count pregunta|:count preguntas',
         'time_limit_short' => 'límite de :minutes min',
