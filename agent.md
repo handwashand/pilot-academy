@@ -381,6 +381,22 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-09-14 — Panel language button, Student site in the account menu (uncommitted)
+Owner's request: a language button in the panel, "not the long dropdown", and a
+way from the admin account menu to the learner interface.
+- **Language button:** `resources/views/filament/topbar-language-switcher.blade.php`
+  on `PanelsRenderHook::USER_MENU_AFTER`. It is a globe plus the current code,
+  with an Alpine menu of native names, one POST form each. Ported from
+  support-engine.
+  - It posts to the student site's `locale.switch`, so the session and
+    `users.locale` are written in one place.
+  - It is hidden when fewer than two languages are active, which means none
+    until `LanguageSeeder` has run.
+- **Account menu:** a `studentSite` item links to `route('academy.home')` and
+  is visible to admins and creators. Filament keys user menu items by action
+  name, so the array key must match `Action::make()`.
+- Pinned in `AccountMenuTest`.
+
 ### 2026-09-14 — Student site translated: page text now follows the language (uncommitted)
 Reported as "the contents do not change on the pages". The header, sign-in and
 Help were translated; every other student page was hard-coded English.

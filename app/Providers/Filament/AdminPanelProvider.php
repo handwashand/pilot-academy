@@ -43,6 +43,12 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Guide')
                     ->icon(Heroicon::OutlinedBookOpen)
                     ->url(fn (): string => AdminGuide::getUrl()),
+                // The way back to what students see, to check a change as a
+                // student would meet it.
+                'studentSite' => Action::make('studentSite')
+                    ->label('Student site')
+                    ->icon(Heroicon::OutlinedAcademicCap)
+                    ->url(fn (): string => route('academy.home')),
             ])
             ->colors([
                 'primary' => Color::Amber,
@@ -104,6 +110,13 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::GLOBAL_SEARCH_AFTER,
                 fn (): string => view('filament.topbar-whats-new')->render(),
+            )
+            // The language button, at the far right past the account menu.
+            // USER_MENU_AFTER stays inside the top bar's control cluster;
+            // TOPBAR_END would sit beside it and shift the whole bar.
+            ->renderHook(
+                PanelsRenderHook::USER_MENU_AFTER,
+                fn (): string => view('filament.topbar-language-switcher')->render(),
             )
             ->sidebarCollapsibleOnDesktop()
             ->maxContentWidth('full')

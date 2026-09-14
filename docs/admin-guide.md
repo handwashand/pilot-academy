@@ -14,6 +14,10 @@ You land on the **Dashboard** — a quick summary of how many students you have,
 
 **Change your own name, email or password** from the account menu: click your initials in the top right → **Profile**. You are asked for your current password before a new one is saved. This works for creators too, who cannot open **Users**.
 
+**See the academy as a student does:** account menu → **Student site**.
+
+**Change the language** with the language button at the far right of the top bar — it shows the current code, such as **EN**. Pick a language from its menu; the whole panel reloads in it, and your choice is saved to your account, so the student site follows it too.
+
 ---
 
 ## 2. The menu at a glance

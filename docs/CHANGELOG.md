@@ -84,6 +84,11 @@ Add a new entry here whenever something visible to admins or students changes.
   the PDF with the same number, and can save the corrected name for the student's
   future certificates. This used to need a developer.
 - **Guide is in the admin account menu too** (your initials, top right).
+- **Student site in the admin account menu**, to see the academy the way
+  students do.
+- **A language button in the admin top bar.** It shows the current language
+  code (such as **EN**) and opens a short menu of languages. The choice is saved
+  to your account, so the panel and the student site both follow it.
 - **The whole student site reads in the student's language.** Home, courses,
   lessons, the final quiz, certificates, search, profile, sign-up and invite
   pages now follow the language chosen in the top bar, or the browser's

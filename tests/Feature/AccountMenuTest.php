@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Filament\Pages\AdminGuide;
 use App\Models\User;
+use Database\Seeders\LanguageSeeder;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -81,5 +82,50 @@ class AccountMenuTest extends TestCase
 
         $this->assertTrue($items->has('guide'), 'The admin account menu should have a Guide item.');
         $this->assertSame(AdminGuide::getUrl(), $items->get('guide')->getUrl());
+    }
+
+    public function test_the_admin_account_menu_links_to_the_student_site(): void
+    {
+        $this->actingAs($this->user(User::ROLE_CREATOR));
+
+        $panel = Filament::getPanel('admin');
+        Filament::setCurrentPanel($panel);
+
+        $items = collect($panel->getUserMenuItems());
+
+        // Filament keys menu items by action name.
+        $this->assertTrue($items->has('studentSite'), 'The admin account menu should link to the student site.');
+        $this->assertSame(route('academy.home'), $items->get('studentSite')->getUrl());
+    }
+
+    public function test_the_admin_top_bar_has_a_compact_language_button(): void
+    {
+        $this->seed(LanguageSeeder::class);
+        $admin = $this->user(User::ROLE_ADMIN);
+
+        $this->actingAs($admin)
+            ->get('/admin')
+            ->assertOk()
+            ->assertSee('data-language-switcher', false)
+            // A button with the current code, not a <select> of every name.
+            ->assertDontSee('<select id="locale-switcher"', false)
+            ->assertSee('action="'.route('locale.switch').'"', false)
+            ->assertSee('Русский')
+            ->assertSee('Português (Brasil)');
+
+        // Choosing a language from the panel returns to the panel, in it.
+        $this->from('/admin')
+            ->post(route('locale.switch'), ['locale' => 'fr'])
+            ->assertRedirect('/admin');
+
+        $this->assertSame('fr', $admin->fresh()->locale);
+    }
+
+    public function test_one_language_shows_no_language_button(): void
+    {
+        $this->actingAs($this->user(User::ROLE_ADMIN))
+            ->get('/admin')
+            ->assertOk()
+            ->assertDontSee('data-language-switcher', false);
     }
 }
