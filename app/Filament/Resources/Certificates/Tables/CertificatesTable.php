@@ -7,6 +7,8 @@ use App\Models\Certificate;
 use App\Models\Company;
 use App\Models\QuizAttempt;
 use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -146,11 +148,11 @@ class CertificatesTable
                         'update_profile' => true,
                     ])
                     ->schema([
-                        \Filament\Forms\Components\TextInput::make('name')
+                        TextInput::make('name')
                             ->label('Name on the certificate')
                             ->required()
                             ->maxLength(255),
-                        \Filament\Forms\Components\Toggle::make('update_profile')
+                        Toggle::make('update_profile')
                             ->label("Also use this name on the student's future certificates")
                             ->helperText('Saves it as the certificate name on their profile, where they can change it too.'),
                     ])

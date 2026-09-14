@@ -45,11 +45,15 @@ class AccountMenuTest extends TestCase
             ->assertDontSee('href="'.url('/admin').'"', false);
     }
 
-    public function test_staff_also_get_a_link_to_the_admin_panel(): void
+    public function test_only_admins_get_a_link_to_the_admin_panel(): void
     {
-        $this->actingAs($this->user(User::ROLE_CREATOR))
+        $this->actingAs($this->user(User::ROLE_ADMIN))
             ->get(route('academy.home'))
             ->assertSee('href="'.url('/admin').'"', false);
+
+        $this->actingAs($this->user(User::ROLE_CREATOR))
+            ->get(route('academy.home'))
+            ->assertDontSee('href="'.url('/admin').'"', false);
     }
 
     public function test_a_guest_has_no_account_menu(): void

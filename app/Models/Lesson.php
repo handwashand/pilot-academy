@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Actions\NotifyContentOwners;
 use App\Models\Concerns\HasContentTranslations;
 use App\Models\Concerns\HasDuration;
 use App\Models\Concerns\HasPublishStatus;
@@ -195,14 +196,14 @@ class Lesson extends Model
     protected static function booted(): void
     {
         static::saved(function (Lesson $lesson): void {
-            \App\Actions\NotifyContentOwners::afterRequest($lesson->course_id);
+            NotifyContentOwners::afterRequest($lesson->course_id);
 
             // Moved out of a course: the course it left may now be empty.
             if ($lesson->wasChanged('course_id')) {
-                \App\Actions\NotifyContentOwners::afterRequest($lesson->getPrevious()['course_id'] ?? null);
+                NotifyContentOwners::afterRequest($lesson->getPrevious()['course_id'] ?? null);
             }
         });
 
-        static::deleted(fn (Lesson $lesson) => \App\Actions\NotifyContentOwners::afterRequest($lesson->course_id));
+        static::deleted(fn (Lesson $lesson) => NotifyContentOwners::afterRequest($lesson->course_id));
     }
 }

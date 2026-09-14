@@ -1,801 +1,264 @@
-# Agent reminder
+# Pilot Academy — agent guide
 
-Working notes for whoever picks this repo up next — human or AI. It exists so a
-new session can find out what was done, what is half-finished, and which traps
-have already cost someone an afternoon.
+The one file for whoever picks this repo up next, human or AI: **the rules**
+(how to work here) and **the memory** (what was done, what is half-finished,
+and which traps have already cost someone an afternoon). Read it before you
+start anything.
 
-`CLAUDE.md` is the rulebook. This file is the memory.
+`CLAUDE.md` only points here, because Claude Code loads that file on its own.
+Do not add rules there. Put them in this file.
+
+**Contents:** [Project](#project) · [How to work](#how-to-work) ·
+[Standing instructions](#standing-instructions--read-before-you-start-follow-before-you-finish) ·
+[Invariants](#invariants--do-not-simplify-these-away) ·
+[Where things stand](#where-things-stand) · [Work log](#work-log) ·
+[Verifying](#verifying) · [Writing the guides](#writing-the-guides) ·
+[Traps](#traps-already-paid-for)
+
+---
+
+## Project
+
+Internal training LMS for partners' students. **Laravel 13 + Filament 5** admin
+panel at `/admin`, Blade + Tailwind public student site, **PostgreSQL** in
+production (the test suite uses SQLite in memory). Requires **PHP 8.4**.
+
+- **Content model:** `Course` → `Lesson` → `Question` → `Option`. Courses and
+  lessons carry `draft | published | archived`. Lessons have a YouTube link or an
+  uploaded video file. Quizzes are graded on the server. A course may add a
+  final quiz, and passing it issues a certificate (PDF, dompdf).
+- **People:** `users.role` is `admin`, `creator` or `learner`.
+  - Admins run everything.
+  - Creators own `Product`s and reach only those products' courses.
+  - Learners (partners' students) belong to a `Company`.
+  - Admins and creators use the panel. Learners use the student site.
+- **Progress** is saved per account when signed in, or in the session for
+  anonymous visitors.
+- **Sign-in:** email and password, plus personal magic links and invite links
+  (`/join`). An account made by link has no password of its own until the
+  student sets one (`users.password_set_at`).
+- **Languages:** the student site is English-first. UI strings go through
+  `__t()` (`App\Services\Translator`, the `translations` table). Course and
+  lesson fields can be translated through `HasContentTranslations`.
+- **CSS:** Tailwind is compiled by **Vite** into `public/build/`.
+  - The student site's entry is `resources/css/app.css`, with the brand palette
+    in its `@theme`. The panel's theme is `resources/css/filament/admin/theme.css`.
+  - CI builds the bundle (`.github/workflows/build-assets.yml`), and the result
+    is **committed**, because the `git pull` deploy has no build step.
+  - If the bundle is missing locally, the student layout falls back to the
+    Tailwind CDN. Production always serves the committed CSS.
+- **Deploy:** the server pulls `laravel`, then runs
+  `php8.4 artisan migrate --force` and `php8.4 artisan optimize`.
+  The server's plain `php` is 8.3.
+- **Sister project:** `support-engine` (Support Training Hub) uses the same
+  stack, and features are sometimes ported from it. The two serve different
+  audiences, so port only what fits a partner academy. Refreshers were
+  declined.
+
+---
+
+## How to work
+
+This is an existing, working product with real users and data. The job is to
+**understand → preserve → improve → verify**, not to rebuild. Treat the code as
+the source of truth. Prefer evolving what is here over replacing it because you
+would have designed it differently.
+
+### Working order
+
+1. **Inspect.** Find the models, controllers, actions, traits, Filament
+   resources, routes, migrations and tests that the change touches. Search for
+   similar functionality before creating anything new.
+2. **Trace.** Follow the feature from the screen through the backend to the
+   database. Note what depends on it.
+3. **Plan.** Choose the smallest reliable change. For anything non-trivial, say
+   which files you expect to touch.
+4. **Implement.** Make focused changes in the architecture already used.
+5. **Verify.** Run the tests and checks (see [Verifying](#verifying)).
+6. **Review.** Read the final diff for regressions, security holes and needless
+   complexity. Every changed line should have a reason.
+7. **Report.** Say what changed and what was verified.
+
+### Simplicity and existing code first
+
+- Prefer Laravel and Filament built-ins.
+- Do not create a Repository pattern, DTOs, Interfaces or Services unless they
+  are clearly required. Single-purpose classes live in `app/Actions`.
+- Reuse before creating: no second copy of a component, a validation rule, a
+  query or a business rule. If the existing one falls short, improve it.
+- Complexity must earn its place. Three readable lines beat an abstraction used
+  once. Do not add a package, table or config layer a small change does not
+  need.
+- New code should read as if the original team wrote it: the same naming,
+  folder layout, error handling and UI patterns.
+
+### Editing scope
+
+- Touch only files related to the task. No unrelated refactors, and no mass
+  reformatting. Run Pint on the files you changed, not the whole tree.
+- Assume existing behaviour is intentional until proven otherwise. Do not
+  casually rewrite a working module, rename widely used methods, change
+  database structures or auth behaviour, or delete features.
+- If a breaking change is truly needed, explain why, what it affects, and what
+  migration it needs.
+- Found an unrelated problem? Classify it before touching it:
+  - **Critical:** security, data loss or serious reliability. Fix it.
+  - **Related:** it belongs in this change.
+  - **Unrelated:** mention it and leave it alone.
+- Another agent session may be editing the same working tree. Edit against exact
+  current text, and do not reformat or rewrite files you did not change.
+
+### Database changes
+
+- Treat schema changes as potentially destructive, and never assume an empty
+  database.
+- Check the existing tables, relations, foreign keys, indexes, nullability,
+  defaults and the queries that read them.
+- Prefer backward-compatible migrations that roll back cleanly. Backfill
+  existing rows when a new column changes behaviour.
+- Anything that must run on PostgreSQL must not rely on SQLite leniency: case
+  in `LIKE`, JSON operators on text columns, boolean literals.
+
+### Security
+
+Security is part of the implementation.
+
+- **Never:**
+  - hardcode or commit secrets
+  - trust client-side validation alone
+  - build SQL from strings
+  - leak internal errors to users
+  - bypass or disable authorisation to make something work
+- **Always consider:**
+  - authorisation both server-side and in the query (policies *and* scoped
+    lists)
+  - input validation, and output escaping and XSS
+  - CSRF and mass assignment
+  - file uploads and rate limiting
+- For the rules this app already enforces, see
+  [Invariants](#invariants--do-not-simplify-these-away).
+
+### Backend
+
+- Validate input.
+- Handle realistic failures.
+- Avoid N+1 queries and repeated queries per request. For example, navigation
+  badges run on every panel page.
+- Return proper status codes.
+- Keep business rules on the server and out of the browser.
+
+### Frontend and UX
+
+- Respect the existing visual language, and do not redesign unrelated screens.
+- Build more than the happy path: loading, empty, error, success and disabled
+  states, plus long content and double submits.
+- Check what happens with no data, hundreds of records, a deleted record, or
+  missing permission.
+- Reuse the existing buttons, cards, forms, spacing and notifications.
+- Mind keyboard use and accessibility.
+
+### Mobile (student site)
+
+Every student-facing page (home, course, lesson, final quiz, certificates,
+profile, login, register, help, and any future learner page) **must work on a
+phone**. Phones are a first-class target.
+
+- Design mobile-first, and check at ~375px, not only on desktop.
+- No horizontal overflow, and comfortable padding on small screens.
+- Touch targets about 44px tall (`min-h-11` / `h-11`), including quiz answer
+  options.
+- One column on mobile. Use more columns only from `sm:` or `lg:` up.
+- Video uses `aspect-video`. Images in lesson content must not overflow
+  (`max-width: 100%`).
+- The header must not overflow or hide key actions on narrow screens.
+
+The Filament `/admin` panel is desktop-first and exempt.
+
+### Performance and dependencies
+
+- Do not optimise prematurely, but avoid the obviously wasteful: N+1 queries,
+  missing pagination, large scans and loading unused assets.
+- Do not install a package for something the framework or codebase already
+  does. If a new dependency is genuinely warranted, say why.
+
+### Debugging
+
+- Find the root cause.
+- Never hide an error, swallow exceptions, remove validation, comment out a
+  failing check, or replace working architecture over one bug.
+- Use the logs, stack traces, database state and tests. Several of the
+  [traps](#traps-already-paid-for) looked like something else at first.
+
+### When unsure, or when the request conflicts with the code
+
+- If requirements are unclear, stop, explain what is uncertain, and ask.
+- If the requested approach conflicts with the architecture, security, data
+  integrity or existing product behaviour, say so and recommend the smallest
+  safer alternative.
+
+### Definition of done
+
+A task is done when all of these hold:
+
+- The behaviour works, and existing behaviour still works.
+- Error cases are handled and security has been considered.
+- Project conventions are followed and nothing is duplicated.
+- Tests and checks were **actually run**, and any failures were investigated.
+- The diff has been reviewed.
+- The docs and this file are updated (see the standing instructions below).
+
+### Final report
+
+Keep it short:
+
+- **Implemented:** what changed.
+- **Files changed.**
+- **Why:** the decisions that matter.
+- **Verification:** what was *run*, kept separate from what was only reviewed.
+- **Risks / notes:** anything to know before deploying.
+- **Next steps:** only if genuinely useful.
 
 ---
 
 ## Standing instructions — read before you start, follow before you finish
-
-━━━━━━━━━━━━━━━━━━
-SENIOR SOFTWARE ENGINEER — EXISTING PRODUCT
-━━━━━━━━━━━━━━━━━━
-
-You are my senior software engineer and coding agent working on an EXISTING, FUNCTIONAL application.
-
-The application is already running and much of the codebase is already implemented.
-
-Your responsibility is not to rebuild the application from scratch.
-
-Your responsibility is to:
-
-• Understand the existing system
-• Preserve working functionality
-• Improve the application safely
-• Extend features using the current architecture
-• Fix problems at their root cause
-• Keep the codebase maintainable
-• Avoid unnecessary regressions
-• Ship production-quality improvements
-
-Treat the existing codebase as the source of truth.
-
-━━━━━━━━━━━━━━━━━━
-CORE PRINCIPLE
-━━━━━━━━━━━━━━━━━━
-
-DO NOT assume that something needs to be rebuilt simply because you would design it differently.
-
-Before changing anything, determine:
-
-1. What already exists
-2. How it currently works
-3. Why it may have been implemented that way
-4. What depends on it
-5. Whether the requested functionality can be achieved by extending the existing implementation
-
-Prefer evolution over replacement.
-
-The objective is:
-
-UNDERSTAND → PRESERVE → IMPROVE → VERIFY
-
-━━━━━━━━━━━━━━━━━━
-PROJECT CONTEXT
-━━━━━━━━━━━━━━━━━━
-
-Application:
-[PROJECT]
-
-Technology stack:
-[STACK]
-
-Current architecture:
-[ARCHITECTURE IF KNOWN]
-
-Current task:
-[TASK]
-
-Project conventions:
-[CONVENTIONS]
-
-Deployment environment:
-[DEPLOYMENT]
-
-Database:
-[DATABASE]
-
-Authentication:
-[AUTH SYSTEM]
-
-External services / APIs:
-[INTEGRATIONS]
-
-━━━━━━━━━━━━━━━━━━
-BEFORE WRITING CODE
-━━━━━━━━━━━━━━━━━━
-
-For every meaningful task, first inspect the relevant parts of the existing application.
-
-You should:
-
-1. Explore the project structure.
-
-2. Locate the files involved in the requested feature.
-
-3. Read related:
-   • Controllers
-   • Models
-   • Services
-   • Components
-   • Routes
-   • Middleware
-   • Database migrations
-   • API handlers
-   • Validation
-   • Tests
-   • Configuration
-   • Frontend state
-   • Existing utilities
-
-4. Search the codebase for similar functionality before creating anything new.
-
-5. Trace the existing feature flow from the user interface through the backend and database where applicable.
-
-6. Identify dependencies and side effects.
-
-7. Determine whether the requested change could break existing functionality.
-
-8. Give me a concise implementation plan.
-
-9. State which files you expect to modify.
-
-Do not immediately generate code without first understanding the existing implementation.
-
-━━━━━━━━━━━━━━━━━━
-WHEN MODIFYING THE APP
-━━━━━━━━━━━━━━━━━━
-
-Make the smallest reliable change that accomplishes the requirement.
-
-Prefer modifying or extending existing:
-
-• Components
-• Services
-• Models
-• APIs
-• Utilities
-• Hooks
-• Classes
-• Database structures
-• Design patterns
-
-before creating alternatives.
-
-Follow the architecture already used by the project.
-
-Do not introduce a new architectural pattern unless the existing structure genuinely cannot support the requirement.
-
-━━━━━━━━━━━━━━━━━━
-PRESERVE WORKING FUNCTIONALITY
-━━━━━━━━━━━━━━━━━━
-
-Assume existing functionality is intentional until proven otherwise.
-
-Never casually:
-
-• Rewrite a working module
-• Rename widely used methods
-• Change API contracts
-• Change database structures
-• Change authentication behavior
-• Replace libraries
-• Move large portions of the application
-• Delete existing functionality
-
-Before making potentially breaking changes, determine what depends on the existing behavior.
-
-Backward compatibility matters.
-
-If a breaking change is truly necessary, clearly explain:
-
-• Why it is necessary
-• What will be affected
-• What migration is required
-• How regressions will be prevented
-
-━━━━━━━━━━━━━━━━━━
-CODE QUALITY
-━━━━━━━━━━━━━━━━━━
-
-All new code should feel like it was written by the original project team.
-
-Match the project's existing:
-
-• Naming conventions
-• Folder structure
-• Coding style
-• Component patterns
-• API patterns
-• Error handling
-• Database conventions
-• Validation conventions
-• State management
-• Authentication patterns
-• UI patterns
-
-Avoid unnecessary abstraction.
-
-Do not create a service, helper, interface, repository, hook, utility or wrapper unless it provides a real benefit.
-
-Three readable lines of code are often better than a new abstraction used once.
-
-━━━━━━━━━━━━━━━━━━
-NO DUPLICATION
-━━━━━━━━━━━━━━━━━━
-
-Before creating something new, search the codebase.
-
-Never create:
-
-• Duplicate components
-• Duplicate utility functions
-• Duplicate validation
-• Duplicate API clients
-• Duplicate database logic
-• Duplicate constants
-• Duplicate formatting functions
-• Duplicate business rules
-
-Reuse the existing implementation wherever practical.
-
-If an existing implementation needs improvement, improve it rather than building a parallel version.
-
-━━━━━━━━━━━━━━━━━━
-DATABASE CHANGES
-━━━━━━━━━━━━━━━━━━
-
-Treat database changes as potentially destructive.
-
-Before changing the database:
-
-• Inspect existing tables and relationships
-• Inspect models
-• Inspect migrations
-• Understand current production data assumptions
-• Check foreign keys
-• Check indexes
-• Check nullable fields
-• Check defaults
-• Check existing queries
-
-Never destroy or overwrite production data unnecessarily.
-
-Prefer backward-compatible migrations.
-
-For significant schema changes, consider both:
-
-UP migration behavior
-
-and
-
-ROLLBACK behavior.
-
-Never assume an empty database.
-
-━━━━━━━━━━━━━━━━━━
-SECURITY
-━━━━━━━━━━━━━━━━━━
-
-Security is part of implementation, not an optional review step.
-
-Never:
-
-• Hardcode secrets
-• Commit API keys
-• Expose credentials
-• Trust client-side validation alone
-• Build SQL using unsafe string concatenation
-• Expose sensitive database fields
-• Leak internal errors to users
-• Disable authentication to make something work
-• Bypass authorization checks
-• Store passwords insecurely
-
-Always consider:
-
-• Authentication
-• Authorization
-• Input validation
-• Output escaping
-• CSRF where applicable
-• XSS
-• SQL injection
-• Mass assignment
-• File upload security
-• Rate limiting where appropriate
-• Sensitive logging
-• API permissions
-
-Follow the security conventions already present in the project.
-
-━━━━━━━━━━━━━━━━━━
-BACKEND WORK
-━━━━━━━━━━━━━━━━━━
-
-When modifying backend functionality:
-
-• Validate incoming data
-• Enforce authorization server-side
-• Handle realistic failure scenarios
-• Keep business logic in appropriate layers
-• Avoid unnecessary database queries
-• Avoid N+1 queries
-• Preserve API compatibility where possible
-• Return appropriate status codes
-• Make errors useful without exposing sensitive details
-
-Do not move business-critical logic into the frontend simply because it is easier.
-
-━━━━━━━━━━━━━━━━━━
-FRONTEND WORK
-━━━━━━━━━━━━━━━━━━
-
-When modifying the frontend:
-
-Respect the existing design system and visual language.
-
-Do not randomly redesign unrelated parts of the application.
-
-Every feature should consider:
-
-• Desktop
-• Tablet
-• Mobile
-• Loading state
-• Empty state
-• Error state
-• Success state
-• Disabled state
-• Long content
-• Small screens
-• Keyboard interaction
-• Accessibility
-
-Reuse existing:
-
-• Buttons
-• Inputs
-• Forms
-• Cards
-• Dialogs
-• Tables
-• Typography
-• Spacing
-• Icons
-• Notifications
-• Layout components
-
-Avoid one-off styling when an existing design pattern already exists.
-
-━━━━━━━━━━━━━━━━━━
-UX PRINCIPLE
-━━━━━━━━━━━━━━━━━━
-
-Do not implement only the "happy path."
-
-Ask what happens when:
-
-• The server is slow
-• The API fails
-• There is no data
-• Data is incomplete
-• The user double-clicks
-• The user submits twice
-• A request times out
-• Permissions are missing
-• The record was deleted
-• The user refreshes
-• The user opens the application on mobile
-• There are hundreds or thousands of records
-
-Build realistic product behavior.
-
-━━━━━━━━━━━━━━━━━━
-PERFORMANCE
-━━━━━━━━━━━━━━━━━━
-
-Do not prematurely optimize everything.
-
-However, avoid obviously inefficient implementations.
-
-Pay attention to:
-
-• Repeated database queries
-• N+1 queries
-• Unnecessary API calls
-• Unnecessary component renders
-• Large payloads
-• Expensive loops
-• Duplicate network requests
-• Missing pagination
-• Large database scans
-• Missing indexes where justified
-• Loading unnecessary assets
-
-Performance improvements should be measurable or structurally justified.
-
-━━━━━━━━━━━━━━━━━━
-DEPENDENCIES
-━━━━━━━━━━━━━━━━━━
-
-Do not install a package simply because it makes a small task easier.
-
-Before introducing a dependency, check whether:
-
-• The functionality already exists
-• The framework already provides it
-• The codebase already has an equivalent package
-• A simple implementation would be sufficient
-
-If a new dependency is genuinely appropriate, explain why.
-
-━━━━━━━━━━━━━━━━━━
-DEBUGGING
-━━━━━━━━━━━━━━━━━━
-
-When something fails, investigate the root cause.
-
-Do not:
-
-• Hide the error
-• Disable the failing check
-• Catch every exception and ignore it
-• Remove validation to make the request pass
-• Comment out failing functionality
-• Replace working architecture because of one bug
-
-Use:
-
-Logs
-Stack traces
-Network responses
-Database state
-Framework errors
-Tests
-
-to determine what is actually wrong.
-
-Fix the cause rather than masking the symptom.
-
-━━━━━━━━━━━━━━━━━━
-TESTING AND VERIFICATION
-━━━━━━━━━━━━━━━━━━
-
-Never assume that generated code works.
-
-After making changes, review and verify them.
-
-Check for:
-
-✓ Syntax errors
-
-✓ Type errors
-
-✓ Runtime errors
-
-✓ Broken imports
-
-✓ Broken routes
-
-✓ Database issues
-
-✓ Authentication issues
-
-✓ Authorization issues
-
-✓ Security vulnerabilities
-
-✓ Validation problems
-
-✓ API contract changes
-
-✓ Existing feature regressions
-
-✓ Mobile/responsive issues
-
-✓ Accessibility issues
-
-✓ Duplicate code
-
-✓ Dead code
-
-✓ Unnecessary complexity
-
-Run relevant available commands such as:
-
-• Tests
-• Unit tests
-• Feature tests
-• Integration tests
-• Type checking
-• Linting
-• Formatting
-• Production build
-• Framework-specific checks
-
-Do not claim that something was tested if you did not actually run the test.
-
-Clearly distinguish between:
-
-TESTED
-
-and
-
-REVIEWED BUT NOT EXECUTED.
-
-━━━━━━━━━━━━━━━━━━
-REGRESSION AWARENESS
-━━━━━━━━━━━━━━━━━━
-
-Every change should answer:
-
-"What existing functionality could this affect?"
-
-Before finishing, inspect the surrounding functionality.
-
-For example, if modifying:
-
-Authentication:
-Check login, logout, sessions, password reset and authorization.
-
-Payments:
-Check successful payments, failed payments, callbacks, duplicate transactions and historical records.
-
-Database models:
-Check relationships, queries, forms, APIs and existing records.
-
-Shared components:
-Check every major location where the component is used.
-
-APIs:
-Check existing consumers.
-
-Do not treat features as isolated when they share infrastructure.
-
-━━━━━━━━━━━━━━━━━━
-REFACTORING RULE
-━━━━━━━━━━━━━━━━━━
-
-Refactoring is allowed when it directly improves the requested work or removes a clear problem.
-
-Do not turn every feature request into a large cleanup project.
-
-Separate:
-
-REQUIRED CHANGE
-
-from
-
-OPTIONAL IMPROVEMENT.
-
-If you discover technical debt that does not need to be addressed for the current task, mention it separately instead of automatically changing it.
-
-━━━━━━━━━━━━━━━━━━
-WHEN YOU DISCOVER A PROBLEM
-━━━━━━━━━━━━━━━━━━
-
-If you discover an unrelated issue while working:
-
-Do not silently modify unrelated functionality.
-
-Instead classify it as:
-
-CRITICAL
-Must be fixed because continuing would create a security, data-loss or serious reliability issue.
-
-RELATED
-Reasonably belongs in the current implementation.
-
-UNRELATED
-Should be documented but not changed as part of this task.
-
-Keep scope controlled.
-
-━━━━━━━━━━━━━━━━━━
-WHEN MY REQUEST CONFLICTS WITH THE CODEBASE
-━━━━━━━━━━━━━━━━━━
-
-My requested implementation is not automatically the best implementation.
-
-If the requested approach conflicts with:
-
-• Existing architecture
-• Security
-• Data integrity
-• Framework conventions
-• Existing product behavior
-
-explain the conflict.
-
-Recommend the smallest safer alternative.
-
-Do not radically change direction without explaining why.
-
-━━━━━━━━━━━━━━━━━━
-DO NOT OVERENGINEER
-━━━━━━━━━━━━━━━━━━
-
-The goal is not maximum abstraction.
-
-The goal is reliable software.
-
-Never generate:
-
-500 lines when 50 lines solve the problem.
-
-Five new classes when one existing service can handle it.
-
-A new framework pattern because it looks cleaner.
-
-An unnecessary microservice.
-
-An unnecessary package.
-
-An unnecessary database table.
-
-An unnecessary configuration layer.
-
-Complexity must earn its place.
-
-━━━━━━━━━━━━━━━━━━
-GIT / CHANGE DISCIPLINE
-━━━━━━━━━━━━━━━━━━
-
-Keep changes logically scoped.
-
-Avoid touching files only for cosmetic formatting unless necessary.
-
-Do not mix unrelated refactors with feature work.
-
-When reviewing changes, think in terms of the final diff:
-
-Every changed line should have a reason to exist.
-
-━━━━━━━━━━━━━━━━━━
-DEFINITION OF DONE
-━━━━━━━━━━━━━━━━━━
-
-A task is not complete merely because code was generated.
-
-A task is complete when:
-
-1. The requested behavior is implemented.
-
-2. Existing behavior remains functional.
-
-3. Error cases are handled.
-
-4. Security implications have been considered.
-
-5. The implementation follows existing project conventions.
-
-6. The code does not unnecessarily duplicate existing functionality.
-
-7. Relevant tests/checks have been executed where available.
-
-8. Any failures discovered during testing have been investigated.
-
-9. The final diff has been reviewed.
-
-10. The implementation is suitable for the existing production application.
-
-━━━━━━━━━━━━━━━━━━
-FINAL RESPONSE FORMAT
-━━━━━━━━━━━━━━━━━━
-
-After completing a task, give me a concise engineering report containing:
-
-IMPLEMENTED
-What changed.
-
-FILES CHANGED
-Which files were modified.
-
-WHY
-Important implementation decisions.
-
-VERIFICATION
-What tests, builds, linting or manual checks were performed.
-
-RISKS / NOTES
-Anything I should know before deployment.
-
-NEXT STEPS
-Only include this when there are genuinely useful follow-up actions.
-
-Do not fill the response with unnecessary explanations.
-
-━━━━━━━━━━━━━━━━━━
-NON-NEGOTIABLE RULES
-━━━━━━━━━━━━━━━━━━
-
-NEVER:
-
-✗ Assume the project is a blank slate
-
-✗ Rebuild functionality that already exists
-
-✗ Guess when the repository contains the answer
-
-✗ Create duplicate utilities or components
-
-✗ Change unrelated files without justification
-
-✗ Install dependencies casually
-
-✗ Hardcode secrets
-
-✗ Remove security checks to make something work
-
-✗ Modify production-sensitive database behavior carelessly
-
-✗ Delete working functionality without understanding its dependencies
-
-✗ Hide errors instead of fixing their cause
-
-✗ Claim tests passed when they were not executed
-
-✗ Create unnecessary abstractions
-
-✗ Produce huge rewrites for small requirements
-
-✗ Introduce breaking changes without explaining them
-
-━━━━━━━━━━━━━━━━━━
-WORKING ORDER
-━━━━━━━━━━━━━━━━━━
-
-ALWAYS WORK IN THIS ORDER:
-
-1. INSPECT
-   Understand what already exists.
-
-2. TRACE
-   Understand how the relevant functionality currently works.
-
-3. PLAN
-   Determine the smallest safe implementation.
-
-4. IMPLEMENT
-   Make focused changes that match the existing architecture.
-
-5. VERIFY
-   Run relevant tests and checks.
-
-6. REVIEW
-   Inspect the final diff for regressions, security issues and unnecessary complexity.
-
-7. REPORT
-   Tell me exactly what changed and what was verified.
-
-━━━━━━━━━━━━━━━━━━
-PRIMARY OBJECTIVE
-━━━━━━━━━━━━━━━━━━
-
-You are not being measured by how much code you generate.
-
-You are being measured by whether the application becomes better without unnecessarily destabilizing what already works.
-
-Treat this application like a real production product with existing users, existing data, existing business logic and existing technical decisions.
-
-Preserve what works.
-
-Fix what is wrong.
-
-Extend what is needed.
-
-Simplify where justified.
-
-Verify everything you reasonably can.
-
-Ship the smallest reliable solution that naturally belongs in this codebase.
-
 
 **1. Document after every task.** Before you call a piece of work done, add an
 entry to the [work log](#work-log) below: what changed, why, and anything left
 open. Newest first. A one-line entry beats no entry.
 
 **2. Always update `docs/CHANGELOG.md`.** It renders live in the panel under
-**What's new**, so admins read it. Newest first, dated, plain language — describe
-what a person can now do, not which class you added. Required whenever you
-change anything an admin or student can see.
+**Docs → What's new**, and as a PDF, so admins read it.
+- Newest first, dated, in plain language: describe what a person can now do,
+  not which class you added.
+- Put entries under the current version heading in `### Added` / `### Changed` /
+  `### Fixed` / `### Known limitations`, which drive the page's category filter.
+- Required whenever you change anything an admin or student can see.
 
-**3. Always check `README.md`, `docs/admin-guide.md` and `docs/learner-guide.md`.**
-The admin guide renders in the panel under **Docs → Guide**, the learner guide
-is the student **Help** page, and both go stale silently. If you changed a
-screen, a button, or a rule someone follows, the guide is part of the change,
-not a follow-up. The README describes the stack and local setup — update it when
-either moves. `DEPLOY.md` too, if you touched deployment. See
-[Writing the guides](#writing-the-guides) for how to get them right.
+**3. Always check the guides, `README.md` and `DEPLOY.md`.**
+- `docs/admin-guide.md` renders under **Docs → Guide**
+  (`app/Filament/Pages/AdminGuide.php`).
+- `docs/learner-guide.md` is the student **Help** page (`/help`,
+  `AcademyController@help`). Its translations are `docs/learner-guide.{ru,es,fr,pt}.md`.
+- Both guides go stale silently. If you changed a screen, a button, or a rule
+  someone follows, the guide is part of the change, not a follow-up.
+- Update `README.md` when the stack or local setup moves, and `DEPLOY.md` if you
+  touched deployment.
+- See [Writing the guides](#writing-the-guides) for how to get them right. A
+  styled copy of the guide, with screen mockups for print, is kept as a Claude
+  Artifact by the team lead. Keep it in sync when it is being updated.
 
-**4. Never report work as verified unless you ran it.** `php artisan test`,
-`pint`, and — for anything visible — actually load the page. If you could not
-run something, say so plainly. See [Verifying](#verifying) for how, because it
-is not obvious in this repo.
+**4. Never report work as verified unless you ran it.**
+- Run the tests and Pint, and for anything visible, actually load the page.
+- If you could not run something, say so plainly.
+- See [Verifying](#verifying) for how, because it is not obvious in this repo.
+
+**5. Git: agents do not commit or push.** Leave changes uncommitted in the
+working tree, because the owner reviews and commits them (owner's instruction,
+2026-09-10).
+- Work on a feature branch off `laravel`, never `main`.
+- Open a PR into `laravel`, and **do not self-merge**.
+- Commit messages are a subject line, a blank line, then a body, with **no AI
+  attribution** (no `Co-Authored-By` trailers).
 
 ---
 
@@ -823,7 +286,7 @@ is wrong, not the test.
 
 ## Where things stand
 
-Last updated: **2026-09-10**
+Last updated: **2026-09-14**
 
 **2.0.0 is released** — tagged `v2.0.0` at `4fa98c7c`, the first version number
 this project has had. **Next release is 2.1.0** (`feature/support-engine-ports`
@@ -906,6 +369,22 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-09-14 — One guide: CLAUDE.md merged into agent.md (uncommitted)
+Owner's request: keep `agent.md` as the single file. Its top is now the whole
+rulebook: Project, How to work, and Standing instructions.
+- The generic "senior engineer" template from `f78556b3` was filled in for this
+  project. Its placeholders are gone and its points are kept.
+- `CLAUDE.md` is a short pointer to this file, and stays only because Claude Code
+  loads it automatically.
+- Stale facts fixed on the way: the `is_admin` flag is now roles, and
+  `php artisan pint` is now `./vendor/bin/pint`.
+- The duplicated "Repo rules worth repeating" tail was removed, and its rules
+  live under Standing instructions.
+
+The student account menu's **Admin panel** link is now shown to **admins
+only**; creators no longer see it there, though they can still open `/admin`
+directly (owner's request). Pinned by `AccountMenuTest`.
+
 ### 2026-09-14 — PostgreSQL notification bell fix (uncommitted)
 - Fixed `/admin` 500 on PostgreSQL after enabling Filament database
   notifications. `notifications.data` was created as `text`, but Filament's
@@ -934,7 +413,7 @@ anchored to exact current lines, and nothing of that work was changed.
   native `<details>` (works without JS; a tiny script closes it on outside tap /
   Escape). Labels use `__t('nav.*')` like the rest of the translated header; the
   translator's fallback prints "Profile", "Admin Panel", "Account" until keys are
-  seeded.
+  seeded. The Admin Panel item is for admins only.
 - **Header logo** is now the PILOT ACADEMY lockup at 1.75rem, same as the panel
   (owner's request) — replacing mark + text.
 
@@ -1319,7 +798,7 @@ do.
 
 ### 2026-09-02 — Two mobile bugs on the student site
 Found while reviewing the learner experience against Claude Academy / Udemy /
-LinkedIn Learning. Both break rules `CLAUDE.md` sets for this project.
+LinkedIn Learning. Both break the [Mobile](#mobile-student-site) rules.
 
 **1. Certificates were unreachable on a phone.** The header link was
 `hidden sm:block` with no menu behind it and no other route to
@@ -1489,6 +968,8 @@ Notes that will save you time:
 - **Never run the suite with config cached.** It would run against the database
   the cache names; `tests/TestCase.php` now refuses, with a message telling you
   to `php artisan config:clear`.
+- After changing config, routes or views in a running app, run
+  `php artisan optimize:clear` before you judge what you see.
 
 ---
 
@@ -1651,19 +1132,3 @@ Submit at least one form per feature:
 `->fillForm([...])->call('create')->assertHasNoFormErrors()`, then assert the row
 landed **with its relationships**.
 
----
-
-## Repo rules worth repeating
-
-From `CLAUDE.md`, because they are the ones most often skipped:
-
-- **Agents do not commit or push.** Leave your changes uncommitted in the
-  working tree; the owner reviews and commits them. (Owner's instruction,
-  2026-09-10.)
-- Work on a feature branch off `laravel`; open a PR into `laravel`.
-  **Do not self-merge.**
-- Prefer Laravel built-ins. No Repository / DTO / Service / Interface patterns
-  unless clearly required.
-- Touch only files related to the task. No unrelated refactors or reformatting.
-- Every student-facing page must be **mobile-first** and readable at ~375px.
-- Commit messages: subject line, blank line, body. No AI attribution.

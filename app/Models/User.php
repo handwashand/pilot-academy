@@ -41,6 +41,7 @@ class User extends Authenticatable implements FilamentUser, HasLocalePreference
     ];
 
     public const PERMISSION_LANGUAGES_MANAGE = 'languages.manage';
+
     public const PERMISSION_TRANSLATIONS_MANAGE = 'translations.manage';
 
     /** New accounts are partners until an admin says otherwise. */

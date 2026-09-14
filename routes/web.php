@@ -6,6 +6,7 @@ use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\ChangelogPdfController;
 use App\Http\Controllers\FinalQuizController;
 use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AcademyController::class, 'home'])->name('academy.home');
@@ -51,9 +52,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/my/certificates', [CertificateController::class, 'index'])->name('certificates.index');
     Route::get('/my/certificates/{certificate}/download', [CertificateController::class, 'download'])->name('certificates.download');
 
-    Route::get('/my/profile', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('academy.profile');
-    Route::put('/my/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('academy.profile.update');
-    Route::put('/my/profile/password', [\App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('academy.profile.password');
+    Route::get('/my/profile', [ProfileController::class, 'edit'])->name('academy.profile');
+    Route::put('/my/profile', [ProfileController::class, 'update'])->name('academy.profile.update');
+    Route::put('/my/profile/password', [ProfileController::class, 'updatePassword'])->name('academy.profile.password');
 });
 
 // What's new as a PDF, one release or all of them. Panel users only — the

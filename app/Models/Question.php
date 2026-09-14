@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Actions\NotifyContentOwners;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -36,7 +37,7 @@ class Question extends Model
     {
         $check = function (Question $question): void {
             if ($question->lesson_id) {
-                \App\Actions\NotifyContentOwners::afterRequest(Lesson::whereKey($question->lesson_id)->value('course_id'));
+                NotifyContentOwners::afterRequest(Lesson::whereKey($question->lesson_id)->value('course_id'));
             }
         };
 

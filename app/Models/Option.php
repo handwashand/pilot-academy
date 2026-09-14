@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Actions\NotifyContentOwners;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -34,7 +35,7 @@ class Option extends Model
             $lessonId = Question::whereKey($option->question_id)->value('lesson_id');
 
             if ($lessonId) {
-                \App\Actions\NotifyContentOwners::afterRequest(Lesson::whereKey($lessonId)->value('course_id'));
+                NotifyContentOwners::afterRequest(Lesson::whereKey($lessonId)->value('course_id'));
             }
         };
 

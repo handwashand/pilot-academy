@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Courses\Schemas;
 
+use App\Actions\FindContentProblems;
 use App\Models\Course;
 use Closure;
 use Filament\Forms\Components\FileUpload;
@@ -114,10 +115,10 @@ class CourseForm
                             // live must stay editable, or nobody could save the
                             // rest of the form while fixing it.
                             if ($value === Course::STATUS_PUBLISHED && $record && ! $record->isPublished()) {
-                                $problems = app(\App\Actions\FindContentProblems::class)->forCourse($record);
+                                $problems = app(FindContentProblems::class)->forCourse($record);
 
                                 if ($problems->isNotEmpty()) {
-                                    $fail('Fix what students would hit before publishing: '.\App\Actions\FindContentProblems::plainList($problems).'.');
+                                    $fail('Fix what students would hit before publishing: '.FindContentProblems::plainList($problems).'.');
                                 }
                             }
                         },

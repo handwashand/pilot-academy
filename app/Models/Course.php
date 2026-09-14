@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Actions\NotifyContentOwners;
 use App\Models\Concerns\HasContentTranslations;
 use App\Models\Concerns\HasDuration;
 use App\Models\Concerns\HasPublishStatus;
@@ -216,7 +217,7 @@ class Course extends Model
      */
     protected static function booted(): void
     {
-        static::saved(fn (Course $course) => \App\Actions\NotifyContentOwners::afterRequest($course->id));
+        static::saved(fn (Course $course) => NotifyContentOwners::afterRequest($course->id));
     }
 
     /**

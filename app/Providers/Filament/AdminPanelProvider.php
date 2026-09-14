@@ -2,7 +2,9 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\AdminGuide;
 use App\Http\Middleware\SetLocale;
+use Filament\Actions\Action;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -11,6 +13,7 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Support\Icons\Heroicon;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -36,10 +39,10 @@ class AdminPanelProvider extends PanelProvider
             // The guide in the account menu as well as under Docs: someone who
             // is stuck reaches for the menu with their own name on it.
             ->userMenuItems([
-                'guide' => \Filament\Actions\Action::make('guide')
+                'guide' => Action::make('guide')
                     ->label('Guide')
-                    ->icon(\Filament\Support\Icons\Heroicon::OutlinedBookOpen)
-                    ->url(fn (): string => \App\Filament\Pages\AdminGuide::getUrl()),
+                    ->icon(Heroicon::OutlinedBookOpen)
+                    ->url(fn (): string => AdminGuide::getUrl()),
             ])
             ->colors([
                 'primary' => Color::Amber,
