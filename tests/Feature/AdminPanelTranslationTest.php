@@ -5,10 +5,14 @@ namespace Tests\Feature;
 use App\Actions\NotifyContentOwners;
 use App\Filament\Resources\Courses\CourseResource;
 use App\Filament\Resources\Lessons\LessonResource;
+use App\Filament\Resources\QuizAttempts\QuizAttemptResource;
 use App\Filament\Widgets\StudentProgressOverview;
 use App\Models\Course;
 use App\Models\User;
 use Database\Seeders\LanguageSeeder;
+use Filament\Actions\AttachAction;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\File;
@@ -122,7 +126,28 @@ class AdminPanelTranslationTest extends TestCase
             ->assertSee('Texte de la leçon')
             ->assertSee('Transcription de la vidéo')
             ->assertSee('Écrit en')
-            ->assertDontSee('Video transcript');
+            ->assertDontSee('Video transcript')
+            ->assertDontSee('Doc links');
+    }
+
+    public function test_headings_keep_a_record_name_in_lower_case(): void
+    {
+        $this->actingAs($this->admin('ru'));
+        App::setLocale('ru');
+
+        // Page headings.
+        $this->get(QuizAttemptResource::getUrl('index'))->assertSee('Попытки тестов')->assertDontSee('Попытки Тестов');
+        $this->get(CourseResource::getUrl('create'))->assertSee('Создать курс')->assertDontSee('Создать Курс');
+
+        // Filament's own dialogs, which Title-Case the name unless told not to.
+        foreach ([
+            [CreateAction::make()->modelLabel('вопрос'), 'вопрос'],
+            [AttachAction::make()->modelLabel('вопрос'), 'вопрос'],
+            [DeleteBulkAction::make()->pluralModelLabel('курсы'), 'курсы'],
+        ] as [$action, $label]) {
+            $this->assertStringContainsString($label, (string) $action->getModalHeading());
+            $this->assertStringNotContainsString(mb_convert_case($label, MB_CASE_TITLE), (string) $action->getModalHeading());
+        }
     }
 
     public function test_a_broken_course_is_reported_to_its_owner_in_the_owners_language(): void

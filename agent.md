@@ -382,6 +382,54 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-09-15 — Russian and French checked on screen, and what that found (uncommitted)
+**How it was checked:** puppeteer-core with installed Chrome against the preview
+container, using `admin-langs.js`, `admin-fixes.js` and `pdfshot-ru.js` in the
+session scratchpad.
+- **Admin panel:** every sidebar page, plus the course, lesson and user forms,
+  in Russian and French at 1440px, and the busiest screens at 375px.
+  - The script reported sideways scroll and any label whose text is wider than
+    its box: none.
+- **Certificate:** a real certificate issued to a Russian-language student,
+  opened in Chrome's PDF viewer.
+- **Full suite:** 388 passed before these fixes.
+
+**Found and fixed:**
+- **Certificate title overlapped the logo.** "СЕРТИФИКАТ О ПРОХОЖДЕНИИ
+  КУРСА" is wider than the English title and ran into the lockup. `.eyebrow`
+  moved from 34mm to 44mm, below the logo (20–37mm), with letter-spacing at
+  3pt.
+- **Title Case in headings.** Filament `Str::ucwords` record names, giving
+  "Попытки Тестов" and "Avis Des Apprenants".
+  - `App\Filament\Resources\Concerns\HasSentenceCaseLabels` on all 11
+    resources: a list heading capitalises only its first letter, and a record
+    name inside a heading stays lower case ("Создать курс").
+  - Modal headings in actions (create, attach, bulk delete, bulk detach) have
+    their own `ucwords`, which the trait cannot reach. `AppServiceProvider`
+    replaces those headings with the same Filament strings, using the plain
+    label.
+- **English record names on relation-manager tabs.** Default messages read the
+  model class name. Each relation manager now overrides `getModelLabel()` /
+  `getPluralModelLabel()`, using `admin_nav.questions`, `activities` and the
+  existing keys.
+- **The Translations page heading was "Translations".** It had no model labels,
+  so Filament used the class name.
+- **"Doc links" in the lesson form.** `->label('')` does not hide a label:
+  Filament falls back to the field name. It is now `->hiddenLabel()`, and the
+  guard test fails on an empty label too.
+- **"Для кого: всех".** The admin audience select used the student site's
+  in-sentence words. `labels.audience` now has standalone names.
+- **English menu paths in the translated admin guides** ("Content → Courses")
+  now use each language's menu names.
+
+**Not a problem:**
+- **Empty dashboard card:** "Progress by partner company" with no companies in
+  the seed.
+- **Two puppeteer `pageerror: Object` events:** they fire during the Filament
+  login redirect, before any page or language switch.
+- **What's new in other languages:** it shows `docs/CHANGELOG.md`, which is
+  English.
+
 ### 2026-09-15 — Language button in the top right corner of both sites (uncommitted)
 The owner's direction: the top-right language button is what people will
 mostly use, on both the panel and the student site.

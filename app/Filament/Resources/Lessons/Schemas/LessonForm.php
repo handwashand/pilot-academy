@@ -246,8 +246,10 @@ class LessonForm
                     ->collapsible()
                     ->schema([
                         Repeater::make('doc_links')
-                            // The section heading names it. An empty label falls
-                            // back to the field name, "Doc links", in English.
+                            // The section heading names it on screen. The label is
+                            // still read out by screen readers, so it is translated
+                            // too: left empty, Filament used the field name, "Doc links".
+                            ->label(__t('admin_lessons.form.docs_section'))
                             ->hiddenLabel()
                             ->itemLabel(fn (array $state): ?string => $state['title'] ?? __t('admin_lessons.form.new_link'))
                             ->defaultItems(0)
