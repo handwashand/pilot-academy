@@ -22,9 +22,27 @@ class LessonResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Content';
-
     protected static ?int $navigationSort = 2;
+
+    public static function getNavigationGroup(): string|UnitEnum|null
+    {
+        return __t('admin_nav.groups.content');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __t('admin_nav.lessons.nav');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __t('admin_nav.lessons.one');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __t('admin_nav.lessons.many');
+    }
 
     /** Creators only ever see lessons inside their own products' courses. */
     public static function getEloquentQuery(): Builder
@@ -56,7 +74,7 @@ class LessonResource extends Resource
 
     public static function getNavigationBadgeTooltip(): ?string
     {
-        return 'Lessons still in draft — hidden even in a published course';
+        return __t('admin_nav.lessons.badge');
     }
 
     protected static ?string $recordTitleAttribute = 'title';
@@ -71,8 +89,8 @@ class LessonResource extends Resource
     public static function getGlobalSearchResultDetails(mixed $record): array
     {
         return [
-            'Course' => $record->course?->title ?? '—',
-            'Status' => $record->statusLabel(),
+            __t('admin_common.course') => $record->course?->title ?? '—',
+            __t('admin_common.status') => $record->statusLabel(),
         ];
     }
 

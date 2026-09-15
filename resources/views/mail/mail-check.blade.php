@@ -1,9 +1,9 @@
 @component('mail::message')
-# This is a test email
+# {{ __t('mail.mail_check.heading') }}
 
-{{ $name }} sent it from **Settings → Mail** in the Pilot Academy admin panel on {{ $sentAt }}.
+{{ __t('mail.mail_check.sent_by', ['name' => $name, 'date' => $sentAt]) }}
 
-If you are reading this, the academy can send email: certificates and reminders will reach students.
+{{ __t('mail.mail_check.works') }}
 
-Links in academy emails start with {{ $appUrl }}. If that is not the address people use to open the academy, the logo and links in certificate emails will be broken.
+{{ __t('mail.mail_check.links', ['url' => $appUrl]) }}
 @endcomponent

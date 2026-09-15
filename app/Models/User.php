@@ -73,9 +73,17 @@ class User extends Authenticatable implements FilamentUser, HasLocalePreference
         return $this->role === self::ROLE_LEARNER;
     }
 
+    /** @return array<string, string> The roles in the reader's language (lang/{code}/labels.php). */
+    public static function roleLabels(): array
+    {
+        return collect(self::ROLE_LABELS)
+            ->mapWithKeys(fn (string $english, string $role): array => [$role => __t("labels.role.{$role}")])
+            ->all();
+    }
+
     public function roleLabel(): string
     {
-        return self::ROLE_LABELS[$this->role] ?? $this->role;
+        return self::roleLabels()[$this->role] ?? $this->role;
     }
 
     public function preferredLocale(): ?string

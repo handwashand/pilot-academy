@@ -12,17 +12,19 @@ class CompanyForm
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->label('Company name')
+                    ->label(__t('admin_people.companies.name'))
                     ->required()
                     ->maxLength(255),
 
                 TextInput::make('region')
+                    ->label(__t('admin_people.companies.region'))
                     ->maxLength(255)
-                    ->helperText('e.g. EMEA, LATAM, CIS'),
+                    ->helperText(__t('admin_people.companies.region_help')),
 
                 TextInput::make('industry')
+                    ->label(__t('admin_people.companies.industry'))
                     ->maxLength(255)
-                    ->helperText('e.g. Logistics, Construction'),
+                    ->helperText(__t('admin_people.companies.industry_help')),
             ]);
     }
 }

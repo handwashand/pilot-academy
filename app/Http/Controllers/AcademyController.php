@@ -490,7 +490,12 @@ class AcademyController extends Controller
                 ->with('contentTranslations')
                 ->where(fn ($query) => $query
                     ->whereRaw('LOWER(title) LIKE ?', [$like])
-                    ->orWhereRaw('LOWER(description) LIKE ?', [$like]))
+                    ->orWhereRaw('LOWER(description) LIKE ?', [$like])
+                    // Found by its translations too: a French course with a
+                    // Russian title turns up for a Russian search.
+                    ->orWhereHas('contentTranslations', fn ($translations) => $translations
+                        ->whereIn('field', ['title', 'description'])
+                        ->whereRaw('LOWER(value) LIKE ?', [$like])))
                 ->orderBy('sort_order')
                 ->limit(20)
                 ->get();
@@ -502,7 +507,10 @@ class AcademyController extends Controller
                     ->orWhereRaw('LOWER(lessons.summary) LIKE ?', [$like])
                     // The transcript is what makes a video findable at all —
                     // until it existed, spoken content matched nothing.
-                    ->orWhereRaw('LOWER(lessons.transcript) LIKE ?', [$like]))
+                    ->orWhereRaw('LOWER(lessons.transcript) LIKE ?', [$like])
+                    ->orWhereHas('contentTranslations', fn ($translations) => $translations
+                        ->whereIn('field', ['title', 'summary', 'transcript'])
+                        ->whereRaw('LOWER(value) LIKE ?', [$like])))
                 // Listed once, under the first live course it is in.
                 ->with(['contentTranslations', 'courses' => fn ($query) => $query->published()->orderBy('courses.sort_order')->with('contentTranslations')])
                 ->orderBy('sort_order')

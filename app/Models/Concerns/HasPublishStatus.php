@@ -38,9 +38,17 @@ trait HasPublishStatus
         return $this->status === self::STATUS_PUBLISHED;
     }
 
+    /** @return array<string, string> The statuses in the reader's language (lang/{code}/labels.php). */
+    public static function statusLabels(): array
+    {
+        return collect(self::STATUS_LABELS)
+            ->mapWithKeys(fn (string $english, string $status): array => [$status => __t("labels.publish_status.{$status}")])
+            ->all();
+    }
+
     public function statusLabel(): string
     {
-        return self::STATUS_LABELS[$this->status] ?? $this->status;
+        return static::statusLabels()[$this->status] ?? $this->status;
     }
 
     /** Overridden where publishing has prerequisites (see Course). */

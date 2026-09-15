@@ -29,6 +29,14 @@ class ActivityEvent extends Model
         self::TYPE_REMINDER_SENT => 'Sent a reminder',
     ];
 
+    /** @return array<string, string> The types in the reader's language (lang/{code}/labels.php). */
+    public static function typeLabels(): array
+    {
+        return collect(self::TYPE_LABELS)
+            ->mapWithKeys(fn (string $english, string $type): array => [$type => __t("labels.activity.{$type}")])
+            ->all();
+    }
+
     protected $fillable = [
         'user_id',
         'type',

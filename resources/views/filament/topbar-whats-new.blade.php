@@ -17,8 +17,8 @@
     <a
         href="{{ $page::getUrl() }}"
         data-whats-new-shortcut
-        title="What's new"
-        aria-label="What's new"
+        title="{{ __t('admin_nav.whats_new.nav') }}"
+        aria-label="{{ __t('admin_nav.whats_new.nav') }}"
         @if ($active) aria-current="page" @endif
         @class([
             'flex shrink-0 items-center justify-center rounded-lg p-2 outline-none transition focus-visible:ring-2 focus-visible:ring-primary-500',

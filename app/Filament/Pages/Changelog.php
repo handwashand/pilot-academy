@@ -61,13 +61,22 @@ class Changelog extends Page
 
     // The class and route stay "changelog" so existing links keep working;
     // only what people read is changed.
-    protected static ?string $navigationLabel = "What's new";
+    public static function getNavigationLabel(): string
+    {
+        return __t('admin_nav.whats_new.nav');
+    }
 
-    protected static ?string $title = "What's new";
+    public function getTitle(): string
+    {
+        return __t('admin_nav.whats_new.nav');
+    }
 
     // Docs sits last in the sidebar, below the screens it explains. The guide
     // comes first inside it: you read how things work before what changed.
-    protected static string|UnitEnum|null $navigationGroup = 'Docs';
+    public static function getNavigationGroup(): string|UnitEnum|null
+    {
+        return __t('admin_nav.groups.docs');
+    }
 
     protected static ?int $navigationSort = 2;
 

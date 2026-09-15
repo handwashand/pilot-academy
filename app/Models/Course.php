@@ -22,6 +22,7 @@ class Course extends Model
     protected $fillable = [
         'product_id',
         'title',
+        'language',
         'slug',
         'description',
         'level',
@@ -54,9 +55,25 @@ class Course extends Model
         'support' => 'Support',
     ];
 
+    /** @return array<string, string> Audiences in the reader's language — the same words the course card uses. */
+    public static function audienceLabels(): array
+    {
+        return collect(self::AUDIENCES)
+            ->mapWithKeys(fn (string $english, string $audience): array => [$audience => __t("academy.common.audience.{$audience}")])
+            ->all();
+    }
+
+    /** @return array<string, string> */
+    public static function levelLabels(): array
+    {
+        return collect(['beginner', 'intermediate', 'advanced'])
+            ->mapWithKeys(fn (string $level): array => [$level => __t("academy.common.level.{$level}")])
+            ->all();
+    }
+
     public function getAudienceLabelAttribute(): ?string
     {
-        return $this->audience ? (self::AUDIENCES[$this->audience] ?? $this->audience) : null;
+        return $this->audience ? (self::audienceLabels()[$this->audience] ?? $this->audience) : null;
     }
 
     /** A course with no published lesson would open empty, so it cannot go live. */

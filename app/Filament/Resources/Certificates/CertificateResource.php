@@ -18,9 +18,27 @@ class CertificateResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAcademicCap;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Results';
-
     protected static ?int $navigationSort = 1;
+
+    public static function getNavigationGroup(): string|UnitEnum|null
+    {
+        return __t('admin_nav.groups.results');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __t('admin_nav.certificates.nav');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __t('admin_nav.certificates.one');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __t('admin_nav.certificates.many');
+    }
 
     public static function getEloquentQuery(): Builder
     {

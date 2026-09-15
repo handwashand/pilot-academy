@@ -26,13 +26,27 @@ class QuizAttemptResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
 
-    protected static ?string $navigationLabel = 'Quiz attempts';
-
-    protected static ?string $modelLabel = 'quiz attempt';
-
-    protected static string|UnitEnum|null $navigationGroup = 'Results';
-
     protected static ?int $navigationSort = 3;
+
+    public static function getNavigationGroup(): string|UnitEnum|null
+    {
+        return __t('admin_nav.groups.results');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __t('admin_nav.quiz_attempts.nav');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __t('admin_nav.quiz_attempts.one');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __t('admin_nav.quiz_attempts.many');
+    }
 
     /**
      * Learner records — admins only, like every learner report here. Checked on
@@ -71,7 +85,7 @@ class QuizAttemptResource extends Resource
 
     public static function getNavigationBadgeTooltip(): ?string
     {
-        return 'Students out of attempts at a quiz they have not passed';
+        return __t('admin_nav.quiz_attempts.badge');
     }
 
     public static function table(Table $table): Table

@@ -71,16 +71,17 @@ class LanguageSeeder extends Seeder
      * lang/{code}/*.php, which is what the site reads anyway — this only puts
      * those lines in the translations table, where they have always been.
      *
-     * The student-site file (academy.php) is left out: a seeded row would
-     * override the shipped line and hide every later correction made in it.
-     * Its lines reach the Translations page as empty rows instead.
+     * Only the groups that were seeded before they shipped as files. Newer ones
+     * (academy.php, admin_*.php) are left out: a seeded row would override the
+     * shipped line and hide every later correction made in it. Their lines
+     * reach the Translations page as empty rows instead.
      *
      * @return array<string, array<string, string>>
      */
     private function strings(): array
     {
         $translator = app(Translator::class);
-        $groups = array_diff(Translator::SHIPPED_GROUPS, ['academy']);
+        $groups = ['nav', 'footer', 'auth', 'field', 'locale', 'help', 'guide', 'admin', 'core', 'mail'];
         $strings = [];
 
         foreach (array_keys(self::LANGUAGES) as $code) {

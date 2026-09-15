@@ -23,7 +23,7 @@ class CertificatesByCourse extends TableWidget
     public function table(Table $table): Table
     {
         return $table
-            ->heading('Certificates issued by course')
+            ->heading(__t('admin_widgets.certificates.heading'))
             ->query(
                 Course::query()
                     ->where('final_quiz_enabled', true)
@@ -38,11 +38,11 @@ class CertificatesByCourse extends TableWidget
             ->defaultSort('issued_count', 'desc')
             ->columns([
                 TextColumn::make('title')
-                    ->label('Course')
+                    ->label(__t('admin_common.course'))
                     ->weight('bold'),
 
                 TextColumn::make('issued_count')
-                    ->label('Certificates issued')
+                    ->label(__t('admin_widgets.overview.certificates'))
                     ->badge()
                     ->color('success'),
             ])

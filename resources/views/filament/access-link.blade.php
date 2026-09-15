@@ -45,7 +45,7 @@
             x-show="! copied"
             x-on:click="copy"
         >
-            Copy link
+            {{ __t('admin_people.users.copy_link') }}
         </x-filament::button>
 
         <x-filament::button
@@ -56,11 +56,11 @@
             x-show="copied"
             x-transition.scale.90.duration.200ms
         >
-            Copied!
+            {{ __t('admin_people.users.copied') }}
         </x-filament::button>
     </div>
 
     <p style="font-size: 0.875rem; opacity: 0.7;">
-        Send this link to the user. Opening it signs them in without a password, and their progress is saved to this account.
+        {{ __t('admin_people.users.access_link_help') }}
     </p>
 </div>

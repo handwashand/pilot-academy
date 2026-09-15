@@ -16,7 +16,7 @@ class ProductForm
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->label('Product / module')
+                    ->label(__t('admin_library.products.name'))
                     ->required()
                     ->maxLength(255)
                     ->live(onBlur: true)
@@ -25,19 +25,21 @@ class ProductForm
                             $set('slug', Str::slug($state));
                         }
                     })
-                    ->helperText('The product this training is about, e.g. GARM or PTM.'),
+                    ->helperText(__t('admin_library.products.name_help')),
 
                 TextInput::make('slug')
+                    ->label(__t('admin_common.slug'))
                     ->required()
                     ->maxLength(255)
                     ->unique(ignoreRecord: true),
 
                 Textarea::make('description')
+                    ->label(__t('admin_common.description'))
                     ->rows(3)
                     ->columnSpanFull(),
 
                 Select::make('creators')
-                    ->label('Creators')
+                    ->label(__t('admin_library.products.creators'))
                     ->relationship(
                         'creators',
                         'name',
@@ -47,7 +49,7 @@ class ProductForm
                     ->preload()
                     ->searchable()
                     ->columnSpanFull()
-                    ->helperText('Creators who own this product\'s training. Only users whose role is already Creator appear here.'),
+                    ->helperText(__t('admin_library.products.creators_help')),
             ]);
     }
 }

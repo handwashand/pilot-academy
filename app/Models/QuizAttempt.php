@@ -24,6 +24,14 @@ class QuizAttempt extends Model
         self::STATUS_EXPIRED => 'Time expired',
     ];
 
+    /** @return array<string, string> The statuses in the reader's language (lang/{code}/labels.php). */
+    public static function statusLabels(): array
+    {
+        return collect(self::STATUS_LABELS)
+            ->mapWithKeys(fn (string $english, string $status): array => [$status => __t("labels.attempt_status.{$status}")])
+            ->all();
+    }
+
     protected $fillable = [
         'user_id',
         'lesson_id',

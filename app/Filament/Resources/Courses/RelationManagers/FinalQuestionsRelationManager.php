@@ -20,47 +20,51 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class FinalQuestionsRelationManager extends RelationManager
 {
     protected static string $relationship = 'finalQuestions';
 
-    protected static ?string $title = 'Final questions';
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return __t('admin_nav.tabs.final_questions');
+    }
 
     public function form(Schema $schema): Schema
     {
         return $schema->components([
             Textarea::make('prompt')
-                ->label('Question')
+                ->label(__t('admin_common.question'))
                 ->required()
                 ->rows(2)
                 ->columnSpanFull(),
 
             Select::make('type')
-                ->label('Answer type')
-                ->options(Question::TYPE_LABELS)
+                ->label(__t('admin_courses.final_tab.answer_type'))
+                ->options(Question::typeLabels())
                 ->default(Question::TYPE_SINGLE)
                 ->required(),
 
             Repeater::make('options')
                 ->relationship()
                 ->orderColumn('sort_order')
-                ->label('Answer options')
-                ->helperText('Tick the correct answer(s). Multiple ticks require an "answer type" of Multiple select.')
+                ->label(__t('admin_common.answer_options'))
+                ->helperText(__t('admin_courses.final_tab.options_help'))
                 ->defaultItems(2)
                 ->minItems(2)
-                ->addActionLabel('Add answer option')
+                ->addActionLabel(__t('admin_common.add_answer_option'))
                 ->columns(4)
                 ->columnSpanFull()
                 ->schema([
                     TextInput::make('text')
-                        ->label('Answer')
+                        ->label(__t('admin_common.answer'))
                         ->required()
                         ->columnSpan(3),
 
                     Toggle::make('is_correct')
-                        ->label('Correct')
+                        ->label(__t('admin_common.correct'))
                         ->inline(false)
                         ->columnSpan(1),
                 ]),
@@ -73,38 +77,40 @@ class FinalQuestionsRelationManager extends RelationManager
             ->recordTitleAttribute('prompt')
             ->columns([
                 TextColumn::make('prompt')
-                    ->label('Question')
+                    ->label(__t('admin_common.question'))
                     ->wrap()
                     ->limit(80)
                     ->searchable(),
 
                 TextColumn::make('type')
+                    ->label(__t('admin_common.type'))
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => Question::TYPE_LABELS[$state] ?? $state)
+                    ->formatStateUsing(fn (string $state): string => Question::typeLabels()[$state] ?? $state)
                     ->color(fn (string $state): string => $state === Question::TYPE_MULTIPLE ? 'warning' : 'gray'),
 
                 TextColumn::make('lesson.title')
-                    ->label('Source')
+                    ->label(__t('admin_courses.final_tab.source'))
                     ->badge()
                     ->color(fn ($record): string => $record->lesson_id ? 'info' : 'success')
-                    ->default('Course-only'),
+                    ->default(__t('admin_courses.final_tab.course_only')),
 
                 TextColumn::make('options_count')
-                    ->label('Options')
+                    ->label(__t('admin_courses.final_tab.options'))
                     ->counts('options')
                     ->badge(),
             ])
             ->filters([
                 SelectFilter::make('type')
-                    ->options(Question::TYPE_LABELS),
+                    ->label(__t('admin_common.type'))
+                    ->options(Question::typeLabels()),
             ])
             ->headerActions([
                 Action::make('addAllLessonQuestions')
-                    ->label('Add all lesson questions')
+                    ->label(__t('admin_courses.final_tab.add_all'))
                     ->icon('heroicon-o-plus-circle')
                     ->color('gray')
                     ->requiresConfirmation()
-                    ->modalDescription('Adds every question from this course\'s lessons to the final quiz bank. Already-added questions are left as they are.')
+                    ->modalDescription(__t('admin_courses.final_tab.add_all_description'))
                     ->action(function () {
                         $course = $this->getOwnerRecord();
                         $ids = Question::whereHas('lesson.courses', fn (Builder $q) => $q->whereKey($course->id))
@@ -114,7 +120,7 @@ class FinalQuestionsRelationManager extends RelationManager
                     }),
 
                 AttachAction::make()
-                    ->label('Attach lesson question')
+                    ->label(__t('admin_courses.final_tab.attach'))
                     ->recordSelectSearchColumns(['prompt'])
                     ->recordTitle(fn (Question $record): string => Str::limit($record->prompt, 70))
                     ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereHas(
@@ -123,15 +129,15 @@ class FinalQuestionsRelationManager extends RelationManager
                     )),
 
                 CreateAction::make()
-                    ->label('New final question')
-                    ->modalHeading('New course-only question'),
+                    ->label(__t('admin_courses.final_tab.create'))
+                    ->modalHeading(__t('admin_courses.final_tab.create_heading')),
             ])
             ->recordActions([
                 EditAction::make(),
                 DetachAction::make()
-                    ->label('Remove from bank'),
+                    ->label(__t('admin_courses.final_tab.detach')),
                 DeleteAction::make()
-                    ->label('Delete question')
+                    ->label(__t('admin_courses.final_tab.delete'))
                     ->visible(fn (Question $record): bool => $record->lesson_id === null),
             ]);
     }

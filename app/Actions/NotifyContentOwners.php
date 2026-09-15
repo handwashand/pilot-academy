@@ -4,6 +4,8 @@ namespace App\Actions;
 
 use App\Models\Course;
 use App\Models\User;
+use App\Services\Translator;
+use Closure;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Notifications\DatabaseNotification;
@@ -18,6 +20,9 @@ use Illuminate\Support\Collection;
  * on already says so. Each problem is notified once while the alert is unread,
  * and an alert whose problem has since been fixed is marked read, so the bell
  * never lists something already mended.
+ *
+ * The alert is stored as text, so it is written in the owner's language — not
+ * the language of whoever made the change.
  */
 class NotifyContentOwners
 {
@@ -65,22 +70,28 @@ class NotifyContentOwners
 
             $alreadyTold = $alerts->map(fn (DatabaseNotification $alert) => $alert->data['viewData']['content_problem_key'] ?? null)->filter();
 
-            foreach ($problems as $key => $problem) {
-                if ($alreadyTold->contains($key)) {
-                    continue;
-                }
-
-                Notification::make()
-                    ->title($problem['what'])
-                    ->body($problem['name'].'. '.$problem['fix'])
-                    ->icon('heroicon-o-exclamation-triangle')
-                    ->iconColor($problem['severity'])
-                    ->viewData(['content_problem_key' => $key, 'content_course_id' => $course->id])
-                    ->actions([
-                        Action::make('fix')->label('Fix it')->url($problem['url'])->markAsRead(),
-                    ])
-                    ->sendToDatabase($owner);
+            if ($problems->keys()->diff($alreadyTold)->isEmpty()) {
+                continue;
             }
+
+            $this->inLanguageOf($owner, function () use ($course, $owner, $alreadyTold): void {
+                foreach ($this->find->forCourse($course) as $problem) {
+                    if ($alreadyTold->contains($problem['key'])) {
+                        continue;
+                    }
+
+                    Notification::make()
+                        ->title($problem['what'])
+                        ->body($problem['name'].'. '.$problem['fix'])
+                        ->icon('heroicon-o-exclamation-triangle')
+                        ->iconColor($problem['severity'])
+                        ->viewData(['content_problem_key' => $problem['key'], 'content_course_id' => $course->id])
+                        ->actions([
+                            Action::make('fix')->label(__t('admin_pages.content_health.fix'))->url($problem['url'])->markAsRead(),
+                        ])
+                        ->sendToDatabase($owner);
+                }
+            });
         }
     }
 
@@ -97,6 +108,14 @@ class NotifyContentOwners
         return $creators->isNotEmpty()
             ? $creators
             : User::query()->where('role', User::ROLE_ADMIN)->get();
+    }
+
+    /** Run $callback with the app in the user's language, then put the request's back. */
+    private function inLanguageOf(User $user, Closure $callback): void
+    {
+        $translator = app(Translator::class);
+
+        $translator->inLocale($translator->localeFor($user), $callback);
     }
 
     /**

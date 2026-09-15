@@ -21,13 +21,22 @@ class AdminGuide extends Page
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
 
-    protected static ?string $navigationLabel = 'Guide';
-
-    protected static ?string $title = 'Admin guide';
-
-    protected static string|UnitEnum|null $navigationGroup = 'Docs';
-
     protected static ?int $navigationSort = 1;
+
+    public static function getNavigationLabel(): string
+    {
+        return __t('admin_nav.guide.nav');
+    }
+
+    public function getTitle(): string
+    {
+        return __t('admin_nav.guide.title');
+    }
+
+    public static function getNavigationGroup(): string|UnitEnum|null
+    {
+        return __t('admin_nav.groups.docs');
+    }
 
     protected string $view = 'filament.pages.admin-guide';
 

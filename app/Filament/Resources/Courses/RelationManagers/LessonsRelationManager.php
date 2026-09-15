@@ -12,12 +12,16 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class LessonsRelationManager extends RelationManager
 {
     protected static string $relationship = 'lessons';
 
-    protected static ?string $title = 'Lessons';
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return __t('admin_nav.tabs.lessons');
+    }
 
     public function table(Table $table): Table
     {
@@ -29,14 +33,15 @@ class LessonsRelationManager extends RelationManager
             ->reorderable('course_lesson.sort_order')
             ->columns([
                 TextColumn::make('title')
-                    ->label('Lesson')
+                    ->label(__t('admin_common.lesson'))
                     ->wrap()
                     ->searchable()
                     ->description(fn (Lesson $record): ?string => $this->alsoIn($record)),
 
                 TextColumn::make('status')
+                    ->label(__t('admin_common.status'))
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => Lesson::STATUS_LABELS[$state] ?? $state)
+                    ->formatStateUsing(fn (string $state): string => Lesson::statusLabels()[$state] ?? $state)
                     ->color(fn (string $state): string => match ($state) {
                         Lesson::STATUS_PUBLISHED => 'success',
                         Lesson::STATUS_ARCHIVED => 'gray',
@@ -44,29 +49,29 @@ class LessonsRelationManager extends RelationManager
                     }),
 
                 TextColumn::make('duration_minutes')
-                    ->label('Length')
+                    ->label(__t('admin_courses.lessons_tab.length'))
                     ->formatStateUsing(fn (?int $state): string => Lesson::formatMinutes($state) ?? '—')
-                    ->tooltip('Students see this. Set it on the lesson.'),
+                    ->tooltip(__t('admin_courses.lessons_tab.length_tip')),
 
                 TextColumn::make('questions_count')
-                    ->label('Questions')
+                    ->label(__t('admin_courses.lessons_tab.questions'))
                     ->counts('questions')
                     ->badge()
                     ->color(fn (int $state): string => $state > 0 ? 'gray' : 'danger')
                     ->tooltip(fn (int $state): ?string => $state > 0
                         ? null
-                        : 'A lesson with no quiz can never be marked finished.'),
+                        : __t('admin_courses.lessons_tab.no_quiz_tip')),
             ])
             ->headerActions([
                 AttachAction::make()
-                    ->label('Add existing lesson')
-                    ->modalHeading('Add an existing lesson to this course')
-                    ->modalDescription('The lesson is shared, not copied: it stays in the courses it is already in, and a change to it shows in all of them. Students who already finished it have it finished here too.')
-                    ->modalSubmitActionLabel('Add to this course')
+                    ->label(__t('admin_courses.lessons_tab.attach'))
+                    ->modalHeading(__t('admin_courses.lessons_tab.attach_heading'))
+                    ->modalDescription(__t('admin_courses.lessons_tab.attach_description'))
+                    ->modalSubmitActionLabel(__t('admin_courses.lessons_tab.attach_submit'))
                     ->multiple()
                     ->recordSelectSearchColumns(['title'])
                     ->recordTitle(fn (Lesson $record): string => $record->course
-                        ? "{$record->title}  ·  from {$record->course->title}"
+                        ? __t('admin_courses.lessons_tab.from_course', ['lesson' => $record->title, 'course' => $record->course->title])
                         : $record->title)
                     ->recordSelectOptionsQuery(function (Builder $query): Builder {
                         $user = auth()->user();
@@ -91,8 +96,8 @@ class LessonsRelationManager extends RelationManager
 
                         if ($clashes->isNotEmpty()) {
                             Notification::make()
-                                ->title('A lesson in this course already uses the same web address')
-                                ->body('Change the slug of '.$clashes->implode(', ').' first, then add it.')
+                                ->title(__t('admin_courses.lessons_tab.slug_clash'))
+                                ->body(__t('admin_courses.lessons_tab.slug_clash_body', ['lessons' => $clashes->implode(', ')]))
                                 ->danger()
                                 ->persistent()
                                 ->send();
@@ -106,15 +111,15 @@ class LessonsRelationManager extends RelationManager
                     ->url(fn (Lesson $record): string => LessonResource::getUrl('edit', ['record' => $record])),
 
                 DetachAction::make()
-                    ->label('Remove from course')
-                    ->modalHeading('Remove this lesson from the course')
-                    ->modalDescription('The lesson stays in its other courses, with its questions and student progress. Only this course stops showing it.')
+                    ->label(__t('admin_courses.lessons_tab.detach'))
+                    ->modalHeading(__t('admin_courses.lessons_tab.detach_heading'))
+                    ->modalDescription(__t('admin_courses.lessons_tab.detach_description'))
                     // Its last course: removing it would leave the lesson in
                     // no course at all. Delete it from Lessons instead.
                     ->visible(fn (Lesson $record): bool => $record->courses()->count() > 1),
             ])
-            ->emptyStateHeading('No lessons yet')
-            ->emptyStateDescription('Add lessons under Lessons in the menu, or add an existing one here.');
+            ->emptyStateHeading(__t('admin_courses.lessons_tab.empty'))
+            ->emptyStateDescription(__t('admin_courses.lessons_tab.empty_description'));
     }
 
     /** "Also in: X, Y" for a lesson shared with other courses. */
@@ -124,6 +129,6 @@ class LessonsRelationManager extends RelationManager
             ->whereKeyNot($this->getOwnerRecord()->getKey())
             ->pluck('title');
 
-        return $others->isNotEmpty() ? 'Also in: '.$others->implode(', ') : null;
+        return $others->isNotEmpty() ? __t('admin_courses.lessons_tab.also_in', ['courses' => $others->implode(', ')]) : null;
     }
 }

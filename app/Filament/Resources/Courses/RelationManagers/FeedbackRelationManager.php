@@ -18,7 +18,10 @@ class FeedbackRelationManager extends RelationManager
 {
     protected static string $relationship = 'feedback';
 
-    protected static ?string $title = 'Student feedback';
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return __t('admin_nav.tabs.feedback');
+    }
 
     public static function getBadge(Model $ownerRecord, string $pageClass): ?string
     {
@@ -34,7 +37,7 @@ class FeedbackRelationManager extends RelationManager
             ->defaultSort('created_at', 'desc')
             ->columns([
                 IconColumn::make('is_positive')
-                    ->label('Verdict')
+                    ->label(__t('admin_courses.feedback_tab.verdict'))
                     ->boolean()
                     ->trueIcon('heroicon-o-hand-thumb-up')
                     ->falseIcon('heroicon-o-hand-thumb-down')
@@ -42,34 +45,34 @@ class FeedbackRelationManager extends RelationManager
                     ->falseColor('danger'),
 
                 TextColumn::make('user.name')
-                    ->label('Student')
+                    ->label(__t('admin_common.student'))
                     ->searchable(),
 
                 TextColumn::make('user.company.name')
-                    ->label('Partner')
+                    ->label(__t('admin_common.partner'))
                     ->badge()
                     ->default('—'),
 
                 TextColumn::make('comment')
-                    ->label('What they said')
+                    ->label(__t('admin_courses.feedback_tab.what_they_said'))
                     ->wrap()
-                    ->placeholder('No comment')
+                    ->placeholder(__t('admin_courses.feedback_tab.no_comment'))
                     ->searchable(),
 
                 TextColumn::make('created_at')
-                    ->label('When')
+                    ->label(__t('admin_common.when'))
                     ->since()
                     ->sortable(),
             ])
             ->filters([
                 TernaryFilter::make('is_positive')
-                    ->label('Verdict')
-                    ->placeholder('All')
-                    ->trueLabel('Useful')
-                    ->falseLabel('Not useful'),
+                    ->label(__t('admin_courses.feedback_tab.verdict'))
+                    ->placeholder(__t('admin_common.all'))
+                    ->trueLabel(__t('admin_courses.feedback_tab.useful'))
+                    ->falseLabel(__t('admin_courses.feedback_tab.not_useful')),
             ])
-            ->emptyStateHeading('No feedback yet')
-            ->emptyStateDescription('Students are asked what they thought once they finish every lesson.')
+            ->emptyStateHeading(__t('admin_courses.feedback_tab.empty'))
+            ->emptyStateDescription(__t('admin_courses.feedback_tab.empty_description'))
             // Students write this, staff only read it.
             ->headerActions([])
             ->recordActions([])

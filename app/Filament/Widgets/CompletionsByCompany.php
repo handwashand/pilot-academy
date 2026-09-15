@@ -21,9 +21,15 @@ class CompletionsByCompany extends ChartWidget
 
     protected static ?int $sort = 2;
 
-    protected ?string $heading = 'Progress by partner company';
+    public function getHeading(): ?string
+    {
+        return __t('admin_widgets.companies.heading');
+    }
 
-    protected ?string $description = 'Share of all published lessons completed by each company\'s students.';
+    public function getDescription(): ?string
+    {
+        return __t('admin_widgets.companies.description');
+    }
 
     protected function getType(): string
     {
@@ -73,7 +79,7 @@ class CompletionsByCompany extends ChartWidget
 
         return [
             'datasets' => [[
-                'label' => '% of published lessons completed',
+                'label' => __t('admin_widgets.companies.dataset'),
                 'data' => $percentages->values()->all(),
                 'backgroundColor' => '#2563eb',
             ]],

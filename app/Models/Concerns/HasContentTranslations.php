@@ -25,7 +25,8 @@ trait HasContentTranslations
 
         $language = app(Translator::class)->activeLanguage($code);
 
-        if (! $language || $language->is_default) {
+        // Someone reading in the language it was written in gets the original.
+        if (! $language || $language->code === $this->contentLanguageCode()) {
             return $original;
         }
 
@@ -43,6 +44,15 @@ trait HasContentTranslations
         return filled($value) ? $value : $original;
     }
 
+    /**
+     * The language the record is written in — a French trainer's course is
+     * French. Unset means the default language.
+     */
+    public function contentLanguageCode(): string
+    {
+        return $this->getAttribute('language') ?: app(Translator::class)->defaultCode();
+    }
+
     /** The fields students see that can be written in other languages. */
     public function translatableFields(): array
     {
@@ -57,7 +67,8 @@ trait HasContentTranslations
 
         $language = app(Translator::class)->activeLanguage($code);
 
-        if (! $language || $language->is_default) {
+        // The original is the record itself, not a translation of it.
+        if (! $language || $language->code === $this->contentLanguageCode()) {
             return;
         }
 
@@ -86,7 +97,7 @@ trait HasContentTranslations
         $total = count($fields);
 
         return Language::active()
-            ->where('is_default', false)
+            ->where('code', '!=', $this->contentLanguageCode())
             ->orderBy('position')
             ->get()
             ->mapWithKeys(function (Language $language) use ($fields, $total): array {

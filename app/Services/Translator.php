@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\Language;
 use App\Models\Translation;
+use Closure;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
@@ -14,7 +16,7 @@ use Illuminate\Support\Str;
 class Translator
 {
     /** Files in lang/{code}/ that __t() reads, and admins may correct. */
-    public const SHIPPED_GROUPS = ['academy', 'nav', 'footer', 'auth', 'field', 'locale', 'help', 'guide', 'admin', 'core', 'mail'];
+    public const SHIPPED_GROUPS = ['academy', 'nav', 'footer', 'auth', 'field', 'locale', 'help', 'guide', 'admin', 'core', 'mail', 'labels', 'admin_nav', 'admin_common', 'admin_courses', 'admin_lessons', 'admin_people', 'admin_library', 'admin_results', 'admin_settings', 'admin_pages', 'admin_widgets'];
 
     private array $bundles = [];
 
@@ -189,6 +191,40 @@ class Translator
         $this->bundles = [];
 
         return true;
+    }
+
+    /**
+     * The language to write to someone in, when they are not the one making the
+     * request — an email, a certificate, a bell alert. Their own choice if that
+     * language is switched on, otherwise the default.
+     */
+    public function localeFor(?HasLocalePreference $person): string
+    {
+        $code = $person?->preferredLocale();
+
+        return $this->isActiveCode($code) ? $code : $this->defaultCode();
+    }
+
+    /**
+     * Run $callback with the app in $code, then put the request's language back
+     * — even when the callback throws.
+     *
+     * @template T
+     *
+     * @param  Closure(): T  $callback
+     * @return T
+     */
+    public function inLocale(string $code, Closure $callback): mixed
+    {
+        $previous = App::getLocale();
+
+        App::setLocale($code);
+
+        try {
+            return $callback();
+        } finally {
+            App::setLocale($previous);
+        }
     }
 
     private function tablesReady(): bool

@@ -382,6 +382,99 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-09-15 — Emails and certificates in the recipient's language (uncommitted)
+**What changed:**
+- **`Translator::localeFor($person)`:** the language to write to someone who is
+  not making the request — theirs if active, else the default.
+  **`Translator::inLocale($code, $callback)`:** sets it and always restores the
+  request's locale. `NotifyContentOwners` now uses both.
+- **Mailables** (`CertificateIssued`, `CourseReminder`, `MailCheckMessage`) call
+  `$this->locale(...)` in the constructor. Laravel renders the envelope and
+  body inside that locale, so plain `__t()` in `envelope()` and the views is
+  enough. `Mail::to($email)` with a string never picks a locale by itself.
+- **Certificate PDF:** `IssueCertificate::renderPdf()` renders the view inside
+  the student's locale. The course title uses `translated('title')`; the date
+  is `isoFormat('LL')` (Carbon's own month names).
+- **Keys:** the `mail` group (emails and the PDF). What's new PDF strings live
+  in `admin_pages.whats_new`.
+- **Laravel's mail footer** ("All rights reserved.") uses `__()` with JSON, so
+  `lang/{ru,fr,es,pt}.json` carry that one line.
+- **Tests:** `MailTranslationTest` covers:
+  - the array mailer's real subject and HTML;
+  - the PDF locale while an English admin regenerates it;
+  - the French date;
+  - fallback for a switched-off language.
+
+### 2026-09-15 — The admin panel in every language (uncommitted)
+Follows "the whole app changes with all its buttons and all text when the
+language is switched". Filament's own buttons were already translated by
+Filament; everything this app wrote in the panel was English literals.
+
+**What changed:**
+- **New shipped groups**, in all five languages and listed in
+  `Translator::SHIPPED_GROUPS`, so they show on Settings → Translations:
+  - `admin_nav`: menu groups, menu items, page titles, record names, tabs.
+  - `admin_common`: shared words and the Translate dialog.
+  - `admin_courses`, `admin_lessons`, `admin_people`, `admin_library`,
+    `admin_results`, `admin_settings`: one per area.
+  - `admin_pages`: Content health, content problems, Final quiz health, Mail,
+    What's new.
+  - `admin_widgets`: the dashboard.
+  - `labels`: names of stored values (publish status, attempt status, question
+    type, activity, role, certificate status).
+- **Static labels became methods.** `$navigationGroup`, `$navigationLabel`,
+  `$title`, `$modelLabel` are read once at boot, so they are now
+  `getNavigationGroup()` etc. returning `__t()`. Navigation groups in
+  `AdminPanelProvider` are `NavigationGroup` objects with closure labels.
+  Chart widgets override `getHeading()`/`getDescription()`.
+- **Value names:** the English constants (`STATUS_LABELS`, `TYPE_LABELS`,
+  `ROLE_LABELS`, `AUDIENCES`) stay as the list of values; screens use
+  `statusLabels()`, `typeLabels()`, `roleLabels()`, `audienceLabels()`,
+  `levelLabels()`, which translate.
+- **Columns Filament named itself** (`TextColumn::make('status')` reads
+  "Status") now have explicit labels — Filament's derived names are English.
+- **Changelog categories** are translated in the view, not in
+  `Changelog::parse()`: the parse is cached by file time and would freeze
+  whichever language parsed it first.
+- **`NotifyContentOwners`** builds each alert inside the owner's locale; bell
+  alerts are stored text.
+- **CSV exports** head their columns in the exporter's language.
+- **Lesson form:** "Title (English)" and "Link titles are in English" dropped —
+  untrue once trainers write in French or Russian.
+- **Tests:** `AdminPanelTranslationTest` — Russian menu and dashboard, French
+  lesson form and tabs, translated status values, an owner's alert in their
+  language, and a guard that fails on any `->label('English…')`-style literal
+  in `app/Filament`.
+- **Next:** emails and the certificate PDF in the recipient's language (done —
+  see the entry above).
+
+### 2026-09-15 — Content written in any language (uncommitted)
+The owner's direction:
+- English is the default language, and others are added after it.
+- French and Russian trainers will write courses in their own language.
+- **Translate** stays, because a course in one language is useful in another.
+- The priority is that the whole interface switches language; content is what
+  trainers write.
+
+**What changed:**
+- **`language` column:** added to `courses` and `lessons` by migration
+  `2026_09_15_000001`, which backfills the default language code. Set in both
+  forms through `CourseForm::writtenIn()`.
+  - On a new lesson the value follows its first course.
+  - `CourseLessons::create()` copies the course's language.
+- **`HasContentTranslations::contentLanguageCode()`:** the "original" is now the
+  record's own language, not the site default.
+  - `translated()` returns the original to readers of that language.
+  - `setTranslation()` refuses to store a translation into the record's own
+    language.
+  - Coverage counts the other languages.
+- **Translate tabs:** every active language except the record's own, so a French
+  course gets an English tab.
+- **Student search** also matches `content_translations` (course title and
+  description; lesson title, summary and transcript).
+- **Next:** the admin panel interface sweep (done — see the entry above), then
+  emails and the certificate PDF in the recipient's language.
+
 ### 2026-09-15 — Content translations, all UI strings shipped, language on phones (uncommitted)
 The three items left from the translation work.
 - **Course and lesson content:**

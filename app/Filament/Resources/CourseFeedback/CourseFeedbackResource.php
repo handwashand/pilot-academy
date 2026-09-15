@@ -26,15 +26,27 @@ class CourseFeedbackResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChatBubbleLeftRight;
 
-    protected static ?string $navigationLabel = 'Student feedback';
-
-    protected static ?string $modelLabel = 'feedback';
-
-    protected static ?string $pluralModelLabel = 'student feedback';
-
-    protected static string|UnitEnum|null $navigationGroup = 'Results';
-
     protected static ?int $navigationSort = 4;
+
+    public static function getNavigationGroup(): string|UnitEnum|null
+    {
+        return __t('admin_nav.groups.results');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __t('admin_nav.feedback.nav');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __t('admin_nav.feedback.one');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __t('admin_nav.feedback.many');
+    }
 
     /**
      * Across every product, so admins only. Creators still read their own

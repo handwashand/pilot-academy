@@ -29,13 +29,22 @@ class MailCheck extends Page
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedEnvelope;
 
-    protected static ?string $navigationLabel = 'Mail';
-
-    protected static ?string $title = 'Mail';
-
-    protected static string|UnitEnum|null $navigationGroup = 'Settings';
-
     protected static ?int $navigationSort = 30;
+
+    public static function getNavigationLabel(): string
+    {
+        return __t('admin_nav.mail.nav');
+    }
+
+    public function getTitle(): string
+    {
+        return __t('admin_nav.mail.nav');
+    }
+
+    public static function getNavigationGroup(): string|UnitEnum|null
+    {
+        return __t('admin_nav.groups.settings');
+    }
 
     protected string $view = 'filament.pages.mail-check';
 
@@ -74,11 +83,11 @@ class MailCheck extends Page
     {
         return [
             Action::make('sendTest')
-                ->label('Send test email')
+                ->label(__t('admin_pages.mail.send_test'))
                 ->icon('heroicon-o-paper-airplane')
                 ->requiresConfirmation()
-                ->modalHeading('Send a test email')
-                ->modalDescription(fn (): string => 'A short test email goes to '.auth()->user()->email.'.')
+                ->modalHeading(__t('admin_pages.mail.send_test_heading'))
+                ->modalDescription(fn (): string => __t('admin_pages.mail.send_test_description', ['email' => auth()->user()->email]))
                 ->action(function (): void {
                     $user = auth()->user();
 
@@ -86,7 +95,7 @@ class MailCheck extends Page
                         Mail::to($user->email)->send(new MailCheckMessage($user));
                     } catch (Throwable $e) {
                         Notification::make()
-                            ->title('The test email could not be sent')
+                            ->title(__t('admin_pages.mail.failed'))
                             ->body($e->getMessage())
                             ->danger()
                             ->persistent()
@@ -97,8 +106,8 @@ class MailCheck extends Page
 
                     if (! $this->summary()['delivers']) {
                         Notification::make()
-                            ->title('Nothing was delivered')
-                            ->body('The academy is set to keep emails on the server instead of sending them. Ask whoever runs the server to set up a mail server in .env.')
+                            ->title(__t('admin_pages.mail.not_delivered'))
+                            ->body(__t('admin_pages.mail.not_delivered_body'))
                             ->warning()
                             ->persistent()
                             ->send();
@@ -107,8 +116,8 @@ class MailCheck extends Page
                     }
 
                     Notification::make()
-                        ->title('Test email sent')
-                        ->body("Check {$user->email}. If it has not arrived in a few minutes, look in spam, then ask whoever runs the server to check the mail settings.")
+                        ->title(__t('admin_pages.mail.sent'))
+                        ->body(__t('admin_pages.mail.sent_body', ['email' => $user->email]))
                         ->success()
                         ->send();
                 }),

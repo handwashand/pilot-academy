@@ -21,9 +21,27 @@ class ProductResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCube;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Content';
-
     protected static ?int $navigationSort = 3;
+
+    public static function getNavigationGroup(): string|UnitEnum|null
+    {
+        return __t('admin_nav.groups.content');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __t('admin_nav.products.nav');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __t('admin_nav.products.one');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __t('admin_nav.products.many');
+    }
 
     protected static ?string $recordTitleAttribute = 'name';
 

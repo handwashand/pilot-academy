@@ -28,18 +28,18 @@ class ListUsers extends ListRecords
     public function getTabs(): array
     {
         return [
-            'all' => Tab::make('All users')
+            'all' => Tab::make(__t('admin_people.users.all_users'))
                 ->badge(fn (): int => User::count()),
 
-            'admins' => Tab::make('Admins')
+            'admins' => Tab::make(__t('admin_people.users.admins'))
                 ->badge(fn (): int => User::where('role', User::ROLE_ADMIN)->count())
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('role', User::ROLE_ADMIN)),
 
-            'creators' => Tab::make('Creators')
+            'creators' => Tab::make(__t('admin_people.users.creators'))
                 ->badge(fn (): int => User::where('role', User::ROLE_CREATOR)->count())
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('role', User::ROLE_CREATOR)),
 
-            'learners' => Tab::make('Learners')
+            'learners' => Tab::make(__t('admin_people.users.learners'))
                 ->badge(fn (): int => User::learners()->count())
                 ->modifyQueryUsing(fn (Builder $query) => $query->learners()),
         ];

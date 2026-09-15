@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources\Lessons\Schemas;
 
+use App\Filament\Resources\Courses\Schemas\CourseForm;
 use App\Models\Course;
 use App\Models\Lesson;
+use App\Services\Translator;
 use Closure;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
@@ -24,13 +26,13 @@ class LessonForm
     {
         return $schema
             ->components([
-                Section::make('Lesson')
+                Section::make(__t('admin_common.lesson'))
                     ->columns(2)
                     ->schema([
                         // Saved by CreateLesson / EditLesson: the first course is
                         // the lesson's home, and the list is synced to course_lesson.
                         Select::make('course_ids')
-                            ->label('Courses')
+                            ->label(__t('admin_common.courses'))
                             ->multiple()
                             ->required()
                             ->searchable()
@@ -59,7 +61,16 @@ class LessonForm
                                         ->all());
                                 }
                             })
-                            ->helperText('A lesson can be in more than one course. It is the same lesson in each: a change shows everywhere, and a student who finishes it in one course has it finished in all of them. The first course owns the lesson.')
+                            // A new lesson is written in its first course's language.
+                            ->live()
+                            ->afterStateUpdated(function (string $operation, $state, callable $set): void {
+                                $first = collect($state)->first();
+
+                                if ($operation === 'create' && $first) {
+                                    $set('language', Course::whereKey($first)->value('language') ?: app(Translator::class)->defaultCode());
+                                }
+                            })
+                            ->helperText(__t('admin_lessons.form.courses_help'))
                             ->rules([
                                 fn (?Lesson $record): Closure => function (string $attribute, $value, Closure $fail) use ($record): void {
                                     $user = auth()->user();
@@ -72,7 +83,7 @@ class LessonForm
 
                                     foreach ((array) $value as $courseId) {
                                         if (! in_array((int) $courseId, $current, true) && ! $user->canManageCourse(Course::find($courseId))) {
-                                            $fail('You can only add lessons to a course for a product assigned to you.');
+                                            $fail(__t('admin_lessons.form.course_not_yours'));
 
                                             return;
                                         }
@@ -80,13 +91,16 @@ class LessonForm
                                 },
                             ]),
 
+                        CourseForm::writtenIn(),
+
                         TextInput::make('sort_order')
-                            ->label('Order')
+                            ->label(__t('admin_lessons.form.order'))
                             ->numeric()
                             ->default(0)
-                            ->helperText('Where it goes in its first course. Drag lessons on a course’s Lessons tab to order each course.'),
+                            ->helperText(__t('admin_lessons.form.order_help')),
 
                         TextInput::make('title')
+                            ->label(__t('admin_common.title'))
                             ->required()
                             ->maxLength(255)
                             ->live(onBlur: true)
@@ -97,9 +111,10 @@ class LessonForm
                             }),
 
                         TextInput::make('slug')
+                            ->label(__t('admin_common.slug'))
                             ->required()
                             ->maxLength(255)
-                            ->helperText('Part of the lesson’s web address. No two lessons in the same course may share it.')
+                            ->helperText(__t('admin_lessons.form.slug_help'))
                             // The student URL finds a lesson by this inside its
                             // course; a second one with the same slug is unreachable.
                             ->rules([
@@ -111,30 +126,31 @@ class LessonForm
                                         ->exists();
 
                                     if ($taken) {
-                                        $fail('Another lesson in one of these courses already uses this address. Choose a different one.');
+                                        $fail(__t('admin_lessons.form.slug_taken'));
                                     }
                                 },
                             ]),
 
                         Textarea::make('summary')
-                            ->label('Short summary')
+                            ->label(__t('admin_lessons.form.summary'))
                             ->rows(2)
                             ->columnSpanFull(),
 
                         Select::make('media_item_id')
-                            ->label('Cover image')
+                            ->label(__t('admin_lessons.form.cover'))
                             ->relationship('mediaItem', 'name')
                             ->searchable()
                             ->preload()
                             ->columnSpanFull()
-                            ->helperText('Pick an image from the library, or add a new one — uploaded images are reusable across lessons. Leave empty for a placeholder.')
+                            ->helperText(__t('admin_lessons.form.cover_help'))
                             ->createOptionForm([
                                 TextInput::make('name')
+                                    ->label(__t('admin_lessons.form.image_name'))
                                     ->required()
                                     ->maxLength(255)
-                                    ->helperText('A label to find this image later.'),
+                                    ->helperText(__t('admin_lessons.form.image_name_help')),
                                 FileUpload::make('path')
-                                    ->label('Image')
+                                    ->label(__t('admin_lessons.form.image'))
                                     ->image()
                                     ->imageEditor()
                                     ->imageEditorAspectRatios(['16:9', '4:3', '1:1', null])
@@ -146,16 +162,16 @@ class LessonForm
                             ]),
 
                         Repeater::make('video_sources')
-                            ->label('Videos')
+                            ->label(__t('admin_lessons.form.videos'))
                             ->defaultItems(0)
                             ->minItems(0)
                             ->maxItems(5)
-                            ->addActionLabel('Add video')
-                            ->itemLabel(fn (array $state): ?string => (($state['type'] ?? 'youtube') === 'upload' ? 'Uploaded video' : 'YouTube video'))
+                            ->addActionLabel(__t('admin_lessons.form.add_video'))
+                            ->itemLabel(fn (array $state): ?string => (($state['type'] ?? 'youtube') === 'upload' ? __t('admin_lessons.form.uploaded_video') : __t('admin_lessons.form.youtube_video')))
                             ->collapsible()
                             ->collapsed()
                             ->columns(1)
-                            ->helperText('Add up to five videos. Each one can be a YouTube link or an uploaded file.')
+                            ->helperText(__t('admin_lessons.form.videos_help'))
                             // A lesson saved before the Videos list: show the video
                             // students see now, so the next save carries it over.
                             ->afterStateHydrated(function (callable $set, $state, $record): void {
@@ -165,10 +181,10 @@ class LessonForm
                             })
                             ->schema([
                                 Select::make('type')
-                                    ->label('Source')
+                                    ->label(__t('admin_lessons.form.source'))
                                     ->options([
                                         'youtube' => 'YouTube',
-                                        'upload' => 'Upload',
+                                        'upload' => __t('admin_lessons.form.upload'),
                                     ])
                                     ->default('youtube')
                                     ->required()
@@ -177,21 +193,21 @@ class LessonForm
                                     ->live(),
 
                                 TextInput::make('youtube_url')
-                                    ->label('YouTube link')
+                                    ->label(__t('admin_lessons.form.youtube_link'))
                                     ->url()
                                     ->visible(fn ($get): bool => ($get('type') ?? 'youtube') === 'youtube')
                                     ->required(fn ($get): bool => ($get('type') ?? 'youtube') === 'youtube')
-                                    ->helperText('One video only, e.g. https://www.youtube.com/watch?v=XXXXXXXXXXX.')
+                                    ->helperText(__t('admin_lessons.form.youtube_help'))
                                     ->rules([
                                         fn (): Closure => function (string $attribute, $value, Closure $fail): void {
                                             if (filled($value) && Lesson::youtubeIdFrom($value) === null) {
-                                                $fail('This is not a link to a single YouTube video, so students would see no video. Open the video itself on YouTube and copy the address from the address bar — playlist, channel and Vimeo links cannot be played here.');
+                                                $fail(__t('admin_lessons.form.youtube_invalid'));
                                             }
                                         },
                                     ]),
 
                                 FileUpload::make('video_path')
-                                    ->label('Uploaded video file')
+                                    ->label(__t('admin_lessons.form.video_file'))
                                     ->disk('public')
                                     ->directory('lesson-videos')
                                     ->visibility('public')
@@ -199,88 +215,88 @@ class LessonForm
                                     ->maxSize(204800) // 200 MB (server upload limits raised to match)
                                     ->visible(fn ($get): bool => ($get('type') ?? 'youtube') === 'upload')
                                     ->required(fn ($get): bool => ($get('type') ?? 'youtube') === 'upload')
-                                    ->helperText('MP4 up to 200 MB.'),
+                                    ->helperText(__t('admin_lessons.form.video_file_help')),
                             ]),
 
                         TextInput::make('duration_minutes')
-                            ->label('Duration (minutes)')
+                            ->label(__t('admin_common.duration_minutes'))
                             ->numeric()
                             ->minValue(0),
 
                         Select::make('status')
-                            ->label('Status')
-                            ->options(Lesson::STATUS_LABELS)
+                            ->label(__t('admin_common.status'))
+                            ->options(Lesson::statusLabels())
                             ->default(Lesson::STATUS_PUBLISHED)
                             ->required()
-                            ->helperText('Students see a lesson only once its course is published too. Set it to draft to keep this one lesson back.'),
+                            ->helperText(__t('admin_lessons.form.status_help')),
 
                         RichEditor::make('content')
-                            ->label('Lesson text')
+                            ->label(__t('admin_lessons.form.content'))
                             ->columnSpanFull(),
 
                         Textarea::make('transcript')
-                            ->label('Video transcript')
+                            ->label(__t('admin_lessons.form.transcript'))
                             ->rows(6)
                             ->columnSpanFull()
-                            ->helperText('What is said in the video, as plain text. Students can read it instead of watching, and it is the only way the words inside a video turn up in search. Paste the captions from YouTube if you have them.'),
+                            ->helperText(__t('admin_lessons.form.transcript_help')),
                     ]),
 
-                Section::make('Documentation links')
-                    ->description('Shown to students after the lesson text. Link titles are in English.')
+                Section::make(__t('admin_lessons.form.docs_section'))
+                    ->description(__t('admin_lessons.form.docs_help'))
                     ->collapsible()
                     ->schema([
                         Repeater::make('doc_links')
                             ->label('')
-                            ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'New link')
+                            ->itemLabel(fn (array $state): ?string => $state['title'] ?? __t('admin_lessons.form.new_link'))
                             ->defaultItems(0)
-                            ->addActionLabel('Add link')
+                            ->addActionLabel(__t('admin_lessons.form.add_link'))
                             ->reorderable()
                             ->columns(2)
                             ->schema([
                                 TextInput::make('title')
-                                    ->label('Title (English)')
+                                    ->label(__t('admin_lessons.form.link_title'))
                                     ->required()
                                     ->maxLength(255),
 
                                 TextInput::make('url')
-                                    ->label('URL')
+                                    ->label(__t('admin_lessons.form.url'))
                                     ->url()
                                     ->required()
                                     ->maxLength(2048),
                             ]),
                     ]),
 
-                Section::make('Knowledge check (quiz)')
-                    ->description('Add questions. Mark the correct option(s) with the toggle.')
+                Section::make(__t('admin_lessons.form.quiz_section'))
+                    ->description(__t('admin_lessons.form.quiz_help'))
                     ->schema([
                         TextInput::make('quiz_time_limit_minutes')
-                            ->label('Time limit (minutes)')
+                            ->label(__t('admin_lessons.form.time_limit'))
                             ->numeric()
                             ->minValue(1)
-                            ->helperText('Optional. A countdown is shown; running out ends the attempt unsuccessfully. Applies to logged-in students.'),
+                            ->helperText(__t('admin_lessons.form.time_limit_help')),
 
                         TextInput::make('quiz_max_attempts')
-                            ->label('Max attempts')
+                            ->label(__t('admin_common.max_attempts'))
                             ->numeric()
                             ->minValue(1)
-                            ->helperText('Optional. How many tries a student gets. Leave empty for unlimited.'),
+                            ->helperText(__t('admin_lessons.form.max_attempts_help')),
 
                         Repeater::make('questions')
                             ->relationship()
                             ->orderColumn('sort_order')
-                            ->itemLabel(fn (array $state): ?string => $state['prompt'] ?? 'New question')
+                            ->itemLabel(fn (array $state): ?string => $state['prompt'] ?? __t('admin_lessons.form.new_question'))
                             ->collapsible()
                             ->collapsed()
                             ->defaultItems(0)
-                            ->addActionLabel('Add question')
+                            ->addActionLabel(__t('admin_lessons.form.add_question'))
                             ->schema([
                                 Textarea::make('prompt')
-                                    ->label('Question')
+                                    ->label(__t('admin_common.question'))
                                     ->required()
                                     ->rows(2),
 
-                                Section::make('Answer options')
-                                    ->description('Tick the correct answer(s).')
+                                Section::make(__t('admin_common.answer_options'))
+                                    ->description(__t('admin_lessons.form.tick_correct'))
                                     ->compact()
                                     ->schema([
                                         Repeater::make('options')
@@ -288,7 +304,7 @@ class LessonForm
                                             ->orderColumn('sort_order')
                                             ->defaultItems(2)
                                             ->minItems(2)
-                                            ->addActionLabel('Add answer option')
+                                            ->addActionLabel(__t('admin_common.add_answer_option'))
                                             ->columns(4)
                                             // Grading needs at least one right
                                             // answer: a question without one can
@@ -299,18 +315,18 @@ class LessonForm
                                                     $correct = collect($value)->filter(fn ($option): bool => (bool) ($option['is_correct'] ?? false));
 
                                                     if ($correct->isEmpty()) {
-                                                        $fail('Tick the correct answer — a question with none can never be passed.');
+                                                        $fail(__t('admin_lessons.form.no_correct'));
                                                     }
                                                 },
                                             ])
                                             ->schema([
                                                 TextInput::make('text')
-                                                    ->label('Answer')
+                                                    ->label(__t('admin_common.answer'))
                                                     ->required()
                                                     ->columnSpan(3),
 
                                                 Toggle::make('is_correct')
-                                                    ->label('Correct')
+                                                    ->label(__t('admin_common.correct'))
                                                     ->inline(false)
                                                     ->columnSpan(1),
                                             ]),

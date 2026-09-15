@@ -19,7 +19,7 @@ class CourseFeedbackTable
             ->defaultSort('created_at', 'desc')
             ->columns([
                 IconColumn::make('is_positive')
-                    ->label('Verdict')
+                    ->label(__t('admin_courses.feedback_tab.verdict'))
                     ->boolean()
                     ->trueIcon('heroicon-o-hand-thumb-up')
                     ->falseIcon('heroicon-o-hand-thumb-down')
@@ -27,46 +27,47 @@ class CourseFeedbackTable
                     ->falseColor('danger'),
 
                 TextColumn::make('course.title')
-                    ->label('Course')
+                    ->label(__t('admin_common.course'))
                     ->searchable()
                     ->sortable()
                     ->wrap(),
 
                 TextColumn::make('user.name')
-                    ->label('Student')
+                    ->label(__t('admin_common.student'))
                     ->description(fn (CourseFeedback $record): ?string => $record->user?->email)
                     ->searchable(),
 
                 TextColumn::make('user.company.name')
-                    ->label('Partner')
+                    ->label(__t('admin_common.partner'))
                     ->badge()
                     ->placeholder('—'),
 
                 TextColumn::make('comment')
-                    ->label('What they said')
+                    ->label(__t('admin_courses.feedback_tab.what_they_said'))
                     ->wrap()
-                    ->placeholder('No comment')
+                    ->placeholder(__t('admin_courses.feedback_tab.no_comment'))
                     ->searchable(),
 
                 TextColumn::make('created_at')
-                    ->label('When')
+                    ->label(__t('admin_common.when'))
                     ->since()
                     ->sortable(),
             ])
             ->filters([
                 TernaryFilter::make('is_positive')
-                    ->label('Verdict')
-                    ->placeholder('All')
-                    ->trueLabel('Useful')
-                    ->falseLabel('Not useful'),
+                    ->label(__t('admin_courses.feedback_tab.verdict'))
+                    ->placeholder(__t('admin_common.all'))
+                    ->trueLabel(__t('admin_courses.feedback_tab.useful'))
+                    ->falseLabel(__t('admin_courses.feedback_tab.not_useful')),
 
                 SelectFilter::make('course')
+                    ->label(__t('admin_common.course'))
                     ->relationship('course', 'title')
                     ->searchable()
                     ->preload(),
 
                 SelectFilter::make('partner')
-                    ->label('Partner')
+                    ->label(__t('admin_common.partner'))
                     ->options(fn (): array => Company::query()->orderBy('name')->pluck('name', 'id')->all())
                     ->query(fn (Builder $query, array $data): Builder => $query->when(
                         $data['value'] ?? null,
@@ -76,7 +77,7 @@ class CourseFeedbackTable
             // Students write this; staff only read it.
             ->recordActions([])
             ->toolbarActions([])
-            ->emptyStateHeading('No feedback yet')
-            ->emptyStateDescription('Students are asked what they thought once they finish a course.');
+            ->emptyStateHeading(__t('admin_courses.feedback_tab.empty'))
+            ->emptyStateDescription(__t('admin_results.feedback.empty_description'));
     }
 }

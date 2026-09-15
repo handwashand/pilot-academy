@@ -10,10 +10,10 @@
     stripped, unsafe links refused).
 --}}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
-    <title>What's new — Pilot Academy</title>
+    <title>{{ __t('admin_pages.whats_new.pdf_title') }}</title>
     <style>
         @page { margin: 20mm 18mm; }
         body { font-family: 'DejaVu Sans', sans-serif; font-size: 10pt; line-height: 1.5; color: #1f2937; margin: 0; }
@@ -45,7 +45,7 @@
     <div class="masthead">
         <p class="product">Pilot Academy</p>
         <p class="subtitle">
-            What's new — {{ $single ? $releases[0]['title'] : 'every release' }}
+            {{ __t('admin_pages.whats_new.pdf_subtitle', ['release' => $single ? $releases[0]['title'] : __t('admin_pages.whats_new.every_release')]) }}
         </p>
     </div>
 
@@ -55,7 +55,7 @@
 
             @foreach ($release['sections'] as $section)
                 <div class="section">
-                    <p class="section-title">{{ $section['label'] }}</p>
+                    <p class="section-title">{{ $section['type'] === 'other' ? $section['label'] : __t('admin_pages.whats_new.types.'.$section['type']) }}</p>
 
                     @foreach ($section['items'] as $item)
                         <div class="entry">{!! $item['html'] !!}</div>
@@ -68,7 +68,7 @@
     <p class="colophon">
         {{-- One expression, not an inline @if: a directive glued to the
              text before it is a known Blade trap in this repo. --}}
-        Generated {{ now()->format('j F Y') }}{{ config('app.version') ? ' · version '.config('app.version') : '' }}
+        {{ __t('admin_pages.whats_new.generated', ['date' => now()->locale(app()->getLocale())->isoFormat('LL')]) }}{{ config('app.version') ? ' · '.__t('admin_pages.whats_new.version', ['version' => config('app.version')]) : '' }}
     </p>
 </body>
 </html>

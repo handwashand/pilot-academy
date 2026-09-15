@@ -25,32 +25,32 @@ class CertificatesTable
             ->defaultSort('issued_at', 'desc')
             ->columns([
                 TextColumn::make('number')
-                    ->label('Number')
+                    ->label(__t('admin_common.number'))
                     ->searchable()
                     ->copyable()
                     ->weight('bold'),
 
                 TextColumn::make('name')
-                    ->label('Student')
+                    ->label(__t('admin_common.student'))
                     ->description(fn (Certificate $record): ?string => $record->user?->email)
                     ->searchable(),
 
                 TextColumn::make('user.company.name')
-                    ->label('Partner')
+                    ->label(__t('admin_common.partner'))
                     ->badge()
                     ->placeholder('—'),
 
                 TextColumn::make('course.title')
-                    ->label('Course')
+                    ->label(__t('admin_common.course'))
                     ->sortable(),
 
                 TextColumn::make('score_percent')
-                    ->label('Score')
+                    ->label(__t('admin_common.score'))
                     ->formatStateUsing(fn ($state): string => "{$state}%")
                     ->sortable(),
 
                 TextColumn::make('attempts')
-                    ->label('Attempts')
+                    ->label(__t('admin_common.attempts'))
                     ->badge()
                     ->getStateUsing(fn (Certificate $record): int => QuizAttempt::where('user_id', $record->user_id)
                         ->where('course_id', $record->course_id)
@@ -58,23 +58,25 @@ class CertificatesTable
                         ->count()),
 
                 TextColumn::make('issued_at')
-                    ->label('Issued')
+                    ->label(__t('admin_common.issued'))
                     ->date('d M Y')
                     ->sortable(),
 
                 TextColumn::make('status')
+                    ->label(__t('admin_common.status'))
                     ->badge()
                     ->getStateUsing(fn (Certificate $record): string => $record->statusLabel())
                     ->color(fn (Certificate $record): string => $record->isValid() ? 'success' : 'danger'),
             ])
             ->filters([
                 SelectFilter::make('course')
+                    ->label(__t('admin_common.course'))
                     ->relationship('course', 'title')
                     ->searchable()
                     ->preload(),
 
                 SelectFilter::make('company')
-                    ->label('Partner')
+                    ->label(__t('admin_common.partner'))
                     ->options(fn (): array => Company::orderBy('name')->pluck('name', 'id')->all())
                     ->query(fn (Builder $query, array $data): Builder => $query->when(
                         $data['value'],
@@ -82,7 +84,8 @@ class CertificatesTable
                     )),
 
                 SelectFilter::make('status')
-                    ->options(['valid' => 'Valid', 'revoked' => 'Revoked'])
+                    ->label(__t('admin_common.status'))
+                    ->options(['valid' => __t('labels.certificate.valid'), 'revoked' => __t('labels.certificate.revoked')])
                     ->query(fn (Builder $query, array $data): Builder => $query->when(
                         $data['value'] === 'valid',
                         fn (Builder $q) => $q->whereNull('revoked_at'),
@@ -93,14 +96,14 @@ class CertificatesTable
             ])
             ->headerActions([
                 Action::make('exportCsv')
-                    ->label('Export CSV')
+                    ->label(__t('admin_results.certificates.export'))
                     ->icon('heroicon-o-arrow-down-tray')
                     ->color('gray')
                     ->action(fn (): StreamedResponse => static::exportCsv()),
             ])
             ->recordActions([
                 Action::make('download')
-                    ->label('Download')
+                    ->label(__t('admin_common.download'))
                     ->icon('heroicon-o-arrow-down-tray')
                     ->visible(fn (Certificate $record): bool => $record->pdf_path && Storage::disk('public')->exists($record->pdf_path))
                     ->action(fn (Certificate $record) => Storage::disk('public')->download(
@@ -109,52 +112,52 @@ class CertificatesTable
                     )),
 
                 Action::make('resend')
-                    ->label('Resend email')
+                    ->label(__t('admin_results.certificates.resend'))
                     ->icon('heroicon-o-envelope')
                     ->color('gray')
                     ->requiresConfirmation()
-                    ->modalDescription(fn (Certificate $record): string => "Email the certificate to {$record->user?->email}.")
+                    ->modalDescription(fn (Certificate $record): string => __t('admin_results.certificates.resend_description', ['email' => (string) $record->user?->email]))
                     ->action(function (Certificate $record, IssueCertificate $issue): void {
                         if (! $record->pdf_path || ! Storage::disk('public')->exists($record->pdf_path)) {
                             $issue->renderPdf($record);
                         }
                         $issue->email($record);
 
-                        Notification::make()->title('Certificate emailed')->success()->send();
+                        Notification::make()->title(__t('admin_results.certificates.emailed'))->success()->send();
                     }),
 
                 Action::make('regenerate')
-                    ->label('Regenerate PDF')
+                    ->label(__t('admin_results.certificates.regenerate'))
                     ->icon('heroicon-o-arrow-path')
                     ->color('gray')
                     ->requiresConfirmation()
                     ->action(function (Certificate $record, IssueCertificate $issue): void {
                         $issue->renderPdf($record);
 
-                        Notification::make()->title('PDF regenerated')->success()->send();
+                        Notification::make()->title(__t('admin_results.certificates.regenerated'))->success()->send();
                     }),
 
                 // A certificate stores the name it was printed with, and
                 // Regenerate PDF reprints that same name — so a misspelling used
                 // to need a developer. The number, date and score never change.
                 Action::make('editName')
-                    ->label('Edit name')
+                    ->label(__t('admin_results.certificates.edit_name'))
                     ->icon('heroicon-o-pencil-square')
                     ->color('gray')
-                    ->modalHeading('Correct the name on this certificate')
-                    ->modalDescription('The PDF is reprinted with the new name, and the public verification page shows it straight away. The number, date and score stay the same. Use Resend email afterwards if the student should get the corrected copy.')
+                    ->modalHeading(__t('admin_results.certificates.edit_name_heading'))
+                    ->modalDescription(__t('admin_results.certificates.edit_name_description'))
                     ->fillForm(fn (Certificate $record): array => [
                         'name' => $record->name,
                         'update_profile' => true,
                     ])
                     ->schema([
                         TextInput::make('name')
-                            ->label('Name on the certificate')
+                            ->label(__t('admin_results.certificates.name_on_certificate'))
                             ->required()
                             ->maxLength(255),
                         Toggle::make('update_profile')
-                            ->label("Also use this name on the student's future certificates")
-                            ->helperText('Saves it as the certificate name on their profile, where they can change it too.'),
+                            ->label(__t('admin_results.certificates.update_profile'))
+                            ->helperText(__t('admin_results.certificates.update_profile_help')),
                     ])
                     ->action(function (Certificate $record, array $data, IssueCertificate $issue): void {
                         $name = trim($data['name']);
@@ -167,24 +170,24 @@ class CertificatesTable
 
                         $issue->renderPdf($record);
 
-                        Notification::make()->title('Name corrected and PDF reprinted')->success()->send();
+                        Notification::make()->title(__t('admin_results.certificates.name_corrected'))->success()->send();
                     }),
 
                 Action::make('revoke')
-                    ->label('Revoke')
+                    ->label(__t('admin_results.certificates.revoke'))
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
                     ->requiresConfirmation()
-                    ->modalDescription('The certificate will show as revoked on the public verification page. Certificates are permanent — use this only for an incorrect issue.')
+                    ->modalDescription(__t('admin_results.certificates.revoke_description'))
                     ->visible(fn (Certificate $record): bool => $record->isValid())
                     ->action(function (Certificate $record): void {
                         $record->update(['revoked_at' => now()]);
 
-                        Notification::make()->title('Certificate revoked')->warning()->send();
+                        Notification::make()->title(__t('admin_results.certificates.revoked'))->warning()->send();
                     }),
 
                 Action::make('restore')
-                    ->label('Restore')
+                    ->label(__t('admin_results.certificates.restore'))
                     ->icon('heroicon-o-arrow-uturn-left')
                     ->color('gray')
                     ->requiresConfirmation()
@@ -192,19 +195,31 @@ class CertificatesTable
                     ->action(function (Certificate $record): void {
                         $record->update(['revoked_at' => null]);
 
-                        Notification::make()->title('Certificate restored')->success()->send();
+                        Notification::make()->title(__t('admin_results.certificates.restored'))->success()->send();
                     }),
             ]);
     }
 
-    /** Stream all certificates as a CSV (synchronous — no queue needed). */
+    /** Stream all certificates as a CSV (synchronous — no queue needed), headed in the exporter's language. */
     protected static function exportCsv(): StreamedResponse
     {
         $filename = 'certificates-'.now()->format('Y-m-d').'.csv';
 
-        return response()->streamDownload(function (): void {
+        $headers = [
+            __t('admin_common.number'),
+            __t('admin_common.student'),
+            __t('admin_common.email'),
+            __t('admin_common.partner'),
+            __t('admin_common.course'),
+            __t('admin_results.certificates.score_percent'),
+            __t('admin_common.attempts'),
+            __t('admin_common.issued'),
+            __t('admin_common.status'),
+        ];
+
+        return response()->streamDownload(function () use ($headers): void {
             $out = fopen('php://output', 'w');
-            fputcsv($out, ['Number', 'Student', 'Email', 'Partner', 'Course', 'Score %', 'Attempts', 'Issued', 'Status']);
+            fputcsv($out, $headers);
 
             Certificate::with('user.company', 'course')
                 ->orderByDesc('issued_at')

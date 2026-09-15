@@ -22,9 +22,27 @@ class UserResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
 
-    protected static string|UnitEnum|null $navigationGroup = 'People';
-
     protected static ?int $navigationSort = 1;
+
+    public static function getNavigationGroup(): string|UnitEnum|null
+    {
+        return __t('admin_nav.groups.people');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __t('admin_nav.users.nav');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __t('admin_nav.users.one');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __t('admin_nav.users.many');
+    }
 
     public static function getEloquentQuery(): Builder
     {

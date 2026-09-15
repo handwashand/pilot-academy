@@ -8,6 +8,7 @@ use App\Models\Course;
 use App\Models\Language;
 use App\Models\Translation;
 use App\Models\User;
+use App\Services\Translator;
 use Database\Seeders\LanguageSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -29,7 +30,7 @@ class LocalizationTest extends TestCase
 
         // Nothing in Russian at all: the default language's text.
         (new Translation)->forceFill(['key' => 'custom.only_english', 'language_id' => $english->id, 'value' => 'Only in English', 'module' => 'custom'])->save();
-        app(\App\Services\Translator::class)->clearBundleCache('en');
+        app(Translator::class)->clearBundleCache('en');
         $this->assertSame('Only in English', __t('custom.only_english', [], 'ru'));
 
         // Nowhere: the key made readable.

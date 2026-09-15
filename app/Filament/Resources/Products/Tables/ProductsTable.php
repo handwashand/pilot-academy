@@ -16,23 +16,24 @@ class ProductsTable
             ->defaultSort('name')
             ->columns([
                 TextColumn::make('name')
-                    ->label('Product / module')
+                    ->label(__t('admin_library.products.name'))
                     ->searchable()
                     ->sortable()
                     ->weight('bold'),
 
                 TextColumn::make('courses_count')
-                    ->label('Courses')
+                    ->label(__t('admin_library.products.courses'))
                     ->counts('courses')
                     ->badge(),
 
                 TextColumn::make('creators.name')
-                    ->label('Creators')
+                    ->label(__t('admin_library.products.creators'))
                     ->badge()
                     ->color('info')
-                    ->placeholder('none assigned'),
+                    ->placeholder(__t('admin_library.products.none_assigned')),
 
                 TextColumn::make('description')
+                    ->label(__t('admin_common.description'))
                     ->limit(60)
                     ->placeholder('—')
                     ->toggleable(),

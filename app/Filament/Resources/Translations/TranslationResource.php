@@ -40,9 +40,12 @@ class TranslationResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedLanguage;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Settings';
-
     protected static ?int $navigationSort = 11;
+
+    public static function getNavigationGroup(): string|UnitEnum|null
+    {
+        return __t('admin_nav.groups.settings');
+    }
 
     /** Every admin can correct wording; anyone else needs the permission. */
     public static function shouldRegisterNavigation(): bool
@@ -81,12 +84,13 @@ class TranslationResource extends Resource
     {
         return $schema->components([
             TextInput::make('key')
+                ->label(__t('admin_settings.translations.key'))
                 ->required()
                 ->maxLength(255)
                 ->disabledOn('edit'),
 
             Select::make('language_id')
-                ->label('Language')
+                ->label(__t('admin_settings.translations.language'))
                 ->relationship('language', 'native_name')
                 ->required()
                 ->preload()
@@ -95,7 +99,7 @@ class TranslationResource extends Resource
             // For reference only: what the English site says, and what this
             // language says when nobody has corrected it.
             Textarea::make('english')
-                ->label('English')
+                ->label(__t('admin_settings.translations.english'))
                 ->rows(3)
                 ->disabled()
                 ->dehydrated(false)
@@ -106,25 +110,25 @@ class TranslationResource extends Resource
                 )),
 
             Textarea::make('shipped')
-                ->label('Shipped text')
-                ->helperText('What students see in this language when the box below is empty.')
+                ->label(__t('admin_settings.translations.shipped'))
+                ->helperText(__t('admin_settings.translations.shipped_help'))
                 ->rows(3)
                 ->disabled()
                 ->dehydrated(false)
                 ->visibleOn('edit')
                 ->columnSpanFull()
                 ->afterStateHydrated(fn (Textarea $component, ?Translation $record) => $component->state(
-                    $record ? (static::shippedLine($record) ?? '— none shipped —') : null,
+                    $record ? (static::shippedLine($record) ?? __t('admin_settings.translations.none_shipped')) : null,
                 )),
 
             Textarea::make('value')
-                ->label('Correction')
+                ->label(__t('admin_settings.translations.correction'))
                 ->rows(4)
                 ->columnSpanFull()
-                ->helperText('Leave empty to use the shipped text. Keep words that start with a colon, such as :name, exactly as they are, and keep the | between the forms of a count ("1 lesson|2 lessons").')
+                ->helperText(__t('admin_settings.translations.correction_help'))
                 ->dehydrateStateUsing(fn ($state) => filled($state) ? $state : null),
 
-            Textarea::make('notes')->rows(2)->columnSpanFull(),
+            Textarea::make('notes')->label(__t('admin_settings.translations.notes'))->rows(2)->columnSpanFull(),
         ]);
     }
 
@@ -135,31 +139,34 @@ class TranslationResource extends Resource
             ->modifyQueryUsing(fn (Builder $query) => $query->with('language'))
             ->columns([
                 TextColumn::make('language.native_name')
-                    ->label('Language')
+                    ->label(__t('admin_settings.translations.language'))
                     ->sortable(),
 
                 TextColumn::make('text')
-                    ->label('Text students see')
+                    ->label(__t('admin_settings.translations.text'))
                     ->state(fn (Translation $record): string => filled($record->value) ? $record->value : (static::shippedLine($record) ?? ''))
                     ->description(fn (Translation $record): ?string => $record->language?->code === 'en' ? null : __t($record->key, [], 'en'))
                     ->limit(90)
                     ->wrap()
-                    ->placeholder('missing'),
+                    ->placeholder(__t('admin_settings.translations.missing')),
 
                 TextColumn::make('status')
+                    ->label(__t('admin_common.status'))
                     ->state(fn (Translation $record): string => match (true) {
-                        filled($record->value) => 'Corrected',
-                        static::shippedLine($record) !== null => 'Shipped',
-                        default => 'Missing',
+                        filled($record->value) => 'corrected',
+                        static::shippedLine($record) !== null => 'shipped',
+                        default => 'missing',
                     })
+                    ->formatStateUsing(fn (string $state): string => __t("admin_settings.translations.states.{$state}"))
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'Corrected' => 'success',
-                        'Shipped' => 'gray',
+                        'corrected' => 'success',
+                        'shipped' => 'gray',
                         default => 'danger',
                     }),
 
                 TextColumn::make('key')
+                    ->label(__t('admin_settings.translations.key'))
                     ->size('xs')
                     ->color('gray')
                     ->copyable()
@@ -187,17 +194,17 @@ class TranslationResource extends Resource
                     }),
             ])
             ->filters([
-                SelectFilter::make('language_id')->relationship('language', 'native_name')->label('Language'),
-                SelectFilter::make('module')->options(fn (): array => Translation::query()->distinct()->pluck('module', 'module')->all()),
+                SelectFilter::make('language_id')->relationship('language', 'native_name')->label(__t('admin_settings.translations.language')),
+                SelectFilter::make('module')->label(__t('admin_settings.translations.module'))->options(fn (): array => Translation::query()->distinct()->pluck('module', 'module')->all()),
                 TernaryFilter::make('corrected')
-                    ->label('Corrected')
+                    ->label(__t('admin_settings.translations.corrected'))
                     ->queries(
                         true: fn (Builder $query) => $query->whereNotNull('value')->where('value', '!=', ''),
                         false: fn (Builder $query) => $query->where(fn (Builder $rows) => $rows->whereNull('value')->orWhere('value', '')),
                     ),
             ])
             ->recordActions([
-                EditAction::make()->label('Correct'),
+                EditAction::make()->label(__t('admin_settings.translations.correct')),
             ]);
     }
 

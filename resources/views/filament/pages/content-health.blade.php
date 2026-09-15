@@ -6,16 +6,14 @@
 
     @if($problems->isEmpty())
         <div class="rounded-xl border border-gray-200 bg-white p-8 text-center shadow-sm dark:border-white/10 dark:bg-gray-900">
-            <p class="text-sm font-semibold text-gray-950 dark:text-white">Nothing is broken for students.</p>
+            <p class="text-sm font-semibold text-gray-950 dark:text-white">{{ __t('admin_pages.content_health.none') }}</p>
             <p class="mx-auto mt-1 max-w-md text-sm text-gray-500 dark:text-gray-400">
-                Every published course has lessons, every lesson can be finished, and every question has a right answer.
-                If that changes, it shows here and as a red count beside Content health in the menu.
+                {{ __t('admin_pages.content_health.none_body') }}
             </p>
         </div>
     @else
         <p class="text-sm text-gray-500 dark:text-gray-400">
-            Students are hitting these right now. Each one links straight to where it is fixed;
-            fixed problems drop off this list on their own.
+            {{ __t('admin_pages.content_health.intro') }}
         </p>
 
         <div class="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-900">
@@ -36,7 +34,7 @@
                         </div>
 
                         <x-filament::link :href="$problem['url']" class="shrink-0">
-                            Fix it
+                            {{ __t('admin_pages.content_health.fix') }}
                         </x-filament::link>
                     </li>
                 @endforeach

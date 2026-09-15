@@ -40,13 +40,22 @@ class FinalQuizHealth extends Page
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
 
-    protected static ?string $navigationLabel = 'Final quiz health';
-
-    protected static ?string $title = 'Final quiz health';
-
-    protected static string|UnitEnum|null $navigationGroup = 'Results';
-
     protected static ?int $navigationSort = 2;
+
+    public static function getNavigationLabel(): string
+    {
+        return __t('admin_nav.final_quiz_health.nav');
+    }
+
+    public function getTitle(): string
+    {
+        return __t('admin_nav.final_quiz_health.nav');
+    }
+
+    public static function getNavigationGroup(): string|UnitEnum|null
+    {
+        return __t('admin_nav.groups.results');
+    }
 
     protected string $view = 'filament.pages.final-quiz-health';
 
@@ -89,7 +98,7 @@ class FinalQuizHealth extends Page
         return $this->firstAttempts()
             ->groupBy('course_id')
             ->map(fn (Collection $attempts, $courseId): array => [
-                'course' => $titles[$courseId] ?? 'Deleted course',
+                'course' => $titles[$courseId] ?? __t('admin_pages.final_quiz_health.deleted_course'),
                 ...static::summarise($attempts),
             ])
             ->sortBy('course')
@@ -168,12 +177,14 @@ class FinalQuizHealth extends Page
     {
         [$low, $high] = static::PASS_BAND;
 
+        $status = fn (string $key): string => __t("admin_pages.final_quiz_health.status.{$key}");
+
         return match (true) {
-            $sample === 0 => ['label' => 'No data yet', 'color' => 'gray', 'note' => 'No learner has sat a final quiz yet.'],
-            $sample < static::SMALL_SAMPLE => ['label' => 'Too few to judge', 'color' => 'gray', 'note' => "Only {$sample} first ".($sample === 1 ? 'attempt' : 'attempts').' so far. Read the band once there are at least '.static::SMALL_SAMPLE.'.'],
-            $rate > $high => ['label' => 'Above the band', 'color' => 'warning', 'note' => 'The quiz is likely too easy: passing it first time says little about what someone knows.'],
-            $rate < $low => ['label' => 'Below the band', 'color' => 'danger', 'note' => 'The lessons probably do not teach what the quiz tests — or some questions are unclear.'],
-            default => ['label' => 'Within the band', 'color' => 'success', 'note' => 'First-time passes are where they should be.'],
+            $sample === 0 => ['label' => $status('no_data'), 'color' => 'gray', 'note' => __t('admin_pages.final_quiz_health.no_attempts')],
+            $sample < static::SMALL_SAMPLE => ['label' => $status('too_few'), 'color' => 'gray', 'note' => __tc('admin_pages.final_quiz_health.status.too_few_note', $sample, ['min' => static::SMALL_SAMPLE])],
+            $rate > $high => ['label' => $status('above'), 'color' => 'warning', 'note' => $status('above_note')],
+            $rate < $low => ['label' => $status('below'), 'color' => 'danger', 'note' => $status('below_note')],
+            default => ['label' => $status('within'), 'color' => 'success', 'note' => $status('within_note')],
         };
     }
 }

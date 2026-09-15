@@ -16,11 +16,13 @@ You land on the **Dashboard** — a quick summary of how many students you have,
 
 **See the academy as a student does:** account menu → **Student site**.
 
-**Change the language** with the language button at the far right of the top bar — it shows the current code, such as **EN**. Pick a language from its menu; the whole panel reloads in it, and your choice is saved to your account, so the student site follows it too.
+**Change the language** with the language button at the far right of the top bar — it shows the current code, such as **EN**. Pick a language from its menu; the whole panel reloads in it — menus, forms, buttons, messages and the dashboard — and your choice is saved to your account, so the student site follows it too. Alerts in the notification bell are written in your language as well. Emails and certificates go to each student in the language they chose, whoever sends them — so a certificate you regenerate for a French student is still printed in French.
 
-**Correct a translation** under **Settings → Translations**. Search for the words you saw on the student site, in any language, click **Correct**, type the new wording in **Correction** and save — students see it straight away. Keep words that start with a colon, such as `:name`, as they are. To go back to the original text, empty **Correction** and save.
+**Correct a translation** under **Settings → Translations**. Search for the words you saw on the student site or in the panel, in any language, click **Correct**, type the new wording in **Correction** and save — everyone sees it straight away. Keep words that start with a colon, such as `:name`, as they are. To go back to the original text, empty **Correction** and save.
 
-**Translate a course or a lesson** with **Translate** at the top of its edit page. There is a tab for each language: the title and description of a course, or the title, summary, lesson text and video transcript of a lesson. Students see the translation in their language; wherever a box is empty they see the English. Certificates and emails stay in English.
+**Write in your own language.** Every course and lesson has a **Written in** field — English unless you choose another. A new lesson takes the language of its first course.
+
+**Translate a course or a lesson** with **Translate** at the top of its edit page, so a course written in one language is useful in the others. There is a tab for every language except the one it is written in: the title and description of a course, or the title, summary, lesson text and video transcript of a lesson. Students see the translation in their language; wherever a box is empty they see the original. Student search finds a course by its translations too.
 
 ---
 

@@ -23,25 +23,26 @@ class QuizAttemptsTable
             ->defaultSort('started_at', 'desc')
             ->columns([
                 TextColumn::make('user.name')
-                    ->label('Student')
+                    ->label(__t('admin_common.student'))
                     ->description(fn (QuizAttempt $record): ?string => $record->user?->email)
                     ->searchable(),
 
                 TextColumn::make('user.company.name')
-                    ->label('Partner')
+                    ->label(__t('admin_common.partner'))
                     ->badge()
                     ->placeholder('—'),
 
                 TextColumn::make('quiz')
-                    ->label('Quiz')
+                    ->label(__t('admin_results.attempts.quiz'))
                     ->state(fn (QuizAttempt $record): string => static::quizName($record))
                     ->description(fn (QuizAttempt $record): ?string => $record->course_id
                         ? $record->course?->title
                         : $record->lesson?->course?->title),
 
                 TextColumn::make('status')
+                    ->label(__t('admin_common.status'))
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => QuizAttempt::STATUS_LABELS[$state] ?? $state)
+                    ->formatStateUsing(fn (string $state): string => QuizAttempt::statusLabels()[$state] ?? $state)
                     ->color(fn (string $state): string => match ($state) {
                         QuizAttempt::STATUS_PASSED => 'success',
                         QuizAttempt::STATUS_FAILED => 'danger',
@@ -50,21 +51,21 @@ class QuizAttemptsTable
                     }),
 
                 TextColumn::make('score')
-                    ->label('Score')
+                    ->label(__t('admin_common.score'))
                     ->state(fn (QuizAttempt $record): ?string => $record->total
                         ? "{$record->score}/{$record->total} ({$record->scorePercent()}%)"
                         : null)
                     ->placeholder('—'),
 
                 TextColumn::make('submitted_at')
-                    ->label('Submitted')
+                    ->label(__t('admin_common.submitted'))
                     ->dateTime('d M Y, H:i')
                     ->sortable()
-                    ->placeholder('Not submitted'),
+                    ->placeholder(__t('admin_results.attempts.not_submitted')),
             ])
             ->filters([
                 Filter::make('out_of_attempts')
-                    ->label('Out of attempts, not passed')
+                    ->label(__t('admin_results.attempts.out_of_attempts'))
                     ->query(fn (Builder $query): Builder => $query->where(function (Builder $where): void {
                         $stuck = QuizAttempt::stuckLearners();
 
@@ -82,8 +83,8 @@ class QuizAttemptsTable
                     })),
 
                 SelectFilter::make('kind')
-                    ->label('Quiz type')
-                    ->options(['final' => 'Final quizzes', 'lesson' => 'Lesson knowledge checks'])
+                    ->label(__t('admin_results.attempts.quiz_type'))
+                    ->options(['final' => __t('admin_results.attempts.final_quizzes'), 'lesson' => __t('admin_results.attempts.lesson_checks')])
                     ->query(fn (Builder $query, array $data): Builder => match ($data['value'] ?? null) {
                         'final' => $query->whereNotNull('course_id'),
                         'lesson' => $query->whereNotNull('lesson_id'),
@@ -91,7 +92,7 @@ class QuizAttemptsTable
                     }),
 
                 SelectFilter::make('course')
-                    ->label('Course')
+                    ->label(__t('admin_common.course'))
                     ->options(fn (): array => Course::query()->orderBy('title')->pluck('title', 'id')->all())
                     ->query(fn (Builder $query, array $data): Builder => $query->when(
                         $data['value'] ?? null,
@@ -101,7 +102,7 @@ class QuizAttemptsTable
                     )),
 
                 SelectFilter::make('partner')
-                    ->label('Partner')
+                    ->label(__t('admin_common.partner'))
                     ->options(fn (): array => Company::query()->orderBy('name')->pluck('name', 'id')->all())
                     ->query(fn (Builder $query, array $data): Builder => $query->when(
                         $data['value'] ?? null,
@@ -109,21 +110,24 @@ class QuizAttemptsTable
                     )),
 
                 SelectFilter::make('status')
-                    ->options(QuizAttempt::STATUS_LABELS),
+                    ->label(__t('admin_common.status'))
+                    ->options(QuizAttempt::statusLabels()),
             ])
             ->recordActions([
                 Action::make('grantAttempt')
-                    ->label('Grant another attempt')
+                    ->label(__t('admin_results.attempts.grant'))
                     ->icon('heroicon-o-arrow-path')
                     ->color('warning')
                     ->visible(fn (QuizAttempt $record): bool => $record->isStuck())
-                    ->modalHeading('Grant another attempt')
-                    ->modalDescription(fn (QuizAttempt $record): string => "{$record->user?->name} gets one more attempt at ".static::quizName($record)
-                        .'. Nobody else is affected: Max attempts stays as it is for everyone else.')
+                    ->modalHeading(__t('admin_results.attempts.grant'))
+                    ->modalDescription(fn (QuizAttempt $record): string => __t('admin_results.attempts.grant_description', [
+                        'name' => (string) $record->user?->name,
+                        'quiz' => static::quizName($record),
+                    ]))
                     ->schema([
                         TextInput::make('reason')
-                            ->label('Reason (optional)')
-                            ->placeholder('For example: the connection dropped during the quiz')
+                            ->label(__t('admin_results.attempts.reason'))
+                            ->placeholder(__t('admin_results.attempts.reason_placeholder'))
                             ->maxLength(255),
                     ])
                     ->action(function (QuizAttempt $record, array $data): void {
@@ -138,20 +142,23 @@ class QuizAttemptsTable
                         QuizAttempt::forgetStuckLearners();
 
                         Notification::make()
-                            ->title('Another attempt granted')
-                            ->body("{$record->user?->name} can try ".static::quizName($record).' once more.')
+                            ->title(__t('admin_results.attempts.granted'))
+                            ->body(__t('admin_results.attempts.granted_body', [
+                                'name' => (string) $record->user?->name,
+                                'quiz' => static::quizName($record),
+                            ]))
                             ->success()
                             ->send();
                     }),
             ])
-            ->emptyStateHeading('No quiz attempts yet')
-            ->emptyStateDescription('Attempts are recorded for final quizzes, and for lesson knowledge checks that have a time limit or a number of attempts.');
+            ->emptyStateHeading(__t('admin_results.attempts.empty'))
+            ->emptyStateDescription(__t('admin_results.attempts.empty_description'));
     }
 
     protected static function quizName(QuizAttempt $record): string
     {
         return $record->course_id
-            ? 'the final quiz'
-            : '"'.($record->lesson?->title ?? 'a lesson').'"';
+            ? __t('admin_results.attempts.final_quiz')
+            : '"'.($record->lesson?->title ?? __t('admin_results.attempts.a_lesson')).'"';
     }
 }

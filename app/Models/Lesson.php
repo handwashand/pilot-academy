@@ -22,6 +22,7 @@ class Lesson extends Model
     protected $fillable = [
         'course_id',
         'title',
+        'language',
         'slug',
         'summary',
         'image_path',

@@ -22,13 +22,22 @@ class ContentHealth extends Page
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedExclamationTriangle;
 
-    protected static ?string $navigationLabel = 'Content health';
-
-    protected static ?string $title = 'Content health';
-
-    protected static string|UnitEnum|null $navigationGroup = 'Content';
-
     protected static ?int $navigationSort = 5;
+
+    public static function getNavigationLabel(): string
+    {
+        return __t('admin_nav.content_health.nav');
+    }
+
+    public function getTitle(): string
+    {
+        return __t('admin_nav.content_health.nav');
+    }
+
+    public static function getNavigationGroup(): string|UnitEnum|null
+    {
+        return __t('admin_nav.groups.content');
+    }
 
     protected string $view = 'filament.pages.content-health';
 
@@ -54,7 +63,7 @@ class ContentHealth extends Page
 
     public static function getNavigationBadgeTooltip(): ?string
     {
-        return 'Broken for students right now';
+        return __t('admin_nav.content_health.badge');
     }
 
     public function problems(): Collection

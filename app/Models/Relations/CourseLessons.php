@@ -14,7 +14,12 @@ class CourseLessons extends BelongsToMany
 {
     public function create(array $attributes = [], array $joining = [], $touch = true)
     {
-        $lesson = $this->related->newInstance(['course_id' => $this->parent->getKey(), ...$attributes]);
+        // Written in its course's language unless told otherwise.
+        $lesson = $this->related->newInstance([
+            'course_id' => $this->parent->getKey(),
+            'language' => $this->parent->getAttribute('language'),
+            ...$attributes,
+        ]);
         $lesson->save(['touch' => false]);
 
         if ($joining !== []) {

@@ -9,6 +9,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -40,13 +41,13 @@ class AdminPanelProvider extends PanelProvider
             // is stuck reaches for the menu with their own name on it.
             ->userMenuItems([
                 'guide' => Action::make('guide')
-                    ->label('Guide')
+                    ->label(fn (): string => __t('admin_nav.account.guide'))
                     ->icon(Heroicon::OutlinedBookOpen)
                     ->url(fn (): string => AdminGuide::getUrl()),
                 // The way back to what students see, to check a change as a
                 // student would meet it.
                 'studentSite' => Action::make('studentSite')
-                    ->label('Student site')
+                    ->label(fn (): string => __t('admin_nav.account.student_site'))
                     ->icon(Heroicon::OutlinedAcademicCap)
                     ->url(fn (): string => route('academy.home')),
             ])
@@ -88,14 +89,13 @@ class AdminPanelProvider extends PanelProvider
             // The sidebar is grouped by job — build the training, look after the
             // people taking it, see what came of it, read how it all works —
             // and in that order. Items declare their group by name; this fixes
-            // the order the groups appear in.
-            ->navigationGroups([
-                'Content',
-                'People',
-                'Results',
-                'Docs',
-                'Settings',
-            ])
+            // the order the groups appear in. Labels are closures: they are read
+            // per request, after SetLocale, so the menu is in the admin's language
+            // — each page's getNavigationGroup() returns the same translation.
+            ->navigationGroups(collect(['content', 'people', 'results', 'docs', 'settings'])
+                ->map(fn (string $group): NavigationGroup => NavigationGroup::make()
+                    ->label(fn (): string => __t("admin_nav.groups.{$group}")))
+                ->all())
             // The dashboard shows the academy, not the panel. Filament's
             // account and version cards are deliberately left off: signing out
             // belongs in the profile menu, top right, where people look for it.

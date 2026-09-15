@@ -98,7 +98,7 @@ class FindContentProblems
 
         return new HtmlString(
             '<span class="font-semibold text-danger-600 dark:text-danger-400">'
-            .e("Students hit {$count} ".Str::plural('problem', $count).' here right now:')
+            .e(__tc('admin_pages.problems.summary', $count))
             .'</span> '.$items.'.'
         );
     }
@@ -137,9 +137,9 @@ class FindContentProblems
             ->map(fn (Course $course): array => [
                 'key' => "course-{$course->id}-empty",
                 'severity' => 'danger',
-                'what' => 'Published course with no published lessons',
+                'what' => __t('admin_pages.problems.course_empty'),
                 'name' => $course->title,
-                'fix' => 'Publish a lesson, or unpublish the course.',
+                'fix' => __t('admin_pages.problems.course_empty_fix'),
                 'url' => CourseResource::getUrl('edit', ['record' => $course]),
                 'course_id' => $course->id,
                 'course_ids' => [$course->id],
@@ -155,9 +155,9 @@ class FindContentProblems
             ->map(fn (Course $course): array => [
                 'key' => "course-{$course->id}-final-quiz-empty",
                 'severity' => 'danger',
-                'what' => 'Final quiz is on but its question bank is empty',
+                'what' => __t('admin_pages.problems.final_bank_empty'),
                 'name' => $course->title,
-                'fix' => 'Open the course, then Final questions → Add all lesson questions.',
+                'fix' => __t('admin_pages.problems.final_bank_empty_fix'),
                 'url' => CourseResource::getUrl('edit', ['record' => $course]),
                 'course_id' => $course->id,
                 'course_ids' => [$course->id],
@@ -185,7 +185,7 @@ class FindContentProblems
         return [
             'course_id' => in_array((int) $lesson->course_id, $ids, true) ? (int) $lesson->course_id : ($ids[0] ?? null),
             'course_ids' => $ids,
-            'courses' => $lesson->courses->pluck('title')->implode(', ') ?: 'no course',
+            'courses' => $lesson->courses->pluck('title')->implode(', ') ?: __t('admin_pages.problems.no_course'),
         ];
     }
 
@@ -199,9 +199,9 @@ class FindContentProblems
                 return [
                     'key' => "lesson-{$lesson->id}-no-questions",
                     'severity' => 'warning',
-                    'what' => 'Published lesson with no quiz questions',
+                    'what' => __t('admin_pages.problems.lesson_no_questions'),
                     'name' => $lesson->title.' — '.$place['courses'],
-                    'fix' => 'Add at least one question, or unpublish the lesson.',
+                    'fix' => __t('admin_pages.problems.lesson_no_questions_fix'),
                     'url' => LessonResource::getUrl('edit', ['record' => $lesson]),
                     'course_id' => $place['course_id'],
                     'course_ids' => $place['course_ids'],
@@ -224,9 +224,9 @@ class FindContentProblems
                 return [
                     'key' => "question-{$question->id}-no-correct-answer",
                     'severity' => 'danger',
-                    'what' => 'Question with no correct answer — impossible to pass',
+                    'what' => __t('admin_pages.problems.no_correct_answer'),
                     'name' => Str::limit($question->prompt, 70).' — '.$question->lesson->title,
-                    'fix' => 'Open the lesson and tick the right answer.',
+                    'fix' => __t('admin_pages.problems.no_correct_answer_fix'),
                     'url' => LessonResource::getUrl('edit', ['record' => $question->lesson]),
                     'course_id' => $place['course_id'],
                     'course_ids' => $place['course_ids'],
@@ -251,9 +251,9 @@ class FindContentProblems
                 return [
                     'key' => "lesson-{$lesson->id}-unplayable-youtube",
                     'severity' => 'danger',
-                    'what' => 'YouTube link that is not a playable video',
+                    'what' => __t('admin_pages.problems.bad_youtube'),
                     'name' => $lesson->title.' — '.$place['courses'],
-                    'fix' => 'Open the lesson and paste the address of the video itself, not a playlist or channel.',
+                    'fix' => __t('admin_pages.problems.bad_youtube_fix'),
                     'url' => LessonResource::getUrl('edit', ['record' => $lesson]),
                     'course_id' => $place['course_id'],
                     'course_ids' => $place['course_ids'],

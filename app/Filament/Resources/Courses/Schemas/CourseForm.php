@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Courses\Schemas;
 
 use App\Actions\FindContentProblems;
 use App\Models\Course;
+use App\Services\Translator;
 use Closure;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -21,7 +22,7 @@ class CourseForm
         return $schema
             ->components([
                 Select::make('product_id')
-                    ->label('Product / module')
+                    ->label(__t('admin_courses.form.product'))
                     ->relationship('product', 'name', function ($query) {
                         $user = auth()->user();
 
@@ -34,19 +35,19 @@ class CourseForm
                     ->preload()
                     ->required(fn (): bool => (bool) auth()->user()?->isCreator())
                     ->default(fn () => auth()->user()?->isCreator() ? auth()->user()->products()->value('products.id') : null)
-                    ->helperText('Which product this course teaches. Creators can only see and manage their own products\' courses.')
+                    ->helperText(__t('admin_courses.form.product_help'))
                     ->rules([
                         fn (): Closure => function (string $attribute, $value, Closure $fail): void {
                             $user = auth()->user();
 
                             if ($user && $user->isCreator() && ! $user->products()->whereKey($value)->exists()) {
-                                $fail('You can only manage courses for a product assigned to you.');
+                                $fail(__t('admin_courses.form.product_not_yours'));
                             }
                         },
                     ]),
 
                 TextInput::make('title')
-                    ->label('Course title')
+                    ->label(__t('admin_courses.form.title'))
                     ->required()
                     ->maxLength(255)
                     ->live(onBlur: true)
@@ -57,56 +58,55 @@ class CourseForm
                     }),
 
                 TextInput::make('slug')
-                    ->label('URL slug')
+                    ->label(__t('admin_courses.form.slug'))
                     ->required()
                     ->maxLength(255)
                     ->unique(ignoreRecord: true)
-                    ->helperText('Used in the page address, e.g. /courses/pilot-quick-start'),
+                    ->helperText(__t('admin_courses.form.slug_help')),
+
+                static::writtenIn(),
 
                 Textarea::make('description')
-                    ->label('Short description')
+                    ->label(__t('admin_courses.form.description'))
                     ->rows(3)
                     ->columnSpanFull(),
 
                 Select::make('level')
-                    ->options([
-                        'beginner' => 'Beginner',
-                        'intermediate' => 'Intermediate',
-                        'advanced' => 'Advanced',
-                    ])
+                    ->label(__t('admin_common.level'))
+                    ->options(Course::levelLabels())
                     ->default('beginner')
                     ->required(),
 
                 Select::make('audience')
-                    ->label('Who it\'s for')
-                    ->options(Course::AUDIENCES)
-                    ->placeholder('Not specified')
-                    ->helperText('Shown as a badge on the course card.'),
+                    ->label(__t('admin_courses.form.audience'))
+                    ->options(Course::audienceLabels())
+                    ->placeholder(__t('admin_courses.form.audience_none'))
+                    ->helperText(__t('admin_courses.form.audience_help')),
 
                 TextInput::make('duration_minutes')
-                    ->label('Duration (minutes)')
+                    ->label(__t('admin_common.duration_minutes'))
                     ->numeric()
                     ->minValue(0),
 
                 TextInput::make('sort_order')
-                    ->label('Sort order')
+                    ->label(__t('admin_courses.form.sort_order'))
                     ->numeric()
                     ->default(0)
-                    ->helperText('Lower numbers appear first.'),
+                    ->helperText(__t('admin_courses.form.sort_order_help')),
 
                 Select::make('status')
-                    ->label('Status')
-                    ->options(Course::STATUS_LABELS)
+                    ->label(__t('admin_common.status'))
+                    ->options(Course::statusLabels())
                     ->default(Course::STATUS_DRAFT)
                     ->required()
                     // New courses are always drafts — publishing is a separate,
                     // deliberate step from the course list.
                     ->disabled(fn (string $operation): bool => $operation === 'create')
-                    ->helperText('Only published courses are visible to students. New courses start as a draft — use Publish in the course list when it is ready.')
+                    ->helperText(__t('admin_courses.form.status_help'))
                     ->rules([
                         fn (?Course $record): Closure => function (string $attribute, $value, Closure $fail) use ($record): void {
                             if ($value === Course::STATUS_PUBLISHED && $record && ! $record->canBePublished()) {
-                                $fail('Add at least one published lesson before publishing this course.');
+                                $fail(__t('admin_courses.form.needs_a_lesson'));
 
                                 return;
                             }
@@ -118,25 +118,25 @@ class CourseForm
                                 $problems = app(FindContentProblems::class)->forCourse($record);
 
                                 if ($problems->isNotEmpty()) {
-                                    $fail('Fix what students would hit before publishing: '.FindContentProblems::plainList($problems).'.');
+                                    $fail(__t('admin_courses.form.fix_first', ['problems' => FindContentProblems::plainList($problems)]));
                                 }
                             }
                         },
                     ]),
 
-                Section::make('Final quiz & certificate')
-                    ->description('A course-wide quiz students take after finishing every lesson. Passing issues a certificate. Manage the question bank in the "Final questions" tab after saving.')
+                Section::make(__t('admin_courses.form.final_section'))
+                    ->description(__t('admin_courses.form.final_section_help'))
                     ->columns(2)
                     ->columnSpanFull()
                     ->schema([
                         Toggle::make('final_quiz_enabled')
-                            ->label('Enable final quiz')
+                            ->label(__t('admin_courses.form.final_enabled'))
                             ->live()
                             ->columnSpanFull()
-                            ->helperText('When on, students who complete all lessons can take the final quiz.'),
+                            ->helperText(__t('admin_courses.form.final_enabled_help')),
 
                         TextInput::make('pass_percent')
-                            ->label('Pass mark (%)')
+                            ->label(__t('admin_courses.form.pass_percent'))
                             ->numeric()
                             ->minValue(1)
                             ->maxValue(100)
@@ -145,32 +145,59 @@ class CourseForm
                             ->visible(fn ($get) => (bool) $get('final_quiz_enabled')),
 
                         TextInput::make('questions_per_attempt')
-                            ->label('Questions per attempt')
+                            ->label(__t('admin_courses.form.questions_per_attempt'))
                             ->numeric()
                             ->minValue(1)
-                            ->placeholder('All')
-                            ->helperText('Randomly drawn from the bank each attempt. Leave empty to use every question.')
+                            ->placeholder(__t('admin_common.all'))
+                            ->helperText(__t('admin_courses.form.questions_per_attempt_help'))
                             ->visible(fn ($get) => (bool) $get('final_quiz_enabled')),
 
                         TextInput::make('final_quiz_max_attempts')
-                            ->label('Max attempts')
+                            ->label(__t('admin_common.max_attempts'))
                             ->numeric()
                             ->minValue(1)
-                            ->placeholder('Unlimited')
-                            ->helperText('Leave empty for unlimited attempts.')
+                            ->placeholder(__t('admin_courses.form.unlimited'))
+                            ->helperText(__t('admin_courses.form.max_attempts_help'))
                             ->visible(fn ($get) => (bool) $get('final_quiz_enabled')),
 
                         FileUpload::make('certificate_template')
-                            ->label('Certificate background (optional)')
+                            ->label(__t('admin_courses.form.certificate_template'))
                             ->image()
                             ->disk('public')
                             ->directory('certificate-templates')
                             ->visibility('public')
                             ->maxSize(8192)
                             ->columnSpanFull()
-                            ->helperText('Full-page A4 landscape background (≈3508×2480 px). Leave empty to use the built-in framed layout. Name, course, date, number and QR are overlaid automatically.')
+                            ->helperText(__t('admin_courses.form.certificate_template_help'))
                             ->visible(fn ($get) => (bool) $get('final_quiz_enabled')),
                     ]),
             ]);
+    }
+
+    /**
+     * The language the content is written in — shared with the lesson form.
+     * English unless the trainer writes in another; Translate adds the rest.
+     */
+    public static function writtenIn(): Select
+    {
+        $translator = app(Translator::class);
+
+        return Select::make('language')
+            ->label(__t('admin_courses.form.written_in'))
+            ->options(function () use ($translator): array {
+                $languages = $translator->activeLanguages()->pluck('native_name', 'code')->all();
+
+                // No languages set up yet: the default is still a valid choice.
+                return $languages !== [] ? $languages : [$translator->defaultCode() => strtoupper($translator->defaultCode())];
+            })
+            ->default(fn (): string => $translator->defaultCode())
+            // Saved before this field existed: written in the default language.
+            ->afterStateHydrated(function (Select $component, $state) use ($translator): void {
+                if (blank($state)) {
+                    $component->state($translator->defaultCode());
+                }
+            })
+            ->required()
+            ->helperText(__t('admin_courses.form.written_in_help'));
     }
 }

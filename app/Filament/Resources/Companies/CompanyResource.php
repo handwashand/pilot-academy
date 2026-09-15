@@ -21,9 +21,27 @@ class CompanyResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
 
-    protected static string|UnitEnum|null $navigationGroup = 'People';
-
     protected static ?int $navigationSort = 2;
+
+    public static function getNavigationGroup(): string|UnitEnum|null
+    {
+        return __t('admin_nav.groups.people');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __t('admin_nav.companies.nav');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __t('admin_nav.companies.one');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __t('admin_nav.companies.many');
+    }
 
     public static function form(Schema $schema): Schema
     {

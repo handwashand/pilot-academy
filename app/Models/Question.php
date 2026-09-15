@@ -19,6 +19,14 @@ class Question extends Model
         self::TYPE_MULTIPLE => 'Multiple select',
     ];
 
+    /** @return array<string, string> The types in the reader's language (lang/{code}/labels.php). */
+    public static function typeLabels(): array
+    {
+        return collect(self::TYPE_LABELS)
+            ->mapWithKeys(fn (string $english, string $type): array => [$type => __t("labels.question_type.{$type}")])
+            ->all();
+    }
+
     protected $fillable = [
         'lesson_id',
         'prompt',

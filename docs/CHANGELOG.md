@@ -24,10 +24,28 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
-- **Courses and lessons in other languages.** **Translate** on a course's or
-  lesson's edit page has a tab for each language — title and description, or
-  title, summary, lesson text and transcript. Students see the translation in
-  their language, and the English wherever none has been written.
+- **The whole admin panel follows your language.** Menus, page titles, every
+  form label and help text, table columns, buttons, confirmation messages,
+  notifications, the dashboard, Content health, Final quiz health, Mail and
+  What's new are in English, Russian, French, Spanish or Portuguese — whichever
+  you pick with the language button. Statuses such as Draft and Published, the
+  exported spreadsheet headings, and the alerts in the notification bell follow
+  it too; an alert about a broken course is written in its owner's language.
+  Anything that reads oddly can be corrected under **Settings → Translations**.
+- **Emails and certificates in the student's language.** The certificate email,
+  the reminder to continue and the certificate PDF itself are written in the
+  language the student chose — with the course title in that language where it
+  has been translated, and the date written the local way — whoever issues,
+  resends or regenerates them. Someone whose language is switched off gets the
+  default. The test email under **Settings → Mail** and the What's new PDF
+  follow the language of the admin who asks for them.
+- **Write courses in any language, and translate them into the others.** Courses
+  and lessons have a **Written in** field (English by default), so French and
+  Russian trainers can write in their own language. **Translate** on the edit
+  page has a tab for every other language — title and description, or title,
+  summary, lesson text and transcript. Students see the translation in their
+  language and the original wherever none has been written, and search finds a
+  course by its translations too.
 - **Choose a language on a phone.** The languages are listed at the foot of
   every student page; the menu in the top bar only fits on larger screens.
 - **One lesson in several courses.** On a course's **Lessons** tab, **Add

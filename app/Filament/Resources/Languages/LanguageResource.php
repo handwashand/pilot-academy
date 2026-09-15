@@ -29,9 +29,12 @@ class LanguageResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedLanguage;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Settings';
-
     protected static ?int $navigationSort = 10;
+
+    public static function getNavigationGroup(): string|UnitEnum|null
+    {
+        return __t('admin_nav.groups.settings');
+    }
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -65,30 +68,30 @@ class LanguageResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return 'language';
+        return __t('admin_nav.languages.one');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return 'languages';
+        return __t('admin_nav.languages.many');
     }
 
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
             TextInput::make('code')
-                ->label('ISO 639-1 code')
+                ->label(__t('admin_settings.languages.code'))
                 ->required()
                 ->length(2)
                 ->unique(ignoreRecord: true),
-            TextInput::make('name')->required()->maxLength(255),
-            TextInput::make('native_name')->required()->maxLength(255),
-            TextInput::make('direction')->required()->default('ltr')->maxLength(3),
-            TextInput::make('position')->numeric()->default(0),
-            Toggle::make('is_active')->label('Active')->default(true),
+            TextInput::make('name')->label(__t('admin_common.name'))->required()->maxLength(255),
+            TextInput::make('native_name')->label(__t('admin_settings.languages.native_name'))->required()->maxLength(255),
+            TextInput::make('direction')->label(__t('admin_settings.languages.direction'))->required()->default('ltr')->maxLength(3),
+            TextInput::make('position')->label(__t('admin_settings.languages.position'))->numeric()->default(0),
+            Toggle::make('is_active')->label(__t('admin_settings.languages.active'))->default(true),
             Toggle::make('is_default')
-                ->label('Default language')
-                ->helperText('Changing this moves the fallback language for everyone.'),
+                ->label(__t('admin_settings.languages.default'))
+                ->helperText(__t('admin_settings.languages.default_help')),
         ]);
     }
 
@@ -97,15 +100,15 @@ class LanguageResource extends Resource
         return $table
             ->defaultSort('position')
             ->columns([
-                TextColumn::make('native_name')->label('Language')->searchable()->sortable(),
-                TextColumn::make('code')->badge(),
-                IconColumn::make('is_active')->label('Active')->boolean(),
-                IconColumn::make('is_default')->label('Default')->boolean(),
-                TextColumn::make('coverage')->label('Coverage')->state(fn (Language $record): string => self::coverage($record)),
+                TextColumn::make('native_name')->label(__t('admin_settings.languages.language'))->searchable()->sortable(),
+                TextColumn::make('code')->label(__t('admin_settings.languages.code_column'))->badge(),
+                IconColumn::make('is_active')->label(__t('admin_settings.languages.active'))->boolean(),
+                IconColumn::make('is_default')->label(__t('admin_settings.languages.default_column'))->boolean(),
+                TextColumn::make('coverage')->label(__t('admin_settings.languages.coverage'))->state(fn (Language $record): string => self::coverage($record)),
             ])
             ->recordActions([
                 Action::make('use')
-                    ->label('Use this language')
+                    ->label(__t('admin_settings.languages.use'))
                     ->action(function (Language $record): void {
                         session()->put('locale', $record->code);
                         auth()->user()?->forceFill(['locale' => $record->code])->save();

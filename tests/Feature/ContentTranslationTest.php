@@ -76,6 +76,53 @@ class ContentTranslationTest extends TestCase
             ->assertOk()->assertSee($course->title)->assertDontSee('Быстрый старт Pilot');
     }
 
+    public function test_a_course_written_in_french_is_translated_into_english_and_russian(): void
+    {
+        $course = Course::create([
+            'title' => 'Démarrage rapide',
+            'slug' => 'demarrage-rapide',
+            'language' => 'fr',
+            'level' => 'beginner',
+            'status' => Course::STATUS_PUBLISHED,
+        ]);
+
+        Livewire::actingAs($this->admin())
+            ->test(EditCourse::class, ['record' => $course->getRouteKey()])
+            ->assertFormSet(['language' => 'fr'])
+            ->callAction('translateContent', data: ['en' => ['title' => 'Quick start'], 'ru' => ['title' => 'Быстрый старт']])
+            ->assertHasNoActionErrors();
+
+        $course = $course->fresh();
+        $this->assertSame('Quick start', $course->translated('title', 'en'), 'English is a translation of a French course.');
+        $this->assertSame('Быстрый старт', $course->translated('title', 'ru'));
+        $this->assertSame('Démarrage rapide', $course->translated('title', 'fr'), 'French readers get the original.');
+
+        // A "French translation" of a French course is not a thing.
+        $course->setTranslation('title', 'fr', 'Autre titre');
+        $this->assertSame('Démarrage rapide', $course->fresh()->translated('title', 'fr'));
+        $this->assertDatabaseMissing('content_translations', ['value' => 'Autre titre']);
+    }
+
+    public function test_a_lesson_written_inside_a_course_takes_its_language(): void
+    {
+        $course = Course::create(['title' => 'Курс', 'slug' => 'kurs', 'language' => 'ru', 'level' => 'beginner']);
+        $lesson = $course->lessons()->create(['title' => 'Урок', 'slug' => 'urok', 'content' => '<p>Текст.</p>']);
+
+        $this->assertSame('ru', $lesson->fresh()->language);
+    }
+
+    public function test_search_finds_a_course_by_its_translation(): void
+    {
+        $course = Course::first();
+        // Lower case on purpose: SQLite only lower-cases ASCII in tests.
+        $course->setTranslation('title', 'ru', 'быстрый старт пилот');
+
+        $this->withHeader('Accept-Language', 'ru')
+            ->get(route('academy.search', ['q' => 'старт пилот']))
+            ->assertOk()
+            ->assertSee('быстрый старт пилот');
+    }
+
     public function test_emptying_a_translation_brings_the_english_back(): void
     {
         $course = Course::first();
