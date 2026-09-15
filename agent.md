@@ -382,6 +382,49 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-09-15 — Language button in the top right corner of both sites (uncommitted)
+The owner's direction: the top-right language button is what people will
+mostly use, on both the panel and the student site.
+
+**Before:**
+- **Admin panel:** already in the corner. `USER_MENU_AFTER` renders inside
+  `fi-topbar-end`, after the account menu.
+- **Student site:** a `<select>` of native names before the account menu, hidden
+  below `sm:`. Phones only had the footer row.
+
+**What changed:**
+- **Student header:** the `<select>` is replaced by a `<details
+  data-language-menu>` button, placed last in the header after the account menu
+  or Register.
+  - It shows at every width. Below `sm:` it is just the code: the Spanish and
+    Russian guest headers have no room for the globe as well.
+  - The code sits in an outlined pill (`border border-slate-200`, `h-9`), so a
+    lone "ES" on a phone reads as a button. The tap area stays `h-11`.
+    - Its minimum width is inline, because no min-width utility is in the
+      committed bundle.
+    - Base `px-1.5` and `hover:border-*` are not in the bundle either.
+  - The globe is the same `heroicon-o-language` path the panel uses.
+  - Every class used was already in the committed CSS bundle.
+- **Layout script:** the closing script handles both header menus.
+- **Blade:** no block `@php` could be used there, because the inline
+  `@php($name = …)` above it would swallow the template.
+- **Footer row:** kept as a second way in.
+- **Tests:** `AccountMenuTest` checks the order in the HTML for both sites.
+- **Checked in a real browser:** puppeteer-core in the session scratchpad
+  (`lang-button.js`), driving installed **Chrome**. Edge still would not
+  launch; Chrome did. The target was a throwaway preview container: SQLite,
+  `migrate --seed`, port 8010, with the working tree mounted.
+  - **Student site at 375px** (English, Russian, Spanish, French guests, and a
+    signed-in user): the button's right edge is 16px from the viewport (the
+    header's own padding). There is no sideways scroll, the header is one line,
+    and the open menu stays on screen.
+  - **Student site at 1280px:** the button is at the right end of the centred
+    `max-w-6xl` header.
+  - **Admin panel at 1440 and 375px:** the button is 16px from the right edge,
+    right of the account menu, with no sideways scroll.
+  - **Filament login in puppeteer** is a Livewire redirect: wait for
+    `.fi-topbar`, not for a navigation.
+
 ### 2026-09-15 — Emails and certificates in the recipient's language (uncommitted)
 **What changed:**
 - **`Translator::localeFor($person)`:** the language to write to someone who is

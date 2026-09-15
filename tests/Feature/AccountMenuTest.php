@@ -64,6 +64,27 @@ class AccountMenuTest extends TestCase
             ->assertSee('href="'.route('login').'"', false);
     }
 
+    public function test_the_language_button_is_last_in_the_student_header_at_every_width(): void
+    {
+        $this->seed(LanguageSeeder::class);
+
+        // Signed in: after the account menu, so in the top right corner.
+        $this->actingAs($this->user(User::ROLE_LEARNER))
+            ->get(route('academy.home'))
+            ->assertOk()
+            ->assertSeeInOrder(['<header', 'data-account-menu', 'data-language-menu', '</header>'], false)
+            // Not hidden on a phone, and not the old wide select.
+            ->assertSee('<details class="relative flex-none" data-language-menu>', false)
+            ->assertDontSee('<select id="locale-switcher"', false);
+
+        auth()->logout();
+
+        // A guest: after Register.
+        $this->get(route('academy.home'))
+            ->assertOk()
+            ->assertSeeInOrder(['<header', 'href="'.route('register').'"', 'data-language-menu', 'name="locale" value="ru"', '</header>'], false);
+    }
+
     public function test_the_header_uses_the_same_logo_as_the_admin_panel(): void
     {
         $this->get(route('academy.home'))
@@ -107,6 +128,8 @@ class AccountMenuTest extends TestCase
             ->get('/admin')
             ->assertOk()
             ->assertSee('data-language-switcher', false)
+            // The top right corner: in the top bar's end group, after the account menu.
+            ->assertSeeInOrder(['fi-topbar-end', 'fi-user-menu', 'data-language-switcher', '</nav>'], false)
             // A button with the current code, not a <select> of every name.
             ->assertDontSee('<select id="locale-switcher"', false)
             ->assertSee('action="'.route('locale.switch').'"', false)

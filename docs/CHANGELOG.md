@@ -46,8 +46,11 @@ Add a new entry here whenever something visible to admins or students changes.
   summary, lesson text and transcript. Students see the translation in their
   language and the original wherever none has been written, and search finds a
   course by its translations too.
-- **Choose a language on a phone.** The languages are listed at the foot of
-  every student page; the menu in the top bar only fits on larger screens.
+- **A language button in the top right corner of every student page.** Like
+  the one in the admin panel — the current language code, such as **EN** —
+  it sits at the right-hand end of the header at every width, on a phone too,
+  and opens a short list of languages. The languages are also listed at the
+  foot of every page.
 - **One lesson in several courses.** On a course's **Lessons** tab, **Add
   existing lesson** now shares the lesson instead of moving it out of its old
   course, and the lesson form has a **Courses** field. It is the same lesson in

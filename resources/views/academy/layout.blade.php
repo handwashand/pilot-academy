@@ -110,8 +110,13 @@
                      height; the alt text and page titles carry the name for
                      anyone who cannot read it. About 89px wide — narrower than
                      the mark and text were, which gives the header room back. --}}
+                {{-- object-fit keeps the lockup's proportions when a narrow phone
+                     (360px, a Spanish guest header) squeezes its width: it scales
+                     down instead of being squashed. Inline, as object-contain is
+                     not relied on from the committed CSS bundle. --}}
                 <img src="{{ asset('img/pilot-logo.png') }}" alt="Pilot Academy"
-                     class="h-7 w-auto max-w-full flex-none" width="89" height="28">
+                     class="h-7 w-auto max-w-full flex-none" width="89" height="28"
+                     style="object-fit: contain; object-position: left center;">
             </a>
             <div class="flex flex-none sm:flex-initial sm:min-w-0 items-center gap-0.5 sm:gap-3">
                 {{-- Help, for everyone: anonymous visitors take lessons too.
@@ -123,17 +128,6 @@
                     <span aria-hidden="true" class="w-6 h-6 rounded-full border border-slate-300 text-xs font-bold flex items-center justify-center">?</span>
                     <span class="hidden sm:block">{{ __t('nav.help') }}</span>
                 </a>
-                @if(($locale['available'] ?? collect())->count() > 1)
-                    <form method="POST" action="{{ route('locale.switch') }}" class="hidden sm:block">
-                        @csrf
-                        <label class="vh" for="locale-switcher">{{ __t('locale.choose') }}</label>
-                        <select id="locale-switcher" name="locale" onchange="this.form.submit()" class="h-10 rounded-lg border border-slate-200 bg-white px-2 text-sm text-slate-600">
-                            @foreach($locale['available'] as $language)
-                                <option value="{{ $language->code }}" @selected($language->code === ($locale['current'] ?? app()->getLocale()))>{{ $language->native_name }}</option>
-                            @endforeach
-                        </select>
-                    </form>
-                @endif
                 @auth
                     @php
                         $account = auth()->user();
@@ -211,6 +205,46 @@
                     <a href="{{ route('login') }}" class="flex flex-none items-center h-11 px-1 sm:px-1.5 whitespace-nowrap text-sm text-slate-600 hover:text-brand font-medium">{{ __t('auth.login') }}</a>
                     <a href="{{ route('register') }}" class="flex flex-none items-center h-10 whitespace-nowrap text-sm font-semibold rounded-lg bg-brand text-white px-3 sm:px-3.5 hover:bg-blue-700">{{ __t('auth.register') }}</a>
                 @endauth
+                {{-- The language button: last in the header, so it sits in the top
+                     right corner at every width, as it does in the admin panel. A
+                     globe and the current code, like the panel's, rather than a
+                     select of every name, which only fitted from tablet up. Below
+                     sm: just the code, because a guest header in Spanish or Russian
+                     has no room for the globe as well. A native details element
+                     like the account menu; the script at the foot closes it. No
+                     block PHP here: the inline one above would swallow it. --}}
+                @if(($locale['available'] ?? collect())->count() > 1)
+                    <details class="relative flex-none" data-language-menu>
+                        <summary class="flex h-11 cursor-pointer list-none items-center text-sm font-semibold text-slate-600 hover:text-brand [&::-webkit-details-marker]:hidden"
+                                 aria-label="{{ __t('locale.choose') }}" title="{{ __t('locale.choose') }}">
+                            {{-- An outlined pill inside the 44px tap area, so a lone "ES" on
+                                 a phone reads as a button, not stray text beside Register.
+                                 The minimum width is inline: no utility for it is in the
+                                 committed CSS bundle. --}}
+                            <span class="flex h-9 items-center justify-center gap-1 rounded-lg border border-slate-200 bg-white px-1 sm:px-2 hover:bg-slate-50" style="min-width: 2.25rem">
+                                <svg class="hidden sm:block w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m10.5 21 5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 0 1 6-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 0 1-3.827-5.802" />
+                                </svg>
+                                <span>{{ strtoupper($locale['current'] ?? app()->getLocale()) }}</span>
+                            </span>
+                        </summary>
+
+                        <form method="POST" action="{{ route('locale.switch') }}"
+                              class="absolute right-0 top-full z-30 mt-2 w-48 max-w-[calc(100vw-2rem)] rounded-xl border border-slate-200 bg-white p-1 shadow-lg">
+                            @csrf
+                            @foreach($locale['available'] as $language)
+                                {{-- In its own language, so a speaker finds theirs without
+                                     knowing the English name. --}}
+                                <button type="submit" name="locale" value="{{ $language->code }}" lang="{{ $language->code }}"
+                                        @if($language->code === ($locale['current'] ?? app()->getLocale())) aria-current="true" @endif
+                                        class="flex min-h-11 w-full items-center justify-between rounded-lg px-3 text-left text-sm {{ $language->code === ($locale['current'] ?? app()->getLocale()) ? 'font-semibold text-navy bg-slate-100' : 'font-medium text-slate-700 hover:bg-slate-50 hover:text-brand' }}">
+                                    <span>{{ $language->native_name }}</span>
+                                    <span class="text-xs uppercase text-slate-400">{{ $language->code }}</span>
+                                </button>
+                            @endforeach
+                        </form>
+                    </details>
+                @endif
             </div>
         </div>
     </header>
@@ -220,8 +254,9 @@
     </main>
 
     <footer class="max-w-6xl mx-auto px-5 py-10 text-center text-sm text-slate-400">
-        {{-- The language choice at every width. The header menu only fits from
-             tablet up, and a student on a phone must still be able to pick. --}}
+        {{-- Every language again at the foot of the page, spelled out — a second
+             way in for anyone who scrolls rather than looks up. The button in
+             the header's top right corner is the main one. --}}
         @if(($locale['available'] ?? collect())->count() > 1)
             <form method="POST" action="{{ route('locale.switch') }}" class="mb-4 flex flex-wrap items-center justify-center gap-1" aria-label="{{ __t('locale.choose') }}">
                 @csrf
@@ -238,11 +273,14 @@
         <a href="{{ route('academy.help') }}" class="hover:text-brand">{{ __t('nav.help') }}</a>
     </footer>
 
-    {{-- Closes the account menu on a tap outside it or on Escape. The menu
-         works without this — it just stays open until toggled again. --}}
+    {{-- Closes the account and language menus on a tap outside them or on
+         Escape. They work without this — they just stay open until toggled
+         again. Opening one closes the other: that tap is outside it. --}}
     <script>
+        var headerMenus = 'details[data-account-menu][open], details[data-language-menu][open]';
+
         document.addEventListener('click', function (event) {
-            document.querySelectorAll('details[data-account-menu][open]').forEach(function (menu) {
+            document.querySelectorAll(headerMenus).forEach(function (menu) {
                 if (! menu.contains(event.target)) {
                     menu.removeAttribute('open');
                 }
@@ -250,7 +288,7 @@
         });
         document.addEventListener('keydown', function (event) {
             if (event.key === 'Escape') {
-                document.querySelectorAll('details[data-account-menu][open]').forEach(function (menu) {
+                document.querySelectorAll(headerMenus).forEach(function (menu) {
                     menu.removeAttribute('open');
                 });
             }

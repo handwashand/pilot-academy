@@ -18,8 +18,9 @@ computer and it is gone.
 link, open it — it signs you straight in, no password needed.
 
 **The academy follows your browser’s language:** English, Russian, Spanish,
-French or Portuguese. To choose another, use the language menu in the top bar
-on a computer or tablet. Course and lesson text is shown as it was written.
+French or Portuguese. To choose another, use the language button in the top
+right corner of any page — it shows the current language, such as **EN**.
+Course and lesson text is shown as it was written.
 
 ## How a course works
 

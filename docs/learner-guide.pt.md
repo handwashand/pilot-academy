@@ -8,7 +8,7 @@ Como a Pilot Academy funciona, da primeira aula até o certificado.
 
 **Entre para manter seu progresso em todos os dispositivos** e para fazer o teste final. Use **Entrar** ou **Cadastrar**. Se sua empresa enviou um link pessoal, abra-o: ele entra direto, sem senha.
 
-**A academia usa o idioma do seu navegador:** inglês, russo, espanhol, francês ou português. Para escolher outro, use o menu de idioma na barra superior no computador ou tablet. O texto dos cursos e das aulas aparece como foi escrito.
+**A academia usa o idioma do seu navegador:** inglês, russo, espanhol, francês ou português. Para escolher outro, use o botão de idioma no canto superior direito de qualquer página — ele mostra o idioma atual, por exemplo **PT**. O texto dos cursos e das aulas aparece como foi escrito.
 
 ## Como um curso funciona
 
