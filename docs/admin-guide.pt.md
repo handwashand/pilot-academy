@@ -15,16 +15,16 @@ Altere seu nome, e-mail ou senha pelo menu da conta, no canto superior direito, 
 | Item | Para que serve |
 |---|---|
 | **Painel** | Indicadores gerais, progresso por empresa e estudantes parados. |
-| **Content → Courses** | Criar cursos e ativar teste final e certificado. |
-| **Content → Lessons** | Adicionar vídeo, texto e perguntas. |
-| **Content → Products** | Produtos ou módulos e seus responsáveis. |
-| **Content → Media Items** | Biblioteca de imagens reutilizáveis. |
-| **People → Users** | Contas, funções, progresso e certificados. |
-| **People → Companies** | Empresas parceiras e seus estudantes. |
-| **Results → Certificates** | Baixar, reenviar, revogar ou restaurar certificados. |
-| **Results → Final quiz health** | Ver se o teste final está fácil ou difícil demais. |
-| **Docs → Guide** | Este guia. |
-| **Docs → What's new** | Mudanças recentes e notas de versão. |
+| **Conteúdo → Cursos** | Criar cursos e ativar teste final e certificado. |
+| **Conteúdo → Aulas** | Adicionar vídeo, texto e perguntas. |
+| **Conteúdo → Produtos** | Produtos ou módulos e seus responsáveis. |
+| **Conteúdo → Mídias** | Biblioteca de imagens reutilizáveis. |
+| **Pessoas → Usuários** | Contas, funções, progresso e certificados. |
+| **Pessoas → Empresas** | Empresas parceiras e seus estudantes. |
+| **Resultados → Certificados** | Baixar, reenviar, revogar ou restaurar certificados. |
+| **Resultados → Qualidade do teste final** | Ver se o teste final está fácil ou difícil demais. |
+| **Documentação → Guia** | Este guia. |
+| **Documentação → Novidades** | Mudanças recentes e notas de versão. |
 
 Os estudantes têm o próprio guia em **Ajuda**, o botão **?** na barra superior.
 

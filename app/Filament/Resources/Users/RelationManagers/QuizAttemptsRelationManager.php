@@ -18,6 +18,16 @@ class QuizAttemptsRelationManager extends RelationManager
         return __t('admin_nav.tabs.quiz_attempts');
     }
 
+    protected static function getModelLabel(): ?string
+    {
+        return __t('admin_nav.quiz_attempts.one');
+    }
+
+    protected static function getPluralModelLabel(): ?string
+    {
+        return __t('admin_nav.quiz_attempts.many');
+    }
+
     public function table(Table $table): Table
     {
         return $table

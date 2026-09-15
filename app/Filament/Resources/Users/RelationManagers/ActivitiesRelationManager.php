@@ -18,6 +18,16 @@ class ActivitiesRelationManager extends RelationManager
         return __t('admin_nav.tabs.activity');
     }
 
+    protected static function getModelLabel(): ?string
+    {
+        return __t('admin_nav.activities.one');
+    }
+
+    protected static function getPluralModelLabel(): ?string
+    {
+        return __t('admin_nav.activities.many');
+    }
+
     public function table(Table $table): Table
     {
         return $table

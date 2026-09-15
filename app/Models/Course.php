@@ -55,11 +55,11 @@ class Course extends Model
         'support' => 'Support',
     ];
 
-    /** @return array<string, string> Audiences in the reader's language — the same words the course card uses. */
+    /** @return array<string, string> Audiences in the reader's language, as standalone names (lang/{code}/labels.php). */
     public static function audienceLabels(): array
     {
         return collect(self::AUDIENCES)
-            ->mapWithKeys(fn (string $english, string $audience): array => [$audience => __t("academy.common.audience.{$audience}")])
+            ->mapWithKeys(fn (string $english, string $audience): array => [$audience => __t("labels.audience.{$audience}")])
             ->all();
     }
 

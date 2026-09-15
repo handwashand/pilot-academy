@@ -14,17 +14,17 @@ Modifiez votre nom, e-mail ou mot de passe depuis le menu du compte, en haut à 
 
 | Élément | Utilité |
 |---|---|
-| **Tableau** | Indicateurs, progression par entreprise et étudiants inactifs. |
-| **Content → Courses** | Créer les cours, activer quiz final et certificat. |
-| **Content → Lessons** | Ajouter vidéo, texte et questions. |
-| **Content → Products** | Produits ou modules et leurs responsables. |
-| **Content → Media Items** | Bibliothèque d'images réutilisables. |
-| **People → Users** | Comptes, rôles, progression et certificats. |
-| **People → Companies** | Entreprises partenaires et étudiants. |
-| **Results → Certificates** | Télécharger, renvoyer, révoquer ou restaurer. |
-| **Results → Final quiz health** | Voir si le quiz final est trop facile ou difficile. |
-| **Docs → Guide** | Ce guide. |
-| **Docs → What's new** | Changements récents et notes de version. |
+| **Tableau de bord** | Indicateurs, progression par entreprise et étudiants inactifs. |
+| **Contenu → Cours** | Créer les cours, activer quiz final et certificat. |
+| **Contenu → Leçons** | Ajouter vidéo, texte et questions. |
+| **Contenu → Produits** | Produits ou modules et leurs responsables. |
+| **Contenu → Médias** | Bibliothèque d'images réutilisables. |
+| **Personnes → Utilisateurs** | Comptes, rôles, progression et certificats. |
+| **Personnes → Entreprises** | Entreprises partenaires et étudiants. |
+| **Résultats → Certificats** | Télécharger, renvoyer, révoquer ou restaurer. |
+| **Résultats → Qualité du quiz final** | Voir si le quiz final est trop facile ou difficile. |
+| **Documentation → Guide** | Ce guide. |
+| **Documentation → Nouveautés** | Changements récents et notes de version. |
 
 Les étudiants ont leur guide dans **Aide**, le bouton **?** de la barre supérieure.
 

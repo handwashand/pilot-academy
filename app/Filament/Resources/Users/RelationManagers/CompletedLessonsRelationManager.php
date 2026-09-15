@@ -16,6 +16,16 @@ class CompletedLessonsRelationManager extends RelationManager
         return __t('admin_nav.tabs.completed_lessons');
     }
 
+    protected static function getModelLabel(): ?string
+    {
+        return __t('admin_nav.lessons.one');
+    }
+
+    protected static function getPluralModelLabel(): ?string
+    {
+        return __t('admin_nav.lessons.many');
+    }
+
     public function table(Table $table): Table
     {
         return $table

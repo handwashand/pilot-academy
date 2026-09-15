@@ -18,13 +18,13 @@ Cambia tu nombre, correo o contraseña desde el menú de cuenta, arriba a la der
 | **Contenido → Cursos** | Crear cursos, activar examen final y certificado. |
 | **Contenido → Lecciones** | Añadir video, texto y preguntas. |
 | **Contenido → Productos** | Productos o módulos de formación y sus responsables. |
-| **Contenido → Medios** | Biblioteca compartida de imágenes. |
+| **Contenido → Archivos multimedia** | Biblioteca compartida de imágenes. |
 | **Personas → Usuarios** | Cuentas, roles, progreso y certificados. |
 | **Personas → Empresas** | Empresas asociadas y sus estudiantes. |
 | **Resultados → Certificados** | Descargar, reenviar, revocar o restaurar certificados. |
-| **Resultados → Salud del examen final** | Ver si los exámenes son demasiado fáciles o difíciles. |
-| **Docs → Guía** | Esta guía. |
-| **Docs → Novedades** | Cambios recientes y notas de versión. |
+| **Resultados → Calidad del examen final** | Ver si los exámenes son demasiado fáciles o difíciles. |
+| **Documentación → Guía** | Esta guía. |
+| **Documentación → Novedades** | Cambios recientes y notas de versión. |
 
 Los estudiantes tienen su propia guía en **Ayuda**, el botón **?** de la barra superior.
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Lessons;
 
+use App\Filament\Resources\Concerns\HasSentenceCaseLabels;
 use App\Filament\Resources\Lessons\Pages\CreateLesson;
 use App\Filament\Resources\Lessons\Pages\EditLesson;
 use App\Filament\Resources\Lessons\Pages\ListLessons;
@@ -18,6 +19,8 @@ use UnitEnum;
 
 class LessonResource extends Resource
 {
+    use HasSentenceCaseLabels;
+
     protected static ?string $model = Lesson::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;

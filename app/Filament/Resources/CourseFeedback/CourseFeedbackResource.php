@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CourseFeedback;
 
+use App\Filament\Resources\Concerns\HasSentenceCaseLabels;
 use App\Filament\Resources\CourseFeedback\Pages\ListCourseFeedback;
 use App\Filament\Resources\CourseFeedback\Tables\CourseFeedbackTable;
 use App\Models\CourseFeedback;
@@ -22,6 +23,8 @@ use UnitEnum;
  */
 class CourseFeedbackResource extends Resource
 {
+    use HasSentenceCaseLabels;
+
     protected static ?string $model = CourseFeedback::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChatBubbleLeftRight;

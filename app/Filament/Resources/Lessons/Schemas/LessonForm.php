@@ -246,7 +246,9 @@ class LessonForm
                     ->collapsible()
                     ->schema([
                         Repeater::make('doc_links')
-                            ->label('')
+                            // The section heading names it. An empty label falls
+                            // back to the field name, "Doc links", in English.
+                            ->hiddenLabel()
                             ->itemLabel(fn (array $state): ?string => $state['title'] ?? __t('admin_lessons.form.new_link'))
                             ->defaultItems(0)
                             ->addActionLabel(__t('admin_lessons.form.add_link'))

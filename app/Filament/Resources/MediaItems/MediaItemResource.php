@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\MediaItems;
 
+use App\Filament\Resources\Concerns\HasSentenceCaseLabels;
 use App\Filament\Resources\MediaItems\Pages\CreateMediaItem;
 use App\Filament\Resources\MediaItems\Pages\EditMediaItem;
 use App\Filament\Resources\MediaItems\Pages\ListMediaItems;
@@ -17,6 +18,8 @@ use UnitEnum;
 
 class MediaItemResource extends Resource
 {
+    use HasSentenceCaseLabels;
+
     protected static ?string $model = MediaItem::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;

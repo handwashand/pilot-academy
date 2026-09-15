@@ -19,6 +19,16 @@ class CertificatesRelationManager extends RelationManager
         return __t('admin_nav.tabs.certificates');
     }
 
+    protected static function getModelLabel(): ?string
+    {
+        return __t('admin_nav.certificates.one');
+    }
+
+    protected static function getPluralModelLabel(): ?string
+    {
+        return __t('admin_nav.certificates.many');
+    }
+
     public function table(Table $table): Table
     {
         return $table

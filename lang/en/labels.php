@@ -34,6 +34,15 @@ return [
         'reminder_sent' => 'Sent a reminder',
     ],
 
+    // Standalone names, for a select or a badge. The student site words these
+    // inside a sentence instead ("For :audience", academy.common.audience).
+    'audience' => [
+        'all' => 'Everyone',
+        'sales' => 'Sales',
+        'technical' => 'Technical',
+        'support' => 'Support',
+    ],
+
     'role' => [
         'admin' => 'Admin',
         'creator' => 'Creator',

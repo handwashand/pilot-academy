@@ -23,6 +23,18 @@ class LessonsRelationManager extends RelationManager
         return __t('admin_nav.tabs.lessons');
     }
 
+    // Names the records in Filament's own messages ("No lessons", "Delete
+    // lesson"); left alone it reads the English model name.
+    protected static function getModelLabel(): ?string
+    {
+        return __t('admin_nav.lessons.one');
+    }
+
+    protected static function getPluralModelLabel(): ?string
+    {
+        return __t('admin_nav.lessons.many');
+    }
+
     public function table(Table $table): Table
     {
         return $table

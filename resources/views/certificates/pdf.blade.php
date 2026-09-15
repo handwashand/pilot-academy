@@ -14,8 +14,10 @@
         .frame-inner { position: absolute; top: 9mm; left: 9mm; width: 277mm; height: 190mm;
                        border: 0.4mm solid #0a2540; }
 
-        .eyebrow { position: absolute; top: 34mm; left: 30mm; width: 237mm; text-align: center;
-                   font-size: 13pt; letter-spacing: 4pt; text-transform: uppercase; color: #1463ff; }
+        /* Below the logo (20–37mm), not beside it: a longer title — Russian
+           "СЕРТИФИКАТ О ПРОХОЖДЕНИИ КУРСА" — reached into the lockup. */
+        .eyebrow { position: absolute; top: 44mm; left: 30mm; width: 237mm; text-align: center;
+                   font-size: 13pt; letter-spacing: 3pt; text-transform: uppercase; color: #1463ff; }
         .lead { position: absolute; top: 60mm; left: 30mm; width: 237mm; text-align: center;
                 font-size: 12pt; color: #64748b; }
         .name { position: absolute; top: 68mm; left: 30mm; width: 237mm; text-align: center;

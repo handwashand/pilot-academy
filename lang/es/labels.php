@@ -30,6 +30,13 @@ return [
         'reminder_sent' => 'Recordatorio enviado',
     ],
 
+    'audience' => [
+        'all' => 'Todos',
+        'sales' => 'Ventas',
+        'technical' => 'Técnicos',
+        'support' => 'Soporte',
+    ],
+
     'role' => [
         'admin' => 'Administrador',
         'creator' => 'Creador',

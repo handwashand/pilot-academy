@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\QuizAttempts;
 
+use App\Filament\Resources\Concerns\HasSentenceCaseLabels;
 use App\Filament\Resources\QuizAttempts\Pages\ListQuizAttempts;
 use App\Filament\Resources\QuizAttempts\Tables\QuizAttemptsTable;
 use App\Models\QuizAttempt;
@@ -22,6 +23,8 @@ use UnitEnum;
  */
 class QuizAttemptResource extends Resource
 {
+    use HasSentenceCaseLabels;
+
     protected static ?string $model = QuizAttempt::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;

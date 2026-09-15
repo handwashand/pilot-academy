@@ -23,6 +23,16 @@ class FeedbackRelationManager extends RelationManager
         return __t('admin_nav.tabs.feedback');
     }
 
+    protected static function getModelLabel(): ?string
+    {
+        return __t('admin_nav.feedback.one');
+    }
+
+    protected static function getPluralModelLabel(): ?string
+    {
+        return __t('admin_nav.feedback.many');
+    }
+
     public static function getBadge(Model $ownerRecord, string $pageClass): ?string
     {
         $count = $ownerRecord->feedback()->count();

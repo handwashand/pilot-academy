@@ -159,7 +159,8 @@ class AdminPanelTranslationTest extends TestCase
 
         foreach (File::allFiles(app_path('Filament')) as $file) {
             foreach (preg_split('/\R/', $file->getContents()) as $number => $line) {
-                if (preg_match("/->({$calls})\\(\\s*['\"][A-Za-z]|(Section|Tab|Stat)::make\\(\\s*['\"][A-Z]/", $line)) {
+                // An empty label counts too: Filament shows the field name instead.
+                if (preg_match("/->({$calls})\\(\\s*['\"][A-Za-z]|->label\\(\\s*(''|\"\")\\s*\\)|(Section|Tab|Stat)::make\\(\\s*['\"][A-Z]/", $line)) {
                     $offenders[] = $file->getRelativePathname().':'.($number + 1).'  '.trim($line);
                 }
             }

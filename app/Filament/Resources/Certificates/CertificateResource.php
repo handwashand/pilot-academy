@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Certificates;
 
 use App\Filament\Resources\Certificates\Pages\ListCertificates;
 use App\Filament\Resources\Certificates\Tables\CertificatesTable;
+use App\Filament\Resources\Concerns\HasSentenceCaseLabels;
 use App\Models\Certificate;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -14,6 +15,8 @@ use UnitEnum;
 
 class CertificateResource extends Resource
 {
+    use HasSentenceCaseLabels;
+
     protected static ?string $model = Certificate::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAcademicCap;

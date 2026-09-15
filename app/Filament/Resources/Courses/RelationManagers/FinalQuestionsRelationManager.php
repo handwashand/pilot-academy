@@ -32,6 +32,16 @@ class FinalQuestionsRelationManager extends RelationManager
         return __t('admin_nav.tabs.final_questions');
     }
 
+    protected static function getModelLabel(): ?string
+    {
+        return __t('admin_nav.questions.one');
+    }
+
+    protected static function getPluralModelLabel(): ?string
+    {
+        return __t('admin_nav.questions.many');
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema->components([

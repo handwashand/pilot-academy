@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Languages;
 
+use App\Filament\Resources\Concerns\HasSentenceCaseLabels;
 use App\Filament\Resources\Languages\Pages\CreateLanguage;
 use App\Filament\Resources\Languages\Pages\EditLanguage;
 use App\Filament\Resources\Languages\Pages\ListLanguages;
@@ -25,6 +26,8 @@ use UnitEnum;
 
 class LanguageResource extends Resource
 {
+    use HasSentenceCaseLabels;
+
     protected static ?string $model = Language::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedLanguage;

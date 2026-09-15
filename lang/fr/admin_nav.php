@@ -78,6 +78,18 @@ return [
     'whats_new' => [
         'nav' => 'Nouveautés',
     ],
+    'questions' => [
+        'one' => 'question',
+        'many' => 'questions',
+    ],
+    'activities' => [
+        'one' => 'activité',
+        'many' => 'activités',
+    ],
+    'translations' => [
+        'one' => 'traduction',
+        'many' => 'traductions',
+    ],
     'languages' => [
         'one' => 'langue',
         'many' => 'langues',

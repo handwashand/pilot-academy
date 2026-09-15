@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Translations;
 
+use App\Filament\Resources\Concerns\HasSentenceCaseLabels;
 use App\Filament\Resources\Translations\Pages\CreateTranslation;
 use App\Filament\Resources\Translations\Pages\EditTranslation;
 use App\Filament\Resources\Translations\Pages\ListTranslations;
@@ -36,6 +37,8 @@ use UnitEnum;
  */
 class TranslationResource extends Resource
 {
+    use HasSentenceCaseLabels;
+
     protected static ?string $model = Translation::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedLanguage;
@@ -78,6 +81,16 @@ class TranslationResource extends Resource
     public static function getNavigationLabel(): string
     {
         return __t('admin.translations');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __t('admin_nav.translations.one');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __t('admin_nav.translations.many');
     }
 
     public static function form(Schema $schema): Schema
