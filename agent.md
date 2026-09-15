@@ -333,10 +333,10 @@ There are no tags in this repo yet, so `v2.0.0` will be the first.
 
 | Branch | State |
 | --- | --- |
-| `laravel` | Main. Deploys to production by `git pull`. At the merge of PR #33. |
-| `feature/support-engine-ports` | Off `laravel`. Ports from support-engine: Help page, What's new PDF, profile page, Docs group, guide search, privacy-enhanced YouTube, header fit at 360px. |
+| `laravel` | Main. Deploys to production by `git pull`. At `e8ac5dcc`, the end of `feature/support-engine-ports`. The next deploy must run `php artisan migrate` (`2026_09_15_000001_add_language_to_courses_and_lessons`). |
+| `feature/support-engine-ports` | Merged into `laravel` (fast-forward to `e8ac5dcc`) and on into `main`. Safe to delete. Carried the support-engine ports plus the admin panel, emails and certificates in every language. |
 | `feature/whats-new-page` | Merged into `laravel` (e3253197). Safe to delete. |
-| `main` | **Not the deploy branch.** Carries an unrelated "Initial commit" history plus a merge of `laravel`. Branch from `laravel`, not from here. |
+| `main` | **Not the deploy branch.** Carries an unrelated "Initial commit" history plus merges of `laravel` (latest `9b51add3`; same files as `laravel`). Branch from `laravel`, not from here. |
 | `feature/sqlite-postgres` | **Pushed, no PR opened.** SQLite → PostgreSQL move. Ready for review. |
 | `feature/admin-dashboard` | PR #34, open. Dashboard, branding, nudge, mobile fixes. |
 | `feature/learner-experience` | **Stacked on `feature/admin-dashboard`, not on `laravel`.** Duration, search, video controls, accessibility, quiz cost, course completion. Merge #34 first. |
