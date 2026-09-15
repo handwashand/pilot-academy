@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\User;
+use App\Services\Translator;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -16,17 +17,22 @@ use Illuminate\Queue\SerializesModels;
  * the academy home page — where "Continue where you left off" already offers the
  * next unfinished lesson. Nothing about which lesson that is needs working out
  * here.
+ *
+ * Written in the student's language, not the admin's who pressed Send.
  */
 class CourseReminder extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public User $student) {}
+    public function __construct(public User $student)
+    {
+        $this->locale(app(Translator::class)->localeFor($student));
+    }
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Pick up where you left off — Pilot Academy',
+            subject: __t('mail.course_reminder.subject'),
         );
     }
 

@@ -98,10 +98,38 @@ class CopyToPgsql extends Command
             $counts[$table] = $this->copyTable($from, $to, $table);
         }
 
+        $this->placeLessonsInTheirCourses($to);
+
         $this->newLine();
         $this->resetSequences($to, array_keys($counts));
 
         return $this->report($from, $to, $counts);
+    }
+
+    /**
+     * Which courses a lesson is in lives in course_lesson, which the old SQLite
+     * file does not have (and which has no id column to copy by). Its migration
+     * ran against an empty target, so fill it from the copied lessons now —
+     * every lesson in its own course, in the same place — or every course would
+     * open empty.
+     */
+    private function placeLessonsInTheirCourses($to): void
+    {
+        if ($to->table('course_lesson')->exists()) {
+            return;
+        }
+
+        $to->table('lessons')->orderBy('id')->chunkById(self::CHUNK, function ($lessons) use ($to): void {
+            $to->table('course_lesson')->insert($lessons->map(fn ($lesson): array => [
+                'course_id' => $lesson->course_id,
+                'lesson_id' => $lesson->id,
+                'sort_order' => $lesson->sort_order,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ])->all());
+        });
+
+        $this->line('  course_lesson: filled from lessons');
     }
 
     /** Refuse to run unless the target has been migrated and is empty. */

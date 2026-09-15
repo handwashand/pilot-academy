@@ -43,37 +43,37 @@ class StudentProgressOverview extends StatsOverviewWidget
         )->avg('score_percent');
 
         return [
-            Stat::make('Students', $students)
-                ->description('Partner accounts')
+            Stat::make(__t('admin_widgets.overview.students'), $students)
+                ->description(__t('admin_widgets.overview.students_help'))
                 ->descriptionIcon('heroicon-m-user-group')
                 ->color('primary'),
 
-            Stat::make('Active students', $active)
-                ->description($engagement.'% started at least one lesson')
+            Stat::make(__t('admin_widgets.overview.active'), $active)
+                ->description(__t('admin_widgets.overview.active_help', ['percent' => $engagement]))
                 ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->color($this->band($engagement)),
 
-            Stat::make('Lesson completions', $completions)
-                ->description('Across all students')
+            Stat::make(__t('admin_widgets.overview.completions'), $completions)
+                ->description(__t('admin_widgets.overview.completions_help'))
                 ->descriptionIcon('heroicon-m-check-circle')
                 ->color('info'),
 
-            Stat::make('Published courses', $publishedCourses)
-                ->description($totalCourses.' in total, drafts included')
+            Stat::make(__t('admin_widgets.overview.published_courses'), $publishedCourses)
+                ->description(__t('admin_widgets.overview.published_courses_help', ['count' => $totalCourses]))
                 ->descriptionIcon('heroicon-m-rectangle-stack')
                 ->color('success'),
 
-            Stat::make('Published lessons', Lesson::published()->count())
-                ->description('Available to learn')
+            Stat::make(__t('admin_widgets.overview.published_lessons'), Lesson::published()->count())
+                ->description(__t('admin_widgets.overview.published_lessons_help'))
                 ->descriptionIcon('heroicon-m-book-open')
                 ->color('gray'),
 
-            Stat::make('Certificates issued', $certificates)
+            Stat::make(__t('admin_widgets.overview.certificates'), $certificates)
                 // Staff pick up real certificates when previewing a final quiz,
                 // so this counts learners only — see ReportsOnLearners.
                 ->description($averageScore === null
-                    ? 'No passes yet'
-                    : 'Average score '.round((float) $averageScore).'%')
+                    ? __t('admin_widgets.overview.no_passes')
+                    : __t('admin_widgets.overview.average_score', ['score' => round((float) $averageScore)]))
                 ->descriptionIcon('heroicon-m-academic-cap')
                 ->color($certificates > 0 ? 'success' : 'gray'),
         ];

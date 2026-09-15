@@ -123,6 +123,25 @@ class ChangelogPageTest extends TestCase
         $this->assertStringNotContainsString('<!--', $html);
     }
 
+    /** Nothing in a changelog needs raw HTML or a script link, so neither renders. */
+    public function test_raw_html_and_unsafe_links_are_not_rendered(): void
+    {
+        $releases = Changelog::parse(<<<'MD'
+            ## September 2026
+
+            ### Added
+            - A change <script>alert(1)</script> with <img src=x onerror=alert(2)> in it.
+            - A [bad link](javascript:alert(3)) and a [good one](https://example.com).
+            MD);
+
+        $html = collect($releases[0]['sections'][0]['items'])->pluck('html')->implode('');
+
+        $this->assertStringNotContainsString('<script', $html);
+        $this->assertStringNotContainsString('onerror', $html);
+        $this->assertStringNotContainsString('javascript:', $html);
+        $this->assertStringContainsString('href="https://example.com"', $html);
+    }
+
     /** The trailing rule between releases is structure, not content. */
     public function test_the_release_separator_is_not_rendered_as_a_rule(): void
     {
@@ -218,6 +237,86 @@ class ChangelogPageTest extends TestCase
         $css = file_get_contents(base_path($theme));
         $this->assertStringContainsString("@source '../../../../app/Filament/**/*.php';", $css);
         $this->assertStringContainsString("@source '../../../../resources/views/filament/**/*.blade.php';", $css);
+    }
+
+    public function test_whats_new_sits_in_the_docs_group(): void
+    {
+        $this->assertSame('Docs', Changelog::getNavigationGroup());
+
+        $this->actingAs($this->user('docs@pilot.local', User::ROLE_ADMIN))
+            ->get('/admin/changelog')
+            ->assertStatus(200)
+            ->assertSee('Docs');
+    }
+
+    public function test_the_page_links_to_the_pdf_of_each_release_and_of_all_of_them(): void
+    {
+        $first = Changelog::releasesFrom(Changelog::changelogPath())[0];
+
+        $this->actingAs($this->user('links@pilot.local', User::ROLE_ADMIN))
+            ->get('/admin/changelog')
+            ->assertSee(route('changelog.pdf'), false)
+            ->assertSee(route('changelog.pdf', ['release' => $first['id']]), false);
+    }
+
+    public function test_every_release_opens_as_one_pdf(): void
+    {
+        $response = $this->actingAs($this->user('pdf@pilot.local', User::ROLE_ADMIN))
+            ->get(route('changelog.pdf'));
+
+        $response->assertStatus(200);
+        $this->assertSame('application/pdf', $response->headers->get('content-type'));
+        $this->assertStringStartsWith('%PDF', $response->getContent());
+        // Inline, so the browser previews it rather than dropping it in downloads.
+        $this->assertStringStartsWith('inline', $response->headers->get('content-disposition'));
+        $this->assertStringContainsString('whats-new-', $response->headers->get('content-disposition'));
+    }
+
+    public function test_one_release_opens_as_a_pdf_named_after_it(): void
+    {
+        $first = Changelog::releasesFrom(Changelog::changelogPath())[0];
+
+        $response = $this->actingAs($this->user('one@pilot.local', User::ROLE_CREATOR))
+            ->get(route('changelog.pdf', ['release' => $first['id']]));
+
+        $response->assertStatus(200);
+        $this->assertStringStartsWith('%PDF', $response->getContent());
+        $this->assertStringStartsWith('inline', $response->headers->get('content-disposition'));
+        $this->assertStringContainsString("whats-new-{$first['id']}.pdf", $response->headers->get('content-disposition'));
+    }
+
+    public function test_the_pdf_links_open_in_a_new_tab(): void
+    {
+        $this->actingAs($this->user('tabs@pilot.local', User::ROLE_ADMIN))
+            ->get('/admin/changelog')
+            ->assertSeeInOrder(['href="'.route('changelog.pdf').'"', 'target="_blank"', 'rel="noopener"'], false);
+    }
+
+    public function test_the_top_bar_has_a_whats_new_shortcut_on_every_panel_page(): void
+    {
+        $this->actingAs($this->user('topbar@pilot.local', User::ROLE_CREATOR))
+            ->get('/admin')
+            ->assertStatus(200)
+            ->assertSee('data-whats-new-shortcut', false)
+            ->assertSee('href="'.Changelog::getUrl().'"', false);
+    }
+
+    public function test_an_unknown_release_is_a_404_not_an_empty_pdf(): void
+    {
+        $this->actingAs($this->user('404@pilot.local', User::ROLE_ADMIN))
+            ->get(route('changelog.pdf', ['release' => 'no-such-month']))
+            ->assertStatus(404);
+    }
+
+    public function test_the_pdf_is_refused_to_students_and_guests(): void
+    {
+        $this->actingAs($this->user('learner-pdf@example.com', User::ROLE_LEARNER))
+            ->get(route('changelog.pdf'))
+            ->assertStatus(403);
+
+        auth()->logout();
+
+        $this->get(route('changelog.pdf'))->assertRedirect();
     }
 
     private function user(string $email, string $role): User

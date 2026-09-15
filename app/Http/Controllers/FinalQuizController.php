@@ -140,12 +140,9 @@ class FinalQuizController extends Controller
             return ['mode' => 'locked'];
         }
 
-        $maxAttempts = $course->final_quiz_max_attempts;
-        $used = QuizAttempt::where('user_id', $user->id)
-            ->where('course_id', $course->id)
-            ->whereIn('status', [QuizAttempt::STATUS_PASSED, QuizAttempt::STATUS_FAILED])
-            ->count();
-        $attemptsRemaining = $maxAttempts ? max(0, $maxAttempts - $used) : null;
+        // Includes any extra attempts an admin granted this student.
+        $maxAttempts = $course->finalQuizAttemptsAllowedFor($user);
+        $attemptsRemaining = $course->finalQuizAttemptsLeftFor($user);
 
         $inProgress = QuizAttempt::where('user_id', $user->id)
             ->where('course_id', $course->id)
@@ -162,7 +159,7 @@ class FinalQuizController extends Controller
             ];
         }
 
-        if ($maxAttempts && $used >= $maxAttempts) {
+        if ($attemptsRemaining === 0) {
             return ['mode' => 'exhausted', 'maxAttempts' => $maxAttempts];
         }
 

@@ -18,9 +18,15 @@ class ActivityOverTime extends ChartWidget
 
     protected static ?int $sort = 5;
 
-    protected ?string $heading = 'Student activity';
+    public function getHeading(): ?string
+    {
+        return __t('admin_widgets.activity.heading');
+    }
 
-    protected ?string $description = 'Lessons finished and sign-ins per day, students only.';
+    public function getDescription(): ?string
+    {
+        return __t('admin_widgets.activity.description');
+    }
 
     protected int|string|array $columnSpan = 'full';
 
@@ -62,7 +68,7 @@ class ActivityOverTime extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Lessons finished',
+                    'label' => __t('admin_widgets.activity.lessons_finished'),
                     'data' => $completions,
                     'borderColor' => '#16a34a',
                     'backgroundColor' => 'rgba(22, 163, 74, 0.1)',
@@ -70,7 +76,7 @@ class ActivityOverTime extends ChartWidget
                     'tension' => 0.3,
                 ],
                 [
-                    'label' => 'Sign-ins',
+                    'label' => __t('admin_widgets.activity.sign_ins'),
                     'data' => $logins,
                     'borderColor' => '#2563eb',
                     'backgroundColor' => 'rgba(37, 99, 235, 0.1)',

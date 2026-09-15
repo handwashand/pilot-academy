@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Actions\NotifyContentOwners;
+use App\Models\Concerns\HasContentTranslations;
 use App\Models\Concerns\HasDuration;
 use App\Models\Concerns\HasPublishStatus;
+use App\Models\Relations\CourseLessons;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,11 +15,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Course extends Model
 {
-    use HasDuration, HasPublishStatus;
+    use HasContentTranslations, HasDuration, HasPublishStatus;
+
+    protected array $translatable = ['title', 'description'];
 
     protected $fillable = [
         'product_id',
         'title',
+        'language',
         'slug',
         'description',
         'level',
@@ -49,9 +55,25 @@ class Course extends Model
         'support' => 'Support',
     ];
 
+    /** @return array<string, string> Audiences in the reader's language, as standalone names (lang/{code}/labels.php). */
+    public static function audienceLabels(): array
+    {
+        return collect(self::AUDIENCES)
+            ->mapWithKeys(fn (string $english, string $audience): array => [$audience => __t("labels.audience.{$audience}")])
+            ->all();
+    }
+
+    /** @return array<string, string> */
+    public static function levelLabels(): array
+    {
+        return collect(['beginner', 'intermediate', 'advanced'])
+            ->mapWithKeys(fn (string $level): array => [$level => __t("academy.common.level.{$level}")])
+            ->all();
+    }
+
     public function getAudienceLabelAttribute(): ?string
     {
-        return $this->audience ? (self::AUDIENCES[$this->audience] ?? $this->audience) : null;
+        return $this->audience ? (self::audienceLabels()[$this->audience] ?? $this->audience) : null;
     }
 
     /** A course with no published lesson would open empty, so it cannot go live. */
@@ -94,14 +116,38 @@ class Course extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function lessons(): HasMany
+    /**
+     * The lessons in this course, in this course's order. A lesson can be in
+     * several courses, each with its own order (course_lesson.sort_order).
+     */
+    public function lessons(): BelongsToMany
     {
-        return $this->hasMany(Lesson::class)->orderBy('sort_order');
+        return $this->belongsToMany(Lesson::class)
+            ->using(CourseLesson::class)
+            ->withPivot('sort_order')
+            ->withTimestamps()
+            ->orderByPivot('sort_order')
+            ->orderBy('lessons.id');
     }
 
-    public function publishedLessons(): HasMany
+    public function publishedLessons(): BelongsToMany
     {
         return $this->lessons()->published();
+    }
+
+    public function hasLesson(Lesson $lesson): bool
+    {
+        return $this->lessons()->whereKey($lesson->getKey())->exists();
+    }
+
+    /** Course::lessons() is a CourseLessons relation — see its create(). */
+    protected function newBelongsToMany(Builder $query, Model $parent, $table, $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey, $relationName = null)
+    {
+        if ($relationName === 'lessons') {
+            return new CourseLessons($query, $parent, $table, $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey, $relationName);
+        }
+
+        return parent::newBelongsToMany($query, $parent, $table, $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey, $relationName);
     }
 
     /**
@@ -167,6 +213,70 @@ class Course extends Model
         $completedIds = $user->completedLessons()->pluck('lessons.id')->all();
 
         return empty(array_diff($publishedIds, $completedIds));
+    }
+
+    /**
+     * Final-quiz attempts this user has left, or null for unlimited. Only
+     * submitted attempts count — one still in progress has not been used yet.
+     * Shared by the final quiz page and the home page, so the two never
+     * disagree about whether someone can still try.
+     */
+    public function finalQuizAttemptsLeftFor(User $user): ?int
+    {
+        $allowed = $this->finalQuizAttemptsAllowedFor($user);
+
+        if ($allowed === null) {
+            return null;
+        }
+
+        $used = QuizAttempt::where('user_id', $user->id)
+            ->where('course_id', $this->id)
+            ->whereIn('status', [QuizAttempt::STATUS_PASSED, QuizAttempt::STATUS_FAILED])
+            ->count();
+
+        return max(0, $allowed - $used);
+    }
+
+    /**
+     * Max attempts for this student, including any extra attempts an admin
+     * granted them from Quiz attempts. Null means unlimited.
+     */
+    public function finalQuizAttemptsAllowedFor(User $user): ?int
+    {
+        if (! $this->final_quiz_max_attempts) {
+            return null;
+        }
+
+        return $this->final_quiz_max_attempts + AttemptGrant::where('user_id', $user->id)
+            ->where('course_id', $this->id)
+            ->count();
+    }
+
+    /**
+     * Tell the course's owners when a change leaves it broken for students.
+     * After the request, not now: a form saves the course before its lessons,
+     * and judging it half-saved would report problems that are not there.
+     */
+    protected static function booted(): void
+    {
+        static::saved(fn (Course $course) => NotifyContentOwners::afterRequest($course->id));
+
+        // Deleting a course deletes the lessons it is home to. One that is also
+        // in another course moves its home there instead of disappearing.
+        static::deleting(function (Course $course): void {
+            foreach (Lesson::query()->where('course_id', $course->id)->get() as $lesson) {
+                $other = CourseLesson::query()
+                    ->where('lesson_id', $lesson->id)
+                    ->where('course_id', '!=', $course->id)
+                    ->orderBy('created_at')
+                    ->value('course_id');
+
+                if ($other) {
+                    $lesson->course_id = $other;
+                    $lesson->saveQuietly();
+                }
+            }
+        });
     }
 
     /**

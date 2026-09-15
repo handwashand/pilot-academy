@@ -17,23 +17,24 @@ class MediaItemsTable
             ->defaultSort('created_at', 'desc')
             ->columns([
                 ImageColumn::make('path')
-                    ->label('Image')
+                    ->label(__t('admin_library.media.image'))
                     ->disk('public')
                     ->height(48),
 
                 TextColumn::make('name')
+                    ->label(__t('admin_common.name'))
                     ->searchable()
                     ->sortable()
                     ->weight('bold'),
 
                 TextColumn::make('lessons_count')
-                    ->label('Used by')
+                    ->label(__t('admin_library.media.used_by'))
                     ->counts('lessons')
                     ->badge()
-                    ->suffix(' lessons'),
+                    ->formatStateUsing(fn ($state): string => __tc('admin_library.media.lessons', (int) $state)),
 
                 TextColumn::make('created_at')
-                    ->label('Added')
+                    ->label(__t('admin_common.added'))
                     ->since()
                     ->sortable(),
             ])

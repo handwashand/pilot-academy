@@ -50,16 +50,15 @@
         {{-- Never a blank page: name the file and say what to put in it. --}}
         <div class="rounded-xl border border-gray-200 bg-white p-8 text-center shadow-sm dark:border-white/10 dark:bg-gray-900">
             <p class="text-sm font-medium text-gray-950 dark:text-white">
-                Nothing to show yet.
+                {{ __t('admin_pages.whats_new.empty') }}
             </p>
             <p class="mx-auto mt-2 max-w-md text-sm text-gray-500 dark:text-gray-400">
-                This page reads
-                <code class="rounded bg-gray-100 px-1 py-0.5 text-xs dark:bg-white/10">{{ \App\Filament\Pages\Changelog::changelogLabel() }}</code>
-                and that file is missing or has no release headings in it. Add a
-                heading like
-                <code class="rounded bg-gray-100 px-1 py-0.5 text-xs dark:bg-white/10">## {{ now()->format('F Y') }}</code>
-                followed by <code class="rounded bg-gray-100 px-1 py-0.5 text-xs dark:bg-white/10">### Added</code>
-                and a bullet per change, and it will appear here.
+                {{-- The sentence is escaped first; only the code samples are markup. --}}
+                {!! strtr(e(__t('admin_pages.whats_new.empty_body')), [
+                    ':file' => '<code class="rounded bg-gray-100 px-1 py-0.5 text-xs dark:bg-white/10">'.e(\App\Filament\Pages\Changelog::changelogLabel()).'</code>',
+                    ':heading' => '<code class="rounded bg-gray-100 px-1 py-0.5 text-xs dark:bg-white/10">## '.e(now()->format('F Y')).'</code>',
+                    ':section' => '<code class="rounded bg-gray-100 px-1 py-0.5 text-xs dark:bg-white/10">### Added</code>',
+                ]) !!}
             </p>
         </div>
     @else
@@ -68,6 +67,8 @@
                 q: '',
                 picked: [],
                 m: {{ \Illuminate\Support\Js::from($matrix) }},
+                noMatch: {{ \Illuminate\Support\Js::from(__t('admin_pages.whats_new.no_match')) }},
+                noCategory: {{ \Illuminate\Support\Js::from(__t('admin_pages.whats_new.no_category')) }},
                 get needle() { return this.q.trim().toLowerCase() },
                 typeOn(type) { return this.picked.length === 0 || this.picked.includes(type) },
                 toggle(type) {
@@ -86,26 +87,28 @@
                 get anyVisible() { return this.m.some((sections, r) => this.releaseVisible(r)) },
                 get emptyMessage() {
                     return this.needle
-                        ? 'Nothing matches “' + this.q.trim() + '”'
-                        : 'Nothing in the categories you picked'
+                        ? this.noMatch.replace(':query', this.q.trim())
+                        : this.noCategory
                 },
             }"
             class="space-y-4"
         >
             <p class="text-sm text-gray-500 dark:text-gray-400">
-                {{ $entries }} {{ \Illuminate\Support\Str::plural('entry', $entries) }}
-                across {{ $months }} {{ \Illuminate\Support\Str::plural('month', $months) }}.
+                {{ __t('admin_pages.whats_new.summary', [
+                    'entries' => __tc('admin_pages.whats_new.entries', $entries),
+                    'months' => __tc('admin_pages.whats_new.months', $months),
+                ]) }}
             </p>
 
             <div class="flex flex-wrap items-center gap-2">
                 <div class="grow sm:grow-0">
                     {{-- A placeholder is not a label. --}}
-                    <label for="whats-new-search" class="sr-only">Search what's new</label>
+                    <label for="whats-new-search" class="sr-only">{{ __t('admin_pages.whats_new.search_label') }}</label>
                     <input
                         id="whats-new-search"
                         type="search"
                         x-model="q"
-                        placeholder="Search changes…"
+                        placeholder="{{ __t('admin_pages.whats_new.search_placeholder') }}"
                         class="w-full rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-950 placeholder-gray-400 shadow-sm outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 sm:w-64 dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder-gray-500"
                     >
                 </div>
@@ -121,10 +124,23 @@
                         class="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium"
                     >
                         <span class="size-1.5 rounded-full {{ $types[$type]['dot'] }}"></span>
-                        {{ $types[$type]['label'] }}
+                        {{ __t('admin_pages.whats_new.types.'.$type) }}
                         <span class="tabular-nums opacity-60">{{ $total }}</span>
                     </button>
                 @endforeach
+
+                {{-- The file always holds whole releases; the filters on screen
+                     do not change what is printed. Opens in a new tab: the PDF
+                     is served inline, so the browser previews it. --}}
+                <a
+                    href="{{ route('changelog.pdf') }}"
+                    target="_blank"
+                    rel="noopener"
+                    class="ms-auto inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-950 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white"
+                >
+                    <x-filament::icon icon="heroicon-m-arrow-top-right-on-square" class="size-4" />
+                    {{ __t('admin_pages.whats_new.all_pdf') }}
+                </a>
             </div>
 
             <p
@@ -146,7 +162,7 @@
 
                         @if ($r === 0)
                             <span class="rounded-full bg-primary-50 px-2 py-0.5 text-xs font-medium text-primary-700 dark:bg-primary-400/10 dark:text-primary-400">
-                                Latest
+                                {{ __t('admin_pages.whats_new.latest') }}
                             </span>
                         @endif
 
@@ -154,9 +170,20 @@
                             @foreach ($releaseCounts[$r] as $type => $count)
                                 <span class="inline-flex items-center gap-1.5">
                                     <span class="size-1.5 rounded-full {{ $types[$type]['dot'] }}"></span>
-                                    {{ $types[$type]['label'] }} {{ $count }}
+                                    {{ __t('admin_pages.whats_new.types.'.$type) }} {{ $count }}
                                 </span>
                             @endforeach
+
+                            <a
+                                href="{{ route('changelog.pdf', ['release' => $release['id']]) }}"
+                                target="_blank"
+                                rel="noopener"
+                                class="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-950 dark:text-gray-300 dark:hover:text-white"
+                                aria-label="{{ __t('admin_pages.whats_new.open_pdf', ['release' => $release['title']]) }}"
+                            >
+                                <x-filament::icon icon="heroicon-m-arrow-top-right-on-square" class="size-3.5" />
+                                PDF
+                            </a>
                         </span>
                     </header>
 
@@ -164,7 +191,8 @@
                         @foreach ($release['sections'] as $s => $section)
                             <section x-show="sectionVisible({{ $r }}, {{ $s }})" class="px-5 py-4">
                                 <h3 class="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400">
-                                    {{ $section['label'] }}
+                                    {{-- A recognised category in the reader's language; any other heading as written. --}}
+                                    {{ $section['type'] === 'other' ? $section['label'] : __t('admin_pages.whats_new.types.'.$section['type']) }}
                                 </h3>
 
                                 <ul class="space-y-2.5">

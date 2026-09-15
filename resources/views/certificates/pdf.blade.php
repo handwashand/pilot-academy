@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
     <style>
@@ -14,8 +14,10 @@
         .frame-inner { position: absolute; top: 9mm; left: 9mm; width: 277mm; height: 190mm;
                        border: 0.4mm solid #0a2540; }
 
-        .eyebrow { position: absolute; top: 34mm; left: 30mm; width: 237mm; text-align: center;
-                   font-size: 13pt; letter-spacing: 4pt; text-transform: uppercase; color: #1463ff; }
+        /* Below the logo (20–37mm), not beside it: a longer title — Russian
+           "СЕРТИФИКАТ О ПРОХОЖДЕНИИ КУРСА" — reached into the lockup. */
+        .eyebrow { position: absolute; top: 44mm; left: 30mm; width: 237mm; text-align: center;
+                   font-size: 13pt; letter-spacing: 3pt; text-transform: uppercase; color: #1463ff; }
         .lead { position: absolute; top: 60mm; left: 30mm; width: 237mm; text-align: center;
                 font-size: 12pt; color: #64748b; }
         .name { position: absolute; top: 68mm; left: 30mm; width: 237mm; text-align: center;
@@ -52,18 +54,20 @@
             <img class="logo" src="{{ $logo }}">
         @endif
 
-        <div class="eyebrow">Certificate of Completion</div>
-        <div class="lead">This certifies that</div>
+        {{-- Rendered inside the student's locale (IssueCertificate::renderPdf):
+             the wording, the course title where translated, and the date. --}}
+        <div class="eyebrow">{{ __t('mail.certificate_pdf.title') }}</div>
+        <div class="lead">{{ __t('mail.certificate_pdf.certifies') }}</div>
         <div class="name">{{ $certificate->name }}</div>
-        <div class="lead2">has successfully completed the course</div>
-        <div class="course">{{ $certificate->course->title }}</div>
+        <div class="lead2">{{ __t('mail.certificate_pdf.completed') }}</div>
+        <div class="course">{{ $certificate->course->translated('title', app()->getLocale()) }}</div>
 
         <img class="qr" src="data:image/svg+xml;base64,{{ $qr }}">
-        <div class="qr-caption">Scan to verify</div>
+        <div class="qr-caption">{{ __t('mail.certificate_pdf.scan') }}</div>
 
         <div class="meta">
-            <div><strong>Certificate No.</strong> {{ $certificate->number }}</div>
-            <div><strong>Issued</strong> {{ $certificate->issued_at->format('F j, Y') }}</div>
+            <div><strong>{{ __t('mail.certificate_pdf.number') }}</strong> {{ $certificate->number }}</div>
+            <div><strong>{{ __t('mail.certificate_pdf.issued') }}</strong> {{ $certificate->issued_at->locale(app()->getLocale())->isoFormat('LL') }}</div>
             <div>{{ route('certificates.verify', $certificate->number) }}</div>
         </div>
     </div>

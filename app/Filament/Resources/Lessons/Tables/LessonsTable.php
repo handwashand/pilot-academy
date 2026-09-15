@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources\Lessons\Tables;
 
+use App\Actions\FindContentProblems;
+use App\Models\Course;
+use App\Models\CourseLesson;
 use App\Models\Lesson;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
@@ -12,8 +15,10 @@ use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 class LessonsTable
@@ -24,14 +29,13 @@ class LessonsTable
             ->defaultSort('sort_order')
             ->columns([
                 ImageColumn::make('cover')
-                    ->label('Cover')
+                    ->label(__t('admin_lessons.table.cover'))
                     ->disk('public')
                     ->height(36)
                     ->state(fn ($record) => $record->media_item_id ? $record->mediaItem?->path : $record->image_path),
 
-                TextColumn::make('course.title')
-                    ->label('Course')
-                    ->sortable()
+                TextColumn::make('courses.title')
+                    ->label(__t('admin_common.courses'))
                     ->badge(),
 
                 TextColumn::make('sort_order')
@@ -39,23 +43,42 @@ class LessonsTable
                     ->sortable(),
 
                 TextColumn::make('title')
+                    ->label(__t('admin_common.title'))
                     ->searchable()
                     ->sortable()
                     ->weight('bold'),
 
+                // Flagged where the work happens, not only on Content health.
+                TextColumn::make('attention')
+                    ->label(__t('admin_common.attention'))
+                    ->state(function (Lesson $record): ?string {
+                        $count = FindContentProblems::forCurrentUser()->where('lesson_id', $record->id)->count();
+
+                        return $count > 0 ? __tc('admin_common.problems', $count) : null;
+                    })
+                    ->badge()
+                    ->color('danger')
+                    ->icon('heroicon-m-exclamation-triangle')
+                    ->tooltip(fn (Lesson $record): ?string => FindContentProblems::forCurrentUser()
+                        ->where('lesson_id', $record->id)
+                        ->pluck('what')
+                        ->unique()
+                        ->implode(' · ') ?: null),
+
                 TextColumn::make('questions_count')
-                    ->label('Quiz Qs')
+                    ->label(__t('admin_lessons.table.quiz_questions'))
                     ->counts('questions')
                     ->badge(),
 
                 IconColumn::make('has_video')
-                    ->label('Video')
+                    ->label(__t('admin_lessons.table.video'))
                     ->boolean()
-                    ->state(fn ($record) => filled($record->youtube_url) || filled($record->video_path)),
+                    ->state(fn ($record) => ! empty($record->videoEntries())),
 
                 TextColumn::make('status')
+                    ->label(__t('admin_common.status'))
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => Lesson::STATUS_LABELS[$state] ?? $state)
+                    ->formatStateUsing(fn (string $state): string => Lesson::statusLabels()[$state] ?? $state)
                     ->color(fn (string $state): string => match ($state) {
                         Lesson::STATUS_PUBLISHED => 'success',
                         Lesson::STATUS_ARCHIVED => 'gray',
@@ -64,11 +87,20 @@ class LessonsTable
                     ->sortable(),
             ])
             ->filters([
+                Filter::make('needs_attention')
+                    ->label(__t('admin_common.needs_attention'))
+                    ->query(fn (Builder $query): Builder => $query->whereIn(
+                        'id',
+                        FindContentProblems::forCurrentUser()->pluck('lesson_id')->filter()->unique()->values()->all(),
+                    )),
+
                 SelectFilter::make('status')
-                    ->options(Lesson::STATUS_LABELS),
+                    ->label(__t('admin_common.status'))
+                    ->options(Lesson::statusLabels()),
 
                 SelectFilter::make('course')
-                    ->relationship('course', 'title', function ($query) {
+                    ->label(__t('admin_common.course'))
+                    ->relationship('courses', 'title', function ($query) {
                         $user = auth()->user();
 
                         return $user?->isCreator()
@@ -80,68 +112,174 @@ class LessonsTable
             ])
             ->recordActions([
                 Action::make('publish')
-                    ->label('Publish')
+                    ->label(__t('admin_common.publish'))
                     ->icon('heroicon-o-rocket-launch')
                     ->color('success')
                     ->requiresConfirmation()
-                    ->modalHeading('Publish lesson')
-                    ->modalDescription(fn (Lesson $record): string => "\"{$record->title}\" becomes visible to students in a published course straight away.")
+                    ->modalHeading(__t('admin_lessons.table.publish_heading'))
+                    // Say what is wrong before anyone presses the button.
+                    ->modalDescription(function (Lesson $record): string {
+                        $problems = static::problemsIfPublished($record);
+
+                        return $problems->isEmpty()
+                            ? __t('admin_lessons.table.publish_ready', ['title' => $record->title])
+                            : __t('admin_lessons.table.publish_blocked', ['problems' => FindContentProblems::plainList($problems)]);
+                    })
                     ->visible(fn (Lesson $record): bool => $record->status === Lesson::STATUS_DRAFT)
                     ->authorize(fn (Lesson $record): bool => auth()->user()->canManageCourse($record->course))
                     ->action(function (Lesson $record): void {
+                        $problems = static::problemsIfPublished($record);
+
+                        if ($problems->isNotEmpty()) {
+                            Notification::make()
+                                ->title(__t('admin_common.fix_before_publishing'))
+                                ->body(FindContentProblems::plainList($problems))
+                                ->danger()
+                                ->persistent()
+                                ->send();
+
+                            return;
+                        }
+
                         $record->publish();
 
-                        Notification::make()->title('Lesson published')->body('Students can see it now.')->success()->send();
+                        Notification::make()->title(__t('admin_lessons.table.published'))->body(__t('admin_common.visible_now'))->success()->send();
                     }),
 
                 Action::make('unpublish')
-                    ->label('Unpublish')
+                    ->label(__t('admin_common.unpublish'))
                     ->icon('heroicon-o-eye-slash')
                     ->color('gray')
                     ->requiresConfirmation()
-                    ->modalHeading('Unpublish lesson')
-                    ->modalDescription('The lesson goes back to draft and disappears from the student site. Nothing is deleted — its text, video, questions and student progress all stay.')
+                    ->modalHeading(__t('admin_lessons.table.unpublish_heading'))
+                    ->modalDescription(function (Lesson $record): string {
+                        $description = __t('admin_lessons.table.unpublish_description');
+
+                        $emptied = static::liveCoursesItIsLastIn($record);
+
+                        return $emptied->isNotEmpty()
+                            ? __tc('admin_lessons.table.only_lesson_in', $emptied->count(), ['courses' => '"'.$emptied->implode('", "').'"']).' '.$description
+                            : $description;
+                    })
                     ->visible(fn (Lesson $record): bool => $record->isPublished())
                     ->authorize(fn (Lesson $record): bool => auth()->user()->canManageCourse($record->course))
                     ->action(function (Lesson $record): void {
                         $record->unpublish();
 
-                        Notification::make()->title('Lesson unpublished')->body('It is a draft again and hidden from students.')->warning()->send();
+                        Notification::make()->title(__t('admin_lessons.table.unpublished'))->body(__t('admin_common.draft_again'))->warning()->send();
                     }),
 
                 EditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    // No prerequisite here: a lesson has nothing to be empty of,
-                    // and its course still gates whether students see it.
                     BulkAction::make('publish')
-                        ->label('Publish')
+                        ->label(__t('admin_common.publish'))
                         ->icon('heroicon-o-rocket-launch')
                         ->color('success')
                         ->requiresConfirmation()
+                        ->modalDescription(__t('admin_lessons.table.bulk_publish_description'))
                         ->deselectRecordsAfterCompletion()
                         ->action(function (Collection $records): void {
-                            $records->each->publish();
+                            $skipped = [];
 
-                            Notification::make()->title($records->count().' lesson(s) published')->success()->send();
+                            $ready = $records->filter(function (Lesson $lesson) use (&$skipped): bool {
+                                $problems = static::problemsIfPublished($lesson);
+
+                                if ($problems->isNotEmpty()) {
+                                    $skipped[] = "{$lesson->title} ({$problems->pluck('what')->implode('; ')})";
+
+                                    return false;
+                                }
+
+                                return true;
+                            });
+
+                            $ready->each->publish();
+
+                            if ($ready->isNotEmpty()) {
+                                Notification::make()->title(__tc('admin_lessons.table.bulk_published', $ready->count()))->success()->send();
+                            }
+
+                            if ($skipped !== []) {
+                                Notification::make()
+                                    ->title(__tc('admin_lessons.table.bulk_skipped', count($skipped)))
+                                    ->body(implode('; ', $skipped))
+                                    ->danger()
+                                    ->persistent()
+                                    ->send();
+                            }
                         }),
 
                     BulkAction::make('unpublish')
-                        ->label('Unpublish')
+                        ->label(__t('admin_common.unpublish'))
                         ->icon('heroicon-o-eye-slash')
                         ->color('gray')
                         ->requiresConfirmation()
-                        ->modalDescription('The selected lessons disappear from their courses. Text, video, questions and student progress all stay.')
+                        ->modalDescription(__t('admin_lessons.table.bulk_unpublish_description'))
                         ->deselectRecordsAfterCompletion()
                         ->action(function (Collection $records): void {
                             $records->each->unpublish();
 
-                            Notification::make()->title($records->count().' lesson(s) unpublished')->warning()->send();
+                            Notification::make()->title(__tc('admin_lessons.table.bulk_unpublished', $records->count()))->warning()->send();
+
+                            $emptied = Course::query()
+                                ->publishedButEmpty()
+                                ->whereIn('id', CourseLesson::query()->whereIn('lesson_id', $records->pluck('id'))->pluck('course_id')->unique())
+                                ->pluck('title');
+
+                            if ($emptied->isNotEmpty()) {
+                                Notification::make()
+                                    ->title(__t('admin_lessons.table.empty_course'))
+                                    ->body(__t('admin_lessons.table.empty_course_body', ['courses' => $emptied->implode(', ')]))
+                                    ->danger()
+                                    ->persistent()
+                                    ->send();
+                            }
                         }),
 
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    /**
+     * What a student would hit if this lesson went live now. Only a live course
+     * matters — in a draft course nobody sees the lesson yet, and it stays
+     * editable in peace.
+     */
+    protected static function problemsIfPublished(Lesson $lesson): Collection
+    {
+        if (! $lesson->courses()->published()->exists()) {
+            return collect();
+        }
+
+        $problems = collect();
+
+        if (! $lesson->questions()->exists()) {
+            $problems->push(['what' => __t('admin_lessons.table.no_questions'), 'name' => $lesson->title]);
+        }
+
+        if ($lesson->questions()->withoutCorrectAnswer()->exists()) {
+            $problems->push(['what' => __t('admin_lessons.table.no_correct_answer'), 'name' => $lesson->title]);
+        }
+
+        if ($lesson->hasUnplayableYoutubeLink()) {
+            $problems->push(['what' => __t('admin_lessons.table.bad_youtube'), 'name' => $lesson->title]);
+        }
+
+        return $problems;
+    }
+
+    /** Titles of the live courses this lesson is the only published lesson in. */
+    protected static function liveCoursesItIsLastIn(Lesson $lesson): Collection
+    {
+        if (! $lesson->isPublished()) {
+            return collect();
+        }
+
+        return $lesson->courses()->published()->withCount('publishedLessons')->get()
+            ->filter(fn (Course $course): bool => $course->published_lessons_count === 1)
+            ->pluck('title');
     }
 }

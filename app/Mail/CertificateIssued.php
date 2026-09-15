@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Certificate;
+use App\Services\Translator;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Attachment;
@@ -11,6 +12,11 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * The certificate, emailed to the student in their own language — whoever
+ * issued or resent it. Laravel renders the whole message, subject included,
+ * inside the locale set here.
+ */
 class CertificateIssued extends Mailable
 {
     use Queueable, SerializesModels;
@@ -18,12 +24,14 @@ class CertificateIssued extends Mailable
     public function __construct(public Certificate $certificate)
     {
         $this->certificate->loadMissing('user', 'course');
+
+        $this->locale(app(Translator::class)->localeFor($this->certificate->user));
     }
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your '.$this->certificate->course->title.' certificate',
+            subject: __t('mail.certificate_issued.subject', ['course' => $this->courseTitle()]),
         );
     }
 
@@ -31,6 +39,9 @@ class CertificateIssued extends Mailable
     {
         return new Content(
             markdown: 'mail.certificate-issued',
+            with: [
+                'courseTitle' => $this->courseTitle(),
+            ],
         );
     }
 
@@ -48,5 +59,11 @@ class CertificateIssued extends Mailable
                 ->as('certificate-'.$this->certificate->number.'.pdf')
                 ->withMime('application/pdf'),
         ];
+    }
+
+    /** The course title in the student's language, where one has been written. */
+    private function courseTitle(): string
+    {
+        return (string) $this->certificate->course->translated('title', $this->locale);
     }
 }

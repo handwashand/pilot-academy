@@ -180,7 +180,7 @@ class ProgressToolsTest extends TestCase
             ->assertSee(route('academy.lesson', [$course, $lessons[1]]), false);
     }
 
-    public function test_nothing_is_offered_to_someone_who_has_not_started(): void
+    public function test_continue_is_not_offered_to_someone_who_has_not_started(): void
     {
         $this->actingAs($this->learner())
             ->get('/')
@@ -188,7 +188,7 @@ class ProgressToolsTest extends TestCase
             ->assertDontSee('Continue where you left off');
     }
 
-    public function test_nothing_is_offered_once_the_course_is_finished(): void
+    public function test_continue_is_not_offered_once_every_lesson_is_finished(): void
     {
         $learner = $this->learner();
         $course = Course::first();

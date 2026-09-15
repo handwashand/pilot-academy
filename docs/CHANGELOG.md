@@ -20,7 +20,175 @@ Add a new entry here whenever something visible to admins or students changes.
      are stripped before anything is rendered, so notes to the next editor can
      live right here. -->
 
-## 2.0.0 — September 2026
+## 2.1.0 — September 2026
+
+### Added
+
+- **The whole admin panel follows your language.** Menus, page titles, every
+  form label and help text, table columns, buttons, confirmation messages,
+  notifications, the dashboard, Content health, Final quiz health, Mail and
+  What's new are in English, Russian, French, Spanish or Portuguese — whichever
+  you pick with the language button. Statuses such as Draft and Published, the
+  exported spreadsheet headings, and the alerts in the notification bell follow
+  it too; an alert about a broken course is written in its owner's language.
+  Anything that reads oddly can be corrected under **Settings → Translations**.
+- **Emails and certificates in the student's language.** The certificate email,
+  the reminder to continue and the certificate PDF itself are written in the
+  language the student chose — with the course title in that language where it
+  has been translated, and the date written the local way — whoever issues,
+  resends or regenerates them. Someone whose language is switched off gets the
+  default. The test email under **Settings → Mail** and the What's new PDF
+  follow the language of the admin who asks for them.
+- **Write courses in any language, and translate them into the others.** Courses
+  and lessons have a **Written in** field (English by default), so French and
+  Russian trainers can write in their own language. **Translate** on the edit
+  page has a tab for every other language — title and description, or title,
+  summary, lesson text and transcript. Students see the translation in their
+  language and the original wherever none has been written, and search finds a
+  course by its translations too.
+- **A language button in the top right corner of every student page.** Like
+  the one in the admin panel — the current language code, such as **EN** —
+  it sits at the right-hand end of the header at every width, on a phone too,
+  and opens a short list of languages. The languages are also listed at the
+  foot of every page.
+- **One lesson in several courses.** On a course's **Lessons** tab, **Add
+  existing lesson** now shares the lesson instead of moving it out of its old
+  course, and the lesson form has a **Courses** field. It is the same lesson in
+  each course — one set of questions, and a student who finishes it once has it
+  finished everywhere — while each course keeps its own order. **Remove from
+  course** takes it out of one course only.
+- **Every admin can correct translations** under **Settings → Translations**.
+  Search for the words students see, in any language, type the correction and
+  save; it shows on the student site straight away. Clear it to go back to the
+  original text. Before, the page needed a special permission and did not list
+  the student site's text at all.
+- **Final quiz health** (**Results → Final quiz health**, admins only) tells you
+  whether the final quiz is doing its job. **First-time pass rate** is judged
+  against a suggested 65–80% band — above it the quiz is likely too easy, below
+  it the lessons probably don't teach what it asks — with a verdict per course,
+  and **Too few to judge** until there are 10 first tries. **Days to
+  certificate** shows the typical time from first lesson to certificate. Staff
+  previews are left out of both.
+- **The student home page always says what to do next.** The card at the top
+  used to disappear the moment a student finished their last lesson — exactly
+  when the final quiz unlocked, and nothing said so. It now reads **Your final
+  quiz is ready**, with the pass mark and attempts left. A student who has just
+  signed up sees **Start here** and the first lesson, instead of "welcome back".
+- **Students can see their own progress.** Signed-in students get a **Your
+  progress** card on the home page: courses in progress, completed, and
+  certificates — plus their **last final quiz result**, which used to show once
+  after submitting and then vanish. A failed attempt says how many tries are
+  left, or to contact an administrator when there are none.
+- **A Help page for students.** **Help** (the **?** in the top bar, on every
+  page, logged in or not) explains how the academy works: what finishes a
+  lesson, when the final quiz unlocks, where certificates are, and what to do
+  when something will not finish. It is readable on a phone, with a contents
+  list at the top.
+- **What's new as a PDF** — one release from the **PDF** link on its heading, or
+  everything from **All releases (PDF)** beside the filters. It opens in a new
+  tab to read, print or save. For sending release notes to people without a
+  panel account. The filters on screen do not change what goes into the file.
+- **What's new is one click from any page.** A megaphone icon beside the search
+  box at the top of the panel opens it. It is still under **Docs** too.
+- **Edit your own profile.** Open the account menu (your initials, top right) →
+  **Profile** to change your name, email or password. Creators could not change
+  their own password before, because they have no access to **Users**.
+- **Search the guide.** **Docs → Guide** now has a contents list beside it and a
+  search box that hides the sections that do not mention what you typed.
+- **Students have a profile.** The account menu — their initials, top right —
+  opens **Profile**, where students change their name and email and set the
+  **name printed on their certificates**. Students who signed in with a personal
+  link have no password yet and can **set one** there; changing an existing
+  password asks for the current one.
+- **Content health** (**Content → Content health**) lists everything broken for
+  students right now, each with a **Fix it** link, with a red count in the menu
+  on every screen. The same problems are flagged in an **Attention** column and a
+  **Needs attention** filter on Courses and Lessons, and under the title of the
+  course or lesson itself.
+- **The bell tells content owners when something breaks.** When a change leaves
+  a course broken for students, the product's creators — or the admins, if nobody
+  owns the product — get an alert with a link to fix it. It clears itself once
+  the problem is fixed.
+- **Give one student another attempt.** **Results → Quiz attempts** lists every
+  student's attempts, with a filter for students out of attempts who have not
+  passed and **Grant another attempt** for one person. A count in the menu shows
+  how many are waiting. Before, the only option was raising Max attempts for
+  everyone.
+- **All student feedback in one list** — **Results → Student feedback**, with
+  filters by verdict, course and partner.
+- **Settings → Mail** says plainly whether the academy is really sending email —
+  the default setting only writes it to a log — and sends you a test email.
+- **Correct the name on a certificate.** **Certificates → Edit name** reprints
+  the PDF with the same number, and can save the corrected name for the student's
+  future certificates. This used to need a developer.
+- **Guide is in the admin account menu too** (your initials, top right).
+- **Student site in the admin account menu**, to see the academy the way
+  students do.
+- **A language button in the admin top bar.** It shows the current language
+  code (such as **EN**) and opens a short menu of languages. The choice is saved
+  to your account, so the panel and the student site both follow it.
+- **The whole student site reads in the student's language.** Home, courses,
+  lessons, the final quiz, certificates, search, profile, sign-up and invite
+  pages now follow the language chosen in the top bar, or the browser's
+  language: English, Russian, Spanish, French or Portuguese (Brazil). Before,
+  only the top bar, sign-in and Help changed. Counts read naturally in each
+  language ("5 уроков", not "5 урок"). Course and lesson text is still shown as
+  written.
+- **Lessons can carry several videos.** In the lesson editor, each video has a
+  **YouTube** or **Upload** source selector, and you can add up to five video
+  entries. The student lesson page renders each saved video in order.
+
+### Changed
+
+- **The left menu is grouped by what you are doing**: **Content** (Courses,
+  Lessons, Products, Media Items), **People** (Users, Companies), **Results**
+  (Certificates, Final quiz health) and **Docs** (Guide, What's new). Nothing was
+  renamed and every screen keeps its address.
+- **YouTube lessons use YouTube's privacy-enhanced player.** No tracking cookie
+  is set until the student presses play, and the end of a video only suggests
+  videos from the same channel — not whatever YouTube would recommend next.
+- **The top bar fits on small phones.** With Help added, the student site's
+  header stays on one line down to 360px wide, and **Log in**, **Log out** and
+  **Register** are now comfortable to tap.
+- **Content needing attention is no longer on the Dashboard.** It moved to
+  **Content health**, where its menu count is visible from every screen.
+- **Publishing checks for problems first.** **Publish** on a course — and on a
+  lesson going into a live course — refuses anything students would get stuck on
+  and says what, in bulk too. Unpublishing the last lesson of a live course warns
+  first.
+- **The student site shows the full PILOT ACADEMY logo** in its top bar, the
+  same as the admin panel, and a student's name and **Log out** moved into the
+  account menu.
+- **Certificates has no count in the menu any more.** It showed the total issued,
+  which nobody needed to act on.
+
+### Known limitations
+
+- **Final quiz health cannot say which questions are the problem.** The academy
+  keeps each attempt's total score, not the answer given to each question, so
+  the page shows *Question difficulty* as **Not measured** rather than guessing.
+- **The bell does not notice changes to a final quiz's question bank** made with
+  Attach or Detach on the Final questions tab. Content health still lists the
+  problem.
+
+### Fixed
+
+- **Brazilian browsers get Portuguese.** A browser set only to Portuguese
+  (Brazil) was shown English, because its language code was not recognised.
+- **The browser icon now keeps the existing Pilot mark while refreshing after
+  deploy.** The public site and admin panel point to versioned favicon URLs so
+  cached old icons are refreshed without changing the logo artwork.
+- **The admin panel opens on PostgreSQL again when the notification bell is on.**
+  The notification payload is now stored as JSON, so Filament can count unread
+  alerts without a database error.
+- **A YouTube link that is not a video no longer saves silently.** A playlist,
+  channel or Vimeo link used to save without complaint and leave the lesson
+  with no video at all. The lesson form now refuses it and says what to paste
+  instead. **YouTube live links** (`youtube.com/live/…`) used to be one of the
+  casualties and now play.
+- **Links saved before this fix are listed** under **Content → Content health**,
+  as *YouTube link that is not a playable video*, each with a link straight to
+  the lesson.
 
 ### What's new is now a filterable list
 
@@ -32,6 +200,8 @@ there is no second copy to update and no way for the two to fall out of step.
 category pill** to narrow to just the additions, the fixes, or the known
 limitations. Months with nothing left in them drop out of the way rather than
 sitting there empty.
+
+## 2.0.0 — September 2026
 
 ### Videos remember where you stopped, and can be read instead of watched
 

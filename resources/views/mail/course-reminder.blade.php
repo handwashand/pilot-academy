@@ -2,17 +2,16 @@
 {{-- PNG on an absolute URL: no mail client renders SVG. --}}
 <img src="{{ asset('img/pilot-logo.png') }}" alt="Pilot Academy" width="180" style="width:180px;max-width:180px;height:auto;margin-bottom:16px;">
 
-# Still with us, {{ $name }}?
+# {{ __t('mail.course_reminder.heading', ['name' => $name]) }}
 
-You made a start on Pilot Academy@if($lessonsDone > 0) — {{ $lessonsDone }} {{ Str::plural('lesson', $lessonsDone) }} finished so far@endif, and there is not much left to pick up.
+{{ $lessonsDone > 0 ? __tc('mail.course_reminder.intro_progress', $lessonsDone) : __t('mail.course_reminder.intro') }}
 
 @component('mail::button', ['url' => $url])
-Continue where you left off
+{{ __t('mail.course_reminder.button') }}
 @endcomponent
 
-That link signs you straight in and takes you to the next lesson, so there is no
-password to remember. It is personal to you — please don't forward it.
+{{ __t('mail.course_reminder.personal') }}
 
-Thanks,<br>
+{{ __t('mail.common.thanks') }}<br>
 Pilot Academy
 @endcomponent

@@ -1,0 +1,146 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Filament\Resources\Languages\LanguageResource;
+use App\Filament\Resources\Translations\TranslationResource;
+use App\Models\Course;
+use App\Models\Language;
+use App\Models\Translation;
+use App\Models\User;
+use App\Services\Translator;
+use Database\Seeders\LanguageSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class LocalizationTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_translation_fallback_chain_uses_default_then_humanised_key(): void
+    {
+        $this->seed(LanguageSeeder::class);
+
+        $russian = Language::where('code', 'ru')->firstOrFail();
+        $english = Language::where('code', 'en')->firstOrFail();
+
+        // An emptied saved row gives way to the Russian shipped in lang/ru/.
+        Translation::where('key', 'nav.help')->where('language_id', $russian->id)->update(['value' => '']);
+        $this->assertSame('Помощь', __t('nav.help', [], 'ru'));
+
+        // Nothing in Russian at all: the default language's text.
+        (new Translation)->forceFill(['key' => 'custom.only_english', 'language_id' => $english->id, 'value' => 'Only in English', 'module' => 'custom'])->save();
+        app(Translator::class)->clearBundleCache('en');
+        $this->assertSame('Only in English', __t('custom.only_english', [], 'ru'));
+
+        // Nowhere: the key made readable.
+        $this->assertSame('Add', __t('course.add', [], 'ru'));
+    }
+
+    public function test_locale_switch_rejects_unknown_codes_and_saves_session_and_user_locale(): void
+    {
+        $this->seed(LanguageSeeder::class);
+
+        $user = User::factory()->create(['role' => User::ROLE_LEARNER]);
+
+        $this->actingAs($user)
+            ->from('/login')
+            ->post(route('locale.switch'), ['locale' => 'ru'])
+            ->assertRedirect('/login');
+
+        $this->assertSame('ru', session('locale'));
+        $this->assertSame('ru', $user->fresh()->locale);
+
+        $this->post(route('locale.switch'), ['locale' => 'de'])
+            ->assertSessionHasErrors('locale');
+    }
+
+    public function test_accept_language_is_used_when_session_and_user_do_not_choose(): void
+    {
+        $this->seed(LanguageSeeder::class);
+
+        $this->withHeader('Accept-Language', 'ru-RU,ru;q=0.9,en;q=0.8')
+            ->get(route('login'))
+            ->assertOk()
+            ->assertSee('Войти');
+    }
+
+    public function test_content_translation_falls_back_and_blank_deletes_translation(): void
+    {
+        $this->seed(LanguageSeeder::class);
+
+        $course = Course::create([
+            'title' => 'Pilot quick start',
+            'slug' => 'pilot-quick-start',
+            'description' => 'English description',
+        ]);
+
+        $this->assertSame('Pilot quick start', $course->translated('title', 'ru'));
+
+        $course->setTranslation('title', 'ru', 'Быстрый старт Pilot');
+        $this->assertSame('Быстрый старт Pilot', $course->fresh()->translated('title', 'ru'));
+
+        $course->setTranslation('title', 'ru', '');
+        $this->assertSame('Pilot quick start', $course->fresh()->translated('title', 'ru'));
+        $this->assertDatabaseMissing('content_translations', ['field' => 'title']);
+    }
+
+    public function test_language_seeder_never_overwrites_edited_translations(): void
+    {
+        $this->seed(LanguageSeeder::class);
+
+        $translation = Translation::where('key', 'nav.help')
+            ->whereHas('language', fn ($query) => $query->where('code', 'es'))
+            ->firstOrFail();
+
+        $translation->update(['value' => 'Soporte']);
+
+        $this->seed(LanguageSeeder::class);
+
+        $this->assertSame('Soporte', $translation->fresh()->value);
+    }
+
+    public function test_language_seeder_includes_brazilian_portuguese_for_every_key(): void
+    {
+        $this->seed(LanguageSeeder::class);
+
+        $this->assertDatabaseHas('languages', [
+            'code' => 'pt',
+            'name' => 'Portuguese (Brazil)',
+            'native_name' => 'Português (Brasil)',
+            'direction' => 'ltr',
+        ]);
+
+        $keyCount = Translation::query()->distinct('key')->count('key');
+
+        foreach (Language::pluck('code') as $code) {
+            $this->assertSame(
+                $keyCount,
+                Translation::whereHas('language', fn ($query) => $query->where('code', $code))->count(),
+                "Every seeded key should exist for {$code}."
+            );
+        }
+
+        $this->assertSame('Entrar', __t('auth.login', [], 'pt'));
+    }
+
+    public function test_languages_need_a_permission_and_translations_are_open_to_every_admin(): void
+    {
+        $admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
+
+        $this->actingAs($admin);
+        $this->assertFalse(LanguageResource::canAccess());
+        // Owner's request (2026-09-14): any admin can correct wording.
+        $this->assertTrue(TranslationResource::canAccess());
+
+        $admin->permissions()->create(['permission' => User::PERMISSION_LANGUAGES_MANAGE]);
+        $this->assertTrue(LanguageResource::canAccess());
+
+        $creator = User::factory()->create(['role' => User::ROLE_CREATOR]);
+        $this->actingAs($creator);
+        $this->assertFalse(TranslationResource::canAccess());
+
+        $creator->permissions()->create(['permission' => User::PERMISSION_TRANSLATIONS_MANAGE]);
+        $this->assertTrue(TranslationResource::canAccess());
+    }
+}

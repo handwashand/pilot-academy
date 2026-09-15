@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Filament\Pages\AdminGuide;
 use App\Models\ActivityEvent;
 use App\Models\Course;
 use App\Models\CourseFeedback;
@@ -9,6 +10,7 @@ use App\Models\Lesson;
 use App\Models\QuizAttempt;
 use App\Models\VideoPosition;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class AcademyController extends Controller
 {
@@ -18,53 +20,148 @@ class AcademyController extends Controller
     {
         $courses = Course::published()
             ->withCount('publishedLessons')
-            ->with('publishedLessons.mediaItem')
+            // Translations up front: the page shows every title in the visitor's language.
+            ->with(['contentTranslations', 'publishedLessons.mediaItem', 'publishedLessons.contentTranslations'])
             ->orderBy('sort_order')
             ->get();
 
         $completed = $this->completedIds($request);
+        $user = $request->user();
+
+        // Courses this student holds a valid certificate for: finished for good.
+        $certified = $user
+            ? $user->certificates()->whereNull('revoked_at')->pluck('course_id')->map(fn ($id): int => (int) $id)->unique()->values()->all()
+            : [];
 
         return view('academy.home', [
             'courses' => $courses,
             'completed' => $completed,
-            'resume' => $this->nextLesson($courses, $completed),
+            'next' => $this->nextStep($courses, $completed, $certified, $user),
+            'progress' => $user ? $this->progressSummary($courses, $completed, $certified, $user) : null,
         ]);
     }
 
     /**
-     * The first unfinished lesson in the first course still in progress, so a
-     * returning student can carry on without hunting for where they stopped.
-     * Nothing is suggested to someone who has not started, or who is done.
+     * The one thing this student should do next, so a returning student carries
+     * on without hunting for it. Walks the courses in their listed order and
+     * stops at the first one started but not finished:
+     *
+     *  - a lesson still to do → that lesson;
+     *  - every lesson done, but a final quiz still between them and the
+     *    certificate → the final quiz. Before this, the card vanished at exactly
+     *    that moment and nothing on the home page said the quiz had unlocked.
+     *
+     * Signed in with nothing started at all → "Start here", the first lesson.
+     * Anonymous visitors are never offered the final quiz: it needs an account,
+     * and their session progress does not carry over when they sign in.
+     *
+     * @return array<string, mixed>|null
      */
-    private function nextLesson($courses, array $completed): ?array
+    private function nextStep($courses, array $completed, array $certified, $user): ?array
     {
-        if (empty($completed)) {
-            return null;
-        }
-
         foreach ($courses as $course) {
             $lessons = $course->publishedLessons;
+            $done = $lessons->whereIn('id', $completed)->count();
 
-            $hasStarted = $lessons->contains(fn (Lesson $lesson): bool => in_array($lesson->id, $completed, true));
-            $next = $lessons->first(fn (Lesson $lesson): bool => ! in_array($lesson->id, $completed, true));
+            if ($done === 0) {
+                continue;
+            }
 
-            if ($hasStarted && $next) {
-                return [
-                    'course' => $course,
-                    'lesson' => $next,
-                    'done' => $lessons->whereIn('id', $completed)->count(),
-                    'total' => $lessons->count(),
-                ];
+            $nextLesson = $lessons->first(fn (Lesson $lesson): bool => ! in_array($lesson->id, $completed, true));
+
+            if ($nextLesson) {
+                return ['kind' => 'lesson', 'course' => $course, 'lesson' => $nextLesson, 'done' => $done, 'total' => $lessons->count()];
+            }
+
+            $finalQuizPending = $user
+                && $course->final_quiz_enabled
+                && ! in_array($course->id, $certified, true)
+                && $course->finalQuestions()->exists();
+
+            if ($finalQuizPending) {
+                $attemptsLeft = $course->finalQuizAttemptsLeftFor($user);
+
+                // Out of attempts: nothing the student can do from here. The
+                // progress card still shows the result and says so.
+                if ($attemptsLeft !== 0) {
+                    return ['kind' => 'final_quiz', 'course' => $course, 'done' => $done, 'total' => $lessons->count(), 'attemptsLeft' => $attemptsLeft];
+                }
+            }
+        }
+
+        if ($user && empty($completed)) {
+            $first = $courses->first(fn (Course $course): bool => $course->publishedLessons->isNotEmpty());
+
+            if ($first) {
+                return ['kind' => 'start', 'course' => $first, 'lesson' => $first->publishedLessons->first(), 'done' => 0, 'total' => $first->publishedLessons->count()];
             }
         }
 
         return null;
     }
 
+    /**
+     * A signed-in student's own numbers, and their latest final quiz result —
+     * which otherwise showed once, on the page after submitting, and was never
+     * seen again. Null when there is nothing yet to summarise.
+     *
+     * "Completed" uses the course page's rule: every lesson done, and the
+     * certificate too where the course has a final quiz.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function progressSummary($courses, array $completed, array $certified, $user): ?array
+    {
+        $inProgress = 0;
+        $finished = 0;
+
+        foreach ($courses as $course) {
+            $total = $course->publishedLessons->count();
+            $done = $course->publishedLessons->whereIn('id', $completed)->count();
+
+            if ($done === 0) {
+                continue;
+            }
+
+            $isFinished = $done === $total
+                && (! $course->final_quiz_enabled || in_array($course->id, $certified, true));
+
+            $isFinished ? $finished++ : $inProgress++;
+        }
+
+        $lastFinal = QuizAttempt::where('user_id', $user->id)
+            ->whereNotNull('course_id')
+            ->whereIn('status', [QuizAttempt::STATUS_PASSED, QuizAttempt::STATUS_FAILED])
+            ->whereHas('course', fn ($query) => $query->published())
+            ->with('course')
+            ->latest('submitted_at')
+            ->first();
+
+        if ($inProgress === 0 && $finished === 0 && $certified === [] && ! $lastFinal) {
+            return null;
+        }
+
+        return [
+            'inProgress' => $inProgress,
+            'finished' => $finished,
+            'certificates' => count($certified),
+            'lastFinal' => $lastFinal ? [
+                'course' => $lastFinal->course,
+                'percent' => $lastFinal->scorePercent(),
+                'passed' => $lastFinal->status === QuizAttempt::STATUS_PASSED,
+                'at' => $lastFinal->submitted_at,
+                // Only worth saying when they have not passed and can still try.
+                'attemptsLeft' => $lastFinal->status === QuizAttempt::STATUS_PASSED
+                    ? null
+                    : $lastFinal->course->finalQuizAttemptsLeftFor($user),
+            ] : null,
+        ];
+    }
+
     public function course(Request $request, Course $course)
     {
         abort_unless($course->isVisibleTo($request->user()), 404);
-        $course->load('publishedLessons.mediaItem');
+        $course->load(['contentTranslations', 'publishedLessons.mediaItem', 'publishedLessons.contentTranslations']);
 
         ActivityEvent::record($request->user(), ActivityEvent::TYPE_COURSE_OPENED, $course->title, $request->path());
 
@@ -94,10 +191,11 @@ class AcademyController extends Controller
     public function lesson(Request $request, Course $course, Lesson $lesson)
     {
         abort_unless($course->isVisibleTo($request->user()) && $lesson->isVisibleTo($request->user()), 404);
-        abort_unless($lesson->course_id === $course->id, 404);
+        abort_unless($course->hasLesson($lesson), 404);
 
-        $lesson->load('questions.options');
-        $lessons = $course->publishedLessons()->get();
+        $lesson->load(['questions.options', 'contentTranslations']);
+        $course->loadMissing('contentTranslations');
+        $lessons = $course->publishedLessons()->with('contentTranslations')->get();
         $currentIndex = $lessons->search(fn ($l) => $l->id === $lesson->id);
         $next = $currentIndex !== false ? $lessons->get($currentIndex + 1) : null;
         $prev = $currentIndex !== false && $currentIndex > 0 ? $lessons->get($currentIndex - 1) : null;
@@ -132,7 +230,7 @@ class AcademyController extends Controller
      */
     public function saveVideoPosition(Request $request, Course $course, Lesson $lesson)
     {
-        abort_unless($lesson->course_id === $course->id, 404);
+        abort_unless($course->hasLesson($lesson), 404);
         abort_unless($course->isVisibleTo($request->user()) && $lesson->isVisibleTo($request->user()), 404);
 
         $data = $request->validate([
@@ -178,7 +276,7 @@ class AcademyController extends Controller
      */
     public function startQuiz(Request $request, Course $course, Lesson $lesson)
     {
-        abort_unless($lesson->course_id === $course->id, 404);
+        abort_unless($course->hasLesson($lesson), 404);
         abort_unless($course->isVisibleTo($request->user()) && $lesson->isVisibleTo($request->user()), 404);
         $user = $request->user();
         abort_unless($user && $lesson->hasQuizLimits(), 403);
@@ -202,7 +300,7 @@ class AcademyController extends Controller
 
     public function submitQuiz(Request $request, Course $course, Lesson $lesson)
     {
-        abort_unless($lesson->course_id === $course->id, 404);
+        abort_unless($course->hasLesson($lesson), 404);
         abort_unless($course->isVisibleTo($request->user()) && $lesson->isVisibleTo($request->user()), 404);
         $lesson->load('questions.options');
 
@@ -321,7 +419,8 @@ class AcademyController extends Controller
         }
 
         $timeLimit = $lesson->quiz_time_limit_minutes;
-        $maxAttempts = $lesson->quiz_max_attempts;
+        // Includes any extra attempts an admin granted this student.
+        $maxAttempts = $lesson->quizAttemptsAllowedFor($user);
 
         $base = QuizAttempt::where('user_id', $user->id)->where('lesson_id', $lesson->id);
         $used = (clone $base)->whereIn('status', [
@@ -330,7 +429,7 @@ class AcademyController extends Controller
             QuizAttempt::STATUS_EXPIRED,
         ])->count();
         $inProgress = (clone $base)->where('status', QuizAttempt::STATUS_IN_PROGRESS)->latest()->first();
-        $attemptsRemaining = $maxAttempts ? max(0, $maxAttempts - $used) : null;
+        $attemptsRemaining = $lesson->quizAttemptsLeftFor($user);
 
         if ($inProgress) {
             $secondsRemaining = null;
@@ -388,22 +487,32 @@ class AcademyController extends Controller
             $like = '%'.mb_strtolower($term).'%';
 
             $courses = Course::published()
+                ->with('contentTranslations')
                 ->where(fn ($query) => $query
                     ->whereRaw('LOWER(title) LIKE ?', [$like])
-                    ->orWhereRaw('LOWER(description) LIKE ?', [$like]))
+                    ->orWhereRaw('LOWER(description) LIKE ?', [$like])
+                    // Found by its translations too: a French course with a
+                    // Russian title turns up for a Russian search.
+                    ->orWhereHas('contentTranslations', fn ($translations) => $translations
+                        ->whereIn('field', ['title', 'description'])
+                        ->whereRaw('LOWER(value) LIKE ?', [$like])))
                 ->orderBy('sort_order')
                 ->limit(20)
                 ->get();
 
             $lessons = Lesson::published()
-                ->whereHas('course', fn ($query) => $query->published())
+                ->whereHas('courses', fn ($query) => $query->published())
                 ->where(fn ($query) => $query
                     ->whereRaw('LOWER(lessons.title) LIKE ?', [$like])
                     ->orWhereRaw('LOWER(lessons.summary) LIKE ?', [$like])
                     // The transcript is what makes a video findable at all —
                     // until it existed, spoken content matched nothing.
-                    ->orWhereRaw('LOWER(lessons.transcript) LIKE ?', [$like]))
-                ->with('course')
+                    ->orWhereRaw('LOWER(lessons.transcript) LIKE ?', [$like])
+                    ->orWhereHas('contentTranslations', fn ($translations) => $translations
+                        ->whereIn('field', ['title', 'summary', 'transcript'])
+                        ->whereRaw('LOWER(value) LIKE ?', [$like])))
+                // Listed once, under the first live course it is in.
+                ->with(['contentTranslations', 'courses' => fn ($query) => $query->published()->orderBy('courses.sort_order')->with('contentTranslations')])
                 ->orderBy('sort_order')
                 ->limit(30)
                 ->get();
@@ -414,6 +523,29 @@ class AcademyController extends Controller
             'courses' => $courses,
             'lessons' => $lessons,
         ]);
+    }
+
+    /**
+     * The student Help page — docs/learner-guide.md, split at its `##`
+     * headings. The file is the single source of truth, as the admin guide
+     * is; this borrows that page's parser so both guides split the same way.
+     * Open to everyone, since anonymous visitors take lessons too.
+     */
+    public function help()
+    {
+        $locale = app()->getLocale();
+        $localized = base_path("docs/learner-guide.{$locale}.md");
+        $path = is_file($localized) ? $localized : base_path('docs/learner-guide.md');
+
+        $sections = is_file($path)
+            ? Cache::remember(
+                'learner-guide.'.$locale.'.'.basename($path).'.'.filemtime($path),
+                now()->addDay(),
+                fn (): array => AdminGuide::parse((string) file_get_contents($path)),
+            )
+            : [];
+
+        return view('academy.help', ['sections' => $sections]);
     }
 
     public function setName(Request $request)
@@ -427,7 +559,7 @@ class AcademyController extends Controller
     public function sitemap()
     {
         $courses = Course::published()
-            ->with(['publishedLessons' => fn ($query) => $query->orderBy('sort_order')])
+            ->with('publishedLessons')
             ->orderBy('sort_order')
             ->get();
 

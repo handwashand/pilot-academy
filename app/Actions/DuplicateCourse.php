@@ -68,6 +68,9 @@ class DuplicateCourse
     {
         $newLesson = $lesson->replicate(['slug', 'created_at', 'updated_at']);
         $newLesson->course_id = $copy->id;
+        // Its place in the course being copied, which for a shared lesson can
+        // differ from the order it has anywhere else.
+        $newLesson->sort_order = $lesson->pivot?->sort_order ?? $lesson->sort_order;
         // lessons.slug has no unique index, but the lesson route resolves by
         // slug alone: a shared slug would resolve to the original's lesson and
         // 404, leaving the copy's lessons unreachable.

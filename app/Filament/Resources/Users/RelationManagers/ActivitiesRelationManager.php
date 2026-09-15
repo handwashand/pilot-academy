@@ -7,12 +7,26 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class ActivitiesRelationManager extends RelationManager
 {
     protected static string $relationship = 'activities';
 
-    protected static ?string $title = 'Activity';
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return __t('admin_nav.tabs.activity');
+    }
+
+    protected static function getModelLabel(): ?string
+    {
+        return __t('admin_nav.activities.one');
+    }
+
+    protected static function getPluralModelLabel(): ?string
+    {
+        return __t('admin_nav.activities.many');
+    }
 
     public function table(Table $table): Table
     {
@@ -20,14 +34,14 @@ class ActivitiesRelationManager extends RelationManager
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('created_at')
-                    ->label('When')
+                    ->label(__t('admin_common.when'))
                     ->dateTime('d M Y, H:i')
                     ->sortable(),
 
                 TextColumn::make('type')
-                    ->label('Action')
+                    ->label(__t('admin_people.tabs.action'))
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => ActivityEvent::TYPE_LABELS[$state] ?? $state)
+                    ->formatStateUsing(fn (string $state): string => ActivityEvent::typeLabels()[$state] ?? $state)
                     ->color(fn (string $state): string => match ($state) {
                         ActivityEvent::TYPE_LOGIN => 'gray',
                         ActivityEvent::TYPE_COURSE_OPENED => 'info',
@@ -38,14 +52,14 @@ class ActivitiesRelationManager extends RelationManager
                     }),
 
                 TextColumn::make('label')
-                    ->label('Details')
+                    ->label(__t('admin_people.tabs.details'))
                     ->placeholder('—')
                     ->wrap(),
             ])
             ->filters([
                 SelectFilter::make('type')
-                    ->label('Action')
-                    ->options(ActivityEvent::TYPE_LABELS),
+                    ->label(__t('admin_people.tabs.action'))
+                    ->options(ActivityEvent::typeLabels()),
             ]);
     }
 }

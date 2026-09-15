@@ -25,7 +25,7 @@
         <a
             href="{{ \App\Filament\Pages\Changelog::getUrl() }}"
             style="font-size: 0.6875rem; line-height: 1.2; color: var(--gray-400); text-decoration: none; letter-spacing: 0.02em;"
-            title="Pilot Academy {{ $version }} — see what's new"
+            title="{{ __t('admin_pages.whats_new.version_title', ['version' => $version]) }}"
         >
             v{{ $version }}
         </a>

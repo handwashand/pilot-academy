@@ -4,36 +4,56 @@ namespace App\Filament\Resources\Courses\RelationManagers;
 
 use App\Filament\Resources\Lessons\LessonResource;
 use App\Models\Lesson;
-use Filament\Actions\AssociateAction;
+use Filament\Actions\AttachAction;
+use Filament\Actions\DetachAction;
 use Filament\Actions\EditAction;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class LessonsRelationManager extends RelationManager
 {
     protected static string $relationship = 'lessons';
 
-    protected static ?string $title = 'Lessons';
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return __t('admin_nav.tabs.lessons');
+    }
+
+    // Names the records in Filament's own messages ("No lessons", "Delete
+    // lesson"); left alone it reads the English model name.
+    protected static function getModelLabel(): ?string
+    {
+        return __t('admin_nav.lessons.one');
+    }
+
+    protected static function getPluralModelLabel(): ?string
+    {
+        return __t('admin_nav.lessons.many');
+    }
 
     public function table(Table $table): Table
     {
         return $table
             ->recordTitleAttribute('title')
-            // Drag the rows to set the order students see. sort_order is what
-            // every student-facing query already orders by.
-            ->reorderable('sort_order')
-            ->defaultSort('sort_order')
+            // Drag the rows to set the order students see in this course. Each
+            // course keeps its own order, so a shared lesson can sit first in
+            // one and last in another.
+            ->reorderable('course_lesson.sort_order')
             ->columns([
                 TextColumn::make('title')
-                    ->label('Lesson')
+                    ->label(__t('admin_common.lesson'))
                     ->wrap()
-                    ->searchable(),
+                    ->searchable()
+                    ->description(fn (Lesson $record): ?string => $this->alsoIn($record)),
 
                 TextColumn::make('status')
+                    ->label(__t('admin_common.status'))
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => Lesson::STATUS_LABELS[$state] ?? $state)
+                    ->formatStateUsing(fn (string $state): string => Lesson::statusLabels()[$state] ?? $state)
                     ->color(fn (string $state): string => match ($state) {
                         Lesson::STATUS_PUBLISHED => 'success',
                         Lesson::STATUS_ARCHIVED => 'gray',
@@ -41,51 +61,86 @@ class LessonsRelationManager extends RelationManager
                     }),
 
                 TextColumn::make('duration_minutes')
-                    ->label('Length')
+                    ->label(__t('admin_courses.lessons_tab.length'))
                     ->formatStateUsing(fn (?int $state): string => Lesson::formatMinutes($state) ?? '—')
-                    ->tooltip('Students see this. Set it on the lesson.'),
+                    ->tooltip(__t('admin_courses.lessons_tab.length_tip')),
 
                 TextColumn::make('questions_count')
-                    ->label('Questions')
+                    ->label(__t('admin_courses.lessons_tab.questions'))
                     ->counts('questions')
                     ->badge()
                     ->color(fn (int $state): string => $state > 0 ? 'gray' : 'danger')
                     ->tooltip(fn (int $state): ?string => $state > 0
                         ? null
-                        : 'A lesson with no quiz can never be marked finished.'),
+                        : __t('admin_courses.lessons_tab.no_quiz_tip')),
             ])
             ->headerActions([
-                AssociateAction::make()
-                    ->label('Add existing lesson')
-                    ->modalHeading('Add an existing lesson to this course')
-                    // A lesson belongs to exactly one course, so this is a move,
-                    // not a copy — it leaves whichever course it is in now.
-                    ->modalDescription('A lesson can only live in one course, so adding it here removes it from the course it is in now. Its text, video, questions and student progress all move with it.')
-                    ->modalSubmitActionLabel('Move it here')
+                AttachAction::make()
+                    ->label(__t('admin_courses.lessons_tab.attach'))
+                    ->modalHeading(__t('admin_courses.lessons_tab.attach_heading'))
+                    ->modalDescription(__t('admin_courses.lessons_tab.attach_description'))
+                    ->modalSubmitActionLabel(__t('admin_courses.lessons_tab.attach_submit'))
                     ->multiple()
                     ->recordSelectSearchColumns(['title'])
                     ->recordTitle(fn (Lesson $record): string => $record->course
-                        ? "{$record->title}  ·  currently in {$record->course->title}"
+                        ? __t('admin_courses.lessons_tab.from_course', ['lesson' => $record->title, 'course' => $record->course->title])
                         : $record->title)
                     ->recordSelectOptionsQuery(function (Builder $query): Builder {
                         $user = auth()->user();
 
-                        // Same scoping as the Lessons list: a creator must not be
-                        // able to pull a lesson out of a product they do not own.
+                        // Same scoping as the Lessons list: a creator can only
+                        // bring in lessons from courses in their own products.
                         if ($user?->isCreator()) {
                             $productIds = $user->products()->pluck('products.id');
 
                             $query->whereHas('course', fn (Builder $course) => $course->whereIn('product_id', $productIds));
                         }
 
-                        return $query->with('course')->orderBy('title');
+                        return $query->with('course')->orderBy('lessons.title');
+                    })
+                    // The student URL finds a lesson by its slug inside the
+                    // course, so two lessons with one slug cannot share a course.
+                    ->before(function (array $data, AttachAction $action): void {
+                        $clashes = Lesson::query()
+                            ->whereIn('id', (array) ($data['recordId'] ?? []))
+                            ->whereIn('slug', $this->getOwnerRecord()->lessons()->pluck('lessons.slug'))
+                            ->pluck('title');
+
+                        if ($clashes->isNotEmpty()) {
+                            Notification::make()
+                                ->title(__t('admin_courses.lessons_tab.slug_clash'))
+                                ->body(__t('admin_courses.lessons_tab.slug_clash_body', ['lessons' => $clashes->implode(', ')]))
+                                ->danger()
+                                ->persistent()
+                                ->send();
+
+                            $action->halt();
+                        }
                     }),
             ])
             ->recordActions([
                 EditAction::make()
                     ->url(fn (Lesson $record): string => LessonResource::getUrl('edit', ['record' => $record])),
+
+                DetachAction::make()
+                    ->label(__t('admin_courses.lessons_tab.detach'))
+                    ->modalHeading(__t('admin_courses.lessons_tab.detach_heading'))
+                    ->modalDescription(__t('admin_courses.lessons_tab.detach_description'))
+                    // Its last course: removing it would leave the lesson in
+                    // no course at all. Delete it from Lessons instead.
+                    ->visible(fn (Lesson $record): bool => $record->courses()->count() > 1),
             ])
-            ->emptyStateHeading('No lessons yet')
-            ->emptyStateDescription('Add lessons under Lessons in the menu, or move an existing one here.');
+            ->emptyStateHeading(__t('admin_courses.lessons_tab.empty'))
+            ->emptyStateDescription(__t('admin_courses.lessons_tab.empty_description'));
+    }
+
+    /** "Also in: X, Y" for a lesson shared with other courses. */
+    private function alsoIn(Lesson $record): ?string
+    {
+        $others = $record->courses()
+            ->whereKeyNot($this->getOwnerRecord()->getKey())
+            ->pluck('title');
+
+        return $others->isNotEmpty() ? __t('admin_courses.lessons_tab.also_in', ['courses' => $others->implode(', ')]) : null;
     }
 }

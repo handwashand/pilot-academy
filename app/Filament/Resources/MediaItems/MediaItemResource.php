@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\MediaItems;
 
+use App\Filament\Resources\Concerns\HasSentenceCaseLabels;
 use App\Filament\Resources\MediaItems\Pages\CreateMediaItem;
 use App\Filament\Resources\MediaItems\Pages\EditMediaItem;
 use App\Filament\Resources\MediaItems\Pages\ListMediaItems;
@@ -13,12 +14,37 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class MediaItemResource extends Resource
 {
+    use HasSentenceCaseLabels;
+
     protected static ?string $model = MediaItem::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
+
+    protected static ?int $navigationSort = 4;
+
+    public static function getNavigationGroup(): string|UnitEnum|null
+    {
+        return __t('admin_nav.groups.content');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __t('admin_nav.media.nav');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __t('admin_nav.media.one');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __t('admin_nav.media.many');
+    }
 
     public static function form(Schema $schema): Schema
     {

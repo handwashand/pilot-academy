@@ -2,27 +2,34 @@
 
 namespace App\Models;
 
+use App\Actions\NotifyContentOwners;
+use App\Models\Concerns\HasContentTranslations;
 use App\Models\Concerns\HasDuration;
 use App\Models\Concerns\HasPublishStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 
 class Lesson extends Model
 {
-    use HasDuration, HasPublishStatus;
+    use HasContentTranslations, HasDuration, HasPublishStatus;
+
+    protected array $translatable = ['title', 'summary', 'content', 'transcript'];
 
     protected $fillable = [
         'course_id',
         'title',
+        'language',
         'slug',
         'summary',
         'image_path',
         'media_item_id',
         'youtube_url',
         'video_path',
+        'video_sources',
         'content',
         'transcript',
         'doc_links',
@@ -35,6 +42,7 @@ class Lesson extends Model
 
     protected $casts = [
         'doc_links' => 'array',
+        'video_sources' => 'array',
     ];
 
     /**
@@ -45,9 +53,33 @@ class Lesson extends Model
         'status' => self::STATUS_PUBLISHED,
     ];
 
+    /**
+     * The home course: the one that owns the lesson and decides who may edit
+     * it. The lesson can be in other courses too — see courses().
+     */
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);
+    }
+
+    /** Every course this lesson is in, its home course included. */
+    public function courses(): BelongsToMany
+    {
+        return $this->belongsToMany(Course::class)
+            ->using(CourseLesson::class)
+            ->withPivot('sort_order')
+            ->withTimestamps();
+    }
+
+    /** Tell the owners of every course this lesson is in to look again. */
+    public static function notifyOwnersOf(mixed $lessonId): void
+    {
+        if (! $lessonId) {
+            return;
+        }
+
+        CourseLesson::query()->where('lesson_id', $lessonId)->pluck('course_id')
+            ->each(fn ($courseId) => NotifyContentOwners::afterRequest($courseId));
     }
 
     /**
@@ -101,9 +133,71 @@ class Lesson extends Model
      */
     public function getVideoUrlAttribute(): ?string
     {
-        return $this->video_path
-            ? Storage::disk('public')->url($this->video_path)
+        $videoPath = $this->video_path;
+
+        return $videoPath
+            ? Storage::disk('public')->url($videoPath)
             : null;
+    }
+
+    public function getVideoPathAttribute(?string $value): ?string
+    {
+        if ($value !== null && $value !== '') {
+            return $value;
+        }
+
+        foreach ($this->videoEntries() as $entry) {
+            if (($entry['type'] ?? 'upload') === 'upload' && filled($entry['video_path'] ?? null)) {
+                return $entry['video_path'];
+            }
+        }
+
+        return null;
+    }
+
+    public function getYoutubeUrlAttribute(?string $value): ?string
+    {
+        if ($value !== null && $value !== '') {
+            return $value;
+        }
+
+        foreach ($this->videoEntries() as $entry) {
+            if (($entry['type'] ?? 'youtube') === 'youtube' && filled($entry['youtube_url'] ?? null)) {
+                return $entry['youtube_url'];
+            }
+        }
+
+        return null;
+    }
+
+    public function videoEntries(): array
+    {
+        $entries = $this->video_sources ?? [];
+
+        if (! is_array($entries) || $entries === []) {
+            // Saved before the Videos list existed: one video, as it always
+            // played — an uploaded file instead of the link, never both.
+            $upload = $this->attributes['video_path'] ?? null;
+            $youtube = $this->attributes['youtube_url'] ?? null;
+
+            $entries = match (true) {
+                filled($upload) => [['type' => 'upload', 'video_path' => $upload]],
+                filled($youtube) => [['type' => 'youtube', 'youtube_url' => $youtube]],
+                default => [],
+            };
+        }
+
+        return array_values(array_filter($entries, fn (mixed $entry): bool => is_array($entry) && (filled($entry['youtube_url'] ?? null) || filled($entry['video_path'] ?? null))));
+    }
+
+    /** A YouTube video in the list whose link is not one playable video. */
+    public function hasUnplayableYoutubeLink(): bool
+    {
+        return collect($this->videoEntries())->contains(
+            fn (array $entry): bool => ($entry['type'] ?? 'youtube') === 'youtube'
+                && filled($entry['youtube_url'] ?? null)
+                && static::youtubeIdFrom($entry['youtube_url']) === null,
+        );
     }
 
     /**
@@ -111,19 +205,111 @@ class Lesson extends Model
      */
     public function getYoutubeIdAttribute(): ?string
     {
-        if (empty($this->youtube_url)) {
+        return static::youtubeIdFrom($this->youtube_url);
+    }
+
+    /**
+     * The id of the single YouTube video a pasted link points at, or null.
+     *
+     * The one definition of "a playable YouTube link": the lesson page embeds
+     * from it, the lesson form refuses what it rejects, and the dashboard
+     * flags stored links it cannot read. A link that does not parse used to
+     * save without complaint and leave the lesson with no video at all —
+     * playlists, channels, Vimeo, and even `youtube.com/live/…` videos.
+     *
+     * Anchored, and the id must end at a boundary, so `…/ID" onload="…` or an
+     * id with extra characters is refused rather than quietly truncated.
+     */
+    public static function youtubeIdFrom(?string $url): ?string
+    {
+        $url = trim((string) $url);
+
+        if ($url === '') {
             return null;
         }
 
-        if (preg_match('~(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|shorts/))([\w-]{11})~', $this->youtube_url, $m)) {
-            return $m[1];
-        }
+        $id = '([A-Za-z0-9_-]{11})(?=[?&/#]|$)';
 
-        // Already just an id?
-        if (preg_match('~^[\w-]{11}$~', $this->youtube_url)) {
-            return $this->youtube_url;
+        $patterns = [
+            // youtu.be/ID
+            '~^(?:https?://)?(?:www\.)?youtu\.be/'.$id.'~',
+            // youtube.com/watch?v=ID, including ?feature=share&v=ID
+            '~^(?:https?://)?(?:www\.|m\.)?youtube(?:-nocookie)?\.com/watch\?(?:[^#\s]*&)?v='.$id.'~',
+            // youtube.com/embed/ID · /shorts/ID · /live/ID · /v/ID
+            '~^(?:https?://)?(?:www\.|m\.)?youtube(?:-nocookie)?\.com/(?:embed|shorts|live|v)/'.$id.'~',
+            // A bare id, as older rows may store.
+            '~^'.$id.'~',
+        ];
+
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $url, $m) === 1) {
+                return $m[1];
+            }
         }
 
         return null;
+    }
+
+    /**
+     * Knowledge-check attempts this student has left, or null for unlimited.
+     * Timed-out attempts count as used; one still in progress does not.
+     */
+    public function quizAttemptsLeftFor(User $user): ?int
+    {
+        $allowed = $this->quizAttemptsAllowedFor($user);
+
+        if ($allowed === null) {
+            return null;
+        }
+
+        $used = QuizAttempt::where('user_id', $user->id)
+            ->where('lesson_id', $this->id)
+            ->whereIn('status', [QuizAttempt::STATUS_PASSED, QuizAttempt::STATUS_FAILED, QuizAttempt::STATUS_EXPIRED])
+            ->count();
+
+        return max(0, $allowed - $used);
+    }
+
+    /** Max attempts for this student, including extra attempts an admin granted. */
+    public function quizAttemptsAllowedFor(User $user): ?int
+    {
+        if (! $this->quiz_max_attempts) {
+            return null;
+        }
+
+        return $this->quiz_max_attempts + AttemptGrant::where('user_id', $user->id)
+            ->where('lesson_id', $this->id)
+            ->count();
+    }
+
+    /** Tell the owners if a change leaves the course broken — see Course::booted(). */
+    protected static function booted(): void
+    {
+        // Once the Videos list is saved it is the only source: the old
+        // single-video columns are emptied, so a video removed from the list
+        // cannot come back through them.
+        static::saving(function (Lesson $lesson): void {
+            if ($lesson->isDirty('video_sources') && is_array($lesson->video_sources)) {
+                $lesson->attributes['youtube_url'] = null;
+                $lesson->attributes['video_path'] = null;
+            }
+        });
+
+        static::saved(function (Lesson $lesson): void {
+            // A lesson is always in its home course.
+            if ($lesson->course_id && ! $lesson->courses()->whereKey($lesson->course_id)->exists()) {
+                $lesson->courses()->attach($lesson->course_id, ['sort_order' => (int) $lesson->sort_order]);
+            }
+
+            NotifyContentOwners::afterRequest($lesson->course_id);
+            static::notifyOwnersOf($lesson->id);
+
+            if ($lesson->wasChanged('course_id')) {
+                NotifyContentOwners::afterRequest($lesson->getPrevious()['course_id'] ?? null);
+            }
+        });
+
+        // Before, not after: the course links go with the lesson.
+        static::deleting(fn (Lesson $lesson) => static::notifyOwnersOf($lesson->id));
     }
 }

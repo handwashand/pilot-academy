@@ -25,7 +25,7 @@ class StudentAuthController extends Controller
 
         if (! Auth::attempt($data, $request->boolean('remember'))) {
             throw ValidationException::withMessages([
-                'email' => 'These credentials do not match our records.',
+                'email' => __t('academy.signup.failed'),
             ]);
         }
 
@@ -82,17 +82,21 @@ class StudentAuthController extends Controller
 
         if ($user && ! $user->isLearner()) {
             throw ValidationException::withMessages([
-                'email' => 'This email belongs to a staff account — please use Log in.',
+                'email' => __t('academy.signup.staff_email'),
             ]);
         }
 
         if (! $user) {
-            $user = User::create([
+            $user = (new User)->forceFill([
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'password' => Str::random(40), // passwordless; access via link
+                // Nobody knows that password, so the profile offers "Set a
+                // password" instead of asking for a current one.
+                'password_set_at' => null,
                 'role' => User::ROLE_LEARNER,
             ]);
+            $user->save();
             $user->ensureLoginToken();
         }
 

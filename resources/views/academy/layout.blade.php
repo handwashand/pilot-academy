@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="{{ $locale['current'] ?? app()->getLocale() }}" dir="{{ $locale['direction'] ?? 'ltr' }}" class="h-full">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,14 +9,9 @@
         <meta name="description" content="{{ $metaDescription }}">
     @endisset
 
-    {{-- public/favicon.ico is the empty stock file, so it is deliberately not
-         linked — an SVG icon covers every current browser. Drop a real .ico in
-         and add a fallback link here if very old browsers ever matter. --}}
-    <link rel="icon" type="image/svg+xml" href="{{ asset('img/pilot-mark.svg') }}">
-    {{-- NOTE: iOS ignores an SVG apple-touch-icon, so "Add to Home Screen"
-         currently falls back to a screenshot. Fixing it needs a square PNG
-         mark (180x180) in public/img/ — there isn't one yet. --}}
-    <link rel="apple-touch-icon" href="{{ asset('img/pilot-mark.svg') }}">
+    {{-- Versioned so browsers replace an old cached favicon after deploy. --}}
+    <link rel="icon" type="image/svg+xml" href="{{ asset('img/pilot-mark.svg') }}?v={{ config('app.version') }}">
+    <link rel="apple-touch-icon" href="{{ asset('img/pilot-mark.svg') }}?v={{ config('app.version') }}">
     {{-- Navy, the brand's dark ink. This was #0284c7 — the blue the mark used
          before it turned amber — which is no longer in the palette at all. --}}
     <meta name="theme-color" content="#0a2540">
@@ -103,27 +98,45 @@
     </style>
 </head>
 <body class="h-full bg-slate-50 text-slate-800">
-    <a href="#main" class="skip-link">Skip to content</a>
+    <a href="#main" class="skip-link">{{ __t('nav.skip') }}</a>
 
     <header class="sticky top-0 z-20 bg-white border-b border-slate-200">
-        <div class="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
-            <a href="{{ route('academy.home') }}" class="flex items-center gap-2.5">
-                {{-- The mark plus HTML text rather than the lockup image. The
-                     lockup now says "PILOT ACADEMY" so it would no longer say
-                     the name twice — but this header is only 64px tall, and at
-                     the 36px the mark allows the lockup's stacked "ACADEMY"
-                     renders about 6px high and cannot be read. The auth pages
-                     have room and do use the real lockup.
-
-                     One ink for the wordmark: the amber mark carries the
-                     colour. "Academy" used to be brand blue, which worked when
-                     the mark was blue too and clashed once it turned amber. --}}
-                <img src="{{ asset('img/pilot-mark.svg') }}" alt="" class="w-9 h-9" width="36" height="36">
-                <span class="font-extrabold text-navy text-lg">Pilot Academy</span>
+        <div class="max-w-6xl mx-auto px-4 sm:px-5 h-16 flex items-center justify-between gap-2">
+            <a href="{{ route('academy.home') }}" class="flex min-w-0 sm:shrink-0 items-center">
+                {{-- The same PILOT ACADEMY lockup as the admin panel, at the same
+                     1.75rem, so both sides of the academy read as one product.
+                     It replaced the mark plus HTML text on 2026-09-14 at the
+                     owner's request. The stacked "ACADEMY" is small at this
+                     height; the alt text and page titles carry the name for
+                     anyone who cannot read it. About 89px wide — narrower than
+                     the mark and text were, which gives the header room back. --}}
+                {{-- object-fit keeps the lockup's proportions when a narrow phone
+                     (360px, a Spanish guest header) squeezes its width: it scales
+                     down instead of being squashed. Inline, as object-contain is
+                     not relied on from the committed CSS bundle. --}}
+                <img src="{{ asset('img/pilot-logo.png') }}" alt="Pilot Academy"
+                     class="h-7 w-auto max-w-full flex-none" width="89" height="28"
+                     style="object-fit: contain; object-position: left center;">
             </a>
-            <div class="flex items-center gap-3">
+            <div class="flex flex-none sm:flex-initial sm:min-w-0 items-center gap-0.5 sm:gap-3">
+                {{-- Help, for everyone: anonymous visitors take lessons too.
+                     Icon-only below sm: like Certificates — the header has no
+                     room for another word on a 375px phone. --}}
+                <a href="{{ route('academy.help') }}"
+                   class="flex flex-none items-center gap-2 h-11 px-1 sm:px-2 rounded-lg text-sm text-slate-600 hover:text-brand hover:bg-slate-50 active:bg-slate-100 font-medium"
+                   aria-label="{{ __t('nav.help') }}">
+                    <span aria-hidden="true" class="w-6 h-6 rounded-full border border-slate-300 text-xs font-bold flex items-center justify-center">?</span>
+                    <span class="hidden sm:block">{{ __t('nav.help') }}</span>
+                </a>
                 @auth
-                    @php($name = auth()->user()->name)
+                    @php
+                        $account = auth()->user();
+                        $initials = collect(preg_split('/\s+/', trim($account->name)))
+                            ->filter()
+                            ->take(2)
+                            ->map(fn ($part) => mb_strtoupper(mb_substr($part, 0, 1)))
+                            ->implode('');
+                    @endphp
                     {{-- Certificates has to stay reachable on a phone: the word
                          alone overflows the header below sm:, so the 🎓 used for
                          certificates elsewhere in the academy carries it there and
@@ -134,27 +147,104 @@
                          the icon on desktop would silently do nothing. Every class
                          here was checked against public/build/assets/app-*.css. --}}
                     <a href="{{ route('certificates.index') }}"
-                       class="flex items-center gap-2 h-11 px-2 rounded-lg text-sm text-slate-600 hover:text-brand hover:bg-slate-50 active:bg-slate-100 font-medium"
-                       aria-label="My certificates">
+                       class="flex flex-none items-center gap-2 h-11 px-2 rounded-lg text-sm text-slate-600 hover:text-brand hover:bg-slate-50 active:bg-slate-100 font-medium"
+                       aria-label="{{ __t('nav.certificates') }}">
                         <span aria-hidden="true">🎓</span>
-                        <span class="hidden sm:block">Certificates</span>
+                        <span class="hidden sm:block">{{ __t('nav.certificates') }}</span>
                     </a>
-                    <span class="hidden sm:block text-sm text-slate-500">{{ $name }}</span>
-                    <span class="w-9 h-9 rounded-full bg-navy text-white flex items-center justify-center font-bold text-sm">
-                        {{ strtoupper(mb_substr($name, 0, 1)) }}
-                    </span>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button class="text-sm text-slate-500 hover:text-brand font-medium">Log out</button>
-                    </form>
+                    {{-- The account menu: who you are signed in as, your profile, the
+                         panel for staff, and the way out. It replaced the name, a
+                         decorative initial and a Log out button, which also gives the
+                         header room back on a phone. A native <details>, so it works
+                         with no JavaScript; the script at the foot of the page only
+                         closes it on an outside tap or Escape. --}}
+                    <details class="relative flex-none" data-account-menu>
+                        <summary class="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-full [&::-webkit-details-marker]:hidden"
+                                 aria-label="{{ __t('academy.nav.account') }}" title="{{ $account->name }}">
+                            <span aria-hidden="true" class="flex h-9 w-9 items-center justify-center rounded-full bg-navy text-sm font-bold text-white">{{ $initials }}</span>
+                        </summary>
+
+                        <div class="absolute right-0 top-full z-30 mt-2 w-64 max-w-[calc(100vw-2rem)] rounded-xl border border-slate-200 bg-white p-1 shadow-lg">
+                            <div class="border-b border-slate-100 px-3 py-2.5">
+                                <p class="truncate text-sm font-bold text-navy">{{ $account->name }}</p>
+                                <p class="truncate text-xs text-slate-500">{{ $account->email }}</p>
+                            </div>
+
+                            <a href="{{ route('academy.profile') }}"
+                               class="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-brand">
+                                {{ __t('academy.nav.profile') }}
+                            </a>
+
+                            <a href="{{ route('certificates.index') }}"
+                               class="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-brand">
+                                {{ __t('nav.certificates') }}
+                            </a>
+
+                            @if($account->isAdmin())
+                                {{-- A full page load: the panel is a different app. --}}
+                                <a href="{{ url('/admin') }}"
+                                   class="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-brand">
+                                    {{ __t('academy.nav.admin_panel') }}
+                                </a>
+                            @endif
+
+                            <form method="POST" action="{{ route('logout') }}" class="mt-1 border-t border-slate-100 pt-1">
+                                @csrf
+                                <button type="submit"
+                                        class="flex min-h-11 w-full items-center rounded-lg px-3 text-left text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-brand">
+                                    {{ __t('nav.logout') }}
+                                </button>
+                            </form>
+                        </div>
+                    </details>
                 @else
                     @php($name = session('student_name'))
                     @if($name)
-                        <span class="hidden sm:block text-sm text-slate-500">{{ $name }}</span>
+                        <span class="hidden sm:block min-w-0 truncate text-sm text-slate-500">{{ $name }}</span>
                     @endif
-                    <a href="{{ route('login') }}" class="text-sm text-slate-600 hover:text-brand font-medium">Log in</a>
-                    <a href="{{ route('register') }}" class="text-sm font-semibold rounded-lg bg-brand text-white px-3.5 py-1.5 hover:bg-blue-700">Register</a>
+                    <a href="{{ route('login') }}" class="flex flex-none items-center h-11 px-1 sm:px-1.5 whitespace-nowrap text-sm text-slate-600 hover:text-brand font-medium">{{ __t('auth.login') }}</a>
+                    <a href="{{ route('register') }}" class="flex flex-none items-center h-10 whitespace-nowrap text-sm font-semibold rounded-lg bg-brand text-white px-3 sm:px-3.5 hover:bg-blue-700">{{ __t('auth.register') }}</a>
                 @endauth
+                {{-- The language button: last in the header, so it sits in the top
+                     right corner at every width, as it does in the admin panel. A
+                     globe and the current code, like the panel's, rather than a
+                     select of every name, which only fitted from tablet up. Below
+                     sm: just the code, because a guest header in Spanish or Russian
+                     has no room for the globe as well. A native details element
+                     like the account menu; the script at the foot closes it. No
+                     block PHP here: the inline one above would swallow it. --}}
+                @if(($locale['available'] ?? collect())->count() > 1)
+                    <details class="relative flex-none" data-language-menu>
+                        <summary class="flex h-11 cursor-pointer list-none items-center text-sm font-semibold text-slate-600 hover:text-brand [&::-webkit-details-marker]:hidden"
+                                 aria-label="{{ __t('locale.choose') }}" title="{{ __t('locale.choose') }}">
+                            {{-- An outlined pill inside the 44px tap area, so a lone "ES" on
+                                 a phone reads as a button, not stray text beside Register.
+                                 The minimum width is inline: no utility for it is in the
+                                 committed CSS bundle. --}}
+                            <span class="flex h-9 items-center justify-center gap-1 rounded-lg border border-slate-200 bg-white px-1 sm:px-2 hover:bg-slate-50" style="min-width: 2.25rem">
+                                <svg class="hidden sm:block w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m10.5 21 5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 0 1 6-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 0 1-3.827-5.802" />
+                                </svg>
+                                <span>{{ strtoupper($locale['current'] ?? app()->getLocale()) }}</span>
+                            </span>
+                        </summary>
+
+                        <form method="POST" action="{{ route('locale.switch') }}"
+                              class="absolute right-0 top-full z-30 mt-2 w-48 max-w-[calc(100vw-2rem)] rounded-xl border border-slate-200 bg-white p-1 shadow-lg">
+                            @csrf
+                            @foreach($locale['available'] as $language)
+                                {{-- In its own language, so a speaker finds theirs without
+                                     knowing the English name. --}}
+                                <button type="submit" name="locale" value="{{ $language->code }}" lang="{{ $language->code }}"
+                                        @if($language->code === ($locale['current'] ?? app()->getLocale())) aria-current="true" @endif
+                                        class="flex min-h-11 w-full items-center justify-between rounded-lg px-3 text-left text-sm {{ $language->code === ($locale['current'] ?? app()->getLocale()) ? 'font-semibold text-navy bg-slate-100' : 'font-medium text-slate-700 hover:bg-slate-50 hover:text-brand' }}">
+                                    <span>{{ $language->native_name }}</span>
+                                    <span class="text-xs uppercase text-slate-400">{{ $language->code }}</span>
+                                </button>
+                            @endforeach
+                        </form>
+                    </details>
+                @endif
             </div>
         </div>
     </header>
@@ -164,7 +254,45 @@
     </main>
 
     <footer class="max-w-6xl mx-auto px-5 py-10 text-center text-sm text-slate-400">
-        Pilot Academy · internal training
+        {{-- Every language again at the foot of the page, spelled out — a second
+             way in for anyone who scrolls rather than looks up. The button in
+             the header's top right corner is the main one. --}}
+        @if(($locale['available'] ?? collect())->count() > 1)
+            <form method="POST" action="{{ route('locale.switch') }}" class="mb-4 flex flex-wrap items-center justify-center gap-1" aria-label="{{ __t('locale.choose') }}">
+                @csrf
+                @foreach($locale['available'] as $language)
+                    <button type="submit" name="locale" value="{{ $language->code }}" lang="{{ $language->code }}"
+                            @if($language->code === ($locale['current'] ?? app()->getLocale())) aria-current="true" @endif
+                            class="inline-flex items-center min-h-11 px-3 rounded-lg {{ $language->code === ($locale['current'] ?? app()->getLocale()) ? 'font-semibold text-navy bg-slate-100' : 'text-slate-500 hover:text-brand hover:bg-slate-50' }}">
+                        {{ $language->native_name }}
+                    </button>
+                @endforeach
+            </form>
+        @endif
+        Pilot Academy · {{ __t('footer.internal_training') }} ·
+        <a href="{{ route('academy.help') }}" class="hover:text-brand">{{ __t('nav.help') }}</a>
     </footer>
+
+    {{-- Closes the account and language menus on a tap outside them or on
+         Escape. They work without this — they just stay open until toggled
+         again. Opening one closes the other: that tap is outside it. --}}
+    <script>
+        var headerMenus = 'details[data-account-menu][open], details[data-language-menu][open]';
+
+        document.addEventListener('click', function (event) {
+            document.querySelectorAll(headerMenus).forEach(function (menu) {
+                if (! menu.contains(event.target)) {
+                    menu.removeAttribute('open');
+                }
+            });
+        });
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                document.querySelectorAll(headerMenus).forEach(function (menu) {
+                    menu.removeAttribute('open');
+                });
+            }
+        });
+    </script>
 </body>
 </html>

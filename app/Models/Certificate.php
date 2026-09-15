@@ -46,7 +46,7 @@ class Certificate extends Model
 
     public function statusLabel(): string
     {
-        return $this->isValid() ? 'Valid' : 'Revoked';
+        return $this->isValid() ? __t('labels.certificate.valid') : __t('labels.certificate.revoked');
     }
 
     /** Public verification URL for this certificate. */

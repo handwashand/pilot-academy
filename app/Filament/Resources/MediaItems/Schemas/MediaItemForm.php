@@ -13,13 +13,13 @@ class MediaItemForm
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->label('Name')
+                    ->label(__t('admin_common.name'))
                     ->required()
                     ->maxLength(255)
-                    ->helperText('A label to find this image later (e.g. "Map screenshot").'),
+                    ->helperText(__t('admin_library.media.name_help')),
 
                 FileUpload::make('path')
-                    ->label('Image')
+                    ->label(__t('admin_library.media.image'))
                     ->image()
                     ->imageEditor()
                     ->imageEditorAspectRatios(['16:9', '4:3', '1:1', null])

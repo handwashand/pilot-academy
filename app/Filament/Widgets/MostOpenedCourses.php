@@ -18,11 +18,17 @@ class MostOpenedCourses extends ChartWidget
 
     protected static ?int $sort = 6;
 
-    protected ?string $heading = 'Most opened courses';
-
-    protected ?string $description = 'Times students opened each course in the last 90 days.';
-
     private const DAYS = 90;
+
+    public function getHeading(): ?string
+    {
+        return __t('admin_widgets.opened.heading');
+    }
+
+    public function getDescription(): ?string
+    {
+        return __t('admin_widgets.opened.description', ['days' => self::DAYS]);
+    }
 
     private const TOP = 8;
 
@@ -49,7 +55,7 @@ class MostOpenedCourses extends ChartWidget
 
         return [
             'datasets' => [[
-                'label' => 'Times opened',
+                'label' => __t('admin_widgets.opened.times_opened'),
                 'data' => $opens->values()->all(),
                 'backgroundColor' => '#7c3aed',
             ]],

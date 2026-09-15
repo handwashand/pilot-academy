@@ -6,6 +6,7 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,9 +18,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 
-#[Fillable(['name', 'certificate_name', 'email', 'password', 'company_id', 'role', 'login_token'])]
+#[Fillable(['name', 'certificate_name', 'email', 'password', 'company_id', 'role', 'login_token', 'locale'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser, HasLocalePreference
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
@@ -38,6 +39,10 @@ class User extends Authenticatable implements FilamentUser
         self::ROLE_CREATOR => 'Creator',
         self::ROLE_LEARNER => 'Learner',
     ];
+
+    public const PERMISSION_LANGUAGES_MANAGE = 'languages.manage';
+
+    public const PERMISSION_TRANSLATIONS_MANAGE = 'translations.manage';
 
     /** New accounts are partners until an admin says otherwise. */
     protected $attributes = [
@@ -68,9 +73,32 @@ class User extends Authenticatable implements FilamentUser
         return $this->role === self::ROLE_LEARNER;
     }
 
+    /** @return array<string, string> The roles in the reader's language (lang/{code}/labels.php). */
+    public static function roleLabels(): array
+    {
+        return collect(self::ROLE_LABELS)
+            ->mapWithKeys(fn (string $english, string $role): array => [$role => __t("labels.role.{$role}")])
+            ->all();
+    }
+
     public function roleLabel(): string
     {
-        return self::ROLE_LABELS[$this->role] ?? $this->role;
+        return self::roleLabels()[$this->role] ?? $this->role;
+    }
+
+    public function preferredLocale(): ?string
+    {
+        return $this->locale;
+    }
+
+    public function hasPermission(string $permission): bool
+    {
+        return $this->permissions()->where('permission', $permission)->exists();
+    }
+
+    public function permissions(): HasMany
+    {
+        return $this->hasMany(UserPermission::class);
     }
 
     /** Everyone who takes courses — the only people who belong in reports. */
@@ -182,6 +210,31 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
+     * Does this person know their password? False for a student who joined by
+     * invite link: they were given a random one and sign in with their personal
+     * link, so the profile offers "Set a password" instead of asking for it.
+     */
+    public function hasOwnPassword(): bool
+    {
+        return $this->password_set_at !== null;
+    }
+
+    /**
+     * Any password saved through the normal paths — registering, an admin
+     * setting one, the profile pages — is one somebody chose, so it is stamped.
+     * The invite-link join is the exception and says so by setting
+     * password_set_at to null explicitly, which this leaves alone.
+     */
+    protected static function booted(): void
+    {
+        static::saving(function (User $user): void {
+            if ($user->isDirty('password') && ! $user->isDirty('password_set_at')) {
+                $user->password_set_at = now();
+            }
+        });
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -191,6 +244,7 @@ class User extends Authenticatable implements FilamentUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'password_set_at' => 'datetime',
             'last_login_at' => 'datetime',
         ];
     }

@@ -1,0 +1,67 @@
+<?php
+
+/*
+ * Words several admin screens share, and the Translate button on courses and
+ * lessons. Keys mirror in every language (see StudentSiteTranslationTest).
+ */
+
+return [
+    'title' => 'Title',
+    'slug' => 'Slug',
+    'status' => 'Status',
+    'level' => 'Level',
+    'type' => 'Type',
+    'course' => 'Course',
+    'courses' => 'Courses',
+    'lesson' => 'Lesson',
+    'product' => 'Product',
+    'student' => 'Student',
+    'partner' => 'Partner',
+    'name' => 'Name',
+    'email' => 'Email',
+    'company' => 'Company',
+    'products' => 'Products',
+    'description' => 'Description',
+    'score' => 'Score',
+    'attempts' => 'Attempts',
+    'submitted' => 'Submitted',
+    'issued' => 'Issued',
+    'number' => 'Number',
+    'download' => 'Download',
+    'added' => 'Added',
+    'never' => 'never',
+    'close' => 'Close',
+    'when' => 'When',
+    'updated' => 'Updated',
+    'all' => 'All',
+    'question' => 'Question',
+    'answer' => 'Answer',
+    'correct' => 'Correct',
+    'answer_options' => 'Answer options',
+    'add_answer_option' => 'Add answer option',
+    'max_attempts' => 'Max attempts',
+    'duration_minutes' => 'Duration (minutes)',
+    'attention' => 'Attention',
+    'needs_attention' => 'Needs attention',
+    'problems' => ':count problem|:count problems',
+    'publish' => 'Publish',
+    'unpublish' => 'Unpublish',
+    'fix_before_publishing' => 'Fix these before publishing',
+    'visible_now' => 'Students can see it now.',
+    'draft_again' => 'It is a draft again and hidden from students.',
+
+    'translate' => [
+        'button' => 'Translate',
+        'heading' => 'Translations',
+        'description' => 'Written in :language. Add the same text in other languages; leave a box empty to show students the original.',
+        'submit' => 'Save translations',
+        'saved' => 'Translations saved',
+        'fields' => [
+            'title' => 'Title',
+            'description' => 'Description',
+            'summary' => 'Short summary',
+            'content' => 'Lesson text',
+            'transcript' => 'Video transcript',
+        ],
+    ],
+];

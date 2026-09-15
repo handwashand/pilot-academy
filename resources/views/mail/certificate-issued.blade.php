@@ -3,20 +3,18 @@
      load a relative path. --}}
 <img src="{{ asset('img/pilot-logo.png') }}" alt="Pilot Academy" width="180" style="width:180px;max-width:180px;height:auto;margin-bottom:16px;">
 
-# Congratulations, {{ $certificate->name }}!
+# {{ __t('mail.certificate_issued.heading', ['name' => $certificate->name]) }}
 
-You passed the final quiz for **{{ $certificate->course->title }}** with a score of
-**{{ $certificate->score_percent }}%** and earned your certificate.
+{{ __t('mail.certificate_issued.passed', ['course' => $courseTitle, 'score' => $certificate->score_percent]) }}
 
-Your certificate is attached to this email as a PDF. Its unique number is
-**{{ $certificate->number }}**.
+{{ __t('mail.certificate_issued.attached', ['number' => $certificate->number]) }}
 
 @component('mail::button', ['url' => $certificate->verifyUrl()])
-Verify certificate
+{{ __t('mail.certificate_issued.button') }}
 @endcomponent
 
-Anyone can confirm this certificate is genuine at the link above.
+{{ __t('mail.certificate_issued.anyone') }}
 
-Thanks,<br>
+{{ __t('mail.common.thanks') }}<br>
 Pilot Academy
 @endcomponent

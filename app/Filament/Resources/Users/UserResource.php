@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Users;
 
+use App\Filament\Resources\Concerns\HasSentenceCaseLabels;
 use App\Filament\Resources\Users\Pages\CreateUser;
 use App\Filament\Resources\Users\Pages\EditUser;
 use App\Filament\Resources\Users\Pages\ListUsers;
@@ -14,12 +15,37 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use UnitEnum;
 
 class UserResource extends Resource
 {
+    use HasSentenceCaseLabels;
+
     protected static ?string $model = User::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
+
+    protected static ?int $navigationSort = 1;
+
+    public static function getNavigationGroup(): string|UnitEnum|null
+    {
+        return __t('admin_nav.groups.people');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __t('admin_nav.users.nav');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __t('admin_nav.users.one');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __t('admin_nav.users.many');
+    }
 
     public static function getEloquentQuery(): Builder
     {

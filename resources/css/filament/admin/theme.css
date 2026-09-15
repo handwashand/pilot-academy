@@ -16,6 +16,8 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 
 @source '../../../../app/Filament/**/*.php';
+/* The edit-page "Students hit N problems here" line is built in an Action. */
+@source '../../../../app/Actions/**/*.php';
 @source '../../../../resources/views/filament/**/*.blade.php';
 @source '../../../../vendor/filament/**/*.blade.php';
 

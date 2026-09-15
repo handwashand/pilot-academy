@@ -39,85 +39,86 @@ class StalledLearners extends TableWidget
     public function table(Table $table): Table
     {
         return $table
-            ->heading('Students who have gone quiet')
-            ->description('Started a course, nothing completed in the last '.self::QUIET_DAYS.' days, no certificate yet.')
+            ->heading(__t('admin_widgets.stalled.heading'))
+            ->description(__t('admin_widgets.stalled.description', ['days' => self::QUIET_DAYS]))
             ->query($this->stalledLearners())
             ->defaultSort('last_completed_at')
             ->columns([
                 TextColumn::make('name')
+                    ->label(__t('admin_common.name'))
                     ->searchable()
                     ->weight('bold')
                     ->description(fn (User $record): ?string => $record->email),
 
                 TextColumn::make('company.name')
-                    ->label('Partner')
+                    ->label(__t('admin_common.partner'))
                     ->badge()
                     ->placeholder('—'),
 
                 TextColumn::make('completed_lessons_count')
-                    ->label('Lessons done')
+                    ->label(__t('admin_widgets.stalled.lessons_done'))
                     ->badge()
                     ->color('success'),
 
                 TextColumn::make('last_completed_at')
-                    ->label('Last activity')
+                    ->label(__t('admin_widgets.stalled.last_activity'))
                     ->dateTime('d M Y')
                     ->since()
                     ->placeholder('—')
                     ->sortable(),
 
                 TextColumn::make('last_reminded_at')
-                    ->label('Reminded')
+                    ->label(__t('admin_widgets.stalled.reminded'))
                     ->dateTime('d M Y')
                     ->since()
-                    ->placeholder('never')
+                    ->placeholder(__t('admin_common.never'))
                     ->color(fn ($state): string => $state ? 'gray' : 'warning')
                     ->sortable(),
             ])
             ->recordActions([
                 Action::make('remind')
-                    ->label('Send reminder')
+                    ->label(__t('admin_widgets.stalled.remind'))
                     ->icon('heroicon-o-envelope')
                     ->color('warning')
                     ->requiresConfirmation()
-                    ->modalHeading('Send a reminder')
-                    ->modalDescription(fn (User $record): string => 'Emails '.$record->email.' a personal link straight back to their next lesson.')
-                    ->modalSubmitActionLabel('Send it')
+                    ->modalHeading(__t('admin_widgets.stalled.remind_heading'))
+                    ->modalDescription(fn (User $record): string => __t('admin_widgets.stalled.remind_description', ['email' => $record->email]))
+                    ->modalSubmitActionLabel(__t('admin_widgets.stalled.send_it'))
                     // Hidden rather than disabled once sent: a greyed-out button
                     // invites clicking, and there is nothing to click for a week.
                     ->visible(fn (User $record): bool => app(RemindStudent::class)->canRemind($record))
                     ->action(function (User $record, RemindStudent $remind): void {
                         $remind->handle($record)
-                            ? Notification::make()->title('Reminder sent to '.$record->name)->success()->send()
-                            : Notification::make()->title('Not sent')->body('Already reminded in the last '.RemindStudent::COOLDOWN_DAYS.' days.')->warning()->send();
+                            ? Notification::make()->title(__t('admin_widgets.stalled.sent', ['name' => $record->name]))->success()->send()
+                            : Notification::make()->title(__t('admin_widgets.stalled.not_sent'))->body(__t('admin_widgets.stalled.cooldown', ['days' => RemindStudent::COOLDOWN_DAYS]))->warning()->send();
                     }),
 
                 Action::make('open')
-                    ->label('Open')
+                    ->label(__t('admin_widgets.stalled.open'))
                     ->icon('heroicon-o-arrow-top-right-on-square')
                     ->url(fn (User $record): string => UserResource::getUrl('edit', ['record' => $record])),
             ])
             ->toolbarActions([
                 BulkAction::make('remind')
-                    ->label('Send reminders')
+                    ->label(__t('admin_widgets.stalled.remind_all'))
                     ->icon('heroicon-o-envelope')
                     ->color('warning')
                     ->requiresConfirmation()
-                    ->modalDescription('Each student gets a personal link back to their next lesson. Anyone reminded in the last '.RemindStudent::COOLDOWN_DAYS.' days is skipped.')
+                    ->modalDescription(__t('admin_widgets.stalled.remind_all_description', ['days' => RemindStudent::COOLDOWN_DAYS]))
                     ->deselectRecordsAfterCompletion()
                     ->action(function (Collection $records, RemindStudent $remind): void {
                         $sent = $records->filter(fn (User $student): bool => $remind->handle($student));
                         $skipped = $records->count() - $sent->count();
 
                         if ($sent->isNotEmpty()) {
-                            Notification::make()->title($sent->count().' reminder(s) sent')->success()->send();
+                            Notification::make()->title(__tc('admin_widgets.stalled.sent_count', $sent->count()))->success()->send();
                         }
 
                         // Say who was left out rather than quietly doing less.
                         if ($skipped > 0) {
                             Notification::make()
-                                ->title($skipped.' skipped')
-                                ->body('Already reminded within the last '.RemindStudent::COOLDOWN_DAYS.' days.')
+                                ->title(__t('admin_widgets.stalled.skipped_count', ['count' => $skipped]))
+                                ->body(__t('admin_widgets.stalled.cooldown', ['days' => RemindStudent::COOLDOWN_DAYS]))
                                 ->warning()
                                 ->send();
                         }
@@ -126,8 +127,8 @@ class StalledLearners extends TableWidget
             // A dashboard panel, not a report — keep it glanceable.
             ->paginated([5, 10, 25])
             ->defaultPaginationPageOption(5)
-            ->emptyStateHeading('Nobody has gone quiet')
-            ->emptyStateDescription('Every student who started a course is either still working through it or has finished.');
+            ->emptyStateHeading(__t('admin_widgets.stalled.empty'))
+            ->emptyStateDescription(__t('admin_widgets.stalled.empty_description'));
     }
 
     private function stalledLearners()

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Courses;
 
+use App\Filament\Resources\Concerns\HasSentenceCaseLabels;
 use App\Filament\Resources\Courses\Pages\CreateCourse;
 use App\Filament\Resources\Courses\Pages\EditCourse;
 use App\Filament\Resources\Courses\Pages\ListCourses;
@@ -14,12 +15,37 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use UnitEnum;
 
 class CourseResource extends Resource
 {
+    use HasSentenceCaseLabels;
+
     protected static ?string $model = Course::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static ?int $navigationSort = 1;
+
+    public static function getNavigationGroup(): string|UnitEnum|null
+    {
+        return __t('admin_nav.groups.content');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __t('admin_nav.courses.nav');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __t('admin_nav.courses.one');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __t('admin_nav.courses.many');
+    }
 
     /**
      * Creators only ever see their own products' courses — enforced here, on
@@ -55,7 +81,7 @@ class CourseResource extends Resource
 
     public static function getNavigationBadgeTooltip(): ?string
     {
-        return 'Courses still in draft — students cannot see them yet';
+        return __t('admin_nav.courses.badge');
     }
 
     protected static ?string $recordTitleAttribute = 'title';
@@ -70,8 +96,8 @@ class CourseResource extends Resource
     public static function getGlobalSearchResultDetails(mixed $record): array
     {
         return [
-            'Status' => $record->statusLabel(),
-            'Product' => $record->product?->name ?? '—',
+            __t('admin_common.status') => $record->statusLabel(),
+            __t('admin_common.product') => $record->product?->name ?? '—',
         ];
     }
 

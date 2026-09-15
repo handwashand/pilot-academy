@@ -19,6 +19,14 @@ class Question extends Model
         self::TYPE_MULTIPLE => 'Multiple select',
     ];
 
+    /** @return array<string, string> The types in the reader's language (lang/{code}/labels.php). */
+    public static function typeLabels(): array
+    {
+        return collect(self::TYPE_LABELS)
+            ->mapWithKeys(fn (string $english, string $type): array => [$type => __t("labels.question_type.{$type}")])
+            ->all();
+    }
+
     protected $fillable = [
         'lesson_id',
         'prompt',
@@ -29,6 +37,18 @@ class Question extends Model
     public function lesson(): BelongsTo
     {
         return $this->belongsTo(Lesson::class);
+    }
+
+    /** Tell the owners if a change leaves the course broken — see Course::booted(). */
+    protected static function booted(): void
+    {
+        $check = function (Question $question): void {
+            // Every course the lesson is in — it can be shared.
+            Lesson::notifyOwnersOf($question->lesson_id);
+        };
+
+        static::saved($check);
+        static::deleted($check);
     }
 
     /**

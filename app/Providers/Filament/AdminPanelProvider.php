@@ -2,14 +2,19 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\AdminGuide;
+use App\Http\Middleware\SetLocale;
+use Filament\Actions\Action;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Support\Icons\Heroicon;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -27,6 +32,25 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            // "Profile" in the account menu: your own name, email and password.
+            // Creators have no access to Users, so without this they had no
+            // way to change their own password at all. Not the simple layout,
+            // so the page keeps the sidebar like every other panel screen.
+            ->profile(isSimple: false)
+            // The guide in the account menu as well as under Docs: someone who
+            // is stuck reaches for the menu with their own name on it.
+            ->userMenuItems([
+                'guide' => Action::make('guide')
+                    ->label(fn (): string => __t('admin_nav.account.guide'))
+                    ->icon(Heroicon::OutlinedBookOpen)
+                    ->url(fn (): string => AdminGuide::getUrl()),
+                // The way back to what students see, to check a change as a
+                // student would meet it.
+                'studentSite' => Action::make('studentSite')
+                    ->label(fn (): string => __t('admin_nav.account.student_site'))
+                    ->icon(Heroicon::OutlinedAcademicCap)
+                    ->url(fn (): string => route('academy.home')),
+            ])
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -53,12 +77,25 @@ class AdminPanelProvider extends PanelProvider
             // sidebar size it sat below the 24px "Sign in" heading in the visual
             // hierarchy — the utility label out-ranking the brand.
             ->brandLogoHeight(fn (): string => request()->routeIs('filament.*.auth.*') ? '3rem' : '1.75rem')
-            ->favicon(asset('img/pilot-mark.svg'))
+            ->favicon(asset('img/pilot-mark.svg').'?v='.config('app.version'))
+            // The bell, top right. First use: telling a course's owner when a
+            // change leaves it broken for students (App\Actions\NotifyContentOwners).
+            ->databaseNotifications()
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
                 Dashboard::class,
             ])
+            // The sidebar is grouped by job — build the training, look after the
+            // people taking it, see what came of it, read how it all works —
+            // and in that order. Items declare their group by name; this fixes
+            // the order the groups appear in. Labels are closures: they are read
+            // per request, after SetLocale, so the menu is in the admin's language
+            // — each page's getNavigationGroup() returns the same translation.
+            ->navigationGroups(collect(['content', 'people', 'results', 'docs', 'settings'])
+                ->map(fn (string $group): NavigationGroup => NavigationGroup::make()
+                    ->label(fn (): string => __t("admin_nav.groups.{$group}")))
+                ->all())
             // The dashboard shows the academy, not the panel. Filament's
             // account and version cards are deliberately left off: signing out
             // belongs in the profile menu, top right, where people look for it.
@@ -68,6 +105,18 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::SIDEBAR_FOOTER,
                 fn (): string => view('filament.sidebar-version')->render(),
+            )
+            // What's new, one click from any page: an icon beside search.
+            ->renderHook(
+                PanelsRenderHook::GLOBAL_SEARCH_AFTER,
+                fn (): string => view('filament.topbar-whats-new')->render(),
+            )
+            // The language button, at the far right past the account menu.
+            // USER_MENU_AFTER stays inside the top bar's control cluster;
+            // TOPBAR_END would sit beside it and shift the whole bar.
+            ->renderHook(
+                PanelsRenderHook::USER_MENU_AFTER,
+                fn (): string => view('filament.topbar-language-switcher')->render(),
             )
             ->sidebarCollapsibleOnDesktop()
             ->maxContentWidth('full')
@@ -80,6 +129,7 @@ class AdminPanelProvider extends PanelProvider
                 ShareErrorsFromSession::class,
                 PreventRequestForgery::class,
                 SubstituteBindings::class,
+                SetLocale::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])

@@ -34,9 +34,9 @@ trait HasDuration
         $rest = $minutes % 60;
 
         return match (true) {
-            $hours === 0 => "{$minutes} min",
-            $rest === 0 => "{$hours} hr",
-            default => "{$hours} hr {$rest} min",
+            $hours === 0 => __t('academy.common.duration.minutes', ['minutes' => $minutes]),
+            $rest === 0 => __t('academy.common.duration.hours', ['hours' => $hours]),
+            default => __t('academy.common.duration.hours_minutes', ['hours' => $hours, 'minutes' => $rest]),
         };
     }
 }

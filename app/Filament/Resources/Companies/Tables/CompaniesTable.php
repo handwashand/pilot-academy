@@ -17,27 +17,30 @@ class CompaniesTable
             ->defaultSort('name')
             ->columns([
                 TextColumn::make('name')
+                    ->label(__t('admin_common.name'))
                     ->searchable()
                     ->sortable()
                     ->weight('bold'),
 
                 TextColumn::make('region')
+                    ->label(__t('admin_people.companies.region'))
                     ->badge()
                     ->placeholder('—'),
 
                 TextColumn::make('industry')
+                    ->label(__t('admin_people.companies.industry'))
                     ->placeholder('—'),
 
                 TextColumn::make('students_count')
-                    ->label('Members')
+                    ->label(__t('admin_people.companies.members'))
                     ->counts('students')
                     ->badge(),
 
                 TextColumn::make('certified')
-                    ->label('Certified')
+                    ->label(__t('admin_people.companies.certified'))
                     ->badge()
                     ->color('success')
-                    ->tooltip('Students with at least one valid certificate, out of total members.')
+                    ->tooltip(__t('admin_people.companies.certified_tip'))
                     ->getStateUsing(function (Company $record): string {
                         $certified = $record->students()
                             ->whereHas('certificates', fn ($q) => $q->whereNull('revoked_at'))

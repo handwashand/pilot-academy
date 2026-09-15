@@ -34,28 +34,28 @@ class HardestLessons extends TableWidget
     public function table(Table $table): Table
     {
         return $table
-            ->heading('Lessons students struggle with')
-            ->description('Graded attempts by students, worst pass rate first. A hard lesson is often an unclear question.')
+            ->heading(__t('admin_widgets.hardest.heading'))
+            ->description(__t('admin_widgets.hardest.description'))
             ->query($this->hardestLessons())
             ->defaultSort('fail_rate', 'desc')
             ->columns([
                 TextColumn::make('title')
-                    ->label('Lesson')
+                    ->label(__t('admin_common.lesson'))
                     ->weight('bold')
                     ->description(fn (Lesson $record): ?string => $record->course?->title),
 
                 TextColumn::make('attempts')
-                    ->label('Attempts')
+                    ->label(__t('admin_common.attempts'))
                     ->badge()
                     ->color('gray'),
 
                 TextColumn::make('failed')
-                    ->label('Failed')
+                    ->label(__t('admin_widgets.hardest.failed'))
                     ->badge()
                     ->color('danger'),
 
                 TextColumn::make('fail_rate')
-                    ->label('Fail rate')
+                    ->label(__t('admin_widgets.hardest.fail_rate'))
                     ->badge()
                     ->formatStateUsing(fn ($state): string => round((float) $state).'%')
                     ->color(fn ($state): string => match (true) {
@@ -67,14 +67,14 @@ class HardestLessons extends TableWidget
             ])
             ->recordActions([
                 Action::make('open')
-                    ->label('Review questions')
+                    ->label(__t('admin_widgets.hardest.review'))
                     ->icon('heroicon-o-arrow-top-right-on-square')
                     ->url(fn (Lesson $record): string => LessonResource::getUrl('edit', ['record' => $record])),
             ])
             ->paginated([5, 10, 25])
             ->defaultPaginationPageOption(5)
-            ->emptyStateHeading('No struggles to report')
-            ->emptyStateDescription('Once students have made a few graded attempts, the toughest lessons show up here.');
+            ->emptyStateHeading(__t('admin_widgets.hardest.empty'))
+            ->emptyStateDescription(__t('admin_widgets.hardest.empty_description'));
     }
 
     private function hardestLessons()

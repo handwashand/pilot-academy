@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Products;
 
+use App\Filament\Resources\Concerns\HasSentenceCaseLabels;
 use App\Filament\Resources\Products\Pages\CreateProduct;
 use App\Filament\Resources\Products\Pages\EditProduct;
 use App\Filament\Resources\Products\Pages\ListProducts;
@@ -13,12 +14,37 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class ProductResource extends Resource
 {
+    use HasSentenceCaseLabels;
+
     protected static ?string $model = Product::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCube;
+
+    protected static ?int $navigationSort = 3;
+
+    public static function getNavigationGroup(): string|UnitEnum|null
+    {
+        return __t('admin_nav.groups.content');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __t('admin_nav.products.nav');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __t('admin_nav.products.one');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __t('admin_nav.products.many');
+    }
 
     protected static ?string $recordTitleAttribute = 'name';
 

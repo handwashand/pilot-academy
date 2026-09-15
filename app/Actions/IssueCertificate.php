@@ -7,6 +7,7 @@ use App\Models\Certificate;
 use App\Models\Course;
 use App\Models\QuizAttempt;
 use App\Models\User;
+use App\Services\Translator;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -83,15 +84,19 @@ class IssueCertificate
             ? 'data:image/png;base64,'.base64_encode(file_get_contents($logoPath))
             : null;
 
-        $pdf = Pdf::loadView('certificates.pdf', [
+        // Printed in the student's language, whoever pressed Regenerate. The
+        // view is rendered here, so the locale has to be set around it.
+        $translator = app(Translator::class);
+
+        $output = $translator->inLocale($translator->localeFor($certificate->user), fn (): string => Pdf::loadView('certificates.pdf', [
             'certificate' => $certificate,
             'qr' => base64_encode($qrSvg),
             'background' => $background,
             'logo' => $logo,
-        ])->setPaper('a4', 'landscape');
+        ])->setPaper('a4', 'landscape')->output());
 
         $path = "certificates/{$certificate->number}.pdf";
-        Storage::disk('public')->put($path, $pdf->output());
+        Storage::disk('public')->put($path, $output);
 
         $certificate->forceFill(['pdf_path' => $path])->save();
 
