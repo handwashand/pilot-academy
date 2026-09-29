@@ -47,7 +47,7 @@ class CoursesPageTest extends TestCase
 
         $this->get(route('academy.courses'))
             ->assertOk()
-            ->assertSee('Explore courses')
+            ->assertSee('Courses')
             ->assertSee('Pilot Monitoring')
             ->assertSee('1 course')
             ->assertDontSee('Unfinished course');
@@ -86,7 +86,7 @@ class CoursesPageTest extends TestCase
         $this->withHeader('Accept-Language', 'ru-RU,ru;q=0.9')
             ->get(route('academy.courses'))
             ->assertOk()
-            ->assertSee('Обзор курсов')
+            ->assertSee('Курсы')
             ->assertSee('Любой уровень')
             ->assertDontSee('All levels');
     }

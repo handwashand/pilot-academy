@@ -274,7 +274,7 @@ return [
     ],
 
     'courses' => [
-        'title' => 'Explorer les cours',
+        'title' => 'Cours',
         'meta' => 'Tous les cours de Pilot Academy, avec des filtres par niveau et par public.',
         'intro' => 'Tous les cours publiés. Filtrez par niveau ou par public visé.',
         'search' => 'Rechercher',

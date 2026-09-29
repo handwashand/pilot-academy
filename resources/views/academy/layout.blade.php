@@ -125,15 +125,15 @@
                      glyph alone with the name in aria-label. Help moved to the
                      account menu and the footer to make room. --}}
                 @foreach([
-                    ['route' => route('academy.courses'), 'label' => __t('nav.courses'), 'glyph' => '&#9678;'],
-                    ['route' => route('academy.case-studies.index'), 'label' => __t('nav.case_studies'), 'glyph' => 'CS'],
-                    ['route' => route('academy.tutorials'), 'label' => __t('nav.tutorials'), 'glyph' => '&#9658;'],
-                    ['route' => route('academy.webinars'), 'label' => __t('nav.webinars'), 'glyph' => '&#9200;'],
+                    ['name' => 'courses', 'route' => route('academy.courses'), 'label' => __t('nav.courses')],
+                    ['name' => 'case_studies', 'route' => route('academy.case-studies.index'), 'label' => __t('nav.case_studies')],
+                    ['name' => 'tutorials', 'route' => route('academy.tutorials'), 'label' => __t('nav.tutorials')],
+                    ['name' => 'webinars', 'route' => route('academy.webinars'), 'label' => __t('nav.webinars')],
                 ] as $item)
                     <a href="{{ $item['route'] }}"
                        class="flex flex-none items-center gap-2 h-11 px-1 sm:px-2 rounded-lg text-sm text-slate-600 hover:text-brand hover:bg-slate-50 active:bg-slate-100 font-medium"
                        aria-label="{{ $item['label'] }}">
-                        <span aria-hidden="true" class="w-6 h-6 rounded-full border border-slate-300 text-[10px] font-bold flex items-center justify-center">{!! $item['glyph'] !!}</span>
+                        @include('academy.partials.nav-icon', ['name' => $item['name']])
                         <span class="hidden md:block">{{ $item['label'] }}</span>
                     </a>
                 @endforeach

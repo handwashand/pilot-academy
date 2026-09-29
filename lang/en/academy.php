@@ -287,7 +287,7 @@ return [
     // The case study pages. The section headings are shared with the editor's
     // form (see lang/en/admin_case_studies.php) so both read the same names.
     'courses' => [
-        'title' => 'Explore courses',
+        'title' => 'Courses',
         'meta' => 'Every Pilot Academy course, with filters for level and audience.',
         'intro' => 'Every published course. Filter by level or by who it is written for.',
         'search' => 'Search',

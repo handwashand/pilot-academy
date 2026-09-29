@@ -273,7 +273,7 @@ return [
     ],
 
     'courses' => [
-        'title' => 'Explorar cursos',
+        'title' => 'Cursos',
         'meta' => 'Todos os cursos da Pilot Academy, com filtros por nível e público.',
         'intro' => 'Todos os cursos publicados. Filtre por nível ou pelo público a que se destinam.',
         'search' => 'Pesquisar',
