@@ -18,6 +18,7 @@ Modifiez votre nom, e-mail ou mot de passe depuis le menu du compte, en haut à 
 | **Contenu → Cours** | Créer les cours, activer quiz final et certificat. |
 | **Contenu → Leçons** | Ajouter vidéo, texte et questions. |
 | **Contenu → Études de cas** | Créer, prévisualiser et publier des guides pratiques de déploiement pour les partenaires. |
+| **Contenu → Webinaires** | Programmer des sessions en direct, partager le lien pour rejoindre et ajouter l’enregistrement ensuite. |
 | **Contenu → Produits** | Produits ou modules et leurs responsables. |
 | **Contenu → Médias** | Bibliothèque d'images réutilisables. |
 | **Personnes → Utilisateurs** | Comptes, rôles, progression et certificats. |

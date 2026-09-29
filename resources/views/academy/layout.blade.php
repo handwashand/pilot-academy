@@ -119,21 +119,24 @@
                      style="object-fit: contain; object-position: left center;">
             </a>
             <div class="flex flex-none sm:flex-initial sm:min-w-0 items-center gap-0.5 sm:gap-3">
-                {{-- Help, for everyone: anonymous visitors take lessons too.
-                     Icon-only below sm: like Certificates — the header has no
-                     room for another word on a 375px phone. --}}
-                <a href="{{ route('academy.help') }}"
-                   class="flex flex-none items-center gap-2 h-11 px-1 sm:px-2 rounded-lg text-sm text-slate-600 hover:text-brand hover:bg-slate-50 active:bg-slate-100 font-medium"
-                   aria-label="{{ __t('nav.help') }}">
-                    <span aria-hidden="true" class="w-6 h-6 rounded-full border border-slate-300 text-xs font-bold flex items-center justify-center">?</span>
-                    <span class="hidden sm:block">{{ __t('nav.help') }}</span>
-                </a>
-                <a href="{{ route('academy.case-studies.index') }}"
-                   class="flex flex-none items-center gap-2 h-11 px-1 sm:px-2 rounded-lg text-sm text-slate-600 hover:text-brand hover:bg-slate-50 active:bg-slate-100 font-medium"
-                   aria-label="{{ __t('nav.case_studies') }}">
-                    <span aria-hidden="true" class="w-6 h-6 rounded-full border border-slate-300 text-[10px] font-bold flex items-center justify-center">CS</span>
-                    <span class="hidden md:block">{{ __t('nav.case_studies') }}</span>
-                </a>
+                {{-- The four things a partner comes here for. The word joins
+                     the glyph from md: up; below that the header has no room
+                     for four labels on a 375px phone, so each link is its
+                     glyph alone with the name in aria-label. Help moved to the
+                     account menu and the footer to make room. --}}
+                @foreach([
+                    ['route' => route('academy.courses'), 'label' => __t('nav.courses'), 'glyph' => '&#9678;'],
+                    ['route' => route('academy.case-studies.index'), 'label' => __t('nav.case_studies'), 'glyph' => 'CS'],
+                    ['route' => route('academy.tutorials'), 'label' => __t('nav.tutorials'), 'glyph' => '&#9658;'],
+                    ['route' => route('academy.webinars'), 'label' => __t('nav.webinars'), 'glyph' => '&#9200;'],
+                ] as $item)
+                    <a href="{{ $item['route'] }}"
+                       class="flex flex-none items-center gap-2 h-11 px-1 sm:px-2 rounded-lg text-sm text-slate-600 hover:text-brand hover:bg-slate-50 active:bg-slate-100 font-medium"
+                       aria-label="{{ $item['label'] }}">
+                        <span aria-hidden="true" class="w-6 h-6 rounded-full border border-slate-300 text-[10px] font-bold flex items-center justify-center">{!! $item['glyph'] !!}</span>
+                        <span class="hidden md:block">{{ $item['label'] }}</span>
+                    </a>
+                @endforeach
                 @auth
                     @php
                         $account = auth()->user();
@@ -184,6 +187,14 @@
                             <a href="{{ route('certificates.index') }}"
                                class="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-brand">
                                 {{ __t('nav.certificates') }}
+                            </a>
+
+                            {{-- Help left the header when the four content areas
+                                 arrived. Guests reach it from the footer, which
+                                 carries it on every page. --}}
+                            <a href="{{ route('academy.help') }}"
+                               class="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-brand">
+                                {{ __t('nav.help') }}
                             </a>
 
                             @if($account->isAdmin())

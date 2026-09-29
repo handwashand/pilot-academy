@@ -3,6 +3,7 @@
 use App\Http\Controllers\AcademyController;
 use App\Http\Controllers\Auth\StudentAuthController;
 use App\Http\Controllers\CaseStudyController;
+use App\Http\Controllers\WebinarController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\ChangelogPdfController;
 use App\Http\Controllers\FinalQuizController;
@@ -12,6 +13,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AcademyController::class, 'home'])->name('academy.home');
 Route::post('/name', [AcademyController::class, 'setName'])->name('academy.name');
+Route::get('/courses', [AcademyController::class, 'courses'])->name('academy.courses');
+Route::get('/tutorials', [AcademyController::class, 'tutorials'])->name('academy.tutorials');
+Route::get('/webinars', [WebinarController::class, 'index'])->name('academy.webinars');
+Route::get('/webinars/{webinar:slug}', [WebinarController::class, 'show'])->name('academy.webinar');
 Route::get('/search', [AcademyController::class, 'search'])->name('academy.search');
 Route::get('/help', [AcademyController::class, 'help'])->name('academy.help');
 Route::get('/case-studies', [CaseStudyController::class, 'index'])->name('academy.case-studies.index');

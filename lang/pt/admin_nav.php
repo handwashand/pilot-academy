@@ -108,6 +108,13 @@ return [
         'activity' => 'Atividade',
     ],
 
+    'webinars' => [
+        'nav' => 'Webinars',
+        'one' => 'webinar',
+        'many' => 'webinars',
+        'badge' => 'Webinars ainda em rascunho — os parceiros ainda não os veem',
+    ],
+
     'case_studies' => [
         'nav' => 'Estudos de caso',
         'one' => 'estudo de caso',

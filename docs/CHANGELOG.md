@@ -24,6 +24,20 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **A top bar with the four things partners come for.** **Courses** is a
+  catalogue of every published course, with a search box and filters for level
+  and who the course is written for. **Case Studies** is beside it, then
+  **Tutorials** — every lesson video in the academy gathered under its course —
+  and **Webinars**. The home page is unchanged: it stays your own starting
+  point, with where you left off at the top. Help moved into the account menu
+  and stays in the footer of every page.
+- **Webinars: live sessions, and the recordings afterwards.** Partners see what
+  is coming up with a **Join** button, and past sessions with **Watch the
+  recording**. Times are shown in UTC, with the zone named, so nobody joins an
+  hour late. Admins and product creators schedule them under **Content →
+  Webinars**: a session needs a date and either a join link or a recording
+  before it can be published, and it can be written in any language and
+  translated like a course.
 - **Case Studies turn proven deployments into reusable partner playbooks.**
   Partners can open **Case Studies** from the academy, search by problem or
   solution, and filter by industry, Pilot feature and difficulty. Each

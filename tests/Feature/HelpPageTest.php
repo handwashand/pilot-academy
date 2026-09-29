@@ -59,11 +59,19 @@ class HelpPageTest extends TestCase
             ->assertDontSee('This file IS the Help page');
     }
 
-    public function test_the_header_links_to_help_on_every_page(): void
+    /**
+     * Help left the header on 2026-09-29, when Courses, Case Studies,
+     * Tutorials and Webinars took those four places. It is in the footer of
+     * every page — the way a guest reaches it — and in the account menu.
+     */
+    public function test_every_page_links_to_help(): void
     {
         $this->get(route('academy.home'))
             ->assertSee('href="'.route('academy.help').'"', false)
-            ->assertSee('aria-label="Help"', false);
+            ->assertSeeInOrder(['<footer', route('academy.help')], false);
+
+        $this->get(route('academy.courses'))
+            ->assertSee('href="'.route('academy.help').'"', false);
     }
 
     public function test_help_uses_the_current_language_file_when_available(): void

@@ -286,6 +286,50 @@ return [
 
     // The case study pages. The section headings are shared with the editor's
     // form (see lang/en/admin_case_studies.php) so both read the same names.
+    'courses' => [
+        'title' => 'Explore courses',
+        'meta' => 'Every Pilot Academy course, with filters for level and audience.',
+        'intro' => 'Every published course. Filter by level or by who it is written for.',
+        'search' => 'Search',
+        'search_hint' => 'Monitoring, reports, sensors',
+        'level' => 'Level',
+        'all_levels' => 'All levels',
+        'audience' => 'Written for',
+        'all_audiences' => 'Everyone',
+        'apply' => 'Apply',
+        'clear' => 'Clear filters',
+        'count' => ':count course|:count courses',
+        'none' => 'No courses matched.',
+        'none_hint' => 'Try clearing one filter or searching for a shorter term.',
+    ],
+    'tutorials' => [
+        'title' => 'Tutorials',
+        'meta' => 'Every Pilot Academy video, gathered from the courses in one place.',
+        'intro' => 'Every lesson video in one place, under the course it belongs to. Open one to watch it and take the lesson.',
+        'videos' => ':count video|:count videos',
+        'open_course' => 'Open the course',
+        'none' => 'No videos yet.',
+        'none_hint' => 'Lessons appear here as soon as they have a video.',
+    ],
+
+    'webinars' => [
+        'title' => 'Webinars',
+        'meta' => 'Live Pilot sessions for partners, and the recordings afterwards.',
+        'intro' => 'Live sessions with the Pilot team, and the recordings when you cannot make it.',
+        'upcoming' => 'Upcoming',
+        'past' => 'Past sessions',
+        'join' => 'Join',
+        'watch' => 'Watch the recording',
+        'presented_by' => 'With :presenter',
+        'minutes' => ':count min',
+        'no_date' => 'Date to be announced',
+        'none_upcoming' => 'Nothing scheduled right now.',
+        'none_upcoming_hint' => 'Past sessions are below, and new ones appear here as they are announced.',
+        'none_past' => 'No recordings yet.',
+        'draft_notice' => 'Webinar: :status',
+        'draft_hint' => 'partners cannot see this page. You are previewing it as an editor.',
+    ],
+
     'case_studies' => [
         'title' => 'Case Studies',
         'meta' => 'Real Pilot deployment patterns for partners and integrators.',

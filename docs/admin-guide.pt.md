@@ -18,6 +18,7 @@ Altere seu nome, e-mail ou senha pelo menu da conta, no canto superior direito, 
 | **Conteúdo → Cursos** | Criar cursos e ativar teste final e certificado. |
 | **Conteúdo → Aulas** | Adicionar vídeo, texto e perguntas. |
 | **Conteúdo → Estudos de caso** | Criar, visualizar e publicar guias práticos de implantação para parceiros. |
+| **Conteúdo → Webinars** | Agendar sessões ao vivo, compartilhar o link para participar e adicionar a gravação depois. |
 | **Conteúdo → Produtos** | Produtos ou módulos e seus responsáveis. |
 | **Conteúdo → Mídias** | Biblioteca de imagens reutilizáveis. |
 | **Pessoas → Usuários** | Contas, funções, progresso e certificados. |

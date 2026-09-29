@@ -9,6 +9,12 @@ How Pilot Academy works, from your first lesson to your certificate.
 
 ## Getting started
 
+The top bar holds four things: **Courses**, every published course with a
+search box and filters for level and audience; **Case Studies**; **Tutorials**,
+every lesson video gathered under its course; and **Webinars**, live sessions
+with the Pilot team and their recordings. Help is in the menu behind your
+initials, and at the foot of every page.
+
 **You can start a lesson without an account.** Open a course from the home
 page and go. Your progress is then kept in this browser only — switch phone or
 computer and it is gone.

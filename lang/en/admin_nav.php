@@ -112,6 +112,13 @@ return [
         'activity' => 'Activity',
     ],
 
+    'webinars' => [
+        'nav' => 'Webinars',
+        'one' => 'webinar',
+        'many' => 'webinars',
+        'badge' => 'Webinars still in draft — partners cannot see them yet',
+    ],
+
     'case_studies' => [
         'nav' => 'Case Studies',
         'one' => 'case study',

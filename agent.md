@@ -382,6 +382,44 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-09-29 — A top bar with four areas, and webinars
+
+The header was Help and Case Studies; the owner asked for Courses, Case
+Studies, Tutorials and Webinars, with Help moved out of the way.
+
+**Courses** (`/courses`) is the catalogue the home page had no room for: every
+published course, a search box, and filters for level and audience. The home
+page is untouched — it stays the student's own starting point. It was built as
+"Explore" and renamed before anything else referred to it.
+
+**Tutorials** (`/tutorials`) gathers every published lesson that has a video,
+under its course. Nothing to maintain: a lesson joins the moment it has a
+video, and opening one goes to the lesson, where the quiz is. `videoEntries()`
+reads a JSON column and the legacy single upload, so the filtering is in PHP,
+not the query.
+
+**Webinars** is a new content type, built like case studies: `HasPublishStatus`,
+`Written in` plus Translate, product scoping, a draft preview banner, and a
+Filament resource under Content. A session needs a date and either a join link
+or a recording before it can be published — one nobody can join and nobody can
+watch helps no one. Times are stored and shown in UTC with the zone named;
+per-viewer local time would need a timezone on each user, which the app has no
+field for.
+
+`canManageCaseStudy` and `canManageWebinar` were the same seven lines, so both
+now call one `canManageContentFor()`.
+
+**Help** moved to the account menu and the footer. A guest has no account menu,
+so the footer is their way in — `HelpPageTest` now checks that rather than the
+header icon it used to.
+
+**Two guards earned their keep:** `AdminGuideMenuTest` caught that the new
+Webinars sidebar item was missing from the admin guide's menu table, in all
+five languages, and `HelpPageTest` caught Help leaving the header.
+
+**Verified:** the whole suite in Docker. Pint clean. `npm run build` for the
+new classes.
+
 ### 2026-09-29 — Case Studies in every language, after a review of the new section
 
 Reviewed the Case Studies commits and ran the whole suite: 394 passed, 1 failed.
@@ -405,10 +443,13 @@ Also: restored `agent.md`, which had been renamed to `agents.md` while
 to `docs/plans/case-studies.md`; and translated the UI names the new guide
 sections had left in English.
 
-**Verified:** the whole suite in Docker — 397 passed, 0 failed (the two new
-tests are a Russian partner reading the listing, a French partner reading a
-study, and a Russian editor opening the form). Pint clean on `app tests lang`.
-Chrome at 375px and 1280px on the listing and a study.
+**Verified:** the whole suite in Docker — 399 passed, 0 failed. The four new
+tests: a Russian partner reading the listing, a French partner reading a study,
+a Russian editor opening the form, a study written in Russian and read in
+English, and the notes hidden from a learner but shown to the product's
+creator. Pint clean on `app tests lang`. Chrome at 375px and 1280px on the
+listing and a study, English and Russian: no sideways scroll, and a translated
+study reads in Russian down to its section bodies.
 
 Then, on the owner's decision, two more changes:
 

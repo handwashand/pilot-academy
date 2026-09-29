@@ -16,6 +16,83 @@ class AcademyController extends Controller
 {
     private const SESSION_KEY = 'completed_lessons';
 
+    /**
+     * Every published course on one page, with the filters the home page has no
+     * room for. The home page stays the student's own starting point — where
+     * they left off — and this is the catalogue.
+     */
+    public function courses(Request $request)
+    {
+        $term = trim((string) $request->query('q', ''));
+        $level = trim((string) $request->query('level', ''));
+        $audience = trim((string) $request->query('audience', ''));
+
+        $courses = Course::published()
+            ->withCount('publishedLessons')
+            // The cards show a title and a progress bar each, so both are
+            // loaded up front rather than a query per card.
+            ->with(['contentTranslations', 'publishedLessons:id'])
+            ->when($term !== '', function ($query) use ($term): void {
+                // LOWER() on both sides, and the translations too — the same
+                // matching as search(), so both pages find the same courses.
+                $like = '%'.mb_strtolower($term).'%';
+
+                $query->where(fn ($match) => $match
+                    ->whereRaw('LOWER(title) LIKE ?', [$like])
+                    ->orWhereRaw('LOWER(description) LIKE ?', [$like])
+                    ->orWhereHas('contentTranslations', fn ($translations) => $translations
+                        ->whereIn('field', ['title', 'description'])
+                        ->whereRaw('LOWER(value) LIKE ?', [$like])));
+            })
+            ->when($level !== '', fn ($query) => $query->where('level', $level))
+            ->when($audience !== '', fn ($query) => $query->where('audience', $audience))
+            ->orderBy('sort_order')
+            ->get();
+
+        $completed = $this->completedIds($request);
+
+        return view('academy.courses', [
+            'courses' => $courses,
+            'completed' => $completed,
+            'term' => $term,
+            'level' => $level,
+            'audience' => $audience,
+            'levels' => Course::levelLabels(),
+            'audiences' => Course::audienceLabels(),
+        ]);
+    }
+
+    /**
+     * Every lesson video in the academy, under the course it belongs to. There
+     * is nothing to maintain here: a lesson joins the list the moment it gets a
+     * video, and the video plays in the lesson, where the quiz is.
+     */
+    public function tutorials(Request $request)
+    {
+        $courses = Course::published()
+            ->with(['contentTranslations', 'publishedLessons.contentTranslations'])
+            ->orderBy('sort_order')
+            ->get()
+            // videoEntries() reads a JSON column and the legacy single upload,
+            // so the filtering happens here rather than in the query.
+            ->map(function (Course $course): Course {
+                $course->setRelation(
+                    'publishedLessons',
+                    $course->publishedLessons->filter(fn (Lesson $lesson): bool => $lesson->videoEntries() !== [])->values(),
+                );
+
+                return $course;
+            })
+            ->filter(fn (Course $course): bool => $course->publishedLessons->isNotEmpty())
+            ->values();
+
+        return view('academy.tutorials', [
+            'courses' => $courses,
+            'completed' => $this->completedIds($request),
+            'videoCount' => $courses->sum(fn (Course $course): int => $course->publishedLessons->count()),
+        ]);
+    }
+
     public function home(Request $request)
     {
         $courses = Course::published()

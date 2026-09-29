@@ -9,4 +9,7 @@ return [
     'certificates' => 'Сертификаты',
     'logout' => 'Выйти',
     'case_studies' => 'Практические примеры',
+    'tutorials' => 'Видеоуроки',
+    'webinars' => 'Вебинары',
+    'courses' => 'Курсы',
 ];

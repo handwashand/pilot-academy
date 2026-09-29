@@ -18,6 +18,7 @@ Cambia tu nombre, correo o contraseña desde el menú de cuenta, arriba a la der
 | **Contenido → Cursos** | Crear cursos, activar examen final y certificado. |
 | **Contenido → Lecciones** | Añadir video, texto y preguntas. |
 | **Contenido → Casos prácticos** | Crear, previsualizar y publicar guías prácticas de implementación para socios. |
+| **Contenido → Seminarios web** | Programar sesiones en directo, compartir el enlace para unirse y añadir la grabación después. |
 | **Contenido → Productos** | Productos o módulos de formación y sus responsables. |
 | **Contenido → Archivos multimedia** | Biblioteca compartida de imágenes. |
 | **Personas → Usuarios** | Cuentas, roles, progreso y certificados. |

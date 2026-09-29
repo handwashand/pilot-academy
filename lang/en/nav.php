@@ -9,4 +9,7 @@ return [
     'certificates' => 'Certificates',
     'logout' => 'Log out',
     'case_studies' => 'Case Studies',
+    'tutorials' => 'Tutorials',
+    'webinars' => 'Webinars',
+    'courses' => 'Courses',
 ];

@@ -4,6 +4,8 @@ Como a Pilot Academy funciona, da primeira aula até o certificado.
 
 ## Primeiros passos
 
+A barra superior reúne quatro coisas: **Cursos**, todos os cursos publicados com pesquisa e filtros por nível e público; **Estudos de caso**; **Tutoriais**, todos os vídeos das aulas reunidos sob o seu curso; e **Webinars**, as sessões ao vivo com a equipe do Pilot e suas gravações. A ajuda está no menu sob as suas iniciais e no rodapé de cada página.
+
 **Você pode começar uma aula sem conta.** Abra um curso na página inicial e siga em frente. Nesse caso, seu progresso fica salvo apenas neste navegador.
 
 **Entre para manter seu progresso em todos os dispositivos** e para fazer o teste final. Use **Entrar** ou **Cadastrar**. Se sua empresa enviou um link pessoal, abra-o: ele entra direto, sem senha.

@@ -108,6 +108,13 @@ return [
         'activity' => 'Actividad',
     ],
 
+    'webinars' => [
+        'nav' => 'Seminarios web',
+        'one' => 'seminario web',
+        'many' => 'seminarios web',
+        'badge' => 'Seminarios web aún en borrador: los socios todavía no los ven',
+    ],
+
     'case_studies' => [
         'nav' => 'Casos prácticos',
         'one' => 'caso práctico',
