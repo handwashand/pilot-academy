@@ -34,17 +34,17 @@ class CaseStudyResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return 'Case Studies';
+        return __t('admin_nav.case_studies.nav');
     }
 
     public static function getModelLabel(): string
     {
-        return 'case study';
+        return __t('admin_nav.case_studies.one');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return 'case studies';
+        return __t('admin_nav.case_studies.many');
     }
 
     public static function getEloquentQuery(): Builder
@@ -71,6 +71,11 @@ class CaseStudyResource extends Resource
         return 'warning';
     }
 
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return __t('admin_nav.case_studies.badge');
+    }
+
     protected static ?string $recordTitleAttribute = 'title';
 
     public static function getGloballySearchableAttributes(): array
@@ -81,8 +86,8 @@ class CaseStudyResource extends Resource
     public static function getGlobalSearchResultDetails(mixed $record): array
     {
         return [
-            'Status' => $record->statusLabel(),
-            'Industry' => $record->industry,
+            __t('admin_common.status') => $record->statusLabel(),
+            __t('admin_case_studies.form.industry') => $record->industry,
         ];
     }
 

@@ -107,4 +107,11 @@ return [
         'certificates' => 'Certificats',
         'activity' => 'Activité',
     ],
+
+    'case_studies' => [
+        'nav' => 'Études de cas',
+        'one' => 'étude de cas',
+        'many' => 'études de cas',
+        'badge' => 'Études de cas encore en brouillon — les partenaires ne les voient pas',
+    ],
 ];

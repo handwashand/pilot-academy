@@ -111,4 +111,11 @@ return [
         'certificates' => 'Certificates',
         'activity' => 'Activity',
     ],
+
+    'case_studies' => [
+        'nav' => 'Case Studies',
+        'one' => 'case study',
+        'many' => 'case studies',
+        'badge' => 'Case studies still in draft — partners cannot see them yet',
+    ],
 ];

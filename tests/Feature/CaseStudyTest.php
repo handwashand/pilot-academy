@@ -2,12 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Resources\CaseStudies\CaseStudyResource;
 use App\Filament\Resources\CaseStudies\Pages\ListCaseStudies;
 use App\Models\CaseStudy;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Product;
 use App\Models\User;
+use Database\Seeders\LanguageSeeder;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -197,6 +199,49 @@ class CaseStudyTest extends TestCase
             ->callAction(TestAction::make('publish')->table($study));
 
         $this->assertSame(CaseStudy::STATUS_DRAFT, $study->fresh()->status);
+    }
+
+    /**
+     * A partner reading in Russian gets the listing, the filters and the ten
+     * study headings in Russian — the studies' own text stays as it was written.
+     */
+    public function test_the_case_study_pages_read_in_the_partners_language(): void
+    {
+        $this->seed(LanguageSeeder::class);
+        $study = $this->completeStudy(['status' => CaseStudy::STATUS_PUBLISHED]);
+
+        $this->withHeader('Accept-Language', 'ru-RU,ru;q=0.9')
+            ->get(route('academy.case-studies.index'))
+            ->assertOk()
+            ->assertSee('Практические примеры')
+            ->assertSee('Отрасль')
+            ->assertSee('Все функции')
+            ->assertSee('Средний')
+            ->assertDontSee('All industries');
+
+        $this->withHeader('Accept-Language', 'fr')
+            ->get(route('academy.case-studies.show', $study))
+            ->assertOk()
+            ->assertSee('Situation et problème du client')
+            ->assertSee('Configuration pas à pas')
+            ->assertSee('Détails de l’étude', false)
+            ->assertDontSee('Step-by-step configuration');
+    }
+
+    /** The editor's screens follow the editor's language, like every other resource. */
+    public function test_the_editor_screens_read_in_the_editors_language(): void
+    {
+        $this->seed(LanguageSeeder::class);
+        $admin = $this->admin();
+        $admin->forceFill(['locale' => 'ru'])->save();
+
+        $this->actingAs($admin)
+            ->get(CaseStudyResource::getUrl('create'))
+            ->assertOk()
+            ->assertSee('Практические примеры')
+            ->assertSee('Краткое описание проблемы')
+            ->assertSee('Пошаговая настройка')
+            ->assertDontSee('Short problem statement');
     }
 
     public function test_creators_only_see_and_manage_their_products_case_studies(): void

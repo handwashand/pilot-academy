@@ -4,7 +4,6 @@ namespace App\Filament\Resources\CaseStudies\Schemas;
 
 use App\Models\CaseStudy;
 use App\Models\Lesson;
-use App\Models\Product;
 use Closure;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
@@ -25,7 +24,7 @@ class CaseStudyForm
     {
         return $schema
             ->components([
-                Section::make('Case study')
+                Section::make(__t('admin_case_studies.sections.main'))
                     ->columns(2)
                     ->schema([
                         Select::make('product_id')
@@ -46,7 +45,7 @@ class CaseStudyForm
                                     $user = auth()->user();
 
                                     if ($user && $user->isCreator() && ! $user->products()->whereKey($value)->exists()) {
-                                        $fail('Choose one of your assigned products.');
+                                        $fail(__t('admin_case_studies.form.own_product'));
                                     }
                                 },
                             ]),
@@ -69,30 +68,32 @@ class CaseStudyForm
                             ->unique(ignoreRecord: true),
 
                         Textarea::make('short_problem')
-                            ->label('Short problem statement')
+                            ->label(__t('admin_case_studies.form.short_problem'))
                             ->rows(3)
                             ->required()
                             ->columnSpanFull(),
 
                         TextInput::make('industry')
-                            ->label('Industry')
+                            ->label(__t('admin_case_studies.form.industry'))
                             ->maxLength(120)
                             ->datalist(['Delivery', 'Field service', 'Fuel logistics', 'Passenger transport', 'Construction']),
 
                         TagsInput::make('features_used')
-                            ->label('Relevant Pilot features')
-                            ->placeholder('Add a feature')
-                            ->suggestions(['Geofences', 'Notifications', 'Reports', 'History', 'Speed control', 'Fuel sensors', 'Sensors', 'Object groups'])
+                            ->label(__t('admin_case_studies.form.features'))
+                            ->placeholder(__t('admin_case_studies.form.add_feature'))
+                            // Pilot's own names, and the same spelling the seeded
+                            // studies use — the listing filter matches them exactly.
+                            ->suggestions(['GeoZones', 'Notifications', 'Reports', 'History', 'Speed control', 'Fuel sensors', 'Sensors', 'Object groups'])
                             ->columnSpanFull(),
 
                         Select::make('difficulty')
-                            ->label('Difficulty')
+                            ->label(__t('admin_case_studies.form.difficulty'))
                             ->options(CaseStudy::difficultyLabels())
                             ->default(CaseStudy::DIFFICULTY_INTERMEDIATE)
                             ->required(),
 
                         TextInput::make('implementation_time')
-                            ->label('Estimated implementation time')
+                            ->label(__t('admin_case_studies.form.implementation_time'))
                             ->maxLength(120)
                             ->placeholder('2-4 hours'),
 
@@ -110,62 +111,64 @@ class CaseStudyForm
                             ->rules([
                                 fn (?CaseStudy $record): Closure => function (string $attribute, $value, Closure $fail) use ($record): void {
                                     if ($value === CaseStudy::STATUS_PUBLISHED && $record && ! $record->canBePublished()) {
-                                        $fail('Add the required sections and source note before publishing.');
+                                        $fail(__t('admin_case_studies.form.before_publishing'));
                                     }
                                 },
                             ]),
                     ]),
 
-                Section::make('Privacy and verification')
-                    ->description('Keep identifying customer details out by default. Store verification notes for any performance claim.')
+                Section::make(__t('admin_case_studies.sections.privacy'))
+                    ->description(__t('admin_case_studies.sections.privacy_hint'))
                     ->columns(2)
                     ->schema([
                         Toggle::make('is_anonymized')
-                            ->label('Anonymized')
+                            ->label(__t('admin_case_studies.form.anonymized'))
                             ->default(true),
 
                         Toggle::make('is_customer_approved')
-                            ->label('Customer approved'),
+                            ->label(__t('admin_case_studies.form.customer_approved')),
 
                         Textarea::make('source_note')
-                            ->label('Source or verification note')
+                            ->label(__t('admin_case_studies.form.source_note'))
                             ->rows(3)
                             ->required()
                             ->columnSpanFull(),
 
                         Textarea::make('performance_claim_note')
-                            ->label('Performance claim note')
+                            ->label(__t('admin_case_studies.form.performance_note'))
                             ->rows(3)
-                            ->helperText('Required when the study mentions measured savings, reductions, uptime, or other quantified outcomes.')
+                            ->helperText(__t('admin_case_studies.form.performance_note_hint'))
                             ->columnSpanFull(),
                     ]),
 
-                Section::make('Media')
-                    ->description('Use sanitized diagrams, screenshots, or attachments. Avoid customer names, locations, live data, credentials, and identifying images.')
+                Section::make(__t('admin_case_studies.sections.media'))
+                    ->description(__t('admin_case_studies.sections.media_hint'))
                     ->columns(2)
                     ->schema([
-                        static::mediaSelect('cover_media_item_id', 'Cover image'),
-                        static::mediaSelect('diagram_media_item_id', 'Diagram or screenshot'),
+                        static::mediaSelect('cover_media_item_id', __t('admin_case_studies.form.cover')),
+                        static::mediaSelect('diagram_media_item_id', __t('admin_case_studies.form.diagram')),
                     ]),
 
-                Section::make('Study sections')
+                // The editor writes under the same headings a partner reads —
+                // see CaseStudy::sections() and academy.case_studies.sections.
+                Section::make(__t('admin_case_studies.sections.study'))
                     ->schema([
-                        static::rich('scenario_problem', 'Customer scenario and problem', true),
-                        static::rich('desired_outcome', 'Desired outcome', true),
-                        static::rich('prerequisites', 'Required devices, data, and prerequisites'),
-                        static::rich('pilot_features', 'Pilot features used'),
-                        static::rich('configuration_steps', 'Step-by-step configuration', true),
-                        static::rich('testing_verification', 'How to test and verify the setup', true),
-                        static::rich('expected_results', 'Expected results and limitations'),
-                        static::rich('troubleshooting', 'Troubleshooting and common mistakes'),
-                        static::rich('adaptation', 'Ways partners can adapt the solution'),
+                        static::rich('scenario_problem', 'scenario', true),
+                        static::rich('desired_outcome', 'outcome', true),
+                        static::rich('prerequisites', 'prerequisites'),
+                        static::rich('pilot_features', 'features'),
+                        static::rich('configuration_steps', 'configuration', true),
+                        static::rich('testing_verification', 'verification', true),
+                        static::rich('expected_results', 'results'),
+                        static::rich('troubleshooting', 'troubleshooting'),
+                        static::rich('adaptation', 'adaptation'),
                     ]),
 
-                Section::make('Related content')
+                Section::make(__t('admin_case_studies.sections.related'))
                     ->columns(2)
                     ->schema([
                         Select::make('related_lesson_ids')
-                            ->label('Related Academy lessons')
+                            ->label(__t('admin_case_studies.form.related_lessons'))
                             ->multiple()
                             ->searchable()
                             ->preload()
@@ -177,19 +180,19 @@ class CaseStudyForm
                             ->columnSpanFull(),
 
                         Repeater::make('related_links')
-                            ->label('Documentation links')
+                            ->label(__t('admin_case_studies.form.links'))
                             ->defaultItems(0)
-                            ->addActionLabel('Add link')
+                            ->addActionLabel(__t('admin_case_studies.form.add_link'))
                             ->columns(2)
                             ->columnSpanFull()
                             ->schema([
                                 TextInput::make('title')
-                                    ->label('Title')
+                                    ->label(__t('admin_common.title'))
                                     ->required()
                                     ->maxLength(255),
 
                                 TextInput::make('url')
-                                    ->label('URL')
+                                    ->label(__t('admin_case_studies.form.link_url'))
                                     ->url()
                                     ->required()
                                     ->maxLength(2048),
@@ -198,10 +201,11 @@ class CaseStudyForm
             ]);
     }
 
-    protected static function rich(string $name, string $label, bool $required = false): RichEditor
+    /** @param  string  $section  A key under academy.case_studies.sections. */
+    protected static function rich(string $name, string $section, bool $required = false): RichEditor
     {
         $field = RichEditor::make($name)
-            ->label($label)
+            ->label(__t("academy.case_studies.sections.{$section}"))
             ->columnSpanFull();
 
         return $required ? $field->required() : $field;

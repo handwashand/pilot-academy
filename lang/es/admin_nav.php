@@ -107,4 +107,11 @@ return [
         'certificates' => 'Certificados',
         'activity' => 'Actividad',
     ],
+
+    'case_studies' => [
+        'nav' => 'Casos prácticos',
+        'one' => 'caso práctico',
+        'many' => 'casos prácticos',
+        'badge' => 'Casos prácticos aún en borrador: los socios todavía no los ven',
+    ],
 ];

@@ -8,4 +8,5 @@ return [
     'help' => 'Aide',
     'certificates' => 'Certificats',
     'logout' => 'Se déconnecter',
+    'case_studies' => 'Études de cas',
 ];

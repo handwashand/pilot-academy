@@ -22,9 +22,9 @@ La búsqueda encuentra cursos y lecciones por nombre, y también palabras dichas
 
 ## Usar casos prácticos
 
-Abre **Case Studies** en la navegación de la academia para encontrar guías prácticas de implementación de Pilot. En un teléfono, el botón puede mostrarse como **CS**.
+Abre **Casos prácticos** en la navegación de la academia para encontrar guías prácticas de implementación de Pilot. En un teléfono, el botón puede mostrarse como **CS**.
 
-Usa **Search** para buscar un problema o una solución, o filtra la lista por sector (**Industry**), función (**Feature**) y dificultad (**Difficulty**). Cada tarjeta también muestra el tiempo estimado de implementación.
+Usa **Buscar** para buscar un problema o una solución, o filtra la lista por sector (**Sector**), función (**Función**) y dificultad (**Dificultad**). Cada tarjeta también muestra el tiempo estimado de implementación.
 
 Cada caso explica el escenario del cliente, los requisitos previos, las funciones de Pilot, los pasos de configuración, cómo probar la solución, los resultados y limitaciones esperados, los errores comunes y las posibles adaptaciones. Al final puede incluir lecciones de la Academia y documentación relacionadas.
 

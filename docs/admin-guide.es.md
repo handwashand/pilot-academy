@@ -17,7 +17,7 @@ Cambia tu nombre, correo o contraseña desde el menú de cuenta, arriba a la der
 | **Panel** | Números generales, progreso por empresa y estudiantes inactivos. |
 | **Contenido → Cursos** | Crear cursos, activar examen final y certificado. |
 | **Contenido → Lecciones** | Añadir video, texto y preguntas. |
-| **Contenido → Case Studies** | Crear, previsualizar y publicar guías prácticas de implementación para socios. |
+| **Contenido → Casos prácticos** | Crear, previsualizar y publicar guías prácticas de implementación para socios. |
 | **Contenido → Productos** | Productos o módulos de formación y sus responsables. |
 | **Contenido → Archivos multimedia** | Biblioteca compartida de imágenes. |
 | **Personas → Usuarios** | Cuentas, roles, progreso y certificados. |
@@ -61,7 +61,7 @@ Al aprobar, el certificado se genera automáticamente como PDF con nombre, curso
 
 ## 4. Cómo configurar cosas
 
-**Casos prácticos.** En **Contenido → Case Studies**, pulsa **New case study** y añade el problema breve, el sector, las funciones de Pilot, la dificultad y el tiempo estimado. Completa el escenario, el resultado deseado, los pasos de configuración y la verificación. Antes de publicar es obligatorio incluir **Source or verification note**; usa **Performance claim note** para guardar la evidencia de cualquier resultado cuantificado. Mantén **Anonymized** activado salvo que exista aprobación explícita, y activa **Customer approved** solo cuando esa aprobación esté registrada. Usa únicamente imágenes depuradas, sin nombres, ubicaciones exactas, credenciales ni datos de vehículos reales. Guarda el borrador, revísalo con **Preview** y después usa **Publish** en la lista. Los socios normales no pueden abrir un borrador. Los creators solo gestionan casos de sus productos asignados.
+**Casos prácticos.** En **Contenido → Casos prácticos**, pulsa **New case study** y añade el problema breve, el sector, las funciones de Pilot, la dificultad y el tiempo estimado. Completa el escenario, el resultado deseado, los pasos de configuración y la verificación. Antes de publicar es obligatorio incluir **Source or verification note**; usa **Performance claim note** para guardar la evidencia de cualquier resultado cuantificado. Mantén **Anonymized** activado salvo que exista aprobación explícita, y activa **Customer approved** solo cuando esa aprobación esté registrada. Usa únicamente imágenes depuradas, sin nombres, ubicaciones exactas, credenciales ni datos de vehículos reales. Guarda el borrador, revísalo con **Preview** y después usa **Publish** en la lista. Los socios normales no pueden abrir un borrador. Los creators solo gestionan casos de sus productos asignados.
 
 Edita preguntas del examen final desde el curso, pestaña **Preguntas finales**. Una pregunta tomada de una lección es la misma pregunta; editarla cambia también la lección.
 

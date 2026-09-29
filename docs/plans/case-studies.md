@@ -14,9 +14,10 @@ Add a Case Studies area to Pilot Academy so partners and integrators can find pr
 | 2. Public Case Studies experience | Done | Added Academy navigation, listing, search, filters, study details, related content, media support, empty states, and responsive layouts. |
 | 3. Editorial workflow | Done | Added role-aware Filament create, edit, preview, publish, unpublish, archive, validation, and product ownership controls. |
 | 4. Starter content | Done | Added three anonymized draft studies with illustrative outcomes and no invented customer claims. |
-| 5. Automated verification | Done | Feature tests and related regression tests pass in Docker; frontend production build passes. |
+| 5. Automated verification | Done | The whole suite passes in Docker (397 tests); frontend production build passes. |
 | 6. Documentation and handoff | Done | Updated the changelog, admin guides, learner Help guides, work log, and this implementation plan. |
-| 7. Product acceptance | In progress | Final browser-based visual and editorial acceptance remains available for the product owner. |
+| 7. Product acceptance | In progress | The listing and a study were checked in Chrome at 375px and 1280px in English and Russian. Editorial acceptance of the three drafts remains with the product owner. |
+| 8. Every language | Done | The panel screens and both partner pages go through `__t()`, in all five languages. Added after review: they were first written as fixed English text. |
 
 ## Reused Application Patterns
 
@@ -101,7 +102,7 @@ Add a Case Studies area to Pilot Academy so partners and integrators can find pr
 - [x] Add the Case Studies menu item and editor workflow to the admin guide.
 - [x] Add public search, filters, study contents, and publication visibility to the learner Help guide.
 - [x] Update the Russian, Spanish, French, and Portuguese guide copies.
-- [x] Record the completed feature and remaining acceptance work in `agents.md`.
+- [x] Record the completed feature and remaining acceptance work in `agent.md`.
 
 ## Verification Results
 
@@ -109,11 +110,11 @@ The host Composer installation is incomplete, so PHP tests were run against the 
 
 | Check | Result |
 | --- | --- |
-| `CaseStudyTest` | Passed: 6 tests, 28 assertions |
-| `StudentSiteTranslationTest` | Passed: 7 tests, 4,151 assertions |
-| `CoursePublishingTest` | Passed: 17 tests, 85 assertions |
-| `CreatorRoleTest` | Passed: 23 tests, 80 assertions |
-| Changelog and guide tests | Passed: 36 tests, 114 assertions |
+| Whole suite, after the language pass | Passed: 397 tests, 5,983 assertions |
+| Whole suite, as first written | **1 failed**, 394 passed — `test_no_panel_label_is_written_as_fixed_english_text`, 36 fixed English labels |
+| `CaseStudyTest` | Passed: 8 tests, including a Russian partner, a French study page and a Russian editor form |
+| Pint on `app tests lang` | Passed: 304 files |
+| Chrome, 375px and 1280px, English and Russian | Listing and study: no sideways scroll, headings follow the language |
 | `npm.cmd run build` | Passed |
 
 ## Files Added
@@ -145,7 +146,7 @@ The host Composer installation is incomplete, so PHP tests were run against the 
 - `docs/CHANGELOG.md`
 - `docs/admin-guide.md` and its Russian, Spanish, French, and Portuguese copies
 - `docs/learner-guide.md` and its Russian, Spanish, French, and Portuguese copies
-- `agents.md`
+- `agent.md`
 
 ## Decisions and Constraints
 
@@ -166,7 +167,9 @@ The host Composer installation is incomplete, so PHP tests were run against the 
 
 These items are intentionally outside the completed implementation or need product-owner validation:
 
-- [ ] Run a manual browser pass at mobile and desktop sizes, including keyboard-only navigation and visible focus states.
+- [ ] Check keyboard-only navigation and visible focus states. Width and language were checked in Chrome at 375px and 1280px.
+- [ ] Decide whether a case study should be translatable the way a course is (`HasContentTranslations`, a **Written in** field and the existing Translate action). Today its text stays in the language its author typed; only the surrounding screen follows the reader.
+- [ ] Decide whether the **Source note** and **Performance claims** shown in the study sidebar should be editor-only — they read as internal verification notes but are public today.
 - [ ] Review the three starter drafts with a Pilot product specialist and publish only approved content.
 - [ ] Add a formal review/approval state if the wider Academy content lifecycle adopts one.
 - [ ] Add partner submissions only after a shared submission, moderation, abuse prevention, and notification pattern is designed.

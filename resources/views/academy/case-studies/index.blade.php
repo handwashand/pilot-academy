@@ -1,31 +1,31 @@
 @extends('academy.layout')
 
-@section('title', 'Case Studies - Pilot Academy')
+@section('title', __t('academy.case_studies.title').' - Pilot Academy')
 
 @php
-    $metaDescription = 'Real Pilot deployment patterns for partners and integrators.';
+    $metaDescription = __t('academy.case_studies.meta');
 @endphp
 
 @section('content')
     <div class="mb-6">
-        <a href="{{ route('academy.home') }}" class="text-sm text-brand font-semibold">&larr; All courses</a>
-        <h1 class="mt-2 text-2xl sm:text-3xl font-extrabold text-navy">Case Studies</h1>
-        <p class="mt-1 max-w-3xl text-slate-500">Learn from proven Pilot configurations and adapt them for partner deployments.</p>
+        <a href="{{ route('academy.home') }}" class="text-sm text-brand font-semibold">&larr; {{ __t('academy.common.all_courses') }}</a>
+        <h1 class="mt-2 text-2xl sm:text-3xl font-extrabold text-navy">{{ __t('academy.case_studies.title') }}</h1>
+        <p class="mt-1 max-w-3xl text-slate-500">{{ __t('academy.case_studies.intro') }}</p>
     </div>
 
     <form method="GET" action="{{ route('academy.case-studies.index') }}" class="mb-8 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <div class="grid gap-3 md:grid-cols-[1.5fr_1fr_1fr_1fr_auto] md:items-end">
             <div>
-                <label for="q" class="block text-sm font-semibold text-navy">Search</label>
+                <label for="q" class="block text-sm font-semibold text-navy">{{ __t('academy.case_studies.search') }}</label>
                 <input id="q" name="q" value="{{ $term }}" type="search"
                        class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-800 focus:border-brand"
-                       placeholder="Geofence, fuel, overspeeding">
+                       placeholder="{{ __t('academy.case_studies.search_hint') }}">
             </div>
 
             <div>
-                <label for="industry" class="block text-sm font-semibold text-navy">Industry</label>
+                <label for="industry" class="block text-sm font-semibold text-navy">{{ __t('academy.case_studies.industry') }}</label>
                 <select id="industry" name="industry" class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-800">
-                    <option value="">All industries</option>
+                    <option value="">{{ __t('academy.case_studies.all_industries') }}</option>
                     @foreach($industries as $option)
                         <option value="{{ $option }}" @selected($industry === $option)>{{ $option }}</option>
                     @endforeach
@@ -33,9 +33,9 @@
             </div>
 
             <div>
-                <label for="feature" class="block text-sm font-semibold text-navy">Feature</label>
+                <label for="feature" class="block text-sm font-semibold text-navy">{{ __t('academy.case_studies.feature') }}</label>
                 <select id="feature" name="feature" class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-800">
-                    <option value="">All features</option>
+                    <option value="">{{ __t('academy.case_studies.all_features') }}</option>
                     @foreach($features as $option)
                         <option value="{{ $option }}" @selected($feature === $option)>{{ $option }}</option>
                     @endforeach
@@ -43,29 +43,29 @@
             </div>
 
             <div>
-                <label for="difficulty" class="block text-sm font-semibold text-navy">Difficulty</label>
+                <label for="difficulty" class="block text-sm font-semibold text-navy">{{ __t('academy.case_studies.difficulty') }}</label>
                 <select id="difficulty" name="difficulty" class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-800">
-                    <option value="">All levels</option>
+                    <option value="">{{ __t('academy.case_studies.all_levels') }}</option>
                     @foreach($difficulties as $value => $label)
                         <option value="{{ $value }}" @selected($difficulty === $value)>{{ $label }}</option>
                     @endforeach
                 </select>
             </div>
 
-            <button class="min-h-11 rounded-lg bg-brand px-5 font-semibold text-white hover:bg-blue-700">Apply</button>
+            <button class="min-h-11 rounded-lg bg-brand px-5 font-semibold text-white hover:bg-blue-700">{{ __t('academy.case_studies.apply') }}</button>
         </div>
 
         @if($term || $industry || $feature || $difficulty)
             <div class="mt-3">
                 <a href="{{ route('academy.case-studies.index') }}" class="inline-flex min-h-11 items-center rounded-lg px-3 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-brand">
-                    Clear filters
+                    {{ __t('academy.case_studies.clear') }}
                 </a>
             </div>
         @endif
     </form>
 
     <p class="mb-4 text-sm text-slate-500" role="status">
-        {{ $caseStudies->total() }} {{ \Illuminate\Support\Str::plural('case study', $caseStudies->total()) }}
+        {{ __tc('academy.case_studies.count', $caseStudies->total()) }}
     </p>
 
     @forelse($caseStudies as $study)
@@ -75,7 +75,7 @@
                 @if($study->coverMediaItem?->url)
                     <img src="{{ $study->coverMediaItem->url }}" alt="" class="h-full w-full object-cover">
                 @else
-                    <span class="px-4 text-center text-3xl font-extrabold text-white/90">CS</span>
+                    <span aria-hidden="true" class="px-4 text-center text-3xl font-extrabold text-white/90">CS</span>
                 @endif
             </div>
 
@@ -106,8 +106,8 @@
         </a>
     @empty
         <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p class="font-semibold text-slate-700">No case studies matched.</p>
-            <p class="mt-1 text-sm text-slate-500">Try clearing one filter or searching for a shorter term.</p>
+            <p class="font-semibold text-slate-700">{{ __t('academy.case_studies.none') }}</p>
+            <p class="mt-1 text-sm text-slate-500">{{ __t('academy.case_studies.none_hint') }}</p>
         </div>
     @endforelse
 

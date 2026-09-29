@@ -15,7 +15,7 @@ class EditCaseStudy extends EditRecord
     {
         return [
             Action::make('preview')
-                ->label('Preview')
+                ->label(__t('admin_case_studies.table.preview'))
                 ->icon('heroicon-o-eye')
                 ->url(fn (): string => route('academy.case-studies.show', $this->getRecord()))
                 ->openUrlInNewTab(),

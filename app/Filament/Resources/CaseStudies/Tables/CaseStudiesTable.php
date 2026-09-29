@@ -39,12 +39,12 @@ class CaseStudiesTable
                     ->placeholder('-'),
 
                 TextColumn::make('industry')
-                    ->label('Industry')
+                    ->label(__t('admin_case_studies.form.industry'))
                     ->searchable()
                     ->badge(),
 
                 TextColumn::make('difficulty')
-                    ->label('Difficulty')
+                    ->label(__t('admin_case_studies.form.difficulty'))
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => CaseStudy::difficultyLabels()[$state] ?? $state)
                     ->color(fn (string $state): string => match ($state) {
@@ -54,11 +54,11 @@ class CaseStudiesTable
                     }),
 
                 IconColumn::make('is_anonymized')
-                    ->label('Anonymized')
+                    ->label(__t('admin_case_studies.form.anonymized'))
                     ->boolean(),
 
                 IconColumn::make('is_customer_approved')
-                    ->label('Approved')
+                    ->label(__t('admin_case_studies.table.approved'))
                     ->boolean(),
 
                 TextColumn::make('status')
@@ -84,12 +84,12 @@ class CaseStudiesTable
                     ->preload(),
 
                 SelectFilter::make('difficulty')
-                    ->label('Difficulty')
+                    ->label(__t('admin_case_studies.form.difficulty'))
                     ->options(CaseStudy::difficultyLabels()),
             ])
             ->recordActions([
                 Action::make('preview')
-                    ->label('Preview')
+                    ->label(__t('admin_case_studies.table.preview'))
                     ->icon('heroicon-o-eye')
                     ->url(fn (CaseStudy $record): string => route('academy.case-studies.show', $record))
                     ->openUrlInNewTab(),
@@ -104,8 +104,8 @@ class CaseStudiesTable
                     ->action(function (CaseStudy $record): void {
                         if (! $record->canBePublished()) {
                             Notification::make()
-                                ->title('Finish the required sections first')
-                                ->body('Title, summary, scenario, desired outcome, configuration, verification, and source note are required before publishing.')
+                                ->title(__t('admin_case_studies.notify.incomplete'))
+                                ->body(__t('admin_case_studies.notify.incomplete_body'))
                                 ->danger()
                                 ->persistent()
                                 ->send();
@@ -115,7 +115,7 @@ class CaseStudiesTable
 
                         $record->publish();
 
-                        Notification::make()->title('Case study published')->body(__t('admin_common.visible_now'))->success()->send();
+                        Notification::make()->title(__t('admin_case_studies.notify.published'))->body(__t('admin_common.visible_now'))->success()->send();
                     }),
 
                 Action::make('unpublish')
@@ -128,7 +128,7 @@ class CaseStudiesTable
                     ->action(function (CaseStudy $record): void {
                         $record->unpublish();
 
-                        Notification::make()->title('Case study returned to draft')->body(__t('admin_common.draft_again'))->warning()->send();
+                        Notification::make()->title(__t('admin_case_studies.notify.drafted'))->body(__t('admin_common.draft_again'))->warning()->send();
                     }),
 
                 EditAction::make(),
@@ -152,7 +152,7 @@ class CaseStudiesTable
                         ->action(function (Collection $records): void {
                             $records->each->unpublish();
 
-                            Notification::make()->title('Case studies returned to draft')->warning()->send();
+                            Notification::make()->title(__t('admin_case_studies.notify.drafted_many'))->warning()->send();
                         }),
 
                     DeleteBulkAction::make(),
@@ -168,13 +168,13 @@ class CaseStudiesTable
         $ready->each->publish();
 
         if ($ready->isNotEmpty()) {
-            Notification::make()->title($ready->count().' case studies published')->success()->send();
+            Notification::make()->title(__tc('admin_case_studies.notify.published_count', $ready->count()))->success()->send();
         }
 
         if ($skipped->isNotEmpty()) {
             Notification::make()
-                ->title($skipped->count().' case studies skipped')
-                ->body('Skipped records are missing required sections or source notes.')
+                ->title(__tc('admin_case_studies.notify.skipped_count', $skipped->count()))
+                ->body(__t('admin_case_studies.notify.skipped_body'))
                 ->danger()
                 ->persistent()
                 ->send();

@@ -17,7 +17,7 @@ Modifiez votre nom, e-mail ou mot de passe depuis le menu du compte, en haut à 
 | **Tableau de bord** | Indicateurs, progression par entreprise et étudiants inactifs. |
 | **Contenu → Cours** | Créer les cours, activer quiz final et certificat. |
 | **Contenu → Leçons** | Ajouter vidéo, texte et questions. |
-| **Contenu → Case Studies** | Créer, prévisualiser et publier des guides pratiques de déploiement pour les partenaires. |
+| **Contenu → Études de cas** | Créer, prévisualiser et publier des guides pratiques de déploiement pour les partenaires. |
 | **Contenu → Produits** | Produits ou modules et leurs responsables. |
 | **Contenu → Médias** | Bibliothèque d'images réutilisables. |
 | **Personnes → Utilisateurs** | Comptes, rôles, progression et certificats. |
@@ -61,7 +61,7 @@ Après réussite, le certificat est généré automatiquement en PDF avec nom, c
 
 ## 4. Paramétrer
 
-**Études de cas.** Dans **Contenu → Case Studies**, cliquez sur **New case study**, puis indiquez le problème en bref, le secteur, les fonctionnalités Pilot, la difficulté et le temps estimé. Complétez le scénario, le résultat recherché, les étapes de configuration et la vérification. Une note **Source or verification note** est obligatoire avant publication ; utilisez **Performance claim note** pour conserver la preuve de tout résultat chiffré. Laissez **Anonymized** activé sauf accord explicite du client et n'activez **Customer approved** que lorsque cet accord est consigné. Utilisez uniquement des images nettoyées, sans noms, lieux précis, identifiants ni données de véhicules réels. Enregistrez le brouillon, contrôlez-le avec **Preview**, puis utilisez **Publish** dans la liste. Les partenaires ordinaires ne peuvent pas ouvrir un brouillon. Les creators ne gèrent que les études des produits qui leur sont attribués.
+**Études de cas.** Dans **Contenu → Études de cas**, cliquez sur **New case study**, puis indiquez le problème en bref, le secteur, les fonctionnalités Pilot, la difficulté et le temps estimé. Complétez le scénario, le résultat recherché, les étapes de configuration et la vérification. Une note **Source or verification note** est obligatoire avant publication ; utilisez **Performance claim note** pour conserver la preuve de tout résultat chiffré. Laissez **Anonymized** activé sauf accord explicite du client et n'activez **Customer approved** que lorsque cet accord est consigné. Utilisez uniquement des images nettoyées, sans noms, lieux précis, identifiants ni données de véhicules réels. Enregistrez le brouillon, contrôlez-le avec **Preview**, puis utilisez **Publish** dans la liste. Les partenaires ordinaires ne peuvent pas ouvrir un brouillon. Les creators ne gèrent que les études des produits qui leur sont attribués.
 
 Modifiez les questions du quiz final depuis l'onglet **Final questions** du cours. Une question venue d'une leçon reste la même question ; la modifier change aussi la leçon.
 

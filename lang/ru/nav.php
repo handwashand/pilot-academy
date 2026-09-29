@@ -8,4 +8,5 @@ return [
     'help' => 'Помощь',
     'certificates' => 'Сертификаты',
     'logout' => 'Выйти',
+    'case_studies' => 'Практические примеры',
 ];

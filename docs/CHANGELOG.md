@@ -34,7 +34,9 @@ Add a new entry here whenever something visible to admins or students changes.
   privately, add sanitized media and verification notes, and publish only when
   the required sections are complete. Three anonymized starter studies are
   included as drafts for geofence arrivals and departures, overspeeding
-  escalation and fuel-event investigation.
+  escalation and fuel-event investigation. Both the partner pages and the
+  editor's screens read in the reader's language, like the rest of the academy;
+  the text of a study stays as its author wrote it.
 - **The whole admin panel follows your language.** Menus, page titles, every
   form label and help text, table columns, buttons, confirmation messages,
   notifications, the dashboard, Content health, Final quiz health, Mail and

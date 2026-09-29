@@ -22,9 +22,9 @@ A busca encontra cursos e aulas pelo nome, e também palavras faladas em um víd
 
 ## Usar estudos de caso
 
-Abra **Case Studies** na navegação da academia para encontrar guias práticos de implantação do Pilot. No celular, o botão pode aparecer como **CS**.
+Abra **Estudos de caso** na navegação da academia para encontrar guias práticos de implantação do Pilot. No celular, o botão pode aparecer como **CS**.
 
-Use **Search** para procurar um problema ou uma solução, ou filtre a lista por setor (**Industry**), recurso (**Feature**) e dificuldade (**Difficulty**). Cada cartão também mostra o tempo estimado de implantação.
+Use **Pesquisar** para procurar um problema ou uma solução, ou filtre a lista por setor (**Setor**), recurso (**Função**) e dificuldade (**Dificuldade**). Cada cartão também mostra o tempo estimado de implantação.
 
 Cada estudo apresenta o cenário do cliente, os pré-requisitos, os recursos do Pilot, as etapas de configuração, como testar a solução, os resultados esperados e limitações, os erros comuns e formas de adaptação. Ao final, podem aparecer aulas da Academia e links de documentação relacionados.
 

@@ -22,9 +22,9 @@ La recherche trouve les cours et les leçons par nom, ainsi que les mots prononc
 
 ## Utiliser les études de cas
 
-Ouvrez **Case Studies** dans la navigation de l'académie pour trouver des guides pratiques de déploiement de Pilot. Sur un téléphone, le bouton peut afficher **CS**.
+Ouvrez **Études de cas** dans la navigation de l'académie pour trouver des guides pratiques de déploiement de Pilot. Sur un téléphone, le bouton peut afficher **CS**.
 
-Utilisez **Search** pour rechercher un problème ou une solution, ou filtrez la liste par secteur (**Industry**), fonctionnalité (**Feature**) et difficulté (**Difficulty**). Chaque carte indique aussi le temps de mise en œuvre estimé.
+Utilisez **Rechercher** pour rechercher un problème ou une solution, ou filtrez la liste par secteur (**Secteur**), fonctionnalité (**Fonction**) et difficulté (**Difficulté**). Chaque carte indique aussi le temps de mise en œuvre estimé.
 
 Chaque étude présente le scénario client, les prérequis, les fonctionnalités Pilot, les étapes de configuration, la méthode de test, les résultats attendus et leurs limites, les erreurs courantes et les adaptations possibles. Des leçons de l'Académie et des liens de documentation associés peuvent apparaître à la fin.
 

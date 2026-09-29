@@ -13,9 +13,29 @@ class CaseStudy extends Model
     use HasPublishStatus;
 
     public const DIFFICULTY_BEGINNER = 'beginner';
+
     public const DIFFICULTY_INTERMEDIATE = 'intermediate';
+
     public const DIFFICULTY_ADVANCED = 'advanced';
 
+    /**
+     * The study's body, in reading order: heading key => column. The headings
+     * themselves are academy.case_studies.sections.*, so an editor writes under
+     * the same names a partner reads.
+     */
+    public const SECTION_FIELDS = [
+        'scenario' => 'scenario_problem',
+        'outcome' => 'desired_outcome',
+        'prerequisites' => 'prerequisites',
+        'features' => 'pilot_features',
+        'configuration' => 'configuration_steps',
+        'verification' => 'testing_verification',
+        'results' => 'expected_results',
+        'troubleshooting' => 'troubleshooting',
+        'adaptation' => 'adaptation',
+    ];
+
+    /** English for reference only — the reader sees academy.common.level. */
     public const DIFFICULTY_LABELS = [
         self::DIFFICULTY_BEGINNER => 'Beginner',
         self::DIFFICULTY_INTERMEDIATE => 'Intermediate',
@@ -69,9 +89,15 @@ class CaseStudy extends Model
         'published_at' => 'datetime',
     ];
 
+    /**
+     * @return array<string, string> The three levels in the reader's language.
+     *                               Same names courses use — see academy.common.level.
+     */
     public static function difficultyLabels(): array
     {
-        return self::DIFFICULTY_LABELS;
+        return collect(self::DIFFICULTY_LABELS)
+            ->mapWithKeys(fn (string $english, string $level): array => [$level => __t("academy.common.level.{$level}")])
+            ->all();
     }
 
     public function product(): BelongsTo
@@ -96,7 +122,25 @@ class CaseStudy extends Model
 
     public function difficultyLabel(): string
     {
-        return self::DIFFICULTY_LABELS[$this->difficulty] ?? ucfirst((string) $this->difficulty);
+        return static::difficultyLabels()[$this->difficulty] ?? ucfirst((string) $this->difficulty);
+    }
+
+    /**
+     * The sections that have been written, each with its heading in the
+     * reader's language and the anchor the page links to.
+     *
+     * @return Collection<int, array{anchor: string, heading: string, body: string}>
+     */
+    public function sections(): Collection
+    {
+        return collect(self::SECTION_FIELDS)
+            ->map(fn (string $field, string $key): array => [
+                'anchor' => str_replace('_', '-', $field),
+                'heading' => __t("academy.case_studies.sections.{$key}"),
+                'body' => (string) $this->getAttribute($field),
+            ])
+            ->filter(fn (array $section): bool => filled($section['body']))
+            ->values();
     }
 
     public function featureList(): array

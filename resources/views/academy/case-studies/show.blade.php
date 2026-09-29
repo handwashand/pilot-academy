@@ -1,31 +1,20 @@
 @extends('academy.layout')
 
-@section('title', $caseStudy->title.' - Case Study - Pilot Academy')
+@section('title', $caseStudy->title.' - '.__t('academy.case_studies.title').' - Pilot Academy')
 
 @php
-    $metaDescription = \Illuminate\Support\Str::limit($caseStudy->short_problem ?: 'Pilot Academy case study.', 155);
-
-    $sections = [
-        'Customer scenario and problem' => $caseStudy->scenario_problem,
-        'Desired outcome' => $caseStudy->desired_outcome,
-        'Required devices, data, and prerequisites' => $caseStudy->prerequisites,
-        'Pilot features used' => $caseStudy->pilot_features,
-        'Step-by-step configuration' => $caseStudy->configuration_steps,
-        'How to test and verify the setup' => $caseStudy->testing_verification,
-        'Expected results and limitations' => $caseStudy->expected_results,
-        'Troubleshooting and common mistakes' => $caseStudy->troubleshooting,
-        'Ways partners can adapt the solution' => $caseStudy->adaptation,
-    ];
+    $metaDescription = \Illuminate\Support\Str::limit($caseStudy->short_problem ?: __t('academy.case_studies.meta'), 155);
 @endphp
 
 @section('content')
     <div class="grid gap-6 lg:grid-cols-[1fr_280px] lg:gap-8">
         <div>
-            <a href="{{ route('academy.case-studies.index') }}" class="text-sm font-semibold text-brand">&larr; Case Studies</a>
+            <a href="{{ route('academy.case-studies.index') }}" class="text-sm font-semibold text-brand">&larr; {{ __t('academy.case_studies.title') }}</a>
 
             @if(! $caseStudy->isPublished())
                 <div class="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                    <strong>Case study: {{ $caseStudy->statusLabel() }}</strong> - learners cannot see this page. You are previewing it as an editor.
+                    <strong>{{ __t('academy.case_studies.draft_notice', ['status' => $caseStudy->statusLabel()]) }}</strong>
+                    - {{ __t('academy.case_studies.draft_hint') }}
                 </div>
             @endif
 
@@ -52,22 +41,21 @@
 
             @if($caseStudy->diagramMediaItem?->url)
                 <figure class="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                    <img src="{{ $caseStudy->diagramMediaItem->url }}" alt="Diagram for {{ $caseStudy->title }}" class="h-auto w-full">
-                    <figcaption class="border-t border-slate-100 px-4 py-2 text-sm text-slate-500">Reference diagram or sanitized screenshot.</figcaption>
+                    <img src="{{ $caseStudy->diagramMediaItem->url }}"
+                         alt="{{ __t('academy.case_studies.diagram_alt', ['title' => $caseStudy->title]) }}" class="h-auto w-full">
+                    <figcaption class="border-t border-slate-100 px-4 py-2 text-sm text-slate-500">{{ __t('academy.case_studies.diagram_caption') }}</figcaption>
                 </figure>
             @endif
 
-            @foreach($sections as $heading => $body)
-                @if(filled($body))
-                    <section id="{{ \Illuminate\Support\Str::slug($heading) }}" class="prose-lesson mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm scroll-mt-20">
-                        <h2>{{ $heading }}</h2>
-                        {!! $body !!}
-                    </section>
-                @endif
+            @foreach($caseStudy->sections() as $section)
+                <section id="{{ $section['anchor'] }}" class="prose-lesson mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm scroll-mt-20">
+                    <h2>{{ $section['heading'] }}</h2>
+                    {!! $section['body'] !!}
+                </section>
             @endforeach
 
             <section id="related" class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm scroll-mt-20">
-                <h2 class="text-xl font-extrabold text-navy">Related Academy lessons and documentation</h2>
+                <h2 class="text-xl font-extrabold text-navy">{{ __t('academy.case_studies.sections.related') }}</h2>
 
                 @if($relatedLessons->isNotEmpty())
                     <div class="mt-4 divide-y divide-slate-100 rounded-xl border border-slate-200">
@@ -103,34 +91,42 @@
                 @endif
 
                 @if($relatedLessons->isEmpty() && empty($caseStudy->related_links))
-                    <p class="mt-2 text-sm text-slate-500">No related lessons or documentation have been linked yet.</p>
+                    <p class="mt-2 text-sm text-slate-500">{{ __t('academy.case_studies.no_related') }}</p>
                 @endif
             </section>
         </div>
 
         <aside class="lg:sticky lg:top-20 self-start">
             <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                <div class="text-xs font-semibold uppercase tracking-wide text-slate-400">Study details</div>
+                <div class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ __t('academy.case_studies.details') }}</div>
                 <dl class="mt-3 space-y-3 text-sm">
                     @if($caseStudy->product)
                         <div>
-                            <dt class="font-semibold text-navy">Product</dt>
+                            <dt class="font-semibold text-navy">{{ __t('academy.case_studies.product') }}</dt>
                             <dd class="text-slate-500">{{ $caseStudy->product->name }}</dd>
                         </div>
                     @endif
                     <div>
-                        <dt class="font-semibold text-navy">Privacy</dt>
-                        <dd class="text-slate-500">{{ $caseStudy->is_customer_approved ? 'Customer approved' : ($caseStudy->is_anonymized ? 'Anonymized' : 'Internal draft') }}</dd>
+                        <dt class="font-semibold text-navy">{{ __t('academy.case_studies.privacy') }}</dt>
+                        <dd class="text-slate-500">
+                            @if($caseStudy->is_customer_approved)
+                                {{ __t('academy.case_studies.approved') }}
+                            @elseif($caseStudy->is_anonymized)
+                                {{ __t('academy.case_studies.anonymized') }}
+                            @else
+                                {{ __t('academy.case_studies.internal') }}
+                            @endif
+                        </dd>
                     </div>
                     @if($caseStudy->source_note)
                         <div>
-                            <dt class="font-semibold text-navy">Source note</dt>
+                            <dt class="font-semibold text-navy">{{ __t('academy.case_studies.source_note') }}</dt>
                             <dd class="text-slate-500">{{ $caseStudy->source_note }}</dd>
                         </div>
                     @endif
                     @if($caseStudy->performance_claim_note)
                         <div>
-                            <dt class="font-semibold text-navy">Performance claims</dt>
+                            <dt class="font-semibold text-navy">{{ __t('academy.case_studies.performance_claims') }}</dt>
                             <dd class="text-slate-500">{{ $caseStudy->performance_claim_note }}</dd>
                         </div>
                     @endif
@@ -138,7 +134,7 @@
 
                 @if($caseStudy->featureList() !== [])
                     <div class="mt-4 border-t border-slate-100 pt-4">
-                        <div class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Features</div>
+                        <div class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">{{ __t('academy.case_studies.features') }}</div>
                         <div class="flex flex-wrap gap-2">
                             @foreach($caseStudy->featureList() as $featureName)
                                 <span class="rounded-lg border border-slate-200 px-2 py-1 text-xs font-medium text-slate-600">{{ $featureName }}</span>
