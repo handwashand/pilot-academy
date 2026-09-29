@@ -28,6 +28,8 @@ Usa **Buscar** para buscar un problema o una solución, o filtra la lista por se
 
 Cada caso explica el escenario del cliente, los requisitos previos, las funciones de Pilot, los pasos de configuración, cómo probar la solución, los resultados y limitaciones esperados, los errores comunes y las posibles adaptaciones. Al final puede incluir lecciones de la Academia y documentación relacionadas.
 
+Un caso se muestra en tu idioma donde alguien lo haya traducido, y en su idioma original en el resto.
+
 Los casos prácticos son material de consulta: no registran progreso, no tienen examen y no emiten certificados. Los socios solo ven los casos publicados.
 
 ## Terminar una lección

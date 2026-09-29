@@ -28,6 +28,8 @@ Utilisez **Rechercher** pour rechercher un problème ou une solution, ou filtrez
 
 Chaque étude présente le scénario client, les prérequis, les fonctionnalités Pilot, les étapes de configuration, la méthode de test, les résultats attendus et leurs limites, les erreurs courantes et les adaptations possibles. Des leçons de l'Académie et des liens de documentation associés peuvent apparaître à la fin.
 
+Une étude s’affiche dans votre langue là où quelqu’un l’a traduite, et dans sa langue d’origine partout ailleurs.
+
 Les études de cas sont des documents de référence : elles ne suivent pas la progression, ne comportent pas de quiz et ne délivrent pas de certificat. Les partenaires ne voient que les études publiées.
 
 ## Terminer une leçon

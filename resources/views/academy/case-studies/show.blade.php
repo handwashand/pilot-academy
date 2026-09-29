@@ -1,9 +1,9 @@
 @extends('academy.layout')
 
-@section('title', $caseStudy->title.' - '.__t('academy.case_studies.title').' - Pilot Academy')
+@section('title', $caseStudy->translated('title').' - '.__t('academy.case_studies.title').' - Pilot Academy')
 
 @php
-    $metaDescription = \Illuminate\Support\Str::limit($caseStudy->short_problem ?: __t('academy.case_studies.meta'), 155);
+    $metaDescription = \Illuminate\Support\Str::limit($caseStudy->translated('short_problem') ?: __t('academy.case_studies.meta'), 155);
 @endphp
 
 @section('content')
@@ -28,9 +28,9 @@
                 @endif
             </div>
 
-            <h1 class="mt-2 text-2xl font-extrabold text-navy sm:text-3xl">{{ $caseStudy->title }}</h1>
+            <h1 class="mt-2 text-2xl font-extrabold text-navy sm:text-3xl">{{ $caseStudy->translated('title') }}</h1>
             @if($caseStudy->short_problem)
-                <p class="mt-1 text-slate-500">{{ $caseStudy->short_problem }}</p>
+                <p class="mt-1 text-slate-500">{{ $caseStudy->translated('short_problem') }}</p>
             @endif
 
             @if($caseStudy->coverMediaItem?->url)
@@ -42,7 +42,7 @@
             @if($caseStudy->diagramMediaItem?->url)
                 <figure class="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
                     <img src="{{ $caseStudy->diagramMediaItem->url }}"
-                         alt="{{ __t('academy.case_studies.diagram_alt', ['title' => $caseStudy->title]) }}" class="h-auto w-full">
+                         alt="{{ __t('academy.case_studies.diagram_alt', ['title' => $caseStudy->translated('title')]) }}" class="h-auto w-full">
                     <figcaption class="border-t border-slate-100 px-4 py-2 text-sm text-slate-500">{{ __t('academy.case_studies.diagram_caption') }}</figcaption>
                 </figure>
             @endif
@@ -118,13 +118,13 @@
                             @endif
                         </dd>
                     </div>
-                    @if($caseStudy->source_note)
+                    @if($isEditor && $caseStudy->source_note)
                         <div>
                             <dt class="font-semibold text-navy">{{ __t('academy.case_studies.source_note') }}</dt>
                             <dd class="text-slate-500">{{ $caseStudy->source_note }}</dd>
                         </div>
                     @endif
-                    @if($caseStudy->performance_claim_note)
+                    @if($isEditor && $caseStudy->performance_claim_note)
                         <div>
                             <dt class="font-semibold text-navy">{{ __t('academy.case_studies.performance_claims') }}</dt>
                             <dd class="text-slate-500">{{ $caseStudy->performance_claim_note }}</dd>

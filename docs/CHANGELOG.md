@@ -35,8 +35,12 @@ Add a new entry here whenever something visible to admins or students changes.
   the required sections are complete. Three anonymized starter studies are
   included as drafts for geofence arrivals and departures, overspeeding
   escalation and fuel-event investigation. Both the partner pages and the
-  editor's screens read in the reader's language, like the rest of the academy;
-  the text of a study stays as its author wrote it.
+  editor's screens read in the reader's language, like the rest of the academy.
+  A study itself has **Written in** and **Translate**, exactly like a course, so
+  a Russian or French author writes in their own language and the others can be
+  added — search finds a study by its translations too. The source and
+  performance-claim notes are for editors only and are no longer shown to
+  partners.
 - **The whole admin panel follows your language.** Menus, page titles, every
   form label and help text, table columns, buttons, confirmation messages,
   notifications, the dashboard, Content health, Final quiz health, Mail and

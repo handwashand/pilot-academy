@@ -410,10 +410,21 @@ tests are a Russian partner reading the listing, a French partner reading a
 study, and a Russian editor opening the form). Pint clean on `app tests lang`.
 Chrome at 375px and 1280px on the listing and a study.
 
-**Still open:** a case study cannot be translated the way a course can — no
-`HasContentTranslations`, no **Written in** field, so its text is whatever the
-author typed. The chrome around it now follows the reader. Worth adding if
-partners want studies in their own language.
+Then, on the owner's decision, two more changes:
+
+**A study is written in a language and translated into the others**, like a
+course. `case_studies.language`, `HasContentTranslations` over the title, the
+summary and the nine section bodies, `CourseForm::writtenIn()` in the form and
+the existing `TranslateContentAction` on the edit page. The search matches
+translations too. The Translate box needed names for eleven fields that the
+page and the form already name, so `HasContentTranslations` grew
+`translatableFieldLabel()`; `CaseStudy` points it at the section headings
+instead of shipping the same words twice.
+
+**The source and performance-claim notes are editors' notes**, so they left the
+public sidebar — the controller passes `$isEditor`, and only someone who may
+edit the study reads them. They read as working notes ("Validate exact fuel
+module availability before publishing") and were public to everyone.
 
 ### 2026-09-29 — Case Studies for partner deployment playbooks
 

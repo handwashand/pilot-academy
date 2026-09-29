@@ -55,6 +55,9 @@ configuration steps, how to test the setup, expected results and limitations,
 common mistakes, and ways to adapt the solution. Related Academy lessons and
 documentation are listed at the end when available.
 
+A study is shown in your language wherever someone has translated it, and in
+the language it was written in everywhere else.
+
 Case studies are reference guides. They do not record progress, have a quiz or
 issue a certificate. Only published studies appear to partners.
 

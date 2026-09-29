@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CaseStudies\Schemas;
 
+use App\Filament\Resources\Courses\Schemas\CourseForm;
 use App\Models\CaseStudy;
 use App\Models\Lesson;
 use Closure;
@@ -60,6 +61,10 @@ class CaseStudyForm
                                     $set('slug', Str::slug($state));
                                 }
                             }),
+
+                        // Written in any language; Translate on the edit page
+                        // adds the rest. Same field courses and lessons use.
+                        CourseForm::writtenIn(),
 
                         TextInput::make('slug')
                             ->label(__t('admin_common.slug'))

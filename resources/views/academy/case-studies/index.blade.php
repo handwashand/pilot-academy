@@ -90,9 +90,9 @@
                     @endif
                 </div>
 
-                <h2 class="text-lg font-extrabold text-navy transition group-hover:text-brand">{{ $study->title }}</h2>
+                <h2 class="text-lg font-extrabold text-navy transition group-hover:text-brand">{{ $study->translated('title') }}</h2>
                 @if($study->short_problem)
-                    <p class="mt-1 text-sm text-slate-500">{{ $study->short_problem }}</p>
+                    <p class="mt-1 text-sm text-slate-500">{{ $study->translated('short_problem') }}</p>
                 @endif
 
                 @if($study->featureList() !== [])

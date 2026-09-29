@@ -244,6 +244,74 @@ class CaseStudyTest extends TestCase
             ->assertDontSee('Short problem statement');
     }
 
+    /**
+     * A study written in Russian, translated into English: an English partner
+     * reads the translation, a Russian partner reads the original.
+     */
+    public function test_a_study_can_be_written_in_one_language_and_translated_into_another(): void
+    {
+        $this->seed(LanguageSeeder::class);
+
+        $study = $this->completeStudy([
+            'status' => CaseStudy::STATUS_PUBLISHED,
+            'language' => 'ru',
+            'title' => 'Контроль прибытия и убытия',
+            'short_problem' => 'Нужны доказательства прибытия на площадки.',
+            'configuration_steps' => '<p>Создайте геозону.</p>',
+        ]);
+
+        $study->setTranslation('title', 'en', 'Arrival and departure monitoring');
+        $study->setTranslation('configuration_steps', 'en', '<p>Create a GeoZone.</p>');
+
+        $this->withHeader('Accept-Language', 'en')
+            ->get(route('academy.case-studies.show', $study))
+            ->assertOk()
+            ->assertSee('Arrival and departure monitoring')
+            ->assertSee('Create a GeoZone.', false)
+            // Nobody translated the summary, so the original stands.
+            ->assertSee('Нужны доказательства прибытия на площадки.');
+
+        $this->withHeader('Accept-Language', 'ru-RU,ru;q=0.9')
+            ->get(route('academy.case-studies.show', $study))
+            ->assertOk()
+            ->assertSee('Контроль прибытия и убытия')
+            ->assertDontSee('Arrival and departure monitoring');
+
+        // And the listing finds it by its translation, like a course.
+        $this->withHeader('Accept-Language', 'en')
+            ->get(route('academy.case-studies.index', ['q' => 'GeoZone']))
+            ->assertOk()
+            ->assertSee('Arrival and departure monitoring');
+    }
+
+    /** The source and performance notes are the editor's working notes. */
+    public function test_only_an_editor_reads_the_source_and_performance_notes(): void
+    {
+        $product = Product::create(['name' => 'PTM', 'slug' => 'ptm']);
+        $study = $this->completeStudy([
+            'status' => CaseStudy::STATUS_PUBLISHED,
+            'product_id' => $product->id,
+            'source_note' => 'Checked against the staging fleet, not a customer.',
+            'performance_claim_note' => 'No quantified claim.',
+        ]);
+
+        $this->actingAs($this->learner())
+            ->get(route('academy.case-studies.show', $study))
+            ->assertOk()
+            ->assertSee($study->title)
+            ->assertDontSee('Checked against the staging fleet, not a customer.')
+            ->assertDontSee('No quantified claim.');
+
+        $this->get(route('academy.case-studies.show', $study))
+            ->assertOk()
+            ->assertDontSee('Checked against the staging fleet, not a customer.');
+
+        $this->actingAs($this->creatorFor($product))
+            ->get(route('academy.case-studies.show', $study))
+            ->assertOk()
+            ->assertSee('Checked against the staging fleet, not a customer.');
+    }
+
     public function test_creators_only_see_and_manage_their_products_case_studies(): void
     {
         $mine = Product::create(['name' => 'GARM', 'slug' => 'garm']);

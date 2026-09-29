@@ -34,7 +34,8 @@ class CaseStudyController extends Controller
             ->values();
 
         $caseStudies = CaseStudy::published()
-            ->with(['product', 'coverMediaItem'])
+            // Loaded up front so a page of titles is not a query per title.
+            ->with(['product', 'coverMediaItem', 'contentTranslations'])
             ->matchingSearch($term)
             ->when($industry !== '', fn (Builder $query) => $query->where('industry', $industry))
             ->when($feature !== '', fn (Builder $query) => $query->whereJsonContains('features_used', $feature))
@@ -60,11 +61,14 @@ class CaseStudyController extends Controller
     {
         abort_unless($caseStudy->isVisibleTo($request->user()), 404);
 
-        $caseStudy->load(['product', 'coverMediaItem', 'diagramMediaItem']);
+        $caseStudy->load(['product', 'coverMediaItem', 'diagramMediaItem', 'contentTranslations']);
 
         return view('academy.case-studies.show', [
             'caseStudy' => $caseStudy,
             'relatedLessons' => $caseStudy->relatedLessons(),
+            // The source and performance notes are the editor's own working
+            // notes, so only someone who may edit the study reads them.
+            'isEditor' => (bool) $request->user()?->canManageCaseStudy($caseStudy),
         ]);
     }
 }

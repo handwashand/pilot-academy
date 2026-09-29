@@ -244,7 +244,10 @@ not track completion or issue a certificate.
    must choose one of their assigned products and can only manage studies for
    those products.
 2. Add the title, short problem statement, industry, relevant Pilot features,
-   difficulty and estimated implementation time.
+   difficulty and estimated implementation time. **Written in** is the study's
+   own language — write in yours, then use **Translate** on the edit page to
+   add the other languages. A partner reads the translation where one exists
+   and the original everywhere else.
 3. Complete the study sections. Before publishing, the academy requires the
    customer scenario and problem, desired outcome, step-by-step configuration,
    testing and verification, and a **Source or verification note**.
@@ -252,7 +255,8 @@ not track completion or issue a certificate.
    customer has explicitly approved identification. Turn on **Customer
    approved** only when that approval is recorded. Use **Performance claim
    note** to record the evidence behind any measured saving, reduction, uptime
-   or other quantified result.
+   or other quantified result. Both notes are for editors: partners never see
+   them, so write them for your colleagues.
 5. Optional: add a sanitized cover image or diagram, related Academy lessons,
    and documentation links. Do not upload customer names, exact locations,
    credentials, live vehicle data or identifying screenshots.

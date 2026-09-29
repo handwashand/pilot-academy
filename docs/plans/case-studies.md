@@ -18,6 +18,8 @@ Add a Case Studies area to Pilot Academy so partners and integrators can find pr
 | 6. Documentation and handoff | Done | Updated the changelog, admin guides, learner Help guides, work log, and this implementation plan. |
 | 7. Product acceptance | In progress | The listing and a study were checked in Chrome at 375px and 1280px in English and Russian. Editorial acceptance of the three drafts remains with the product owner. |
 | 8. Every language | Done | The panel screens and both partner pages go through `__t()`, in all five languages. Added after review: they were first written as fixed English text. |
+| 9. Studies in every language | Done | A study has **Written in** and **Translate**, like a course, over the title, summary and nine sections. Search matches translations. |
+| 10. Editors' notes stay internal | Done | The source and performance-claim notes left the public sidebar; only someone who may edit the study reads them. |
 
 ## Reused Application Patterns
 
@@ -168,8 +170,9 @@ The host Composer installation is incomplete, so PHP tests were run against the 
 These items are intentionally outside the completed implementation or need product-owner validation:
 
 - [ ] Check keyboard-only navigation and visible focus states. Width and language were checked in Chrome at 375px and 1280px.
-- [ ] Decide whether a case study should be translatable the way a course is (`HasContentTranslations`, a **Written in** field and the existing Translate action). Today its text stays in the language its author typed; only the surrounding screen follows the reader.
-- [ ] Decide whether the **Source note** and **Performance claims** shown in the study sidebar should be editor-only — they read as internal verification notes but are public today.
+- [x] Make a case study translatable the way a course is. Done: `Written in`, Translate, and translation-aware search.
+- [x] Keep the **Source note** and **Performance claims** to editors. Done.
+- [ ] Translate the three starter drafts once a Pilot specialist has approved the English.
 - [ ] Review the three starter drafts with a Pilot product specialist and publish only approved content.
 - [ ] Add a formal review/approval state if the wider Academy content lifecycle adopts one.
 - [ ] Add partner submissions only after a shared submission, moderation, abuse prevention, and notification pattern is designed.

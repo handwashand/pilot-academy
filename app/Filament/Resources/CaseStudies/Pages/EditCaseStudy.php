@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CaseStudies\Pages;
 
+use App\Filament\Actions\TranslateContentAction;
 use App\Filament\Resources\CaseStudies\CaseStudyResource;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
@@ -19,6 +20,7 @@ class EditCaseStudy extends EditRecord
                 ->icon('heroicon-o-eye')
                 ->url(fn (): string => route('academy.case-studies.show', $this->getRecord()))
                 ->openUrlInNewTab(),
+            TranslateContentAction::make(),
             DeleteAction::make(),
         ];
     }

@@ -28,6 +28,8 @@ Use **Pesquisar** para procurar um problema ou uma solução, ou filtre a lista 
 
 Cada estudo apresenta o cenário do cliente, os pré-requisitos, os recursos do Pilot, as etapas de configuração, como testar a solução, os resultados esperados e limitações, os erros comuns e formas de adaptação. Ao final, podem aparecer aulas da Academia e links de documentação relacionados.
 
+Um estudo aparece no seu idioma onde alguém o traduziu e no idioma original no restante.
+
 Os estudos de caso são materiais de referência: não registram progresso, não têm teste e não emitem certificado. Os parceiros veem apenas os estudos publicados.
 
 ## Concluir uma aula

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasContentTranslations;
 use App\Models\Concerns\HasPublishStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +11,25 @@ use Illuminate\Support\Collection;
 
 class CaseStudy extends Model
 {
-    use HasPublishStatus;
+    use HasContentTranslations, HasPublishStatus;
+
+    /**
+     * Everything a partner reads. A study is written in one language and
+     * Translate adds the others; an untranslated field shows the original.
+     */
+    protected array $translatable = [
+        'title',
+        'short_problem',
+        'scenario_problem',
+        'desired_outcome',
+        'prerequisites',
+        'pilot_features',
+        'configuration_steps',
+        'testing_verification',
+        'expected_results',
+        'troubleshooting',
+        'adaptation',
+    ];
 
     public const DIFFICULTY_BEGINNER = 'beginner';
 
@@ -47,6 +66,7 @@ class CaseStudy extends Model
         'cover_media_item_id',
         'diagram_media_item_id',
         'title',
+        'language',
         'slug',
         'short_problem',
         'industry',
@@ -120,6 +140,23 @@ class CaseStudy extends Model
         return $this->isPublished() || (bool) $user?->canManageCaseStudy($this);
     }
 
+    /**
+     * A study's fields are already named on the page and in the form, so the
+     * Translate box borrows those names instead of shipping them twice.
+     */
+    public function translatableFieldLabel(string $field): string
+    {
+        if ($field === 'short_problem') {
+            return __t('admin_case_studies.form.short_problem');
+        }
+
+        $section = array_search($field, self::SECTION_FIELDS, true);
+
+        return $section === false
+            ? __t("admin_common.translate.fields.{$field}")
+            : __t("academy.case_studies.sections.{$section}");
+    }
+
     public function difficultyLabel(): string
     {
         return static::difficultyLabels()[$this->difficulty] ?? ucfirst((string) $this->difficulty);
@@ -137,7 +174,9 @@ class CaseStudy extends Model
             ->map(fn (string $field, string $key): array => [
                 'anchor' => str_replace('_', '-', $field),
                 'heading' => __t("academy.case_studies.sections.{$key}"),
-                'body' => (string) $this->getAttribute($field),
+                // The reader's language where someone has translated it,
+                // the author's words where nobody has.
+                'body' => (string) $this->translated($field),
             ])
             ->filter(fn (array $section): bool => filled($section['body']))
             ->values();
@@ -211,7 +250,11 @@ class CaseStudy extends Model
             ->whereRaw('LOWER(title) LIKE ?', [$like])
             ->orWhereRaw('LOWER(short_problem) LIKE ?', [$like])
             ->orWhereRaw('LOWER(industry) LIKE ?', [$like])
-            ->orWhereRaw('LOWER(configuration_steps) LIKE ?', [$like]));
+            ->orWhereRaw('LOWER(configuration_steps) LIKE ?', [$like])
+            // Found by its translations too, like a course: a study written in
+            // English turns up for a Russian search once it has been translated.
+            ->orWhereHas('contentTranslations', fn ($translations) => $translations
+                ->whereRaw('LOWER(value) LIKE ?', [$like])));
     }
 
     protected static function booted(): void
