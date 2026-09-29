@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             LanguageSeeder::class,
             PilotMonitoringCourseSeeder::class,
+            CaseStudySeeder::class,
         ]);
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AcademyController;
 use App\Http\Controllers\Auth\StudentAuthController;
+use App\Http\Controllers\CaseStudyController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\ChangelogPdfController;
 use App\Http\Controllers\FinalQuizController;
@@ -13,6 +14,8 @@ Route::get('/', [AcademyController::class, 'home'])->name('academy.home');
 Route::post('/name', [AcademyController::class, 'setName'])->name('academy.name');
 Route::get('/search', [AcademyController::class, 'search'])->name('academy.search');
 Route::get('/help', [AcademyController::class, 'help'])->name('academy.help');
+Route::get('/case-studies', [CaseStudyController::class, 'index'])->name('academy.case-studies.index');
+Route::get('/case-studies/{caseStudy:slug}', [CaseStudyController::class, 'show'])->name('academy.case-studies.show');
 Route::get('/sitemap.xml', [AcademyController::class, 'sitemap'])->name('sitemap');
 Route::post('/locale', LocaleController::class)->name('locale.switch');
 

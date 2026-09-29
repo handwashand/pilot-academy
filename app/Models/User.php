@@ -148,6 +148,20 @@ class User extends Authenticatable implements FilamentUser, HasLocalePreference
             && $this->products()->whereKey($course->product_id)->exists();
     }
 
+    public function canManageCaseStudy(?CaseStudy $caseStudy): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        if (! $this->isCreator() || ! $caseStudy) {
+            return false;
+        }
+
+        return $caseStudy->product_id !== null
+            && $this->products()->whereKey($caseStudy->product_id)->exists();
+    }
+
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);

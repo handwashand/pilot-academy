@@ -128,6 +128,12 @@
                     <span aria-hidden="true" class="w-6 h-6 rounded-full border border-slate-300 text-xs font-bold flex items-center justify-center">?</span>
                     <span class="hidden sm:block">{{ __t('nav.help') }}</span>
                 </a>
+                <a href="{{ route('academy.case-studies.index') }}"
+                   class="flex flex-none items-center gap-2 h-11 px-1 sm:px-2 rounded-lg text-sm text-slate-600 hover:text-brand hover:bg-slate-50 active:bg-slate-100 font-medium"
+                   aria-label="Case Studies">
+                    <span aria-hidden="true" class="w-6 h-6 rounded-full border border-slate-300 text-[10px] font-bold flex items-center justify-center">CS</span>
+                    <span class="hidden md:block">Case Studies</span>
+                </a>
                 @auth
                     @php
                         $account = auth()->user();
