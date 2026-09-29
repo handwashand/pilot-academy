@@ -24,6 +24,17 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **Case Studies turn proven deployments into reusable partner playbooks.**
+  Partners can open **Case Studies** from the academy, search by problem or
+  solution, and filter by industry, Pilot feature and difficulty. Each
+  published study covers the scenario, prerequisites, Pilot features,
+  configuration, testing, expected results, limitations, troubleshooting,
+  adaptations and related lessons or documentation. Admins and product
+  creators can prepare studies under **Content → Case Studies**, preview drafts
+  privately, add sanitized media and verification notes, and publish only when
+  the required sections are complete. Three anonymized starter studies are
+  included as drafts for geofence arrivals and departures, overspeeding
+  escalation and fuel-event investigation.
 - **The whole admin panel follows your language.** Menus, page titles, every
   form label and help text, table columns, buttons, confirmation messages,
   notifications, the dashboard, Content health, Final quiz health, Mail and

@@ -382,6 +382,32 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-09-29 — Case Studies for partner deployment playbooks (uncommitted)
+
+Added a searchable **Case Studies** area for partners and integrators, with
+industry, Pilot feature and difficulty filters, ten-part implementation guides,
+sanitized cover/diagram media, and related Academy lessons and documentation.
+Only published studies are public; authorized admins and product-scoped
+creators can create, edit, preview, publish and return studies to draft from
+the Filament panel. Publication requires the core scenario, outcome,
+configuration, verification and source-note fields. Privacy fields record
+whether a study is anonymized or customer approved, with a separate note for
+the evidence behind performance claims.
+
+Seeded three anonymized drafts: geofence arrival/departure monitoring,
+overspeeding escalation and fuel-event investigation. Partner submissions and
+a separate review state remain deferred because the application has no shared
+moderation/review workflow to reuse. Updated the current changelog, all admin
+guide copies, all learner Help copies, and `CASE_STUDY_PLAN.md`.
+
+**Verified:** `CaseStudyTest` (6 tests, 28 assertions),
+`StudentSiteTranslationTest` (7 tests, 4,151 assertions),
+`CoursePublishingTest` (17 tests, 85 assertions), `CreatorRoleTest` (23 tests,
+80 assertions), and `npm.cmd run build` passed during implementation. After the
+documentation correction, the focused changelog, admin-guide menu, guide page
+and learner Help tests passed (36 tests, 114 assertions). Manual browser
+acceptance and Pilot subject-matter review of the seeded drafts remain open.
+
 ### 2026-09-15 — Russian and French checked on screen, and what that found (uncommitted)
 **How it was checked:** puppeteer-core with installed Chrome against the preview
 container, using `admin-langs.js`, `admin-fixes.js` and `pdfshot-ru.js` in the

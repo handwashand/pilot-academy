@@ -38,6 +38,7 @@ doing: building the training (**Content**), looking after the people taking it
 | **Dashboard** | The home screen: overall numbers, progress by partner, and who has gone quiet. |
 | **Content → Courses** | Create courses and turn on the final quiz and certificate. |
 | **Content → Lessons** | Add lessons to a course: a video, text, and quiz questions. |
+| **Content → Case Studies** | Build, preview and publish reusable deployment playbooks for partners. |
 | **Content → Products** | The products/modules your training is about (GARM, PTM, …) and who owns each one. |
 | **Content → Media Items** | A shared image library you can reuse as lesson covers. |
 | **Content → Content health** | Everything broken for students right now, each with a link to fix it. A red number beside it means something needs fixing. |
@@ -232,6 +233,40 @@ When a student passes, the certificate is made **automatically**: a PDF with the
 ---
 
 ## 4. How to set things up
+
+### Create and publish a case study
+
+Use **Content → Case Studies** for a practical deployment guide that partners
+can reproduce. A case study is reference material rather than a course: it does
+not track completion or issue a certificate.
+
+1. Click **New case study** and choose the **Product** where relevant. Creators
+   must choose one of their assigned products and can only manage studies for
+   those products.
+2. Add the title, short problem statement, industry, relevant Pilot features,
+   difficulty and estimated implementation time.
+3. Complete the study sections. Before publishing, the academy requires the
+   customer scenario and problem, desired outcome, step-by-step configuration,
+   testing and verification, and a **Source or verification note**.
+4. Under **Privacy and verification**, leave **Anonymized** on unless the
+   customer has explicitly approved identification. Turn on **Customer
+   approved** only when that approval is recorded. Use **Performance claim
+   note** to record the evidence behind any measured saving, reduction, uptime
+   or other quantified result.
+5. Optional: add a sanitized cover image or diagram, related Academy lessons,
+   and documentation links. Do not upload customer names, exact locations,
+   credentials, live vehicle data or identifying screenshots.
+6. Save the study as **Draft**, then use **Preview** to inspect its public page.
+   The preview is available to authorized editors, but ordinary partners cannot
+   open the draft.
+7. Return to the Case Studies list and click **Publish**. A study missing a
+   required section or source note stays a draft and the panel explains what
+   needs to be completed. **Unpublish** returns a live study to Draft without
+   deleting it.
+
+Published studies appear under **Case Studies** on the public academy. Check
+that the study can be found with its industry, feature and difficulty filters,
+and that its related lessons and documentation open correctly.
 
 ### Edit the final quiz questions
 

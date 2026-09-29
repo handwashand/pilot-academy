@@ -20,6 +20,16 @@ La carte en haut de l'accueil indique toujours la prochaine étape : commencer, 
 
 La recherche trouve les cours et les leçons par nom, ainsi que les mots prononcés dans une vidéo lorsqu'une transcription existe.
 
+## Utiliser les études de cas
+
+Ouvrez **Case Studies** dans la navigation de l'académie pour trouver des guides pratiques de déploiement de Pilot. Sur un téléphone, le bouton peut afficher **CS**.
+
+Utilisez **Search** pour rechercher un problème ou une solution, ou filtrez la liste par secteur (**Industry**), fonctionnalité (**Feature**) et difficulté (**Difficulty**). Chaque carte indique aussi le temps de mise en œuvre estimé.
+
+Chaque étude présente le scénario client, les prérequis, les fonctionnalités Pilot, les étapes de configuration, la méthode de test, les résultats attendus et leurs limites, les erreurs courantes et les adaptations possibles. Des leçons de l'Académie et des liens de documentation associés peuvent apparaître à la fin.
+
+Les études de cas sont des documents de référence : elles ne suivent pas la progression, ne comportent pas de quiz et ne délivrent pas de certificat. Les partenaires ne voient que les études publiées.
+
 ## Terminer une leçon
 
 Une leçon est terminée lorsque vous **réussissez son contrôle de connaissances**. Lire ou regarder ne suffit pas.

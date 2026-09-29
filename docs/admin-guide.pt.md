@@ -17,6 +17,7 @@ Altere seu nome, e-mail ou senha pelo menu da conta, no canto superior direito, 
 | **Painel** | Indicadores gerais, progresso por empresa e estudantes parados. |
 | **Conteúdo → Cursos** | Criar cursos e ativar teste final e certificado. |
 | **Conteúdo → Aulas** | Adicionar vídeo, texto e perguntas. |
+| **Conteúdo → Case Studies** | Criar, visualizar e publicar guias práticos de implantação para parceiros. |
 | **Conteúdo → Produtos** | Produtos ou módulos e seus responsáveis. |
 | **Conteúdo → Mídias** | Biblioteca de imagens reutilizáveis. |
 | **Pessoas → Usuários** | Contas, funções, progresso e certificados. |
@@ -59,6 +60,8 @@ Abra o site público, conclua as aulas e confirme que o teste final desbloqueia.
 Ao passar, o certificado é gerado automaticamente em PDF com nome, curso, data, número único e QR code.
 
 ## 4. Como configurar
+
+**Estudos de caso.** Em **Conteúdo → Case Studies**, clique em **New case study** e informe o problema resumido, o setor, os recursos do Pilot, a dificuldade e o tempo estimado. Preencha o cenário, o resultado desejado, as etapas de configuração e a verificação. A nota **Source or verification note** é obrigatória antes da publicação; use **Performance claim note** para guardar a evidência de qualquer resultado quantificado. Mantenha **Anonymized** ativado, exceto quando houver aprovação explícita do cliente, e ative **Customer approved** somente quando essa aprovação estiver registrada. Use apenas imagens higienizadas, sem nomes, locais exatos, credenciais ou dados de veículos reais. Salve o rascunho, confira com **Preview** e depois use **Publish** na lista. Parceiros comuns não conseguem abrir um rascunho. Creators gerenciam somente os estudos dos produtos atribuídos a eles.
 
 Edite perguntas do teste final na aba **Final questions** do curso. Uma pergunta vinda de uma aula é a mesma pergunta; editá-la muda também a aula.
 

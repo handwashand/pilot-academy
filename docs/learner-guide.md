@@ -41,6 +41,23 @@ last final quiz — including how many attempts you have left.
 Looking for something? **Search** finds courses and lessons by name, and also
 by words spoken in a video that has a transcript.
 
+## Using case studies
+
+Open **Case Studies** in the academy navigation to find practical Pilot
+deployment guides. On a phone, the navigation button may show **CS**.
+
+Use **Search** to look for a problem or solution, or narrow the list by
+**Industry**, **Feature** and **Difficulty**. Each card also shows the estimated
+implementation time.
+
+A case study explains the customer scenario, prerequisites, Pilot features,
+configuration steps, how to test the setup, expected results and limitations,
+common mistakes, and ways to adapt the solution. Related Academy lessons and
+documentation are listed at the end when available.
+
+Case studies are reference guides. They do not record progress, have a quiz or
+issue a certificate. Only published studies appear to partners.
+
 ## Finishing a lesson
 
 A lesson is finished when you **pass its knowledge check** — reading or watching

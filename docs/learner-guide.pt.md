@@ -20,6 +20,16 @@ O cartão no topo da página inicial sempre mostra o próximo passo: começar, c
 
 A busca encontra cursos e aulas pelo nome, e também palavras faladas em um vídeo quando há transcrição.
 
+## Usar estudos de caso
+
+Abra **Case Studies** na navegação da academia para encontrar guias práticos de implantação do Pilot. No celular, o botão pode aparecer como **CS**.
+
+Use **Search** para procurar um problema ou uma solução, ou filtre a lista por setor (**Industry**), recurso (**Feature**) e dificuldade (**Difficulty**). Cada cartão também mostra o tempo estimado de implantação.
+
+Cada estudo apresenta o cenário do cliente, os pré-requisitos, os recursos do Pilot, as etapas de configuração, como testar a solução, os resultados esperados e limitações, os erros comuns e formas de adaptação. Ao final, podem aparecer aulas da Academia e links de documentação relacionados.
+
+Os estudos de caso são materiais de referência: não registram progresso, não têm teste e não emitem certificado. Os parceiros veem apenas os estudos publicados.
+
 ## Concluir uma aula
 
 Uma aula é concluída quando você **passa na verificação de conhecimento**. Apenas ler ou assistir não conclui a aula.

@@ -15,7 +15,8 @@ Add a Case Studies area to Pilot Academy so partners and integrators can find pr
 | 3. Editorial workflow | Done | Added role-aware Filament create, edit, preview, publish, unpublish, archive, validation, and product ownership controls. |
 | 4. Starter content | Done | Added three anonymized draft studies with illustrative outcomes and no invented customer claims. |
 | 5. Automated verification | Done | Feature tests and related regression tests pass in Docker; frontend production build passes. |
-| 6. Handoff and acceptance | In progress | This document records the implementation. Final browser-based visual and editorial acceptance remains available for the product owner. |
+| 6. Documentation and handoff | Done | Updated the changelog, admin guides, learner Help guides, work log, and this implementation plan. |
+| 7. Product acceptance | In progress | Final browser-based visual and editorial acceptance remains available for the product owner. |
 
 ## Reused Application Patterns
 
@@ -94,6 +95,14 @@ Add a Case Studies area to Pilot Academy so partners and integrators can find pr
 - [ ] Complete final manual browser acceptance on representative desktop and mobile viewports.
 - [ ] Have a Pilot subject-matter expert review configuration terminology before publishing starter drafts.
 
+### Phase 7: Documentation
+
+- [x] Add the feature to `docs/CHANGELOG.md` under the current release.
+- [x] Add the Case Studies menu item and editor workflow to the admin guide.
+- [x] Add public search, filters, study contents, and publication visibility to the learner Help guide.
+- [x] Update the Russian, Spanish, French, and Portuguese guide copies.
+- [x] Record the completed feature and remaining acceptance work in `agents.md`.
+
 ## Verification Results
 
 The host Composer installation is incomplete, so PHP tests were run against the rebuilt Docker application image.
@@ -104,6 +113,7 @@ The host Composer installation is incomplete, so PHP tests were run against the 
 | `StudentSiteTranslationTest` | Passed: 7 tests, 4,151 assertions |
 | `CoursePublishingTest` | Passed: 17 tests, 85 assertions |
 | `CreatorRoleTest` | Passed: 23 tests, 80 assertions |
+| Changelog and guide tests | Passed: 36 tests, 114 assertions |
 | `npm.cmd run build` | Passed |
 
 ## Files Added
@@ -132,6 +142,10 @@ The host Composer installation is incomplete, so PHP tests were run against the 
 - `routes/web.php`
 - `public/build/manifest.json`
 - Compiled CSS in `public/build/assets/`
+- `docs/CHANGELOG.md`
+- `docs/admin-guide.md` and its Russian, Spanish, French, and Portuguese copies
+- `docs/learner-guide.md` and its Russian, Spanish, French, and Portuguese copies
+- `agents.md`
 
 ## Decisions and Constraints
 
