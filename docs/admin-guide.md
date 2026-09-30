@@ -18,7 +18,7 @@ You land on the **Dashboard** — a quick summary of how many students you have,
 
 **Change the language** with the language button at the far right of the top bar — it shows the current code, such as **EN**. Pick a language from its menu; the whole panel reloads in it — menus, forms, buttons, messages and the dashboard — and your choice is saved to your account, so the student site follows it too. Alerts in the notification bell are written in your language as well. Emails and certificates go to each student in the language they chose, whoever sends them — so a certificate you regenerate for a French student is still printed in French.
 
-**Correct a translation** under **Settings → Translations**. Search for the words you saw on the student site or in the panel, in any language, click **Correct**, type the new wording in **Correction** and save — everyone sees it straight away. Keep words that start with a colon, such as `:name`, as they are. To go back to the original text, empty **Correction** and save.
+**Correct a translation** under **Settings → Translations**. Each line of text is one row, with a column per language, so you can read a line across all five at once. Search for the words you saw on the student site or in the panel, in any language, then click the cell in the language you want to fix, type the new wording in **Correction** and save — everyone sees it straight away. Keep words that start with a colon, such as `:name`, as they are. To go back to the original text, empty **Correction** and save.
 
 **Write in your own language.** Every course and lesson has a **Written in** field — English unless you choose another. A new lesson takes the language of its first course.
 
@@ -52,7 +52,7 @@ doing: building the training (**Content**), looking after the people taking it
 | **Results → Student feedback** | What students said about every course, in one list. Admins only. |
 | **Docs → Guide** | This guide, with a contents list and a search box. |
 | **Docs → What's new** | Everything that has changed in the academy, newest first. Search it, filter it by category, or open it as a PDF. |
-| **Settings → Mail** | Whether the academy really sends email, and a button to send yourself a test. Admins only. |
+| **Settings → Mail** | Are emails arriving? What the server is set to do, and a button to send yourself a test. Admins, and anyone given **Check mail delivery**. |
 | **Settings → Translations** | The wording students see, in every language — correct any of it without waiting for a developer. Admins only. |
 
 Students have their own guide on the public site: **Help**, the **?** in the top bar. Point a stuck student there first — it covers what finishes a lesson, when the final quiz unlocks, and where certificates are.
@@ -527,7 +527,7 @@ Open your site address + `/certificates/` + the certificate number (or scan the 
 | A certificate was issued by mistake | **Certificates** → **Revoke**. Public check shows "Revoked". Changed your mind? **Restore**. |
 | The PDF is empty or won't download | **Certificates** → **Regenerate PDF**, then **Download** again. |
 | The name on a certificate is wrong | **Certificates** → the row → **Edit name**. The PDF is reprinted with the same number. Use **Resend email** if the student should get the corrected copy. |
-| Certificate emails never arrive | **Settings → Mail** says whether the academy is really sending email. **Send test email** to check. |
+| Certificate emails never arrive | **Settings → Mail** says whether the academy is really sending email. **Send test email** to check. The settings themselves live in the server’s `.env`. |
 | You need a list for a report | **Certificates** → **Export CSV** (open in Excel or Google Sheets). |
 | You need everyone's progress, not just certificates | **Users** → **Export learner progress**. One row per student: lessons done, certificates, last activity. |
 | A student ran out of attempts | **Results → Quiz attempts** → turn on the **Out of attempts, not passed** filter → **Grant another attempt** on their row. Only that student gets one more try. To change it for everyone, raise **Max attempts** on the course or lesson. |

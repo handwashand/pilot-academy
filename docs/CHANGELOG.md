@@ -31,6 +31,18 @@ Add a new entry here whenever something visible to admins or students changes.
   and **Webinars**. The home page is unchanged: it stays your own starting
   point, with where you left off at the top. Help moved into the account menu
   and stays in the footer of every page.
+- **Someone other than an admin can check whether emails are arriving.**
+  **Settings → Mail** now opens with the question it answers — not getting
+  emails? — and a test you send yourself. Admins still see it, and an admin can
+  now hand **Check mail delivery** to anyone else under **People → Users →
+  Permissions**, so a support colleague can answer "did that certificate email
+  go out?" without being made an admin of the whole academy. The settings
+  themselves stay in the server’s `.env`, out of the panel.
+- **Translations read across, not down.** **Settings → Translations** now
+  shows one row per line of text with a column for each language, so you can
+  see at a glance where a wording is still the shipped one — or missing. Click
+  the cell in the language you want to fix. Searching still finds a line by
+  words from any language.
 - **Tutorials you add yourself, by link or upload.** Alongside the lesson
   videos gathered from the courses, admins and product creators can add
   standalone how-to videos under **Content → Tutorials** — a YouTube link or a
@@ -228,6 +240,11 @@ Add a new entry here whenever something visible to admins or students changes.
   as *YouTube link that is not a playable video*, each with a link straight to
   the lesson.
 
+<!-- For contributors, not for the panel: this section explains how the page
+     itself works, which is our business rather than an admin's. It stays in
+     this file and is stripped before anything is rendered — see
+     Changelog::parse(). Keep notes like this inside a comment.
+
 ### What's new is now a filterable list
 
 **This page is built from `docs/CHANGELOG.md` itself**, read fresh on every
@@ -238,6 +255,7 @@ there is no second copy to update and no way for the two to fall out of step.
 category pill** to narrow to just the additions, the fixes, or the known
 limitations. Months with nothing left in them drop out of the way rather than
 sitting there empty.
+-->
 
 ## 2.0.0 — September 2026
 

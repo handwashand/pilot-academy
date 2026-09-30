@@ -19,6 +19,12 @@ class ListTranslations extends ListRecords
         parent::mount();
     }
 
+    /** The cells are the way in, and nothing else on the page says so. */
+    public function getSubheading(): ?string
+    {
+        return __t('admin_settings.translations.click_hint');
+    }
+
     protected function getHeaderActions(): array
     {
         return [

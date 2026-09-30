@@ -70,6 +70,7 @@ class UserForm
                     ->options([
                         User::PERMISSION_LANGUAGES_MANAGE => __t('admin_people.users.manage_languages'),
                         User::PERMISSION_TRANSLATIONS_MANAGE => __t('admin_people.users.manage_translations'),
+                        User::PERMISSION_MAIL_CHECK => __t('admin_people.users.check_mail'),
                     ])
                     ->helperText(__t('admin_people.users.permissions_help'))
                     ->dehydrated(false)

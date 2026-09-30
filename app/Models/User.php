@@ -44,6 +44,9 @@ class User extends Authenticatable implements FilamentUser, HasLocalePreference
 
     public const PERMISSION_TRANSLATIONS_MANAGE = 'translations.manage';
 
+    /** Open Settings → Mail and send yourself a test email. */
+    public const PERMISSION_MAIL_CHECK = 'mail.check';
+
     /** New accounts are partners until an admin says otherwise. */
     protected $attributes = [
         'role' => self::ROLE_LEARNER,

@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Mail\MailCheckMessage;
+use App\Models\User;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -48,9 +49,27 @@ class MailCheck extends Page
 
     protected string $view = 'filament.pages.mail-check';
 
+    /**
+     * Every admin, and anyone an admin gives the permission to — a support
+     * colleague can answer "did that certificate email go out?" without being
+     * made an admin of the whole academy.
+     */
     public static function canAccess(): bool
     {
-        return (bool) auth()->user()?->isAdmin();
+        $user = auth()->user();
+
+        return (bool) ($user?->isAdmin() || $user?->hasPermission(User::PERMISSION_MAIL_CHECK));
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return static::canAccess();
+    }
+
+    /** The question the page exists to answer, above the readings. */
+    public function getSubheading(): ?string
+    {
+        return __t('admin_pages.mail.subheading');
     }
 
     /**

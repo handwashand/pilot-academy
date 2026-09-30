@@ -62,6 +62,7 @@ return [
     ],
 
     'mail' => [
+        'subheading' => 'Não está recebendo e-mails? Envie um teste para você mesmo e veja o que o servidor está configurado para fazer.',
         'send_test' => 'Enviar e-mail de teste',
         'send_test_heading' => 'Enviar um e-mail de teste',
         'send_test_description' => 'Um e-mail de teste curto vai para :email.',

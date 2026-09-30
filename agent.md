@@ -382,6 +382,55 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-09-30 — Contributor notes out of the panel, Mail out of the menu
+
+The **What's new** page showed an entry explaining that the page is built from
+`docs/CHANGELOG.md` — our business, not a partner admin's. The owner asked for
+it to stay in the file for contributors and leave the view. It is wrapped in an
+HTML comment now, which `Changelog::parse()` strips, so the page and the PDF
+both drop it while the text stays where whoever works on this next will read
+it. `ChangelogPageTest` now fails if an authoring note ever reaches either.
+
+**Mail briefly left the sidebar and came back with a permission.** It was taken
+off on the reasoning that mail is set in the server's `.env`; the owner then
+asked for it back, reframed, and gated by a right that can be given or taken
+away. So: `User::PERMISSION_MAIL_CHECK`, a **Check mail delivery** checkbox
+beside the existing two under **People → Users**, `canAccess()` reading
+admin-or-permission the way `TranslationResource` does, and
+`shouldRegisterNavigation()` following `canAccess()` so the menu item appears
+for exactly whoever may open it. The page now opens with the question it
+answers — "Not getting emails? Send yourself a test…" — as a subheading rather
+than starting with readings. Settings themselves stay in `.env`; nothing about
+that changed.
+
+A colleague can now answer "did that certificate email go out?" without being
+made an admin of the whole academy.
+
+**Verified:** the whole suite in Docker. Pint clean.
+
+### 2026-09-30 — Translations as a matrix, languages across the top
+
+Settings → Translations was one row per key **per language**: the same line
+appeared five times and you filtered by language to compare. It is now one row
+per key with a column per language, so a line reads across.
+
+The table query keeps one row per key (`MIN(id)` grouped by key, so a key that
+exists in only one language still lists), and `Translation::siblings()` — a
+`hasMany` on `key` — carries the other languages, eager-loaded, so a page of
+keys is not a query per language. Each cell is a `TextColumn` with an `action()`
+holding the correction box, and it writes to that language's own row,
+`firstOrNew` so a language with no row yet still gets one. Green where somebody
+corrected it, grey where the shipped line stands, red where the key is missing
+from that language.
+
+Search now also matches a correction written in any language, not only the
+row's own. The language filter went, since every row has them all; the "missing
+in" case is visible in the colour instead. The per-row edit page still exists
+and still works — the tests that use it were left alone.
+
+**Verified:** the whole suite in Docker. Pint clean. Chrome on the page at
+1680px: 1,004 rows where there were 5,020.
+
 ### 2026-09-30 — Tutorials an admin adds, by link or upload
 
 Tutorials was derived entirely from lesson videos. It still is, but a

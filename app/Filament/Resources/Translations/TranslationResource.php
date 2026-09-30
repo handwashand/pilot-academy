@@ -11,7 +11,7 @@ use App\Models\Translation;
 use App\Models\User;
 use App\Services\Translator;
 use BackedEnum;
-use Filament\Actions\EditAction;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -149,34 +149,13 @@ class TranslationResource extends Resource
     {
         return $table
             ->defaultSort('key')
-            ->modifyQueryUsing(fn (Builder $query) => $query->with('language'))
+            // One row per key, whichever language it was first written in, with
+            // every language beside it — so a line reads across, not down.
+            ->modifyQueryUsing(fn (Builder $query) => $query
+                ->whereIn('translations.id', Translation::query()->selectRaw('MIN(id)')->groupBy('key'))
+                ->with(['language', 'siblings.language']))
             ->columns([
-                TextColumn::make('language.native_name')
-                    ->label(__t('admin_settings.translations.language'))
-                    ->sortable(),
-
-                TextColumn::make('text')
-                    ->label(__t('admin_settings.translations.text'))
-                    ->state(fn (Translation $record): string => filled($record->value) ? $record->value : (static::shippedLine($record) ?? ''))
-                    ->description(fn (Translation $record): ?string => $record->language?->code === 'en' ? null : __t($record->key, [], 'en'))
-                    ->limit(90)
-                    ->wrap()
-                    ->placeholder(__t('admin_settings.translations.missing')),
-
-                TextColumn::make('status')
-                    ->label(__t('admin_common.status'))
-                    ->state(fn (Translation $record): string => match (true) {
-                        filled($record->value) => 'corrected',
-                        static::shippedLine($record) !== null => 'shipped',
-                        default => 'missing',
-                    })
-                    ->formatStateUsing(fn (string $state): string => __t("admin_settings.translations.states.{$state}"))
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'corrected' => 'success',
-                        'shipped' => 'gray',
-                        default => 'danger',
-                    }),
+                ...static::languageColumns(),
 
                 TextColumn::make('key')
                     ->label(__t('admin_settings.translations.key'))
@@ -200,25 +179,117 @@ class TranslationResource extends Resource
                             ->values()
                             ->all();
 
+                        // The row shown is one language; a correction may
+                        // have been written in any of them.
+                        $correctedKeys = Translation::query()
+                            ->whereRaw('LOWER(value) LIKE ?', ["%{$needle}%"])
+                            ->pluck('key')
+                            ->all();
+
                         return $query->where(fn (Builder $rows) => $rows
                             ->whereRaw('LOWER(translations.key) LIKE ?', ["%{$needle}%"])
-                            ->orWhereRaw('LOWER(translations.value) LIKE ?', ["%{$needle}%"])
+                            ->orWhereIn('translations.key', $correctedKeys)
                             ->orWhereIn('translations.key', $matchingKeys));
                     }),
             ])
             ->filters([
-                SelectFilter::make('language_id')->relationship('language', 'native_name')->label(__t('admin_settings.translations.language')),
                 SelectFilter::make('module')->label(__t('admin_settings.translations.module'))->options(fn (): array => Translation::query()->distinct()->pluck('module', 'module')->all()),
+                // A key counts as corrected when any language has been corrected.
                 TernaryFilter::make('corrected')
                     ->label(__t('admin_settings.translations.corrected'))
                     ->queries(
-                        true: fn (Builder $query) => $query->whereNotNull('value')->where('value', '!=', ''),
-                        false: fn (Builder $query) => $query->where(fn (Builder $rows) => $rows->whereNull('value')->orWhere('value', '')),
+                        true: fn (Builder $query) => $query->whereHas('siblings', fn (Builder $rows) => $rows->whereNotNull('value')->where('value', '!=', '')),
+                        false: fn (Builder $query) => $query->whereDoesntHave('siblings', fn (Builder $rows) => $rows->whereNotNull('value')->where('value', '!=', '')),
                     ),
-            ])
-            ->recordActions([
-                EditAction::make()->label(__t('admin_settings.translations.correct')),
             ]);
+    }
+
+    /**
+     * A column per language: the correction where someone wrote one, the
+     * shipped line otherwise, and empty where the key is missing from that
+     * language. Clicking a cell corrects that language.
+     *
+     * @return array<int, TextColumn>
+     */
+    protected static function languageColumns(): array
+    {
+        return app(Translator::class)->activeLanguages()
+            ->map(fn (Language $language): TextColumn => TextColumn::make("language_{$language->code}")
+                ->label($language->native_name)
+                ->state(fn (Translation $record): ?string => static::lineFor($record, $language->code))
+                ->placeholder(__t('admin_settings.translations.missing'))
+                ->color(fn (Translation $record): string => match (true) {
+                    filled(static::rowFor($record, $language->code)?->value) => 'success',
+                    static::lineFor($record, $language->code) !== null => 'gray',
+                    default => 'danger',
+                })
+                ->tooltip(fn (Translation $record): ?string => static::lineFor($record, $language->code))
+                ->limit(60)
+                ->wrap()
+                ->action(static::correctionAction($language)))
+            ->all();
+    }
+
+    /** The correction box behind a cell, for one language. */
+    protected static function correctionAction(Language $language): Action
+    {
+        $code = $language->code;
+
+        return Action::make("correct_{$code}")
+            ->modalHeading(fn (Translation $record): string => __t('admin_settings.translations.correct_in', ['language' => $language->native_name]))
+            ->modalSubmitActionLabel(__t('admin_settings.translations.save_correction'))
+            ->fillForm(fn (Translation $record): array => [
+                'english' => __t($record->key, [], 'en'),
+                'shipped' => app(Translator::class)->shipped($code)[$record->key] ?? __t('admin_settings.translations.none_shipped'),
+                'value' => static::rowFor($record, $code)?->value,
+            ])
+            ->schema([
+                Textarea::make('english')
+                    ->label(__t('admin_settings.translations.english'))
+                    ->rows(2)
+                    ->disabled()
+                    ->dehydrated(false),
+
+                Textarea::make('shipped')
+                    ->label(__t('admin_settings.translations.shipped'))
+                    ->helperText(__t('admin_settings.translations.shipped_help'))
+                    ->rows(2)
+                    ->disabled()
+                    ->dehydrated(false),
+
+                Textarea::make('value')
+                    ->label(__t('admin_settings.translations.correction'))
+                    ->helperText(__t('admin_settings.translations.correction_help'))
+                    ->rows(4),
+            ])
+            ->action(function (Translation $record, array $data) use ($language): void {
+                // The row for this language may not exist yet: a key written in
+                // one language only still gets corrected in the others.
+                $row = Translation::firstOrNew([
+                    'key' => $record->key,
+                    'language_id' => $language->id,
+                ]);
+
+                $row->value = filled($data['value']) ? $data['value'] : null;
+                $row->updated_by = auth()->id();
+                $row->created_by ??= auth()->id();
+                $row->save();
+            });
+    }
+
+    protected static function rowFor(Translation $record, string $code): ?Translation
+    {
+        return $record->siblings->first(fn (Translation $row): bool => $row->language?->code === $code);
+    }
+
+    /** What this language shows today: the correction, or the shipped line. */
+    protected static function lineFor(Translation $record, string $code): ?string
+    {
+        $value = static::rowFor($record, $code)?->value;
+
+        return filled($value)
+            ? $value
+            : (app(Translator::class)->shipped($code)[$record->key] ?? null);
     }
 
     public static function shippedLine(Translation $record): ?string

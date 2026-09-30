@@ -24,6 +24,7 @@ return [
         'permissions_help' => 'Granted per account. These are not included in the Admin or Creator roles by default.',
         'manage_languages' => 'Manage languages',
         'manage_translations' => 'Manage translations',
+        'check_mail' => 'Check mail delivery',
         'lessons_done' => 'Lessons done',
         'last_login' => 'Last login',
         'export' => 'Export learner progress',
