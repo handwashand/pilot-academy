@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Mail\PasswordResetLink;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 #[Fillable(['name', 'certificate_name', 'email', 'password', 'company_id', 'role', 'login_token', 'locale'])]
@@ -241,6 +243,30 @@ class User extends Authenticatable implements FilamentUser, HasLocalePreference
     public function accessUrl(): string
     {
         return route('academy.enter', $this->ensureLoginToken());
+    }
+
+    /**
+     * "Forgot password?" sends the academy's own email, in this person's
+     * language, rather than Laravel's English notification.
+     *
+     * Deferred until after the response has gone out, and for one reason: the
+     * page must not reveal whether an address has an account. It says the same
+     * words either way, but sending an email takes time and not sending one
+     * does not — so a prober could tell the two apart with a stopwatch. This
+     * way both answers come back at the same speed.
+     *
+     * defer() rather than a queued mailable: the academy runs no queue worker,
+     * so a queued email would sit in the jobs table unsent.
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $mail = new PasswordResetLink(
+            $this,
+            route('password.reset', ['token' => $token, 'email' => $this->email]),
+            (int) config('auth.passwords.users.expire', 60),
+        );
+
+        defer(fn () => Mail::to($this)->send($mail));
     }
 
     /**

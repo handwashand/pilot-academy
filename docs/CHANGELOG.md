@@ -31,6 +31,11 @@ Add a new entry here whenever something visible to admins or students changes.
   and **Webinars**. The home page is unchanged: it stays your own starting
   point, with where you left off at the top. Help moved into the account menu
   and stays in the footer of every page.
+- **Forgot your password? Set a new one yourself.** Both login pages — the
+  academy and the panel — now offer **Forgot password?**. Give the address you
+  sign in with and a link arrives, written in your language, good for one hour
+  and one use. The page says the same thing whether or not the address has an
+  account, so it cannot be used to find out who is a customer.
 - **Someone other than an admin can check whether emails are arriving.**
   **Settings → Mail** now opens with the question it answers — not getting
   emails? — and a test you send yourself. Admins still see it, and an admin can

@@ -42,4 +42,12 @@ return [
         'number' => 'Certificado n.º',
         'issued' => 'Emitido el',
     ],
+    'password_reset' => [
+        'subject' => 'Nueva contraseña de Pilot Academy',
+        'heading' => 'Hola :name:',
+        'intro' => 'Alguien ha pedido una nueva contraseña para tu cuenta de Pilot Academy. Si fuiste tú, el botón de abajo abre la página.',
+        'button' => 'Elegir una nueva contraseña',
+        'expires' => 'El enlace sirve :count minuto.|El enlace sirve :count minutos, y una sola vez.',
+        'ignore' => 'Si no fuiste tú, no ha cambiado nada: ignora este correo y tu contraseña seguirá igual.',
+    ],
 ];

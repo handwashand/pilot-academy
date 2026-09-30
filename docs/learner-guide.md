@@ -20,6 +20,9 @@ initials, and at the foot of every page.
 page and go. Your progress is then kept in this browser only — switch phone or
 computer and it is gone.
 
+**Forgotten your password?** Use **Forgot password?** on the login page. A link
+to set a new one arrives by email; it lasts an hour and works once.
+
 **Log in to keep your progress everywhere** and to take the final quiz. Use
 **Log in** or **Register** in the top bar. If your company sent you a personal
 link, open it — it signs you straight in, no password needed.

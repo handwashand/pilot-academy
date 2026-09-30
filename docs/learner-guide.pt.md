@@ -8,6 +8,8 @@ A barra superior reúne quatro coisas: **Cursos**, todos os cursos publicados co
 
 **Você pode começar uma aula sem conta.** Abra um curso na página inicial e siga em frente. Nesse caso, seu progresso fica salvo apenas neste navegador.
 
+**Esqueceu a senha?** Use **Esqueceu a senha?** na página de entrada. Um link para definir outra chega por e-mail: ele vale por uma hora e funciona uma vez.
+
 **Entre para manter seu progresso em todos os dispositivos** e para fazer o teste final. Use **Entrar** ou **Cadastrar**. Se sua empresa enviou um link pessoal, abra-o: ele entra direto, sem senha.
 
 **A academia usa o idioma do seu navegador:** inglês, russo, espanhol, francês ou português. Para escolher outro, use o botão de idioma no canto superior direito de qualquer página — ele mostra o idioma atual, por exemplo **PT**. O texto dos cursos e das aulas aparece como foi escrito.

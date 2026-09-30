@@ -8,6 +8,8 @@ La barra superior reúne cuatro cosas: **Cursos**, todos los cursos publicados c
 
 **Puedes empezar una lección sin cuenta.** Abre un curso desde la página principal y continúa. Tu progreso queda guardado solo en este navegador.
 
+**¿Olvidaste tu contraseña?** Usa **¿Olvidaste tu contraseña?** en la página de inicio de sesión. Recibirás un enlace por correo para elegir otra: dura una hora y sirve una sola vez.
+
 **Inicia sesión para conservar tu progreso en todos tus dispositivos** y para hacer el examen final. Usa **Iniciar sesión** o **Registrarse**. Si tu empresa te envió un enlace personal, ábrelo: te inicia sesión directamente.
 
 **La academia usa el idioma de tu navegador:** inglés, ruso, español, francés o portugués. Para elegir otro, usa el botón de idioma en la esquina superior derecha de cualquier página: muestra el idioma actual, por ejemplo **ES**. El texto de los cursos y las lecciones se muestra tal como está escrito.

@@ -8,6 +8,8 @@ La barre supérieure réunit quatre choses : **Cours**, tous les cours publiés 
 
 **Vous pouvez commencer une leçon sans compte.** Ouvrez un cours depuis l'accueil et avancez. Votre progression reste alors uniquement dans ce navigateur.
 
+**Mot de passe oublié ?** Utilisez **Mot de passe oublié ?** sur la page de connexion. Un lien pour en choisir un nouveau arrive par e-mail : il dure une heure et ne sert qu’une fois.
+
 **Connectez-vous pour conserver votre progression partout** et passer le quiz final. Utilisez **Connexion** ou **S’inscrire**. Si votre entreprise vous a envoyé un lien personnel, ouvrez-le : il vous connecte directement.
 
 **L’académie s’affiche dans la langue de votre navigateur :** anglais, russe, espagnol, français ou portugais. Pour en choisir une autre, utilisez le bouton de langue en haut à droite de chaque page — il affiche la langue actuelle, par exemple **FR**. Le texte des cours et des leçons s’affiche tel qu’il a été rédigé.

@@ -382,6 +382,37 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-09-30 — Forgot password, for partners and staff alike
+
+There was no password reset at all: a partner who forgot theirs waited for an
+admin to send them their personal sign-in link. Both login pages now offer
+**Forgot password?** and land on the same two pages, so there is one flow and
+one email.
+
+Laravel's broker does the token work — hashed, an hour, one use, one link a
+minute per person. The `password_reset_tokens` table was already there, created
+by the first users migration; I wrote a second migration for it before noticing,
+which failed loudly on the first run. `User::sendPasswordResetNotification()` is
+overridden to send `PasswordResetLink`, our own mailable, in the person's
+language, rather than Laravel's English notification.
+
+**The page never says whether an address has an account.** Otherwise anyone
+could type addresses and learn which partners are customers. So: one message
+either way, no `exists` rule on the field (which would leak the same fact
+through a validation error), one message for every bad link, and `throttle:6,1`
+so nobody walks a list through it.
+
+**Timing was the leftover hole** — sending mail takes longer than not sending
+it, so a stopwatch could tell the answers apart. The email is now sent in a
+`defer()`, after the response has gone out, so both come back at the same
+speed. Not a queued mailable: the academy runs no queue worker, and a queued
+email would sit in the jobs table unsent.
+
+The panel's link is a render hook on `AUTH_LOGIN_FORM_AFTER`, the same way the
+language switcher and What's new reach the top bar.
+
+**Verified:** the whole suite in Docker. Pint clean.
+
 ### 2026-09-30 — Contributor notes out of the panel, Mail out of the menu
 
 The **What's new** page showed an entry explaining that the page is built from

@@ -118,6 +118,12 @@ class AdminPanelProvider extends PanelProvider
                 PanelsRenderHook::USER_MENU_AFTER,
                 fn (): string => view('filament.topbar-language-switcher')->render(),
             )
+            // "Forgot password?" under the panel's own login form, pointing at
+            // the same reset pages the student site uses.
+            ->renderHook(
+                PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
+                fn (): string => view('filament.login-forgot-password')->render(),
+            )
             ->sidebarCollapsibleOnDesktop()
             ->maxContentWidth('full')
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
