@@ -571,6 +571,44 @@ class DashboardTest extends TestCase
         $this->assertSame([1, 1, 1, 1, 1], $data['datasets'][0]['data']);
     }
 
+    /**
+     * A certificate earned before the academy recorded opens and completions
+     * used to draw a funnel of 0, 0, 0, 0, 11 — impossible, and the first thing
+     * an admin disbelieves. Each stage now also counts the learners the later
+     * stages prove were there.
+     */
+    public function test_the_journey_never_shows_a_later_stage_ahead_of_an_earlier_one(): void
+    {
+        $lesson = Lesson::first();
+        $learner = $this->learner('history@partner.com');
+
+        // What an academy looks like before activity tracking existed: finished
+        // lessons and a certificate, and not one event to go with them.
+        $learner->completedLessons()->attach($lesson->id, ['completed_at' => now()->subDay()]);
+        $this->certificateFor($learner, 'PA-HISTORY', 91);
+
+        $this->assertSame(0, ActivityEvent::query()->count(), 'This case is about data with no events at all.');
+
+        $data = $this->chartWidgetData(LearnerJourney::class)['datasets'][0]['data'];
+
+        $this->assertSame([1, 1, 1, 1, 1], $data);
+
+        foreach (array_slice($data, 1) as $index => $stage) {
+            $this->assertLessThanOrEqual($data[$index], $stage, 'A stage may never be taller than the one before it.');
+        }
+    }
+
+    /** The headline count reads the pivot, so history before tracking still counts. */
+    public function test_lesson_completions_come_from_the_record_not_the_event_log(): void
+    {
+        $lesson = Lesson::first();
+        $learner = $this->learner('pivot@partner.com');
+
+        $learner->completedLessons()->attach($lesson->id, ['completed_at' => now()->subDay()]);
+
+        $this->assertSame(1, $this->stats()['Lesson completions']);
+    }
+
     public function test_resource_engagement_respects_the_product_filter(): void
     {
         $included = Product::create(['name' => 'Resource product', 'slug' => 'resource-product']);

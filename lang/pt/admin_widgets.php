@@ -93,7 +93,7 @@ return [
 
     'journey' => [
         'heading' => 'Jornada do aluno',
-        'description' => 'Alunos únicos registrados em cada etapa no período selecionado.',
+        'description' => 'Alunos únicos que chegaram a cada etapa no período selecionado. Concluir conta as etapas anteriores.',
         'learners' => 'Alunos',
         'course_opened' => 'Abriu um curso',
         'lesson_opened' => 'Abriu uma aula',

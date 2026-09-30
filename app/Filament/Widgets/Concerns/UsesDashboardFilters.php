@@ -5,6 +5,8 @@ namespace App\Filament\Widgets\Concerns;
 use Carbon\CarbonImmutable;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Facades\DB;
 
 trait UsesDashboardFilters
 {
@@ -20,6 +22,38 @@ trait UsesDashboardFilters
                 ->where('product_id', $productId))
             ->when($this->dashboardCourseId(), fn (Builder $events, int $courseId): Builder => $events
                 ->where('course_id', $courseId));
+    }
+
+    /**
+     * Finished lessons as the pivot records them, filtered like everything else
+     * on the page.
+     *
+     * Activity events only go back to the day the academy started recording
+     * them; lesson_user goes back to the first lesson anybody finished. Figures
+     * about finishing read this, so they do not fall to zero for an academy
+     * that was busy before tracking existed.
+     */
+    protected function completedLessonRows(): QueryBuilder
+    {
+        $rows = DB::table('lesson_user')
+            ->join('users', 'users.id', '=', 'lesson_user.user_id')
+            ->whereNotNull('lesson_user.completed_at')
+            ->whereBetween('lesson_user.completed_at', [$this->dashboardStart(), $this->dashboardEnd()])
+            ->when($this->dashboardCompanyId(), fn (QueryBuilder $query, int $companyId): QueryBuilder => $query
+                ->where('users.company_id', $companyId));
+
+        // Only join the course side when a filter needs it: a lesson can sit in
+        // several courses, and the join would otherwise count it once each.
+        if ($this->dashboardProductId() || $this->dashboardCourseId()) {
+            $rows->whereExists(fn ($exists) => $exists
+                ->from('course_lesson')
+                ->join('courses', 'courses.id', '=', 'course_lesson.course_id')
+                ->whereColumn('course_lesson.lesson_id', 'lesson_user.lesson_id')
+                ->when($this->dashboardProductId(), fn ($query, int $productId) => $query->where('courses.product_id', $productId))
+                ->when($this->dashboardCourseId(), fn ($query, int $courseId) => $query->where('courses.id', $courseId)));
+        }
+
+        return $rows;
     }
 
     protected function dashboardStart(): CarbonImmutable

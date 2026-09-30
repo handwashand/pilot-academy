@@ -41,6 +41,14 @@ Add a new entry here whenever something visible to admins or students changes.
   and **Webinars**. The home page is unchanged: it stays your own starting
   point, with where you left off at the top. Help moved into the account menu
   and stays in the footer of every page.
+- **The dashboard funnel and the completion count tell the same story.**
+  **Learner journey** used to read every stage from the activity log, which
+  only goes back to the day the academy started recording it — so an academy
+  with older certificates saw no opens, no completions and a full bar of
+  certificates. Each stage now also counts the learners the later stages prove
+  were there, so no bar can stand taller than the one before it, and
+  **Lesson completions** counts finished lessons from the record rather than
+  the log. **Most opened courses** is full width like the other charts.
 - **Forgot your password? Set a new one yourself.** Both login pages — the
   academy and the panel — now offer **Forgot password?**. Give the address you
   sign in with and a link arrives, written in your language, good for one hour

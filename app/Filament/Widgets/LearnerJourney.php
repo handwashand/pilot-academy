@@ -35,23 +35,38 @@ class LearnerJourney extends ChartWidget
         return 'bar';
     }
 
+    /**
+     * A funnel that cannot contradict itself.
+     *
+     * Opens are known only from activity events, which start when the academy
+     * began recording them; finishing is also written in lesson_user and
+     * certificates, which go back further. Counting each stage from its own
+     * source alone produced nonsense on real data — no opens, no completions,
+     * eleven certificates — because a certificate earned before tracking has
+     * no matching events.
+     *
+     * So each stage also counts the learners the later stages prove were
+     * there: earning a certificate means finishing the course, which means
+     * finishing its lessons, which means opening them. Every bar is therefore
+     * at least as tall as the one after it, and none of them overstates what
+     * happened — the evidence is simply read forwards.
+     */
     protected function getData(): array
     {
-        $types = [
-            ActivityEvent::TYPE_COURSE_OPENED,
-            ActivityEvent::TYPE_LESSON_OPENED,
-            ActivityEvent::TYPE_LESSON_COMPLETED,
-            ActivityEvent::TYPE_COURSE_COMPLETED,
-        ];
-
-        $counts = $this->scopeToLearners(
-            $this->filterActivity(ActivityEvent::query())->whereIn('type', $types),
+        $eventLearners = $this->scopeToLearners(
+            $this->filterActivity(ActivityEvent::query())->whereIn('type', [
+                ActivityEvent::TYPE_COURSE_OPENED,
+                ActivityEvent::TYPE_LESSON_OPENED,
+                ActivityEvent::TYPE_LESSON_COMPLETED,
+                ActivityEvent::TYPE_COURSE_COMPLETED,
+            ]),
         )
-            ->selectRaw('type, count(distinct user_id) as learners')
+            ->select(['type', 'user_id'])
+            ->get()
             ->groupBy('type')
-            ->pluck('learners', 'type');
+            ->map(fn ($rows) => $rows->pluck('user_id')->unique()->all());
 
-        $certificates = $this->scopeToLearners(
+        $certified = $this->scopeToLearners(
             Certificate::query()
                 ->whereNull('revoked_at')
                 ->whereBetween('issued_at', [$this->dashboardStart(), $this->dashboardEnd()])
@@ -61,18 +76,40 @@ class LearnerJourney extends ChartWidget
                     ->whereHas('course', fn (Builder $course): Builder => $course->where('product_id', $productId)))
                 ->when($this->dashboardCourseId(), fn (Builder $query, int $courseId): Builder => $query
                     ->where('course_id', $courseId)),
-        )->distinct('user_id')->count('user_id');
+        )->pluck('user_id')->unique()->all();
 
+        // Read backwards from the strongest evidence, so each stage carries
+        // everyone the stages after it imply.
+        $courseFinished = array_unique([...$eventLearners[ActivityEvent::TYPE_COURSE_COMPLETED] ?? [], ...$certified]);
+        $lessonFinished = array_unique([...$eventLearners[ActivityEvent::TYPE_LESSON_COMPLETED] ?? [], ...$this->finishedALesson(), ...$courseFinished]);
+        $lessonOpened = array_unique([...$eventLearners[ActivityEvent::TYPE_LESSON_OPENED] ?? [], ...$lessonFinished]);
+        $courseOpened = array_unique([...$eventLearners[ActivityEvent::TYPE_COURSE_OPENED] ?? [], ...$lessonOpened]);
+
+        return $this->chart([
+            count($courseOpened),
+            count($lessonOpened),
+            count($lessonFinished),
+            count($courseFinished),
+            count($certified),
+        ]);
+    }
+
+    /** Learners with a lesson finished in the period, from the pivot itself. */
+    private function finishedALesson(): array
+    {
+        return $this->scopeToLearners($this->completedLessonRows(), 'lesson_user.user_id')
+            ->distinct()
+            ->pluck('lesson_user.user_id')
+            ->all();
+    }
+
+    /** @param  array<int, int>  $data */
+    private function chart(array $data): array
+    {
         return [
             'datasets' => [[
                 'label' => __t('admin_widgets.journey.learners'),
-                'data' => [
-                    (int) ($counts[ActivityEvent::TYPE_COURSE_OPENED] ?? 0),
-                    (int) ($counts[ActivityEvent::TYPE_LESSON_OPENED] ?? 0),
-                    (int) ($counts[ActivityEvent::TYPE_LESSON_COMPLETED] ?? 0),
-                    (int) ($counts[ActivityEvent::TYPE_COURSE_COMPLETED] ?? 0),
-                    $certificates,
-                ],
+                'data' => $data,
                 'backgroundColor' => ['#2563eb', '#0891b2', '#16a34a', '#ca8a04', '#7c3aed'],
                 'borderRadius' => 3,
             ]],

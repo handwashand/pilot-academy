@@ -5,6 +5,7 @@
 
 return [
     'skip' => 'Saltar al contenido',
+    'sections' => 'Secciones',
     'help' => 'Ayuda',
     'certificates' => 'Certificados',
     'logout' => 'Cerrar sesión',

@@ -450,6 +450,35 @@ passed for all seven changed PHP source and test files; the rebuilt container's
 `/admin` route redirects guests to `/admin/login` as expected. No manual browser
 screenshot review was available, so that remains the only visual follow-up.
 
+### 2026-09-30 — A dashboard funnel that cannot contradict itself
+
+Reviewing the dashboard in a browser — the check phase 6 was still waiting on —
+showed **Learner journey** reading 0, 0, 0, 0, 11: no opens, no completions,
+eleven certificates. Nothing was broken in the filtering. `activity_events`
+holds only what has happened since the academy began recording it (in the local
+database, twenty logins and nothing else), while `lesson_user` and
+`certificates` go back to the beginning. Each stage counted from its own source
+alone, so they disagreed.
+
+Each stage now also counts the learners the later stages prove were there: a
+certificate means the course was finished, which means its lessons were, which
+means they were opened. Evidence read forwards. No bar can stand taller than
+the one before it, and nothing is invented — the test that locks this in
+creates a certificate with no events at all.
+
+Finished lessons come from the pivot through one shared filtered query,
+`UsesDashboardFilters::completedLessonRows()`, which the headline **Lesson
+completions** card now uses too; it read 0 beside a funnel full of
+certificates. **Most opened courses** was the one chart still at half width,
+leaving dead space beside it, and is now full width.
+
+The plan doc said the browser review "was not run because this repository has
+no browser automation dependency". It has been run now, from the session
+scratchpad, so nothing was added to the repository — and the doc says so.
+
+**Verified:** dashboard tests 41 passed, whole suite in Docker, Pint clean,
+and the dashboard re-checked in Chrome afterwards.
+
 ### 2026-09-30 — Forgot password, for partners and staff alike
 
 There was no password reset at all: a partner who forgot theirs waited for an

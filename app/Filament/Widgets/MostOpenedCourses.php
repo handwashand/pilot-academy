@@ -22,6 +22,9 @@ class MostOpenedCourses extends ChartWidget
 
     protected static ?int $sort = 7;
 
+    /** Full width like every other chart; half left dead space beside it. */
+    protected int|string|array $columnSpan = 'full';
+
     public function getHeading(): ?string
     {
         return __t('admin_widgets.opened.heading');

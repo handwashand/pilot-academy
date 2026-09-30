@@ -41,7 +41,8 @@ products.
 | 3. Dashboard filters and partner engagement | Complete | Shared date/partner/product/course filters and an honest engagement table. |
 | 4. Course-level learner journey | Complete | Stable activity subjects, funnel, and course-specific stalled learners. |
 | 5. Resource engagement | Complete | Signed-in Case Study, Tutorial, and Webinar usage. |
-| 6. Visual verification | In progress | Automated rendering is covered; a manual browser screenshot review remains. |
+| 6. Visual verification | Complete | Rendering is covered by tests and confirmed in Chrome: all four charts paint, the filter row fills the width, and the page stays at the viewport. |
+| 7. Funnel and completion sources | Complete | Stages read forwards from the strongest evidence, and finished lessons come from the pivot rather than the event log. |
 
 ## Phase 1: Metric Accuracy
 
@@ -104,7 +105,11 @@ products.
   tests, including empty data and translated labels.
 - [x] Keep every new chart full-width with a stable maximum height and integer
   axes; keep filters responsive from one to five columns.
-- [ ] Review authenticated desktop and mobile screenshots in a real browser.
+- [x] Review authenticated desktop and mobile screenshots in a real browser.
+  Done 2026-09-30 in headless Chrome: Learner journey, Student activity, Most
+  opened courses and Resource engagement all paint pixels; page width stays at
+  the viewport. Most opened courses was the one chart left at half width and is
+  now full width like the rest.
 
 ## Verification
 
@@ -132,8 +137,8 @@ For each implemented phase:
   exclusion, draft-only lessons, role visibility, and assigned-product scoping
   are covered by regression tests.
 - [x] Changelog and all five admin guides are updated.
-- [ ] A manual browser screenshot review was not run because this repository has
-  no browser automation dependency; visual layout remains a follow-up check.
+- [x] The browser review was run on 2026-09-30 with headless Chrome driven from
+  the session scratchpad, so no dependency was added to the repository.
 
 ### 2026-09-30 Activity Graph Refinement
 
@@ -176,3 +181,21 @@ For each implemented phase:
   introduced without a separate privacy, retention and consent decision.
 - The existing Content Health page remains the single definition and location
   for broken content.
+
+## Phase 7: Honest Funnel and Completion Counts
+
+Found while reviewing the rendered dashboard: with real data the funnel read
+0, 0, 0, 0, 11 — no opens, no completions, eleven certificates. Activity events
+only go back to the day recording started; `lesson_user` and `certificates` go
+back further, so each stage counted from its own source alone disagreed with
+the others.
+
+- [x] Each funnel stage also counts the learners the later stages prove were
+  there, so no bar can stand taller than the one before it.
+- [x] Finished lessons come from `lesson_user` through one shared, filtered
+  query (`UsesDashboardFilters::completedLessonRows()`).
+- [x] The headline **Lesson completions** card reads the same source, so it no
+  longer shows zero beside a funnel full of certificates.
+- [x] Most opened courses is full width like every other chart.
+- [x] Regression tests: a certificate with no matching events, and a completion
+  with no matching event.

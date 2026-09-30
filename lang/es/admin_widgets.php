@@ -93,7 +93,7 @@ return [
 
     'journey' => [
         'heading' => 'Recorrido del estudiante',
-        'description' => 'Estudiantes únicos registrados en cada etapa durante el período seleccionado.',
+        'description' => 'Estudiantes únicos que llegaron a cada etapa durante el período seleccionado. Terminar cuenta los pasos anteriores.',
         'learners' => 'Estudiantes',
         'course_opened' => 'Abrió un curso',
         'lesson_opened' => 'Abrió una lección',

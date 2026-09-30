@@ -96,7 +96,7 @@ return [
 
     'journey' => [
         'heading' => 'Learner journey',
-        'description' => 'Unique learners recorded at each stage in the selected period.',
+        'description' => 'Unique learners who reached each stage in the selected period. Finishing counts the steps before it.',
         'learners' => 'Learners',
         'course_opened' => 'Opened a course',
         'lesson_opened' => 'Opened a lesson',

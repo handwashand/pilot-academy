@@ -93,7 +93,7 @@ return [
 
     'journey' => [
         'heading' => 'Parcours apprenant',
-        'description' => 'Apprenants uniques enregistrés à chaque étape sur la période sélectionnée.',
+        'description' => 'Apprenants uniques ayant atteint chaque étape sur la période sélectionnée. Terminer compte les étapes précédentes.',
         'learners' => 'Apprenants',
         'course_opened' => 'Cours ouvert',
         'lesson_opened' => 'Leçon ouverte',

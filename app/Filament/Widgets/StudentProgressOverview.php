@@ -37,10 +37,11 @@ class StudentProgressOverview extends StatsOverviewWidget
             ->count();
         $engagement = $students > 0 ? (int) round($active / $students * 100) : 0;
 
-        $completions = $this->scopeToLearners(
-            $this->filterActivity(ActivityEvent::query())
-                ->where('type', ActivityEvent::TYPE_LESSON_COMPLETED),
-        )->count();
+        // From the pivot, not from activity events: an academy that was busy
+        // before tracking began still has its finished lessons counted here,
+        // and this card no longer reads zero beside a funnel showing
+        // certificates. See UsesDashboardFilters::completedLessonRows().
+        $completions = $this->scopeToLearners($this->completedLessonRows(), 'lesson_user.user_id')->count();
 
         $publishedCourses = Course::published()
             ->when($this->dashboardProductId(), fn (Builder $query, int $productId): Builder => $query->where('product_id', $productId))
