@@ -139,6 +139,24 @@ class ProgressToolsTest extends TestCase
         $this->assertSame([3, 1], $data['datasets'][0]['data']);
     }
 
+    public function test_the_chart_uses_the_current_title_for_stable_course_events(): void
+    {
+        $learner = $this->learner();
+        $course = Course::first();
+
+        ActivityEvent::record(
+            $learner,
+            ActivityEvent::TYPE_COURSE_OPENED,
+            'Original title',
+            subject: $course,
+            course: $course,
+        );
+
+        $course->update(['title' => 'Renamed course']);
+
+        $this->assertSame(['Renamed course'], $this->chartData()['labels']);
+    }
+
     public function test_staff_opens_are_not_counted(): void
     {
         ActivityEvent::record($this->admin(), ActivityEvent::TYPE_COURSE_OPENED, 'Admin checking');

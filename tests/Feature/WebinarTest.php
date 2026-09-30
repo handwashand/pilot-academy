@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Filament\Resources\Webinars\Pages\ListWebinars;
+use App\Models\ActivityEvent;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Webinar;
@@ -129,6 +130,36 @@ class WebinarTest extends TestCase
             ->assertSee('UTC');
 
         $this->assertStringEndsWith('UTC', $webinar->whenLabel());
+    }
+
+    public function test_signed_in_webinar_opens_joins_and_recordings_are_tracked(): void
+    {
+        $webinar = $this->webinar([
+            'status' => Webinar::STATUS_PUBLISHED,
+            'recording_url' => 'https://example.com/recording',
+        ]);
+        $learner = $this->learner();
+
+        $this->actingAs($learner)
+            ->get(route('academy.webinar', $webinar))
+            ->assertOk();
+        $this->get(route('academy.webinar.join', $webinar))
+            ->assertRedirect('https://example.com/join');
+        $this->get(route('academy.webinar.recording', $webinar))
+            ->assertRedirect('https://example.com/recording');
+
+        foreach ([
+            ActivityEvent::TYPE_WEBINAR_OPENED,
+            ActivityEvent::TYPE_WEBINAR_JOINED,
+            ActivityEvent::TYPE_WEBINAR_RECORDING_OPENED,
+        ] as $type) {
+            $this->assertDatabaseHas('activity_events', [
+                'user_id' => $learner->id,
+                'type' => $type,
+                'subject_type' => $webinar->getMorphClass(),
+                'subject_id' => $webinar->id,
+            ]);
+        }
     }
 
     public function test_the_page_reads_in_the_partners_language(): void

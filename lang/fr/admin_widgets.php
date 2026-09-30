@@ -3,11 +3,24 @@
 // French. Keys mirror lang/en/admin_widgets.php — see the note there.
 
 return [
+    'filters' => [
+        'heading' => 'Filtres du tableau de bord',
+        'description' => 'Appliqués à l’activité et aux résultats ; videz un champ pour tout inclure.',
+        'start_date' => 'Du',
+        'end_date' => 'Au',
+        'partner' => 'Partenaire',
+        'all_partners' => 'Tous les partenaires',
+        'product' => 'Produit',
+        'all_products' => 'Tous les produits',
+        'course' => 'Cours',
+        'all_courses' => 'Tous les cours',
+    ],
+
     'overview' => [
         'students' => 'Apprenants',
         'students_help' => 'Comptes partenaires',
         'active' => 'Apprenants actifs',
-        'active_help' => ':percent % ont commencé au moins une leçon',
+        'active_help' => ':percent % actifs sur la période sélectionnée',
         'completions' => 'Leçons terminées',
         'completions_help' => 'Tous apprenants confondus',
         'published_courses' => 'Cours publiés',
@@ -19,10 +32,20 @@ return [
         'average_score' => 'Score moyen :score %',
     ],
 
+    'creator' => [
+        'status' => ':published publiés · :drafts brouillons · :archived archivés',
+    ],
+
     'companies' => [
-        'heading' => 'Progression par entreprise partenaire',
-        'description' => 'Part de toutes les leçons publiées terminées par les apprenants de chaque entreprise.',
-        'dataset' => '% des leçons publiées terminées',
+        'heading' => 'Engagement des partenaires',
+        'description' => 'Portée et résultats des apprenants sur la période sélectionnée.',
+        'learners' => 'Apprenants',
+        'active' => 'Actifs',
+        'completions' => 'Leçons terminées',
+        'certificates' => 'Certificats',
+        'last_activity' => 'Dernière activité',
+        'open' => 'Ouvrir le partenaire',
+        'empty' => 'Aucun partenaire ne correspond à ces filtres',
     ],
 
     'certificates' => [
@@ -63,14 +86,37 @@ return [
 
     'activity' => [
         'heading' => 'Activité des apprenants',
-        'description' => 'Leçons terminées et connexions par jour, apprenants uniquement.',
+        'description' => 'Apprenants actifs uniques et leçons terminées par jour sur la période sélectionnée.',
+        'active_learners' => 'Apprenants actifs',
         'lessons_finished' => 'Leçons terminées',
-        'sign_ins' => 'Connexions',
+    ],
+
+    'journey' => [
+        'heading' => 'Parcours apprenant',
+        'description' => 'Apprenants uniques enregistrés à chaque étape sur la période sélectionnée.',
+        'learners' => 'Apprenants',
+        'course_opened' => 'Cours ouvert',
+        'lesson_opened' => 'Leçon ouverte',
+        'lesson_completed' => 'Leçon terminée',
+        'course_completed' => 'Cours terminé',
+        'certified' => 'Certificat obtenu',
+    ],
+
+    'resources' => [
+        'heading' => 'Engagement avec les ressources',
+        'description' => 'Actions des partenaires connectés sur la période sélectionnée.',
+        'opens' => 'Actions',
+        'case_studies' => 'Études de cas ouvertes',
+        'tutorials' => 'Tutoriels ouverts',
+        'webinars' => 'Webinaires ouverts',
+        'joins' => 'Participations',
+        'recordings' => 'Enregistrements ouverts',
     ],
 
     'opened' => [
         'heading' => 'Cours les plus ouverts',
-        'description' => 'Nombre d’ouvertures de chaque cours par les apprenants ces :days derniers jours.',
+        'description' => 'Nombre d’ouvertures de chaque cours par les apprenants sur la période sélectionnée.',
         'times_opened' => 'Ouvertures',
+        'removed_course' => 'Cours supprimé',
     ],
 ];

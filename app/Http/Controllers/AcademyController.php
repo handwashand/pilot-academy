@@ -108,6 +108,8 @@ class AcademyController extends Controller
 
         $tutorial->load(['product', 'contentTranslations']);
 
+        ActivityEvent::record($request->user(), ActivityEvent::TYPE_TUTORIAL_OPENED, $tutorial->title, $request->path(), $tutorial);
+
         return view('academy.tutorial', ['tutorial' => $tutorial]);
     }
 
@@ -258,7 +260,7 @@ class AcademyController extends Controller
         abort_unless($course->isVisibleTo($request->user()), 404);
         $course->load(['contentTranslations', 'publishedLessons.mediaItem', 'publishedLessons.contentTranslations']);
 
-        ActivityEvent::record($request->user(), ActivityEvent::TYPE_COURSE_OPENED, $course->title, $request->path());
+        ActivityEvent::record($request->user(), ActivityEvent::TYPE_COURSE_OPENED, $course->title, $request->path(), $course, $course);
 
         $user = $request->user();
 
@@ -295,7 +297,7 @@ class AcademyController extends Controller
         $next = $currentIndex !== false ? $lessons->get($currentIndex + 1) : null;
         $prev = $currentIndex !== false && $currentIndex > 0 ? $lessons->get($currentIndex - 1) : null;
 
-        ActivityEvent::record($request->user(), ActivityEvent::TYPE_LESSON_OPENED, $lesson->title, $request->path());
+        ActivityEvent::record($request->user(), ActivityEvent::TYPE_LESSON_OPENED, $lesson->title, $request->path(), $lesson, $course);
 
         $user = $request->user();
 
@@ -488,15 +490,15 @@ class AcademyController extends Controller
         $this->markCompleted($request, $lesson->id);
 
         if ($user && $isNewCompletion) {
-            ActivityEvent::record($user, ActivityEvent::TYPE_LESSON_COMPLETED, $lesson->title, $request->path());
+            ActivityEvent::record($user, ActivityEvent::TYPE_LESSON_COMPLETED, $lesson->title, $request->path(), $lesson, $course);
 
             if ($course->isCompletedBy($user)
                 && ! $user->activities()
                     ->where('type', ActivityEvent::TYPE_COURSE_COMPLETED)
-                    ->where('label', $course->title)
+                    ->where('course_id', $course->id)
                     ->exists()
             ) {
-                ActivityEvent::record($user, ActivityEvent::TYPE_COURSE_COMPLETED, $course->title);
+                ActivityEvent::record($user, ActivityEvent::TYPE_COURSE_COMPLETED, $course->title, subject: $course, course: $course);
             }
         }
     }

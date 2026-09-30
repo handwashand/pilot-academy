@@ -37,7 +37,7 @@
                     </div>
 
                     @if($webinar->join_url)
-                        <a href="{{ $webinar->join_url }}" target="_blank" rel="noopener"
+                        <a href="{{ route('academy.webinar.join', $webinar) }}" target="_blank" rel="noopener"
                            class="inline-flex min-h-11 flex-none items-center justify-center rounded-lg bg-brand px-5 text-sm font-semibold text-white hover:bg-blue-700">
                             {{ __t('academy.webinars.join') }}
                         </a>
@@ -69,7 +69,7 @@
                     </div>
 
                     @if($webinar->hasRecording())
-                        <a href="{{ $webinar->recording_url }}" target="_blank" rel="noopener"
+                        <a href="{{ route('academy.webinar.recording', $webinar) }}" target="_blank" rel="noopener"
                            class="inline-flex min-h-11 flex-none items-center justify-center rounded-lg bg-navy px-5 text-sm font-semibold text-white hover:bg-slate-800">
                             {{ __t('academy.webinars.watch') }}
                         </a>

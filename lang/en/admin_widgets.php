@@ -6,11 +6,24 @@
  */
 
 return [
+    'filters' => [
+        'heading' => 'Dashboard filters',
+        'description' => 'Applied to learner activity and results; clear a field to include everything.',
+        'start_date' => 'From',
+        'end_date' => 'To',
+        'partner' => 'Partner',
+        'all_partners' => 'All partners',
+        'product' => 'Product',
+        'all_products' => 'All products',
+        'course' => 'Course',
+        'all_courses' => 'All courses',
+    ],
+
     'overview' => [
         'students' => 'Students',
         'students_help' => 'Partner accounts',
         'active' => 'Active students',
-        'active_help' => ':percent% started at least one lesson',
+        'active_help' => ':percent% active in the selected period',
         'completions' => 'Lesson completions',
         'completions_help' => 'Across all students',
         'published_courses' => 'Published courses',
@@ -22,10 +35,20 @@ return [
         'average_score' => 'Average score :score%',
     ],
 
+    'creator' => [
+        'status' => ':published published · :drafts drafts · :archived archived',
+    ],
+
     'companies' => [
-        'heading' => 'Progress by partner company',
-        'description' => 'Share of all published lessons completed by each company\'s students.',
-        'dataset' => '% of published lessons completed',
+        'heading' => 'Partner engagement',
+        'description' => 'Learner reach and outcomes in the selected period.',
+        'learners' => 'Learners',
+        'active' => 'Active',
+        'completions' => 'Lessons finished',
+        'certificates' => 'Certificates',
+        'last_activity' => 'Last activity',
+        'open' => 'Open partner',
+        'empty' => 'No partners match these filters',
     ],
 
     'certificates' => [
@@ -66,14 +89,37 @@ return [
 
     'activity' => [
         'heading' => 'Student activity',
-        'description' => 'Lessons finished and sign-ins per day, students only.',
+        'description' => 'Unique active students and lessons finished per day in the selected period.',
+        'active_learners' => 'Active students',
         'lessons_finished' => 'Lessons finished',
-        'sign_ins' => 'Sign-ins',
+    ],
+
+    'journey' => [
+        'heading' => 'Learner journey',
+        'description' => 'Unique learners recorded at each stage in the selected period.',
+        'learners' => 'Learners',
+        'course_opened' => 'Opened a course',
+        'lesson_opened' => 'Opened a lesson',
+        'lesson_completed' => 'Finished a lesson',
+        'course_completed' => 'Finished a course',
+        'certified' => 'Earned a certificate',
+    ],
+
+    'resources' => [
+        'heading' => 'Resource engagement',
+        'description' => 'Signed-in partner actions in the selected period.',
+        'opens' => 'Actions',
+        'case_studies' => 'Case study opens',
+        'tutorials' => 'Tutorial opens',
+        'webinars' => 'Webinar opens',
+        'joins' => 'Webinar joins',
+        'recordings' => 'Recording opens',
     ],
 
     'opened' => [
         'heading' => 'Most opened courses',
-        'description' => 'Times students opened each course in the last :days days.',
+        'description' => 'Times students opened each course in the selected period.',
         'times_opened' => 'Times opened',
+        'removed_course' => 'Removed course',
     ],
 ];

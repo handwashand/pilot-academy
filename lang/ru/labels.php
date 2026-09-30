@@ -28,6 +28,11 @@ return [
         'lesson_completed' => 'Урок пройден',
         'course_completed' => 'Курс пройден',
         'reminder_sent' => 'Отправлено напоминание',
+        'case_study_opened' => 'Открытие практического примера',
+        'tutorial_opened' => 'Открытие видеоурока',
+        'webinar_opened' => 'Открытие вебинара',
+        'webinar_joined' => 'Подключение к вебинару',
+        'webinar_recording_opened' => 'Открытие записи вебинара',
     ],
 
     'audience' => [

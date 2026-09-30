@@ -10,6 +10,8 @@ Vous arrivez sur le **Tableau**, qui résume les étudiants, la progression, les
 
 Modifiez votre nom, e-mail ou mot de passe depuis le menu du compte, en haut à droite, puis **Profil**.
 
+Les administrateurs voient l'activité des étudiants, leur progression et les certificats. **Étudiants actifs** compte ceux qui se sont connectés ou ont travaillé dans l'académie au cours des 30 derniers jours ; les rappels et l'activité du personnel ne comptent pas. Le graphique affiche les apprenants actifs uniques sous forme de ligne et les leçons terminées sous forme de barres ; plusieurs actions d'une même personne dans la journée ne comptent qu'une fois. Les leçons publiées et la progression par entreprise comprennent uniquement les leçons accessibles dans un cours publié. Les créateurs voient des cartes liées aux Cours, Études de cas, Tutoriels et Webinaires de leurs produits attribués, réparties entre publiés, brouillons et archivés, sans données sur les étudiants ni les entreprises.
+
 ## 2. Le menu en bref
 
 | Élément | Utilité |
@@ -79,7 +81,9 @@ Pour ajouter une entreprise et un étudiant, créez d'abord l'entreprise dans **
 
 Utilisez **Users** pour filtrer par rôle et ouvrir la progression d'un étudiant.
 
-Le **Tableau** montre les contenus à corriger, les indicateurs, la progression par entreprise, les étudiants inactifs, les leçons difficiles, l'activité et les cours les plus ouverts.
+Les **Filtres du tableau de bord** permettent de choisir une période, un partenaire, un produit ou un cours ; la période par défaut est de 30 jours. Les créateurs ne voient ni ces filtres ni les données des apprenants.
+
+Le **Tableau** montre l’**Engagement des partenaires**, le **Parcours apprenant**, l’activité quotidienne, les ressources ouvertes et les cours les plus ouverts. La liste des apprenants inactifs est calculée par cours : terminer ou certifier un autre cours ne masque plus un cours abandonné. L’engagement avec les études de cas, les tutoriels et les webinaires ne compte que les utilisateurs connectés ; les visites anonymes ne sont pas enregistrées.
 
 Dans **Student feedback**, sur le cours, lisez les avis privés des étudiants.
 

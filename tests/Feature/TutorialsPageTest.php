@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Filament\Resources\Tutorials\Pages\ListTutorials;
+use App\Models\ActivityEvent;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Tutorial;
@@ -40,6 +41,16 @@ class TutorialsPageTest extends TestCase
             'content' => '<p>Body.</p>',
             'status' => Lesson::STATUS_PUBLISHED,
             ...$overrides,
+        ]);
+    }
+
+    private function learner(): User
+    {
+        return User::create([
+            'name' => 'Partner Learner',
+            'email' => 'tutorial-learner@partner.test',
+            'password' => bcrypt('password'),
+            'role' => User::ROLE_LEARNER,
         ]);
     }
 
@@ -132,6 +143,28 @@ class TutorialsPageTest extends TestCase
             ->assertDontSee('Not ready');
 
         $this->get(route('academy.tutorial', $draft))->assertNotFound();
+    }
+
+    public function test_a_signed_in_tutorial_open_is_recorded_with_its_stable_id(): void
+    {
+        $tutorial = Tutorial::create([
+            'title' => 'Tracked tutorial',
+            'slug' => 'tracked-tutorial',
+            'youtube_url' => 'https://www.youtube.com/watch?v=abcdefghijk',
+            'status' => Tutorial::STATUS_PUBLISHED,
+        ]);
+        $learner = $this->learner();
+
+        $this->actingAs($learner)
+            ->get(route('academy.tutorial', $tutorial))
+            ->assertOk();
+
+        $this->assertDatabaseHas('activity_events', [
+            'user_id' => $learner->id,
+            'type' => ActivityEvent::TYPE_TUTORIAL_OPENED,
+            'subject_type' => $tutorial->getMorphClass(),
+            'subject_id' => $tutorial->id,
+        ]);
     }
 
     public function test_a_tutorial_without_a_working_video_cannot_be_published(): void

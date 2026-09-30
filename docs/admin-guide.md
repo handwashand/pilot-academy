@@ -10,7 +10,11 @@
 
 Open your site address in a browser and add `/admin` at the end. Sign in with your admin email and password.
 
-You land on the **Dashboard** — a quick summary of how many students you have, how many lessons they finished, and how many certificates were issued. The menu on the left takes you to every part of the academy.
+You land on the **Dashboard**. Admins see student activity, lesson progress and
+certificates. Creators see the Courses, Case Studies, Tutorials and Webinars in
+their assigned products, split into published, draft and archived content, with
+links to each list. Creators never see learner or partner reporting. The menu on
+the left takes you to every part of the academy.
 
 **Change your own name, email or password** from the account menu: click your initials in the top right → **Profile**. You are asked for your current password before a new one is saved. This works for creators too, who cannot open **Users**.
 
@@ -382,16 +386,25 @@ the complaints, and **Course** or **Partner** to narrow it down.
 
 ### Read the Dashboard
 
+Administrators can use **Dashboard filters** to choose a date range, partner,
+product or course. The default range is the last 30 days. Dates apply to
+activity and results; product and course also narrow the content totals. The
+stalled list keeps its fixed 14-day rule, while its partner, product and course
+filters still apply. Creators do not see these filters or any learner data.
+
 The home screen has these panels:
 
 | Panel | What it tells you |
 |---|---|
-| The numbers along the top | Students and how many are active, lesson completions, published courses and lessons, certificates issued with the average score. |
-| **Progress by partner company** | How much of the published material each partner's students have worked through. A partner with no students yet reads as 0. |
-| **Students who have gone quiet** | Started a course, completed nothing for two weeks, and no certificate. The one list here worth acting on — **Send reminder** emails them a link straight back to their next lesson, or **Open** to see the person. |
+| The numbers along the top | Students, active students and lesson completions in the selected period, published courses and available lessons, and certificates issued with the average score. A login or learner activity counts; reminder emails and staff activity do not. |
+| **Partner engagement** | Learners, active learners, lesson completions, certificates and last activity for each partner in the selected period. **Open partner** goes straight to that company. A partner with no activity remains visible with zeroes. |
+| Creator content cards | Creators see totals for Courses, Case Studies, Tutorials and Webinars in their assigned products, split into published, draft and archived. Click a card to open that list. Admins do not see these cards. |
+| **Students who have gone quiet** | Started the named course, completed nothing in that course for two weeks, and has no certificate for that course. Work or a certificate in another course does not hide the row. **Send reminder** emails a link back to their next lesson, or **Open** to see the person. |
 | **Lessons students struggle with** | Lessons ranked by how often students fail the quiz. |
-| **Student activity** | Lessons finished and sign-ins per day over the last 30 days — whether use is picking up or going quiet. |
-| **Most opened courses** | What students opened in the last 90 days, finished or not. |
+| **Learner journey** | Unique signed-in learners who opened a course, opened a lesson, finished a lesson, finished a course and earned a certificate in the selected period. |
+| **Student activity** | Unique active students as a line and lessons finished as bars for each day in the selected period. Several actions by one student on one day count as one active student, so the line shows reach rather than clicks. |
+| **Most opened courses** | Which courses signed-in students opened in the selected period, finished or not. |
+| **Resource engagement** | Signed-in learner actions for case studies, tutorials and webinars, including webinar joins and recording opens. Anonymous visits are not recorded. |
 
 > **Lessons students struggle with** is usually telling you a question is
 > unclear, not that the students are weak. A lesson needs at least three graded

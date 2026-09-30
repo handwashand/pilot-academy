@@ -10,6 +10,8 @@ Entrarás al **Panel**, donde ves estudiantes, progreso, cursos publicados y cer
 
 Cambia tu nombre, correo o contraseña desde el menú de cuenta, arriba a la derecha, en **Perfil**.
 
+Los administradores ven la actividad de estudiantes, el progreso y los certificados. **Estudiantes activos** cuenta a quienes iniciaron sesión o trabajaron en la academia durante los últimos 30 días; los recordatorios y la actividad del personal no cuentan. El gráfico muestra estudiantes activos únicos como línea y lecciones terminadas como barras, por lo que varias acciones de una persona en un día cuentan una sola vez. Las lecciones publicadas y el progreso por empresa incluyen solo lecciones disponibles dentro de un curso publicado. Los creadores ven tarjetas enlazadas para Cursos, Casos prácticos, Tutoriales y Seminarios web de sus productos asignados, separadas por publicadas, borradores y archivadas, sin datos de estudiantes ni empresas.
+
 ## 2. El menú de un vistazo
 
 | Opción | Para qué sirve |
@@ -79,7 +81,9 @@ Para añadir una empresa y estudiante: crea la empresa en **Empresas**, luego cr
 
 Usa **Usuarios** para filtrar por rol y abrir el progreso de un estudiante.
 
-El **Panel** muestra contenido con problemas, números generales, progreso por empresa, estudiantes inactivos, lecciones difíciles, actividad y cursos más abiertos.
+Los **Filtros del panel** permiten elegir un período, socio, producto o curso; el período predeterminado es de 30 días. Los creadores no ven estos filtros ni datos de estudiantes.
+
+El **Panel** muestra la **Participación de socios**, el **Recorrido del estudiante**, la actividad diaria, los recursos abiertos y los cursos más abiertos. La lista de estudiantes inactivos se calcula por curso: terminar o recibir un certificado en otro curso no oculta un curso abandonado. La participación con casos prácticos, tutoriales y seminarios solo registra a usuarios con sesión iniciada; las visitas anónimas no se registran.
 
 En **Comentarios de estudiantes**, dentro del curso, revisa si el curso fue útil y lee comentarios privados.
 

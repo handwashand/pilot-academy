@@ -382,6 +382,74 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-09-30 — Dashboard filters, learner journey and resource engagement
+
+The administrator dashboard now has shared date, partner, product and course
+filters. The default date range is 30 days. The unsupported company-completion
+percentage is gone; `CompletionsByCompany` remains the class name for discovery
+compatibility but is now a partner engagement table with learner reach,
+completions, certificates, last activity and a direct company link.
+
+`activity_events` now stores nullable polymorphic subject IDs plus course and
+product context. New course, lesson, Case Study, Tutorial and Webinar actions
+write those IDs while retaining the historical label. This supports the new
+learner-journey and resource-engagement charts and lets course-open rankings use
+stable identity. Existing label-only events remain readable but cannot be
+retroactively product- or course-filtered.
+
+Stalled follow-up is now course-specific through `course_lesson`: a certificate
+or recent completion in one course does not hide an older stalled course. The
+course title, lesson count and last completion shown on the row all come from
+the same stalled course. Resource analytics deliberately cover signed-in users
+only; anonymous tracking needs a separate privacy and retention decision.
+
+**Verified so far:** 64 focused dashboard and resource tests passed with 265
+assertions. Full-suite, formatting and visual verification results follow in the
+roadmap after the final pass.
+
+### 2026-09-30 — Learner activity shows people, not repeated clicks
+
+The 30-day **Student activity** graph used to draw two overlapping filled lines
+for lesson completions and raw sign-ins. That made one learner signing in several
+times look like broader academy use. It now counts distinct learners per day
+across learner-generated activity and pairs that blue line with green lesson-
+completion bars. Reminder events and staff activity remain excluded.
+
+The chart has localized date labels, a bottom legend, indexed tooltips, integer
+ticks, fewer visible date labels on narrow screens, and a stable height. The
+aggregation now folds the queried events once instead of filtering the full set
+again for each of 30 days. Changelog, roadmap, English guide and all localized
+admin guides describe the new meaning.
+
+**Verified:** 101 focused tests passed with 5,427 assertions; Pint passed for
+`ActivityOverTime.php` and `DashboardTest.php`.
+
+### 2026-09-30 — A trustworthy dashboard for admins and a workspace for creators
+
+The dashboard roadmap now lives in `docs/plans/dashboard-improvements.md`, with
+completed, in-progress and planned work kept explicit. The first two phases are
+done. **Active students** now means learner activity during the last 30 days,
+not anyone who completed a lesson at any point; staff actions and reminders do
+not count. Published lesson totals and company progress share one
+`Lesson::availableToLearners()` scope, so a published lesson stranded inside a
+draft course no longer distorts the figures.
+
+Creators now get four linked content cards for Courses, Case Studies, Tutorials
+and Webinars. Counts are limited to their assigned products and show published,
+draft and archived content. Admins retain the learner dashboard, creators get no
+learner or company data, and learners still cannot enter the panel.
+
+The changed labels are translated in all five shipped languages. The visible
+behavior is recorded in What's new and in every localized admin guide. Later
+phases deliberately remain in the roadmap: shared filters and partner
+engagement, stable activity subject IDs and a course funnel, course-specific
+stalled tracking, and engagement reporting for the newer resource types.
+
+**Verified:** 102 focused feature tests passed with 5,427 assertions; Pint
+passed for all seven changed PHP source and test files; the rebuilt container's
+`/admin` route redirects guests to `/admin/login` as expected. No manual browser
+screenshot review was available, so that remains the only visual follow-up.
+
 ### 2026-09-30 — Forgot password, for partners and staff alike
 
 There was no password reset at all: a partner who forgot theirs waited for an

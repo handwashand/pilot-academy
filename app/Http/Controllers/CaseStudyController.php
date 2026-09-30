@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityEvent;
 use App\Models\CaseStudy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -62,6 +63,8 @@ class CaseStudyController extends Controller
         abort_unless($caseStudy->isVisibleTo($request->user()), 404);
 
         $caseStudy->load(['product', 'coverMediaItem', 'diagramMediaItem', 'contentTranslations']);
+
+        ActivityEvent::record($request->user(), ActivityEvent::TYPE_CASE_STUDY_OPENED, $caseStudy->title, $request->path(), $caseStudy);
 
         return view('academy.case-studies.show', [
             'caseStudy' => $caseStudy,

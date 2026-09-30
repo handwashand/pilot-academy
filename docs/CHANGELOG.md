@@ -24,6 +24,16 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **Dashboard filters and partner engagement you can act on.** Administrators
+  can filter learner reporting by date, partner, product and course. The old
+  company percentage has been replaced by a partner table with learners,
+  active learners, lesson completions, certificates and last activity, plus a
+  direct link to each partner. A new learner journey shows how many signed-in
+  learners opened a course, opened and finished a lesson, finished a course and
+  earned a certificate. Resource engagement now covers case study and tutorial
+  opens, webinar page opens, joins and recording opens. Stalled follow-up is
+  course-specific, so a certificate or recent work in one course no longer
+  hides a learner who went quiet in another.
 - **A top bar with the four things partners come for.** **Courses** is a
   catalogue of every published course, with a search box and filters for level
   and who the course is written for. **Case Studies** is beside it, then
@@ -195,6 +205,17 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Changed
 
+- **The Dashboard now distinguishes recent activity from historical progress.**
+  **Active students** means learners who signed in or worked in the academy
+  during the last 30 days; reminder emails and staff activity do not inflate the
+  number. Published lesson totals and partner progress now include only lessons
+  that learners can actually reach through a published course. The activity
+  graph now plots unique active learners as a line and completed lessons as bars,
+  so repeated sign-ins by one person no longer look like wider adoption.
+- **Product creators now have a useful, private Dashboard.** It summarizes their
+  assigned products' Courses, Case Studies, Tutorials and Webinars by published,
+  draft and archived status, with each card linking to its content list. It does
+  not expose learner, company, quiz, feedback or certificate data.
 - **The left menu is grouped by what you are doing**: **Content** (Courses,
   Lessons, Products, Media Items), **People** (Users, Companies), **Results**
   (Certificates, Final quiz health) and **Docs** (Guide, What's new). Nothing was

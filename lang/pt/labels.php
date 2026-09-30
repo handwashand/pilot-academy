@@ -28,6 +28,11 @@ return [
         'lesson_completed' => 'Concluiu uma aula',
         'course_completed' => 'Concluiu um curso',
         'reminder_sent' => 'Lembrete enviado',
+        'case_study_opened' => 'Abriu um estudo de caso',
+        'tutorial_opened' => 'Abriu um tutorial',
+        'webinar_opened' => 'Abriu um webinar',
+        'webinar_joined' => 'Entrou em um webinar',
+        'webinar_recording_opened' => 'Abriu a gravação de um webinar',
     ],
 
     'audience' => [

@@ -40,13 +40,13 @@
 
         <div class="mt-6 flex flex-wrap gap-3">
             @if($webinar->isUpcoming() && $webinar->join_url)
-                <a href="{{ $webinar->join_url }}" target="_blank" rel="noopener"
+                <a href="{{ route('academy.webinar.join', $webinar) }}" target="_blank" rel="noopener"
                    class="inline-flex min-h-11 items-center rounded-lg bg-brand px-5 text-sm font-semibold text-white hover:bg-blue-700">
                     {{ __t('academy.webinars.join') }}
                 </a>
             @endif
             @if($webinar->hasRecording())
-                <a href="{{ $webinar->recording_url }}" target="_blank" rel="noopener"
+                <a href="{{ route('academy.webinar.recording', $webinar) }}" target="_blank" rel="noopener"
                    class="inline-flex min-h-11 items-center rounded-lg bg-navy px-5 text-sm font-semibold text-white hover:bg-slate-800">
                     {{ __t('academy.webinars.watch') }}
                 </a>

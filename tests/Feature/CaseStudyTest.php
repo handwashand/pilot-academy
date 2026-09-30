@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Filament\Resources\CaseStudies\CaseStudyResource;
 use App\Filament\Resources\CaseStudies\Pages\ListCaseStudies;
+use App\Models\ActivityEvent;
 use App\Models\CaseStudy;
 use App\Models\Course;
 use App\Models\Lesson;
@@ -149,6 +150,28 @@ class CaseStudyTest extends TestCase
             ->assertSee('Related Academy lessons and documentation')
             ->assertSee('Working with History')
             ->assertSee('Pilot docs');
+    }
+
+    public function test_a_signed_in_case_study_open_is_recorded_with_its_stable_id(): void
+    {
+        $product = Product::create(['name' => 'PTM', 'slug' => 'tracked-ptm']);
+        $study = $this->completeStudy([
+            'product_id' => $product->id,
+            'status' => CaseStudy::STATUS_PUBLISHED,
+        ]);
+        $learner = $this->learner();
+
+        $this->actingAs($learner)
+            ->get(route('academy.case-studies.show', $study))
+            ->assertOk();
+
+        $this->assertDatabaseHas('activity_events', [
+            'user_id' => $learner->id,
+            'type' => ActivityEvent::TYPE_CASE_STUDY_OPENED,
+            'subject_type' => $study->getMorphClass(),
+            'subject_id' => $study->id,
+            'product_id' => $product->id,
+        ]);
     }
 
     public function test_unpublished_studies_are_hidden_from_learners_but_previewable_by_editors(): void

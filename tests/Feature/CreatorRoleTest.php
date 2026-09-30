@@ -7,6 +7,7 @@ use App\Filament\Resources\Lessons\Pages\ListLessons;
 use App\Filament\Resources\Users\Pages\ListUsers;
 use App\Filament\Widgets\CertificatesByCourse;
 use App\Filament\Widgets\StudentProgressOverview;
+use App\Models\ActivityEvent;
 use App\Models\Certificate;
 use App\Models\Company;
 use App\Models\Course;
@@ -355,10 +356,16 @@ class CreatorRoleTest extends TestCase
     public function test_staff_lesson_completions_do_not_count_as_learner_progress(): void
     {
         $lesson = $this->garmCourse->lessons()->first();
+        $learner = $this->learner();
+        $creator = $this->garmCreator();
+        $admin = $this->admin();
 
-        $this->learner()->completedLessons()->attach($lesson->id, ['completed_at' => now()]);
-        $this->garmCreator()->completedLessons()->attach($lesson->id, ['completed_at' => now()]);
-        $this->admin()->completedLessons()->attach($lesson->id, ['completed_at' => now()]);
+        $learner->completedLessons()->attach($lesson->id, ['completed_at' => now()]);
+        $creator->completedLessons()->attach($lesson->id, ['completed_at' => now()]);
+        $admin->completedLessons()->attach($lesson->id, ['completed_at' => now()]);
+        ActivityEvent::record($learner, ActivityEvent::TYPE_LESSON_COMPLETED, $lesson->title);
+        ActivityEvent::record($creator, ActivityEvent::TYPE_LESSON_COMPLETED, $lesson->title);
+        ActivityEvent::record($admin, ActivityEvent::TYPE_LESSON_COMPLETED, $lesson->title);
 
         // Three rows in the pivot, but only one of them is learner progress.
         $this->assertSame(3, DB::table('lesson_user')->count());

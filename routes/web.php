@@ -4,12 +4,12 @@ use App\Http\Controllers\AcademyController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\StudentAuthController;
 use App\Http\Controllers\CaseStudyController;
-use App\Http\Controllers\WebinarController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\ChangelogPdfController;
 use App\Http\Controllers\FinalQuizController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WebinarController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AcademyController::class, 'home'])->name('academy.home');
@@ -19,6 +19,8 @@ Route::get('/tutorials', [AcademyController::class, 'tutorials'])->name('academy
 Route::get('/tutorials/{tutorial:slug}', [AcademyController::class, 'tutorial'])->name('academy.tutorial');
 Route::get('/webinars', [WebinarController::class, 'index'])->name('academy.webinars');
 Route::get('/webinars/{webinar:slug}', [WebinarController::class, 'show'])->name('academy.webinar');
+Route::get('/webinars/{webinar:slug}/join', [WebinarController::class, 'join'])->name('academy.webinar.join');
+Route::get('/webinars/{webinar:slug}/recording', [WebinarController::class, 'recording'])->name('academy.webinar.recording');
 Route::get('/search', [AcademyController::class, 'search'])->name('academy.search');
 Route::get('/help', [AcademyController::class, 'help'])->name('academy.help');
 Route::get('/case-studies', [CaseStudyController::class, 'index'])->name('academy.case-studies.index');

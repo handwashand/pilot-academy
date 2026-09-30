@@ -28,6 +28,11 @@ return [
         'lesson_completed' => 'Leçon terminée',
         'course_completed' => 'Cours terminé',
         'reminder_sent' => 'Rappel envoyé',
+        'case_study_opened' => 'Étude de cas ouverte',
+        'tutorial_opened' => 'Tutoriel ouvert',
+        'webinar_opened' => 'Webinaire ouvert',
+        'webinar_joined' => 'Participation au webinaire',
+        'webinar_recording_opened' => 'Enregistrement du webinaire ouvert',
     ],
 
     'audience' => [

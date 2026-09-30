@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use App\Actions\RemindStudent;
 use App\Filament\Resources\Users\UserResource;
 use App\Filament\Widgets\Concerns\ReportsOnLearners;
+use App\Filament\Widgets\Concerns\UsesDashboardFilters;
 use App\Models\ActivityEvent;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -28,6 +29,7 @@ use Illuminate\Support\Facades\DB;
 class StalledLearners extends TableWidget
 {
     use ReportsOnLearners;
+    use UsesDashboardFilters;
 
     protected static ?int $sort = 3;
 
@@ -54,6 +56,11 @@ class StalledLearners extends TableWidget
                     ->label(__t('admin_common.partner'))
                     ->badge()
                     ->placeholder('—'),
+
+                TextColumn::make('stalled_course_title')
+                    ->label(__t('admin_common.course'))
+                    ->badge()
+                    ->color('warning'),
 
                 TextColumn::make('completed_lessons_count')
                     ->label(__t('admin_widgets.stalled.lessons_done'))
@@ -134,32 +141,49 @@ class StalledLearners extends TableWidget
     private function stalledLearners()
     {
         return $this->learners()
+            ->when($this->dashboardCompanyId(), fn ($query, int $companyId) => $query->where('company_id', $companyId))
             ->with('company')
-            ->withCount('completedLessons')
-            ->addSelect(['last_completed_at' => DB::table('lesson_user')
-                ->selectRaw('max(completed_at)')
-                ->whereColumn('lesson_user.user_id', 'users.id'),
-            ])
+            ->addSelect(['stalled_course_title' => $this->stalledCoursesForUser()->select('stalled_courses.title')->limit(1)])
+            ->addSelect(['completed_lessons_count' => $this->stalledCoursesForUser()
+                ->selectRaw('count(distinct stalled_lu.lesson_id)')
+                ->limit(1)])
+            ->addSelect(['last_completed_at' => $this->stalledCoursesForUser()
+                ->selectRaw('max(stalled_lu.completed_at)')
+                ->limit(1)])
             // Who has already been chased, so nobody gets the same nudge twice.
             ->addSelect(['last_reminded_at' => DB::table('activity_events')
                 ->selectRaw('max(created_at)')
                 ->whereColumn('activity_events.user_id', 'users.id')
                 ->where('activity_events.type', ActivityEvent::TYPE_REMINDER_SENT),
             ])
-            // Started something…
-            ->whereExists(fn (Builder $query) => $query
-                ->from('lesson_user')
-                ->whereColumn('lesson_user.user_id', 'users.id'))
-            // …but nothing recently.
-            ->whereNotExists(fn (Builder $query) => $query
-                ->from('lesson_user')
-                ->whereColumn('lesson_user.user_id', 'users.id')
-                ->where('lesson_user.completed_at', '>=', now()->subDays(self::QUIET_DAYS)))
-            // Finishing late still counts as finished, so anyone holding a
-            // certificate is not outstanding and drops off the list.
-            ->whereNotExists(fn (Builder $query) => $query
+            ->whereExists($this->stalledCoursesForUser()->selectRaw('1'));
+    }
+
+    /** A course this learner started, went quiet in, and has not certified in. */
+    private function stalledCoursesForUser(): Builder
+    {
+        return DB::table('courses as stalled_courses')
+            ->join('course_lesson as stalled_cl', 'stalled_cl.course_id', '=', 'stalled_courses.id')
+            ->join('lesson_user as stalled_lu', 'stalled_lu.lesson_id', '=', 'stalled_cl.lesson_id')
+            ->whereColumn('stalled_lu.user_id', 'users.id')
+            ->where('stalled_lu.completed_at', '<', now()->subDays(self::QUIET_DAYS))
+            ->when($this->dashboardProductId(), fn (Builder $query, int $productId): Builder => $query
+                ->where('stalled_courses.product_id', $productId))
+            ->when($this->dashboardCourseId(), fn (Builder $query, int $courseId): Builder => $query
+                ->where('stalled_courses.id', $courseId))
+            ->whereNotExists(fn (Builder $recent) => $recent
+                ->from('course_lesson as recent_cl')
+                ->join('lesson_user as recent_lu', 'recent_lu.lesson_id', '=', 'recent_cl.lesson_id')
+                ->whereColumn('recent_cl.course_id', 'stalled_courses.id')
+                ->whereColumn('recent_lu.user_id', 'users.id')
+                ->where('recent_lu.completed_at', '>=', now()->subDays(self::QUIET_DAYS)))
+            ->whereNotExists(fn (Builder $certificates) => $certificates
                 ->from('certificates')
+                ->whereColumn('certificates.course_id', 'stalled_courses.id')
                 ->whereColumn('certificates.user_id', 'users.id')
-                ->whereNull('certificates.revoked_at'));
+                ->whereNull('certificates.revoked_at'))
+            ->groupBy('stalled_courses.id', 'stalled_courses.title')
+            ->orderByRaw('max(stalled_lu.completed_at) asc')
+            ->orderBy('stalled_courses.id');
     }
 }

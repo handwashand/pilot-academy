@@ -3,8 +3,11 @@
 namespace App\Filament\Widgets;
 
 use App\Filament\Widgets\Concerns\ReportsOnLearners;
+use App\Filament\Widgets\Concerns\UsesDashboardFilters;
 use App\Models\ActivityEvent;
+use App\Models\Course;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Str;
 
 /**
  * Which courses students actually open.
@@ -15,10 +18,9 @@ use Filament\Widgets\ChartWidget;
 class MostOpenedCourses extends ChartWidget
 {
     use ReportsOnLearners;
+    use UsesDashboardFilters;
 
-    protected static ?int $sort = 6;
-
-    private const DAYS = 90;
+    protected static ?int $sort = 7;
 
     public function getHeading(): ?string
     {
@@ -27,7 +29,7 @@ class MostOpenedCourses extends ChartWidget
 
     public function getDescription(): ?string
     {
-        return __t('admin_widgets.opened.description', ['days' => self::DAYS]);
+        return __t('admin_widgets.opened.description');
     }
 
     private const TOP = 8;
@@ -39,19 +41,31 @@ class MostOpenedCourses extends ChartWidget
 
     protected function getData(): array
     {
-        // The event stores the course title as a label rather than an id, so
-        // this counts by title. A renamed course starts a new bar, which is
-        // honest: the old bar is what students actually opened at the time.
-        $opens = $this->scopeToLearners(
-            ActivityEvent::query()
+        $events = $this->scopeToLearners(
+            $this->filterActivity(ActivityEvent::query())
                 ->where('type', ActivityEvent::TYPE_COURSE_OPENED)
-                ->whereNotNull('label')
-                ->where('created_at', '>=', now()->subDays(self::DAYS)),
+                ->where(fn ($query) => $query->whereNotNull('subject_id')->orWhereNotNull('label')),
         )
-            ->get(['label'])
-            ->countBy('label')
+            ->get(['subject_id', 'label']);
+
+        $courseTitles = Course::query()
+            ->whereIn('id', $events->pluck('subject_id')->filter()->unique())
+            ->pluck('title', 'id');
+
+        $opens = $events
+            ->countBy(fn (ActivityEvent $event): string => $event->subject_id
+                ? 'course:'.$event->subject_id
+                : 'legacy:'.$event->label)
             ->sortDesc()
             ->take(self::TOP);
+
+        $labels = $opens->keys()->map(function (string $key) use ($courseTitles): string {
+            if (str_starts_with($key, 'course:')) {
+                return $courseTitles[(int) Str::after($key, 'course:')] ?? __t('admin_widgets.opened.removed_course');
+            }
+
+            return Str::after($key, 'legacy:');
+        });
 
         return [
             'datasets' => [[
@@ -59,7 +73,7 @@ class MostOpenedCourses extends ChartWidget
                 'data' => $opens->values()->all(),
                 'backgroundColor' => '#7c3aed',
             ]],
-            'labels' => $opens->keys()->all(),
+            'labels' => $labels->all(),
         ];
     }
 

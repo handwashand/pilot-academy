@@ -10,6 +10,8 @@ Você chega ao **Painel**, com resumo de estudantes, progresso, cursos publicado
 
 Altere seu nome, e-mail ou senha pelo menu da conta, no canto superior direito, em **Perfil**.
 
+Administradores veem atividade dos estudantes, progresso e certificados. **Estudantes ativos** conta quem entrou ou trabalhou na academia nos últimos 30 dias; lembretes e atividade da equipe não contam. O gráfico mostra alunos ativos únicos como uma linha e aulas concluídas como barras; várias ações da mesma pessoa no mesmo dia contam apenas uma vez. As aulas publicadas e o progresso por empresa incluem apenas aulas disponíveis em um curso publicado. Criadores veem cartões com links para Cursos, Estudos de caso, Tutoriais e Webinars dos produtos atribuídos, separados em publicados, rascunhos e arquivados, sem dados de estudantes ou empresas.
+
 ## 2. O menu em resumo
 
 | Item | Para que serve |
@@ -79,7 +81,9 @@ Para adicionar empresa e estudante, crie a empresa em **Companies** e depois cri
 
 Use **Users** para filtrar por função e abrir o progresso de um estudante.
 
-O **Painel** mostra conteúdo com problemas, indicadores, progresso por empresa, estudantes parados, aulas difíceis, atividade e cursos mais abertos.
+Os **Filtros do painel** permitem escolher período, parceiro, produto ou curso; o período padrão é de 30 dias. Criadores não veem esses filtros nem dados dos alunos.
+
+O **Painel** mostra o **Engajamento dos parceiros**, a **Jornada do aluno**, a atividade diária, os recursos abertos e os cursos mais abertos. A lista de alunos parados agora é calculada por curso: concluir ou receber um certificado em outro curso não esconde um curso abandonado. O engajamento com estudos de caso, tutoriais e webinars registra apenas usuários conectados; visitas anônimas não são registradas.
 
 Em **Student feedback**, dentro do curso, leia comentários privados dos estudantes.
 
