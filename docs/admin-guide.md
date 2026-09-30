@@ -40,6 +40,7 @@ doing: building the training (**Content**), looking after the people taking it
 | **Content → Lessons** | Add lessons to a course: a video, text, and quiz questions. |
 | **Content → Case Studies** | Build, preview and publish reusable deployment playbooks for partners. |
 | **Content → Webinars** | Schedule live sessions, share the join link, and add the recording afterwards. |
+| **Content → Tutorials** | Standalone how-to videos, by YouTube link or uploaded file. |
 | **Content → Products** | The products/modules your training is about (GARM, PTM, …) and who owns each one. |
 | **Content → Media Items** | A shared image library you can reuse as lesson covers. |
 | **Content → Content health** | Everything broken for students right now, each with a link to fix it. A red number beside it means something needs fixing. |

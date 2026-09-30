@@ -4,7 +4,7 @@ Comment fonctionne Pilot Academy, de votre première leçon à votre certificat.
 
 ## Premiers pas
 
-La barre supérieure réunit quatre choses : **Cours**, tous les cours publiés avec une recherche et des filtres par niveau et par public ; **Études de cas** ; **Tutoriels**, toutes les vidéos des leçons réunies sous leur cours ; et **Webinaires**, les sessions en direct avec l’équipe Pilot et leurs enregistrements. L’aide est dans le menu sous vos initiales et au bas de chaque page.
+La barre supérieure réunit quatre choses : **Cours**, tous les cours publiés avec une recherche et des filtres par niveau et par public ; **Études de cas** ; **Tutoriels**, toutes les vidéos des leçons réunies sous leur cours ; et **Webinaires**, les sessions en direct avec l’équipe Pilot et leurs enregistrements. Les tutoriels réunissent de courtes vidéos pratiques et toutes les vidéos des leçons : vous pouvez en regarder une sans commencer un cours. L’aide est dans le menu sous vos initiales et au bas de chaque page.
 
 **Vous pouvez commencer une leçon sans compte.** Ouvrez un cours depuis l'accueil et avancez. Votre progression reste alors uniquement dans ce navigateur.
 

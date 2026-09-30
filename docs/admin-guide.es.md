@@ -19,6 +19,7 @@ Cambia tu nombre, correo o contraseña desde el menú de cuenta, arriba a la der
 | **Contenido → Lecciones** | Añadir video, texto y preguntas. |
 | **Contenido → Casos prácticos** | Crear, previsualizar y publicar guías prácticas de implementación para socios. |
 | **Contenido → Seminarios web** | Programar sesiones en directo, compartir el enlace para unirse y añadir la grabación después. |
+| **Contenido → Tutoriales** | Vídeos prácticos independientes, por enlace de YouTube o archivo subido. |
 | **Contenido → Productos** | Productos o módulos de formación y sus responsables. |
 | **Contenido → Archivos multimedia** | Biblioteca compartida de imágenes. |
 | **Personas → Usuarios** | Cuentas, roles, progreso y certificados. |

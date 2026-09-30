@@ -112,6 +112,13 @@ return [
         'activity' => 'Activity',
     ],
 
+    'tutorials' => [
+        'nav' => 'Tutorials',
+        'one' => 'tutorial',
+        'many' => 'tutorials',
+        'badge' => 'Tutorials still in draft — partners cannot see them yet',
+    ],
+
     'webinars' => [
         'nav' => 'Webinars',
         'one' => 'webinar',

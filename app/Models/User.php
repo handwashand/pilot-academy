@@ -158,6 +158,11 @@ class User extends Authenticatable implements FilamentUser, HasLocalePreference
         return $this->canManageContentFor($webinar?->product_id);
     }
 
+    public function canManageTutorial(?Tutorial $tutorial): bool
+    {
+        return $this->canManageContentFor($tutorial?->product_id);
+    }
+
     /**
      * Content outside courses — case studies, webinars — belongs to a product,
      * and a creator only touches the products they were given. An admin may

@@ -382,6 +382,26 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-09-30 — Tutorials an admin adds, by link or upload
+
+Tutorials was derived entirely from lesson videos. It still is, but a
+`Tutorial` model now sits above that: a standalone how-to that belongs to no
+course, with one video — a YouTube link or an uploaded file. The form reuses
+the two sources and the validation `LessonForm` already had, including
+`Lesson::youtubeIdFrom()`, so a playlist link is refused here too; that is what
+stops publishing, since a tutorial with no working video is an empty page.
+
+The page shows the standalone ones first under **Pilot how-tos**, then the
+course videos under **From the courses**, and the count at the top covers both.
+Each standalone tutorial has its own page with the player — `youtube-nocookie`
+for links, a `<video>` element for uploads, as on a lesson.
+
+Same shape as case studies and webinars: `HasPublishStatus`, `Written in` plus
+Translate, product scoping, a draft preview banner, `canManageTutorial()` on
+the shared `canManageContentFor()`.
+
+**Verified:** the whole suite in Docker. Pint clean. `npm run build`.
+
 ### 2026-09-29 — A top bar with four areas, and webinars
 
 The header was Help and Case Studies; the owner asked for Courses, Case

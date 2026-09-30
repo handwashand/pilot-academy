@@ -15,6 +15,7 @@ Route::get('/', [AcademyController::class, 'home'])->name('academy.home');
 Route::post('/name', [AcademyController::class, 'setName'])->name('academy.name');
 Route::get('/courses', [AcademyController::class, 'courses'])->name('academy.courses');
 Route::get('/tutorials', [AcademyController::class, 'tutorials'])->name('academy.tutorials');
+Route::get('/tutorials/{tutorial:slug}', [AcademyController::class, 'tutorial'])->name('academy.tutorial');
 Route::get('/webinars', [WebinarController::class, 'index'])->name('academy.webinars');
 Route::get('/webinars/{webinar:slug}', [WebinarController::class, 'show'])->name('academy.webinar');
 Route::get('/search', [AcademyController::class, 'search'])->name('academy.search');

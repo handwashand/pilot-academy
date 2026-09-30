@@ -31,6 +31,13 @@ Add a new entry here whenever something visible to admins or students changes.
   and **Webinars**. The home page is unchanged: it stays your own starting
   point, with where you left off at the top. Help moved into the account menu
   and stays in the footer of every page.
+- **Tutorials you add yourself, by link or upload.** Alongside the lesson
+  videos gathered from the courses, admins and product creators can add
+  standalone how-to videos under **Content → Tutorials** — a YouTube link or a
+  file you upload, the same two sources a lesson video takes. They appear above
+  the course videos on **Tutorials**, each on its own page with the player. A
+  tutorial cannot be published until its video actually works, and it can be
+  written in any language and translated like a course.
 - **Webinars: live sessions, and the recordings afterwards.** Partners see what
   is coming up with a **Join** button, and past sessions with **Watch the
   recording**. Times are shown in UTC, with the zone named, so nobody joins an

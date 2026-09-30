@@ -108,6 +108,13 @@ return [
         'activity' => 'Activité',
     ],
 
+    'tutorials' => [
+        'nav' => 'Tutoriels',
+        'one' => 'tutoriel',
+        'many' => 'tutoriels',
+        'badge' => 'Tutoriels encore en brouillon — les partenaires ne les voient pas',
+    ],
+
     'webinars' => [
         'nav' => 'Webinaires',
         'one' => 'webinaire',

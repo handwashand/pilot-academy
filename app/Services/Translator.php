@@ -16,7 +16,7 @@ use Illuminate\Support\Str;
 class Translator
 {
     /** Files in lang/{code}/ that __t() reads, and admins may correct. */
-    public const SHIPPED_GROUPS = ['academy', 'nav', 'footer', 'auth', 'field', 'locale', 'help', 'guide', 'admin', 'core', 'mail', 'labels', 'admin_nav', 'admin_common', 'admin_courses', 'admin_lessons', 'admin_people', 'admin_library', 'admin_results', 'admin_settings', 'admin_pages', 'admin_widgets', 'admin_case_studies', 'admin_webinars'];
+    public const SHIPPED_GROUPS = ['academy', 'nav', 'footer', 'auth', 'field', 'locale', 'help', 'guide', 'admin', 'core', 'mail', 'labels', 'admin_nav', 'admin_common', 'admin_courses', 'admin_lessons', 'admin_people', 'admin_library', 'admin_results', 'admin_settings', 'admin_pages', 'admin_widgets', 'admin_case_studies', 'admin_webinars', 'admin_tutorials'];
 
     private array $bundles = [];
 

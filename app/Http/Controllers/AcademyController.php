@@ -8,6 +8,7 @@ use App\Models\Course;
 use App\Models\CourseFeedback;
 use App\Models\Lesson;
 use App\Models\QuizAttempt;
+use App\Models\Tutorial;
 use App\Models\VideoPosition;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -86,11 +87,28 @@ class AcademyController extends Controller
             ->filter(fn (Course $course): bool => $course->publishedLessons->isNotEmpty())
             ->values();
 
+        // Standalone tutorials an admin added, above the course videos.
+        $tutorials = Tutorial::published()
+            ->with(['product', 'contentTranslations'])
+            ->orderBy('sort_order')
+            ->orderBy('title')
+            ->get();
+
         return view('academy.tutorials', [
             'courses' => $courses,
+            'tutorials' => $tutorials,
             'completed' => $this->completedIds($request),
-            'videoCount' => $courses->sum(fn (Course $course): int => $course->publishedLessons->count()),
+            'videoCount' => $tutorials->count() + $courses->sum(fn (Course $course): int => $course->publishedLessons->count()),
         ]);
+    }
+
+    public function tutorial(Request $request, Tutorial $tutorial)
+    {
+        abort_unless($tutorial->isVisibleTo($request->user()), 404);
+
+        $tutorial->load(['product', 'contentTranslations']);
+
+        return view('academy.tutorial', ['tutorial' => $tutorial]);
     }
 
     public function home(Request $request)
