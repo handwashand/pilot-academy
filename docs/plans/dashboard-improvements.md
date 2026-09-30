@@ -123,7 +123,7 @@ For each implemented phase:
 - Confirm creators receive no learner names, companies, progress, attempts,
   feedback, or certificate information.
 - Update `docs/CHANGELOG.md`, `docs/admin-guide.md`, its localized copies, and
-  the `agent.md` work log for visible changes.
+  the `agents.md` work log for visible changes.
 
 ### 2026-09-30 Results
 
@@ -164,8 +164,8 @@ For each implemented phase:
 - [x] Stalled follow-up is course-specific, including its displayed course,
   completion count and last completion.
 - [x] Focused dashboard, Case Study, Tutorial and Webinar tests: 64 passed (265
-  assertions). Full-suite and formatting results are recorded after the final
-  verification pass.
+  assertions). Final verification: 444 tests passed (6,954 assertions), and
+  Pint passed for the six dashboard source and regression-test files.
 
 ## Decisions
 

@@ -370,6 +370,7 @@ return [
         'source_note' => 'Source note',
         'performance_claims' => 'Performance claims',
         'features' => 'Features',
+        'step_image_alt' => 'Picture for :step',
         'sections' => [
             'scenario' => 'Customer scenario and problem',
             'outcome' => 'Desired outcome',

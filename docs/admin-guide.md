@@ -263,8 +263,11 @@ not track completion or issue a certificate.
    note** to record the evidence behind any measured saving, reduction, uptime
    or other quantified result. Both notes are for editors: partners never see
    them, so write them for your colleagues.
-5. Optional: add a sanitized cover image or diagram, related Academy lessons,
-   and documentation links. Do not upload customer names, exact locations,
+5. Add pictures to any step, two ways: the paperclip in that step's toolbar
+   puts an image inside the text, and the box under the step takes a pasted
+   screenshot, a dropped file or a normal file pick, showing them beneath that
+   step. Optional: add a sanitized cover image or diagram, related Academy
+   lessons, and documentation links. Do not upload customer names, exact locations,
    credentials, live vehicle data or identifying screenshots.
 6. Save the study as **Draft**, then use **Preview** to inspect its public page.
    The preview is available to authorized editors, but ordinary partners cannot

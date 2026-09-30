@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 
 class CaseStudy extends Model
 {
@@ -84,6 +85,7 @@ class CaseStudy extends Model
         'expected_results',
         'troubleshooting',
         'adaptation',
+        'section_images',
         'related_lesson_ids',
         'related_links',
         'source_note',
@@ -102,6 +104,7 @@ class CaseStudy extends Model
 
     protected $casts = [
         'features_used' => 'array',
+        'section_images' => 'array',
         'related_lesson_ids' => 'array',
         'related_links' => 'array',
         'is_anonymized' => 'boolean',
@@ -177,9 +180,25 @@ class CaseStudy extends Model
                 // The reader's language where someone has translated it,
                 // the author's words where nobody has.
                 'body' => (string) $this->translated($field),
+                'images' => $this->imagesFor($key),
             ])
-            ->filter(fn (array $section): bool => filled($section['body']))
+            // A step with only pictures is still a step worth showing.
+            ->filter(fn (array $section): bool => filled($section['body']) || $section['images'] !== [])
             ->values();
+    }
+
+    /**
+     * The pictures saved for one step, as urls a page can show.
+     *
+     * @return array<int, string>
+     */
+    public function imagesFor(string $section): array
+    {
+        return collect($this->section_images[$section] ?? [])
+            ->filter(fn ($path): bool => filled($path))
+            ->map(fn (string $path): string => Storage::disk('public')->url($path))
+            ->values()
+            ->all();
     }
 
     public function featureList(): array

@@ -14,6 +14,9 @@ return [
     ],
 
     'form' => [
+        'step_images' => 'Imagens para “:step”',
+        'step_images_help' => 'Cole uma captura, solte um arquivo aqui ou escolha um. Elas aparecem sob esta etapa na página do parceiro. Higienize antes: sem nomes de clientes, locais exatos, credenciais ou dados de veículos reais.',
+        'images_help' => 'Adicione uma imagem a qualquer etapa: o clipe na barra, ou cole ou arraste um arquivo direto. Higienize as capturas: sem nomes de clientes, locais ou dados reais.',
         'short_problem' => 'Descrição breve do problema',
         'industry' => 'Setor',
         'features' => 'Funções do Pilot relevantes',

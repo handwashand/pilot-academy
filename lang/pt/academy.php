@@ -356,6 +356,7 @@ return [
         'source_note' => 'Fonte',
         'performance_claims' => 'Afirmações quantificadas',
         'features' => 'Funções',
+        'step_image_alt' => 'Imagem para “:step”',
         'sections' => [
             'scenario' => 'Situação e problema do cliente',
             'outcome' => 'Resultado desejado',

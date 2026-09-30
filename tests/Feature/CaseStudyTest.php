@@ -335,6 +335,51 @@ class CaseStudyTest extends TestCase
             ->assertSee('Checked against the staging fleet, not a customer.');
     }
 
+    /** A screenshot saved against one step shows under that step, and no other. */
+    public function test_pictures_belong_to_the_step_they_were_added_to(): void
+    {
+        $study = $this->completeStudy([
+            'status' => CaseStudy::STATUS_PUBLISHED,
+            'section_images' => [
+                'configuration' => ['case-study-images/geozone.png', 'case-study-images/geozone-2.png'],
+                'verification' => ['case-study-images/history.png'],
+            ],
+        ]);
+
+        $response = $this->get(route('academy.case-studies.show', $study))->assertOk();
+
+        // Each picture is a public url the partner's browser can fetch.
+        $response->assertSee('/storage/case-study-images/geozone.png', false)
+            ->assertSee('/storage/case-study-images/geozone-2.png', false)
+            ->assertSee('/storage/case-study-images/history.png', false);
+
+        // The configuration step carries its two, before the verification step.
+        $response->assertSeeInOrder([
+            'Step-by-step configuration',
+            'case-study-images/geozone.png',
+            'case-study-images/geozone-2.png',
+            'How to test and verify the setup',
+            'case-study-images/history.png',
+        ], false);
+
+        $this->assertSame([], $study->imagesFor('troubleshooting'), 'A step nobody gave a picture has none.');
+    }
+
+    /** A step with only a screenshot is still worth showing. */
+    public function test_a_step_with_pictures_and_no_words_still_appears(): void
+    {
+        $study = $this->completeStudy([
+            'status' => CaseStudy::STATUS_PUBLISHED,
+            'troubleshooting' => null,
+            'section_images' => ['troubleshooting' => ['case-study-images/error.png']],
+        ]);
+
+        $this->get(route('academy.case-studies.show', $study))
+            ->assertOk()
+            ->assertSee('Troubleshooting and common mistakes')
+            ->assertSee('/storage/case-study-images/error.png', false);
+    }
+
     public function test_creators_only_see_and_manage_their_products_case_studies(): void
     {
         $mine = Product::create(['name' => 'GARM', 'slug' => 'garm']);

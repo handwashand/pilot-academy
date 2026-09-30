@@ -5,8 +5,8 @@ The one file for whoever picks this repo up next, human or AI: **the rules**
 and which traps have already cost someone an afternoon). Read it before you
 start anything.
 
-`CLAUDE.md` only points here, because Claude Code loads that file on its own.
-Do not add rules there. Put them in this file.
+This is the repository's only agent instruction file. Keep rules and project
+memory here so every coding agent works from the same source.
 
 **Contents:** [Project](#project) · [How to work](#how-to-work) ·
 [Standing instructions](#standing-instructions--read-before-you-start-follow-before-you-finish) ·
@@ -382,6 +382,38 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-09-30 — Pictures within each case-study step
+
+Editors can now attach sanitized screenshots to any individual case-study step,
+either inline through the rich-editor paperclip or as an ordered gallery by
+pasting, dropping or selecting files below the step. Gallery images are stored
+on the public disk and rendered beneath the matching step; image-only steps are
+kept visible. The migration adds nullable JSON storage, and the editor guidance
+is translated in all five UI languages and all five admin guides.
+
+The two ways in are not a duplicate: Filament's `RichEditor` cannot take a
+pasted image — the compiled TipTap bundle has no paste handler, and a synthetic
+paste produces no upload — while `FileUpload` documents `pasteable()`. So the
+paperclip carries a picture that belongs mid-sentence, and the box below the
+step takes a paste, a drop or a file. Rich-editor attachments were defaulting to
+the private `local` disk, which uploads happily and then shows a broken image to
+the partner; they are pinned to the public disk now, as the gallery is.
+
+**Partially verified.** PHP syntax checks passed for all fourteen changed PHP
+files and `git diff --check` passed. Docker Desktop returned HTTP 500 from its
+engine `_ping` endpoint, so the suite, Pint and browser check could not run,
+including the two new tests in `CaseStudyTest` (pictures stay with their own
+step; a step with pictures and no words still appears). Run all three when the
+engine is available. `section_images` belongs in `$fillable` and `$casts` and
+**not** in `$translatable` — both arrays end with `'adaptation',`, and it was
+briefly added to the wrong one.
+
+### 2026-09-30 — Agent instructions consolidated
+
+Removed the redundant `CLAUDE.md` pointer after confirming that its short rule
+summary was already fully represented here. `agents.md` is now the sole agent
+guide and project work log.
+
 ### 2026-09-30 — Dashboard filters, learner journey and resource engagement
 
 The administrator dashboard now has shared date, partner, product and course
@@ -403,9 +435,10 @@ course title, lesson count and last completion shown on the row all come from
 the same stalled course. Resource analytics deliberately cover signed-in users
 only; anonymous tracking needs a separate privacy and retention decision.
 
-**Verified so far:** 64 focused dashboard and resource tests passed with 265
-assertions. Full-suite, formatting and visual verification results follow in the
-roadmap after the final pass.
+**Verified:** 64 focused dashboard and resource tests passed with 265
+assertions; the final Docker suite passed 444 tests with 6,954 assertions. Pint
+passed for the six dashboard source and regression-test files, and authenticated
+desktop and mobile dashboard screenshots were reviewed in Chrome.
 
 ### 2026-09-30 — Learner activity shows people, not repeated clicks
 
@@ -476,8 +509,9 @@ The plan doc said the browser review "was not run because this repository has
 no browser automation dependency". It has been run now, from the session
 scratchpad, so nothing was added to the repository — and the doc says so.
 
-**Verified:** dashboard tests 41 passed, whole suite in Docker, Pint clean,
-and the dashboard re-checked in Chrome afterwards.
+**Verified:** dashboard tests 41 passed, the whole suite passed in Docker, Pint
+was clean for the changed dashboard files, and the dashboard was re-checked in
+Chrome afterwards.
 
 ### 2026-09-30 — Forgot password, for partners and staff alike
 
@@ -635,8 +669,8 @@ names courses use. The feature suggestions said "Geofences" while the seeded
 studies say "GeoZones", and the listing filter matches exactly, so the
 suggestion now says GeoZones too.
 
-Also: restored `agent.md`, which had been renamed to `agents.md` while
-`CLAUDE.md` still pointed at `agent.md`; moved the root `CASE_STUDY_PLAN.md`
+Also: restored the root agent guide after its filename and the `CLAUDE.md`
+pointer had drifted apart; moved the root `CASE_STUDY_PLAN.md`
 to `docs/plans/case-studies.md`; and translated the UI names the new guide
 sections had left in English.
 
@@ -1104,13 +1138,13 @@ The page itself (search, category filters, PDFs, Latest) was already here.
   into the downloads folder with nothing on screen.
 - Pinned in `ChangelogPageTest`.
 
-### 2026-09-14 — One guide: CLAUDE.md merged into agent.md (uncommitted)
-Owner's request: keep `agent.md` as the single file. Its top is now the whole
+### 2026-09-14 — One guide: CLAUDE.md merged into agents.md (uncommitted)
+Owner's request: keep `agents.md` as the single file. Its top is now the whole
 rulebook: Project, How to work, and Standing instructions.
 - The generic "senior engineer" template from `f78556b3` was filled in for this
   project. Its placeholders are gone and its points are kept.
-- `CLAUDE.md` is a short pointer to this file, and stays only because Claude Code
-  loads it automatically.
+- `CLAUDE.md` was initially kept as a short pointer to this file. It was removed
+  when agent instructions were later consolidated here.
 - Stale facts fixed on the way: the `is_admin` flag is now roles, and
   `php artisan pint` is now `./vendor/bin/pint`.
 - The duplicated "Repo rules worth repeating" tail was removed, and its rules

@@ -51,6 +51,13 @@
                 <section id="{{ $section['anchor'] }}" class="prose-lesson mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm scroll-mt-20">
                     <h2>{{ $section['heading'] }}</h2>
                     {!! $section['body'] !!}
+
+                    {{-- The step's own screenshots, under the words they belong to. --}}
+                    @foreach($section['images'] as $image)
+                        <img src="{{ $image }}"
+                             alt="{{ __t('academy.case_studies.step_image_alt', ['step' => $section['heading']]) }}"
+                             class="mt-4 h-auto w-full rounded-xl border border-slate-200">
+                    @endforeach
                 </section>
             @endforeach
 

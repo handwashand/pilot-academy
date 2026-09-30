@@ -14,6 +14,9 @@ return [
     ],
 
     'form' => [
+        'step_images' => 'Imágenes para «:step»',
+        'step_images_help' => 'Pega una captura, suelta un archivo aquí o elige uno. Aparecen bajo este paso en la página del socio. Depúralas antes: sin nombres de clientes, ubicaciones exactas, credenciales ni datos de vehículos reales.',
+        'images_help' => 'Añade una imagen a cualquier paso: el clip de la barra, o pega o arrastra un archivo directamente. Depura las capturas: sin nombres de clientes, ubicaciones ni datos reales.',
         'short_problem' => 'Descripción breve del problema',
         'industry' => 'Sector',
         'features' => 'Funciones de Pilot relevantes',

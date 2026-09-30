@@ -357,6 +357,7 @@ return [
         'source_note' => 'Источник',
         'performance_claims' => 'Количественные заявления',
         'features' => 'Функции',
+        'step_image_alt' => 'Изображение к шагу «:step»',
         'sections' => [
             'scenario' => 'Ситуация и проблема заказчика',
             'outcome' => 'Желаемый результат',

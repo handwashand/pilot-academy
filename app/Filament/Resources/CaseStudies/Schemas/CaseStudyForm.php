@@ -158,15 +158,15 @@ class CaseStudyForm
                 // see CaseStudy::sections() and academy.case_studies.sections.
                 Section::make(__t('admin_case_studies.sections.study'))
                     ->schema([
-                        static::rich('scenario_problem', 'scenario', true),
-                        static::rich('desired_outcome', 'outcome', true),
-                        static::rich('prerequisites', 'prerequisites'),
-                        static::rich('pilot_features', 'features'),
-                        static::rich('configuration_steps', 'configuration', true),
-                        static::rich('testing_verification', 'verification', true),
-                        static::rich('expected_results', 'results'),
-                        static::rich('troubleshooting', 'troubleshooting'),
-                        static::rich('adaptation', 'adaptation'),
+                        ...static::step('scenario_problem', 'scenario', true),
+                        ...static::step('desired_outcome', 'outcome', true),
+                        ...static::step('prerequisites', 'prerequisites'),
+                        ...static::step('pilot_features', 'features'),
+                        ...static::step('configuration_steps', 'configuration', true),
+                        ...static::step('testing_verification', 'verification', true),
+                        ...static::step('expected_results', 'results'),
+                        ...static::step('troubleshooting', 'troubleshooting'),
+                        ...static::step('adaptation', 'adaptation'),
                     ]),
 
                 Section::make(__t('admin_case_studies.sections.related'))
@@ -206,11 +206,57 @@ class CaseStudyForm
             ]);
     }
 
-    /** @param  string  $section  A key under academy.case_studies.sections. */
+    /**
+     * One step: the words, then its pictures.
+     *
+     * Two ways in, because they suit different pictures. Something that belongs
+     * mid-sentence goes in the text through the paperclip; a screenshot that
+     * stands on its own goes in the box below, which also takes a paste from
+     * the clipboard or a file dropped on it.
+     *
+     * @param  string  $section  A key under academy.case_studies.sections.
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    protected static function step(string $name, string $section, bool $required = false): array
+    {
+        return [
+            static::rich($name, $section, $required),
+            FileUpload::make("section_images.{$section}")
+                ->label(__t('admin_case_studies.form.step_images', ['step' => __t("academy.case_studies.sections.{$section}")]))
+                ->helperText(__t('admin_case_studies.form.step_images_help'))
+                ->image()
+                ->multiple()
+                ->reorderable()
+                ->appendFiles()
+                ->openable()
+                ->disk('public')
+                ->directory('case-study-images')
+                ->visibility('public')
+                ->maxSize(8192)
+                ->columnSpanFull(),
+        ];
+    }
+
+    /**
+     * One step of the study, with pictures.
+     *
+     * Every step takes images the same way: the paperclip in the toolbar, a
+     * file dragged onto the box, or one pasted straight in. They land on the
+     * public disk, because a partner has to be able to see them — the app's
+     * default disk is private, so an attachment saved there would upload
+     * happily and then show a broken image on the study page.
+     *
+     * @param  string  $section  A key under academy.case_studies.sections.
+     */
     protected static function rich(string $name, string $section, bool $required = false): RichEditor
     {
         $field = RichEditor::make($name)
             ->label(__t("academy.case_studies.sections.{$section}"))
+            ->fileAttachmentsDisk('public')
+            ->fileAttachmentsDirectory('case-study-images')
+            ->fileAttachmentsVisibility('public')
+            ->fileAttachmentsMaxSize(8192)
+            ->helperText(__t('admin_case_studies.form.images_help'))
             ->columnSpanFull();
 
         return $required ? $field->required() : $field;

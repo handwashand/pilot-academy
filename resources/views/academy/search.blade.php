@@ -17,7 +17,7 @@
     @if($term === '')
         <p class="text-slate-500">{{ __t('academy.search.type_something') }}</p>
     @else
-        {{-- Block form only — see the Blade trap in agent.md. --}}
+        {{-- Block form only — see the Blade trap in agents.md. --}}
         @php
             $resultCount = $courses->count() + $lessons->count();
         @endphp

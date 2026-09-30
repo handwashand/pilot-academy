@@ -41,6 +41,13 @@ Add a new entry here whenever something visible to admins or students changes.
   and **Webinars**. The home page is unchanged: it stays your own starting
   point, with where you left off at the top. Help moved into the account menu
   and stays in the footer of every page.
+- **Pictures on every step of a case study.** Each of the ten steps now takes
+  screenshots two ways: the paperclip in its toolbar, for an image that belongs
+  mid-sentence, and a box beneath it that accepts a paste from the clipboard, a
+  file dropped on it, or a normal file pick. They appear under that step on the
+  partner's page, in the order you put them. Images added inside a step are
+  stored where partners can actually see them — before this they were saved
+  privately and would have shown as broken.
 - **The dashboard funnel and the completion count tell the same story.**
   **Learner journey** used to read every stage from the activity log, which
   only goes back to the day the academy started recording it — so an academy

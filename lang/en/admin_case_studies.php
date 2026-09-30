@@ -19,6 +19,9 @@ return [
     ],
 
     'form' => [
+        'step_images' => 'Pictures for :step',
+        'step_images_help' => 'Paste a screenshot, drop a file here, or choose one. They appear under this step on the partner\'s page. Sanitize them first: no customer names, exact locations, credentials or live vehicle data.',
+        'images_help' => 'Add a picture to any step: the paperclip in the toolbar, or paste or drag one straight in. Keep screenshots sanitized — no customer names, locations or live data.',
         'short_problem' => 'Short problem statement',
         'industry' => 'Industry',
         'features' => 'Relevant Pilot features',

@@ -14,6 +14,9 @@ return [
     ],
 
     'form' => [
+        'step_images' => 'Images pour « :step »',
+        'step_images_help' => 'Collez une capture, déposez un fichier ici ou choisissez-en un. Elles apparaissent sous cette étape sur la page partenaire. Nettoyez-les d’abord : ni noms de clients, ni lieux précis, ni identifiants, ni données de véhicules réels.',
+        'images_help' => 'Ajoutez une image à n’importe quelle étape : le trombone de la barre d’outils, ou collez ou glissez un fichier directement. Nettoyez les captures : ni noms de clients, ni lieux, ni données réelles.',
         'short_problem' => 'Énoncé court du problème',
         'industry' => 'Secteur',
         'features' => 'Fonctions Pilot concernées',

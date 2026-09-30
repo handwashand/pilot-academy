@@ -104,7 +104,7 @@ Add a Case Studies area to Pilot Academy so partners and integrators can find pr
 - [x] Add the Case Studies menu item and editor workflow to the admin guide.
 - [x] Add public search, filters, study contents, and publication visibility to the learner Help guide.
 - [x] Update the Russian, Spanish, French, and Portuguese guide copies.
-- [x] Record the completed feature and remaining acceptance work in `agent.md`.
+- [x] Record the completed feature and remaining acceptance work in `agents.md`.
 
 ## Verification Results
 
@@ -148,7 +148,7 @@ The host Composer installation is incomplete, so PHP tests were run against the 
 - `docs/CHANGELOG.md`
 - `docs/admin-guide.md` and its Russian, Spanish, French, and Portuguese copies
 - `docs/learner-guide.md` and its Russian, Spanish, French, and Portuguese copies
-- `agent.md`
+- `agents.md`
 
 ## Decisions and Constraints
 
