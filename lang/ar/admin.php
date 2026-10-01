@@ -4,7 +4,7 @@
 // the translations table with the same key overrides a line.
 
 return [
-    'languages' => 'Languages',
-    'translations' => 'Translations',
-    'localization' => 'Localization',
+    'languages' => 'اللغات',
+    'translations' => 'الترجمات',
+    'localization' => 'التعريب',
 ];

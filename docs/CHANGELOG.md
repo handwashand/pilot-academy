@@ -20,16 +20,23 @@ Add a new entry here whenever something visible to admins or students changes.
      are stripped before anything is rendered, so notes to the next editor can
      live right here. -->
 
-## 2.2.0 — October 2026
-
-### Added
-
-- **Arabic language support.** The academy now supports Arabic (ar) as a sixth language. The student site and admin panel support RTL layout automatically, with directional arrows flipping based on the active language. Dates and numerals use Western Arabic formatting (1 2 3) by default. The Arabic learner and admin guides are available. Certificates will remain in English for Arabic learners due to rendering constraints.
-
 ## 2.1.0 — September 2026
 
 ### Added
 
+- **Arabic, and the academy reads right to left.** Arabic joins English,
+  Russian, Spanish, French and Portuguese. Choosing it turns the whole student
+  site around — the text runs right to left, and the arrows that say "next" and
+  "back" turn with it. The admin panel turns around too. Dates and numbers stay
+  in the figures you already know (1 2 3). The Help page and the admin guide are
+  written in Arabic.
+  **Two things to know.** The buttons and labels themselves are still in
+  English: the Arabic wording is being written, and until it is, an Arabic
+  reader sees English text in an Arabic layout. You can fill any of it in
+  yourself under **Settings → Translations**, and what you save shows straight
+  away. Certificates are still issued in English for Arabic learners, because
+  the PDF cannot yet shape Arabic script correctly — an Arabic certificate would
+  print its letters disconnected and in the wrong order.
 - **Write a lesson without leaving the course.** The course's **Lessons** tab
   now has **New lesson** beside **Add existing lesson**. Give it a title and a
   web address and it joins the end of that course, written in the course's

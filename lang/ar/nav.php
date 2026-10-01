@@ -4,13 +4,13 @@
 // the translations table with the same key overrides a line.
 
 return [
-    'skip' => 'Skip to content',
-    'sections' => 'Sections',
-    'help' => 'Help',
-    'certificates' => 'Certificates',
-    'logout' => 'Log out',
-    'case_studies' => 'Case Studies',
-    'tutorials' => 'Tutorials',
-    'webinars' => 'Webinars',
-    'courses' => 'Courses',
+    'skip' => 'تخطَّ إلى المحتوى',
+    'sections' => 'الأقسام',
+    'help' => 'المساعدة',
+    'certificates' => 'الشهادات',
+    'logout' => 'تسجيل الخروج',
+    'case_studies' => 'دراسات الحالة',
+    'tutorials' => 'الشروحات',
+    'webinars' => 'الندوات',
+    'courses' => 'الدورات',
 ];

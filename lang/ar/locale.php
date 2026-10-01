@@ -4,6 +4,6 @@
 // the translations table with the same key overrides a line.
 
 return [
-    'choose' => 'Choose language',
-    'invalid' => 'Choose an active language.',
+    'choose' => 'اختر اللغة',
+    'invalid' => 'اختر لغة مفعّلة.',
 ];

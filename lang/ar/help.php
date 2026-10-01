@@ -4,11 +4,11 @@
 // the translations table with the same key overrides a line.
 
 return [
-    'title' => 'Help - Pilot Academy',
-    'meta' => 'How Pilot Academy works: lessons, knowledge checks, the final quiz and certificates.',
-    'heading' => 'Help',
-    'unavailable' => 'The help guide is not available right now.',
-    'contents_aria' => 'Help contents',
-    'still_stuck' => 'Still stuck? Contact your academy administrator.',
-    'back_to_courses' => 'Back to courses',
+    'title' => 'المساعدة - أكاديمية بايلوت',
+    'meta' => 'كيف تعمل أكاديمية بايلوت: الدروس، واختبارات الفهم، والاختبار النهائي، والشهادات.',
+    'heading' => 'المساعدة',
+    'unavailable' => 'دليل المساعدة غير متاح في الوقت الحالي.',
+    'contents_aria' => 'محتويات المساعدة',
+    'still_stuck' => 'ما زلت متعثرًا؟ تواصل مع مسؤول الأكاديمية لديك.',
+    'back_to_courses' => 'العودة إلى الدورات',
 ];

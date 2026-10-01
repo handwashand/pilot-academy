@@ -4,6 +4,6 @@
 // the translations table with the same key overrides a line.
 
 return [
-    'email' => 'Email',
-    'password' => 'Password',
+    'email' => 'البريد الإلكتروني',
+    'password' => 'كلمة المرور',
 ];

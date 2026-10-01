@@ -733,7 +733,7 @@ five languages, and `HelpPageTest` caught Help leaving the header.
 **Verified:** the whole suite in Docker. Pint clean. `npm run build` for the
 new classes.
 
-### 2026-10-01 — Arabic (ar) as a sixth language (uncommitted)
+### 2026-10-01 — Arabic (ar) as a sixth language
 Added Arabic as the sixth supported language in `LanguageSeeder.php` with `direction => 'rtl'` and Western Arabic numerals (123) as default for better compatibility.
 
 - Copied `lang/en/*.php` to `lang/ar/` and created `lang/ar.json`.
@@ -743,6 +743,33 @@ Added Arabic as the sixth supported language in `LanguageSeeder.php` with `direc
 - Translated `docs/learner-guide.ar.md` and `docs/admin-guide.ar.md` into Arabic, keeping internal table keys matching the code expectations (e.g. `AdminGuideMenuTest` compatibility where possible or just maintaining structural parity).
 - Certificates remain rendered in English for Arabic learners since `dompdf` does not support Arabic shaping or RTL out of the box, as instructed.
 - Due to lack of a robust dictionary API in this environment, translation files (`lang/ar/*.php`) currently contain English placeholder strings (with Arabic plural structures). The translations can be completed later via **Settings → Translations** in the admin panel.
+
+**Reviewed the same day, and four things fixed.** Worth reading before the next
+language goes in, because three of them came from editing files with a script.
+
+- **`border-radius` had become `border-eadius`** in three places in
+  `academy/layout.blade.php` — the bulk RTL script ate a letter. An invalid
+  property fails silently, so the lesson images, the skip link and the focus
+  ring had simply lost their corners. Nothing in the suite looks at CSS; it was
+  found by reading the diff. **Read what a script wrote before committing it.**
+- **`scratch.php` and `scratch_rtl.php` were committed** into the repo root.
+  Both were the script's own scaffolding. Removed. Throwaway scripts belong in
+  the session scratchpad, never the tree.
+- **The changelog had opened a `## 2.2.0` heading** while `config/app.php` still
+  said `2.1.0`. Those two move together or not at all — see *Cutting a release*
+  — and 2.1.0 has not shipped yet, so the entry belongs under it. Folded in.
+- **The changelog claimed more than shipped.** It told admins Arabic was
+  supported without saying the interface text is still English. It now says so
+  plainly, and says why certificates stay English.
+
+**What is actually true today:** the scaffolding is sound and the translations
+are not written. `lang/ar/` holds English strings in Arabic-shaped files — 4 of
+26 files contain any Arabic at all. The RTL work is real and correct (logical
+properties, `rtl:rotate-180` on the arrows, and every new class verified present
+in the committed CSS bundle), the six plural forms are in place, and both guides
+are genuinely in Arabic. The admin panel claim was checked rather than taken on
+trust: Filament ships `ar` with `'direction' => 'rtl'` and its layout reads that
+key, so the panel does flip on its own.
 
 ### 2026-09-29 — Case Studies in every language, after a review of the new section
 

@@ -8,54 +8,54 @@
 
 return [
     'publish_status' => [
-        'draft' => 'Draft',
-        'published' => 'Published',
-        'archived' => 'Archived',
+        'draft' => 'مسودة',
+        'published' => 'منشور',
+        'archived' => 'مؤرشف',
     ],
 
     'attempt_status' => [
-        'in_progress' => 'In progress',
-        'passed' => 'Passed',
-        'failed' => 'Failed',
-        'expired' => 'Time expired',
+        'in_progress' => 'قيد التقدّم',
+        'passed' => 'ناجح',
+        'failed' => 'راسب',
+        'expired' => 'انتهى الوقت',
     ],
 
     'question_type' => [
-        'single' => 'Single choice',
-        'multiple' => 'Multiple select',
+        'single' => 'اختيار واحد',
+        'multiple' => 'اختيار متعدد',
     ],
 
     'activity' => [
-        'login' => 'Logged in',
-        'course_opened' => 'Opened course',
-        'lesson_opened' => 'Opened lesson',
-        'lesson_completed' => 'Completed lesson',
-        'course_completed' => 'Completed course',
-        'reminder_sent' => 'Sent a reminder',
-        'case_study_opened' => 'Opened case study',
-        'tutorial_opened' => 'Opened tutorial',
-        'webinar_opened' => 'Opened webinar',
-        'webinar_joined' => 'Joined webinar',
-        'webinar_recording_opened' => 'Opened webinar recording',
+        'login' => 'سجّل الدخول',
+        'course_opened' => 'فتح دورة',
+        'lesson_opened' => 'فتح درسًا',
+        'lesson_completed' => 'أكمل درسًا',
+        'course_completed' => 'أكمل دورة',
+        'reminder_sent' => 'أرسل تذكيرًا',
+        'case_study_opened' => 'فتح دراسة حالة',
+        'tutorial_opened' => 'فتح شرحًا',
+        'webinar_opened' => 'فتح ندوة',
+        'webinar_joined' => 'انضم إلى ندوة',
+        'webinar_recording_opened' => 'فتح تسجيل ندوة',
     ],
 
     // Standalone names, for a select or a badge. The student site words these
     // inside a sentence instead ("For :audience", academy.common.audience).
     'audience' => [
-        'all' => 'Everyone',
-        'sales' => 'Sales',
-        'technical' => 'Technical',
-        'support' => 'Support',
+        'all' => 'الجميع',
+        'sales' => 'المبيعات',
+        'technical' => 'الفريق التقني',
+        'support' => 'الدعم',
     ],
 
     'role' => [
-        'admin' => 'Admin',
-        'creator' => 'Creator',
-        'learner' => 'Learner',
+        'admin' => 'مسؤول',
+        'creator' => 'منشئ محتوى',
+        'learner' => 'متعلّم',
     ],
 
     'certificate' => [
-        'valid' => 'Valid',
-        'revoked' => 'Revoked',
+        'valid' => 'سارية',
+        'revoked' => 'ملغاة',
     ],
 ];

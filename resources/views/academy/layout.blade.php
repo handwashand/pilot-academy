@@ -62,7 +62,7 @@
         .prose-lesson ul { list-style: disc; margin: .6rem 0 .6rem 1.4rem; color: #334155; line-height: 1.7; }
         .prose-lesson strong { color: #0a2540; }
         /* Keep embedded lesson media from overflowing on small screens */
-        .prose-lesson img, .prose-lesson video { max-width: 100%; height: auto; border-eadius: 8px; }
+        .prose-lesson img, .prose-lesson video { max-width: 100%; height: auto; border-radius: 8px; }
         .prose-lesson iframe { max-width: 100%; }
         .prose-lesson table { display: block; max-width: 100%; overflow-x: auto; }
 
@@ -81,13 +81,13 @@
         .skip-link {
             position: absolute; left: 12px; top: -64px; z-index: 50;
             background: #fff; color: #0a2540; font-weight: 600;
-            padding: 10px 16px; border-eadius: 8px;
+            padding: 10px 16px; border-radius: 8px;
             box-shadow: 0 4px 14px rgba(10, 37, 64, .18);
         }
         .skip-link:focus { top: 12px; }
 
         /* The default focus ring is invisible against the brand blue links. */
-        :focus-visible { outline: 2px solid #1463ff; outline-offset: 2px; border-eadius: 4px; }
+        :focus-visible { outline: 2px solid #1463ff; outline-offset: 2px; border-radius: 4px; }
 
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {

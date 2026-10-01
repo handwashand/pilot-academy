@@ -4,8 +4,8 @@
 // the translations table with the same key overrides a line.
 
 return [
-    'trainee' => 'Trainee',
-    'trainer' => 'Trainer',
-    'dashboard' => 'Dashboard',
-    'settings' => 'Settings',
+    'trainee' => 'متدرّب',
+    'trainer' => 'مدرّب',
+    'dashboard' => 'لوحة المعلومات',
+    'settings' => 'الإعدادات',
 ];

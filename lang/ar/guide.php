@@ -5,11 +5,11 @@
 
 return [
     'admin' => [
-        'unavailable' => 'The guide file docs/admin-guide.md was not found.',
+        'unavailable' => 'لم يُعثر على ملف الدليل docs/admin-guide.md.',
     ],
-    'search_label' => 'Search the guide',
-    'search_placeholder' => 'Search the guide...',
-    'contents' => 'Contents',
-    'contents_aria' => 'Guide contents',
-    'no_results_prefix' => 'Nothing in the guide mentions',
+    'search_label' => 'ابحث في الدليل',
+    'search_placeholder' => 'ابحث في الدليل...',
+    'contents' => 'المحتويات',
+    'contents_aria' => 'محتويات الدليل',
+    'no_results_prefix' => 'لا شيء في الدليل يذكر',
 ];
