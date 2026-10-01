@@ -743,10 +743,13 @@ new classes.
 
 Nineteen items across six groups came to 1,166px of menu in an 896px nav, so
 the sidebar scrolled while the page beside it did not, and **Docs** was below
-the fold on a laptop. Four numbers in the panel theme bring the groups list to
-984px — rows 40px → 36px, items 4px → 2px apart, groups 28px → 14px, nav
-padding 32px → 20px. The panel is desktop-first and exempt from the student
-site's ~44px tap rule, so a 36px row is a mouse target.
+the fold on a laptop. The panel theme now brings the groups list to **831px,
+which fits without scrolling at all**: rows 40px → 30px, items 4px → 1px apart,
+groups 28px → 10px, nav padding 32px → 16px, label type 16px → 14px, group
+headings 13px, and the icons 20px → 18px so they do not end up looking like
+bullets beside the smaller words. The panel is desktop-first and exempt from
+the student site's ~44px tap rule, so a 30px row is a mouse target, not a thumb
+one.
 
 **The class names are not the obvious ones, and the first attempt did nothing
 visible.** Read them off the rendered DOM rather than guessing:

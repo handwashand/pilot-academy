@@ -246,9 +246,10 @@ Add a new entry here whenever something visible to admins or students changes.
 ### Changed
 - **The admin menu is more compact.** The sidebar had grown to nineteen items
   across six groups and ran off the bottom of a normal screen, so you had to
-  scroll the menu to reach **Docs**. The rows are a little shorter and sit
-  closer together, and the gap between groups is smaller — about a sixth less
-  height, enough to see the whole menu on a laptop.
+  scroll the menu to reach **Docs** and **Settings**. The rows are shorter and
+  sit closer together, the gaps between groups are smaller, and the labels and
+  icons are a little smaller — around a quarter less height, so the whole menu
+  is on screen at once with nothing to scroll.
 - **The dashboard is down to two colours.** Blue carries the ordinary numbers,
   and amber marks only what wants your attention: lessons students keep failing,
   learners who have gone quiet and have not been reminded, and the reminder
