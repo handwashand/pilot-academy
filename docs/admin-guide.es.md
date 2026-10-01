@@ -45,7 +45,7 @@ En **Cursos**, pulsa **Nuevo curso**. Completa título, descripción corta, dura
 
 En **Lecciones**, crea una lección, elige el curso, añade video, texto, duración, transcripción y preguntas. La lección debe tener una verificación de conocimiento para que el estudiante pueda completarla.
 
-Ordena las lecciones desde la pestaña **Lecciones** dentro del curso. Mover una lección existente la saca de su curso anterior; para copiar material, usa **Duplicar** en el curso.
+Ordena las lecciones desde la pestaña **Lecciones** dentro del curso. Ahí mismo, **Nueva lección** crea una lección directamente en este curso, y **Añadir lección existente** abre la lista de lecciones de otros cursos: la lección se comparte, sigue también en su curso anterior. Para una copia aparte, usa **Duplicar** en el curso.
 
 ### Paso 3 · Activar el examen final
 

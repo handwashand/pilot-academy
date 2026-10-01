@@ -45,7 +45,7 @@ Dans **Courses**, cliquez **New course**. Renseignez titre, description courte, 
 
 Dans **Lessons**, créez une leçon, choisissez le cours, ajoutez vidéo, texte, durée, transcription et questions. Une leçon doit avoir un contrôle de connaissances pour être terminée.
 
-Réordonnez les leçons depuis l'onglet **Lessons** du cours. Déplacer une leçon existante la retire de son ancien cours ; pour copier, utilisez **Duplicate** sur le cours.
+Réordonnez les leçons depuis l'onglet **Lessons** du cours. Au même endroit, **Nouvelle leçon** crée une leçon directement dans ce cours, et **Ajouter une leçon existante** ouvre la liste des leçons des autres cours : la leçon est partagée, elle reste aussi dans son cours d'origine. Pour une copie distincte, utilisez **Duplicate** sur le cours.
 
 ### Étape 3 · Activer le quiz final
 

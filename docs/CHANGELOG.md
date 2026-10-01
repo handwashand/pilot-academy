@@ -24,6 +24,15 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **Write a lesson without leaving the course.** The course's **Lessons** tab
+  now has **New lesson** beside **Add existing lesson**. Give it a title and a
+  web address and it joins the end of that course, written in the course's
+  language — no more going to **Lessons**, creating one, and picking the course
+  back again. Open it with **Edit** when you are ready for the content, the
+  videos and the knowledge check. **Add existing lesson** now opens with the
+  lessons you can add already listed, each showing which course it comes from,
+  instead of an empty box that only filled in once you typed; lessons this
+  course already has are left out.
 - **Dashboard filters and partner engagement you can act on.** Administrators
   can filter learner reporting by date, partner, product and course. The old
   company percentage has been replaced by a partner table with learners,

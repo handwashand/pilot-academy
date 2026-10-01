@@ -88,7 +88,7 @@ would have designed it differently.
 - Do not create a Repository pattern, DTOs, Interfaces or Services unless they
   are clearly required. Single-purpose classes live in `app/Actions`.
 - Reuse before creating: no second copy of a component, a validation rule, a
-  query or a business rule. If the existing one falls short, improve it.
+  query or a business rule. If the existing one falls short, improve it. Code should be maintainable and understable.
 - Complexity must earn its place. Three readable lines beat an abstraction used
   once. Do not add a package, table or config layer a small change does not
   need.
@@ -382,6 +382,46 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-01 — A lesson can be written from inside its course
+
+The Lessons tab could only reuse a lesson that already existed. Writing a new
+one meant going to **Lessons**, creating it, and picking the course back again.
+There is now a **New lesson** button beside **Add existing lesson**: title, slug
+and summary, and the lesson joins the end of that course.
+
+It saves through `$course->lessons()->create()`, which is `CourseLessons::create()`
+— the home course and the course's language come from there, and `Lesson::saved()`
+files it in the pivot. **Filament's `CreateAction` cannot be left to its own
+devices here:** it builds the record and attaches it afterwards, so the insert
+would run with no `course_id`, which the column forbids. Hence `->using()`.
+The fields are `LessonForm::insideCourse()` rather than the whole lesson form,
+whose `course_ids` select would contradict the course you are standing in.
+
+**Add existing lesson was worse than it looked.** It is a searchable select that
+Filament leaves empty until you type, so it read as "there is nothing to add".
+It is now `preloadRecordSelect()`, and lessons already in this course are
+excluded, since offering them does nothing.
+
+**That is when the real bug surfaced, and only in a browser against PostgreSQL.**
+Filament runs the picker's query as `select distinct lessons.*`, and `lessons`
+has two `json` columns (`doc_links`, `video_sources`). PostgreSQL has no
+equality operator for `json`, so the modal failed with
+`SQLSTATE[42883]: could not identify an equality operator for type json` and
+simply spun forever. **This was not new** — the same query runs on every search,
+so the picker has been broken on PostgreSQL all along; preloading only made it
+fail on open instead of on the first keystroke. Narrowing the select to
+`lessons.id, lessons.title, lessons.course_id` fixes it, and then `distinct`
+objects to the relation's pivot ordering not being selected, so the picker is
+`reorder`ed by title. **The suite cannot catch either one**: SQLite is happy
+with both. Only the browser check against the Postgres container found it.
+
+**Verified:** the whole suite in Docker, Pint clean, and the tab driven in
+Chrome against PostgreSQL — the New lesson modal creates a lesson into the
+course, and the picker lists "ZZ Temp lesson · from ZZ Temp check course" with
+nothing typed. That temporary course and lesson were deleted afterwards (back to
+8 lessons, 1 course). Four new tests in `CourseLessonsRelationTest`, one of them
+reading the mounted action's own select options.
+
 ### 2026-09-30 — Pictures within each case-study step
 
 Editors can now attach sanitized screenshots to any individual case-study step,
@@ -399,14 +439,20 @@ step takes a paste, a drop or a file. Rich-editor attachments were defaulting to
 the private `local` disk, which uploads happily and then shows a broken image to
 the partner; they are pinned to the public disk now, as the gallery is.
 
-**Partially verified.** PHP syntax checks passed for all fourteen changed PHP
-files and `git diff --check` passed. Docker Desktop returned HTTP 500 from its
-engine `_ping` endpoint, so the suite, Pint and browser check could not run,
-including the two new tests in `CaseStudyTest` (pictures stay with their own
-step; a step with pictures and no words still appears). Run all three when the
-engine is available. `section_images` belongs in `$fillable` and `$casts` and
-**not** in `$translatable` — both arrays end with `'adaptation',`, and it was
-briefly added to the wrong one.
+**Verified:** PHP syntax checks passed for all fourteen changed PHP files,
+`git diff --check` passed, and Pint passed for those fourteen files. The focused
+Case Study, guide and translation tests passed: 36 tests with 5,463 assertions.
+The PostgreSQL migration ran successfully, and an authenticated Chrome check
+confirmed all nine step galleries and their sanitization guidance in the
+editor. On the partner page, an uploaded image rendered beneath its matching
+section without horizontal overflow at 1,440px or 390px; desktop and mobile
+screenshots were reviewed. The full suite reached 445 passing tests and one
+unrelated failure from concurrent lesson-form work: four new English
+`admin_courses.lessons_tab.create*` keys did not yet exist in French.
+
+`section_images` belongs in `$fillable` and `$casts` and **not** in
+`$translatable` — both arrays end with `'adaptation',`, and it was briefly added
+to the wrong one.
 
 ### 2026-09-30 — Agent instructions consolidated
 
@@ -1848,6 +1894,18 @@ purpose — `sidebar-version.blade.php`, `doc.blade.php`. They work; leave them.
 Filament's own API (`brandLogoHeight()`, `->extraAttributes()`) is still the
 better tool for anything Filament already models. This trap is what made the
 sign-in logo the wrong size *and* broke its dark-mode swap.
+
+**`select distinct lessons.*` cannot run on PostgreSQL.** `lessons` carries two
+`json` columns (`doc_links`, `video_sources`), and PostgreSQL has no equality
+operator for `json`, so any `distinct` over `lessons.*` dies with
+`SQLSTATE[42883]: could not identify an equality operator for type json`.
+Filament builds exactly that query for a relation manager's **Attach** picker,
+which is why Add existing lesson failed on Postgres while every test passed —
+SQLite compares json as text and never complains. Whenever a query over
+`lessons` needs `distinct`, name the columns. Watch for the sequel, too: once
+the select is narrowed, `distinct` refuses any ordering column that is not in
+it, and `Course::lessons()` is ordered by the pivot — so `reorder()` on a column
+you did select. Found in a browser, not by the suite.
 
 **Tailwind preflight makes form controls transparent.** An `<input>` with no
 `bg-*` class has no background. Fine on a white card, invisible on a coloured

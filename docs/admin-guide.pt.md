@@ -45,7 +45,7 @@ Em **Courses**, clique em **New course**. Preencha título, descrição curta, d
 
 Em **Lessons**, crie uma aula, escolha o curso, adicione vídeo, texto, duração, transcrição e perguntas. A aula precisa de uma verificação de conhecimento para que o estudante consiga concluí-la.
 
-Ordene as aulas na aba **Lessons** do curso. Mover uma aula existente a remove do curso anterior; para copiar material, use **Duplicate** no curso.
+Ordene as aulas na aba **Lessons** do curso. No mesmo lugar, **Nova aula** cria uma aula direto neste curso, e **Adicionar aula existente** abre a lista de aulas dos outros cursos: a aula é compartilhada, continua também no curso anterior. Para uma cópia separada, use **Duplicate** no curso.
 
 ### Etapa 3 · Ativar o teste final
 

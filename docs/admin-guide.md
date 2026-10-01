@@ -124,8 +124,15 @@ lists every lesson in that course.
 - **To change the order**, drag a row by the handle on its left. The order you
   set here is the order students work through, on the course page, in the lesson
   sidebar and in "Continue where you left off". There is nothing to save.
-- **To reuse a lesson that already exists**, click **Add existing lesson** and
-  search for it. The search shows which course each lesson comes from.
+- **To write a new lesson**, click **New lesson**. Give it a title and a web
+  address and it is added to the end of this course, in the course's language —
+  there is no need to go to **Lessons** first and pick the course afterwards.
+  Open it with **Edit** when you are ready to write the content, add videos and
+  set the knowledge check.
+- **To reuse a lesson that already exists**, click **Add existing lesson**. The
+  list opens with every lesson you can add, each showing which course it comes
+  from, and you can type to narrow it. Lessons already in this course are not
+  listed, because they are here.
 - **To take a lesson out of this course**, click **Remove from course** on its
   row. It stays in its other courses. A lesson's only course cannot be removed —
   delete the lesson under **Lessons** instead.

@@ -14,6 +14,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
@@ -338,5 +339,55 @@ class LessonForm
                             ]),
                     ]),
             ]);
+    }
+
+    /**
+     * The little a lesson needs to exist inside a course, for the New lesson
+     * button on the course's Lessons tab.
+     *
+     * Its course, its language and its place in the order all follow from the
+     * course it is written in (see CourseLessons::create), so the editor is
+     * asked only for what cannot be inferred. The content, the videos and the
+     * knowledge check are on the lesson's own form, which is one click away —
+     * this is the shell, not a second copy of that form.
+     *
+     * @return array<int, Component>
+     */
+    public static function insideCourse(Course $course): array
+    {
+        return [
+            TextInput::make('title')
+                ->label(__t('admin_common.title'))
+                ->required()
+                ->maxLength(255)
+                ->live(onBlur: true)
+                // Only while the editor has not written one themselves, so a
+                // deliberate slug survives a change of mind about the title.
+                ->afterStateUpdated(function ($state, callable $set, Get $get): void {
+                    if (blank($get('slug'))) {
+                        $set('slug', Str::slug((string) $state));
+                    }
+                }),
+
+            TextInput::make('slug')
+                ->label(__t('admin_common.slug'))
+                ->required()
+                ->maxLength(255)
+                ->helperText(__t('admin_lessons.form.slug_help'))
+                // The student URL finds a lesson by this inside its course, so
+                // two lessons in one course cannot share a slug.
+                ->rules([
+                    fn (): Closure => function (string $attribute, $value, Closure $fail) use ($course): void {
+                        if ($course->lessons()->where('lessons.slug', $value)->exists()) {
+                            $fail(__t('admin_lessons.form.slug_taken'));
+                        }
+                    },
+                ]),
+
+            Textarea::make('summary')
+                ->label(__t('admin_lessons.form.summary'))
+                ->rows(2)
+                ->columnSpanFull(),
+        ];
     }
 }

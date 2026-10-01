@@ -14,6 +14,7 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
@@ -215,7 +216,7 @@ class CaseStudyForm
      * the clipboard or a file dropped on it.
      *
      * @param  string  $section  A key under academy.case_studies.sections.
-     * @return array<int, \Filament\Schemas\Components\Component>
+     * @return array<int, Component>
      */
     protected static function step(string $name, string $section, bool $required = false): array
     {
