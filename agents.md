@@ -299,7 +299,7 @@ is wrong, not the test.
 
 ## Where things stand
 
-Last updated: **2026-09-14**
+Last updated: **2026-10-01**
 
 **2.0.0 is released** — tagged `v2.0.0` at `4fa98c7c`, the first version number
 this project has had. **Next release is 2.1.0** (`feature/support-engine-ports`
@@ -331,18 +331,27 @@ There are no tags in this repo yet, so `v2.0.0` will be the first.
 
 ### Branches
 
+**`laravel` is the production branch** — the one to maintain. Everything else
+serves it.
+
 | Branch | State |
 | --- | --- |
-| `laravel` | Main. Deploys to production by `git pull`. At `e8ac5dcc`, the end of `feature/support-engine-ports`. The next deploy must run `php artisan migrate` (`2026_09_15_000001_add_language_to_courses_and_lessons`). |
-| `feature/support-engine-ports` | Merged into `laravel` at `e8ac5dcc` and on into `main`, then carried on: **3 commits ahead again** with the Case Studies area. Not merged. Earlier work: the support-engine ports plus the admin panel, emails and certificates in every language. |
-| `feature/whats-new-page` | Merged into `laravel` (e3253197). Safe to delete. |
-| `main` | **Not the deploy branch.** Carries an unrelated "Initial commit" history plus merges of `laravel` (latest `9b51add3`; same files as `laravel`). Branch from `laravel`, not from here. |
-| `feature/sqlite-postgres` | **Pushed, no PR opened.** SQLite → PostgreSQL move. Ready for review. |
-| `feature/admin-dashboard` | PR #34, open. Dashboard, branding, nudge, mobile fixes. |
-| `feature/learner-experience` | **Stacked on `feature/admin-dashboard`, not on `laravel`.** Duration, search, video controls, accessibility, quiz cost, course completion. Merge #34 first. |
-| `feature/course-publishing-workflow` | Merged as PR #32. Safe to delete. |
-| `feature/creator-role` | Merged as PR #33. Safe to delete. |
-| `feature/postgres-migration` | Duplicate of `feature/sqlite-postgres`, same commit. **Delete it** so nobody reviews the wrong one. |
+| `laravel` | **Production.** Deploys by `git pull`, at `e8ac5dcc`. Merging `feature/support-engine-ports` brings 15 commits and **six migrations** (case studies, their language column and step images, webinars, tutorials, activity-event subject context), so that deploy must run `php8.4 artisan migrate --force` — not a plain pull. |
+| `stable` | A snapshot of the deployed tree, taken 2026-10-01 before that merge, at `9b51add3`. Its tree is byte-identical to `laravel`. **Local only** — push it if it is to be a rollback point anyone else can reach. |
+| `feature/support-engine-ports` | **15 commits ahead of `laravel`, not merged.** Case Studies, Webinars, Tutorials, the dashboard rework, password reset, the translations matrix, and writing a lesson from inside its course. The current guide (this file) lives here: `laravel` still carries the old `CLAUDE.md` + `agent.md` pair, and the consolidation arrives with this merge. |
+| `feature/admin-dashboard` | The local copy is merged into `laravel`, but **`origin/feature/admin-dashboard` is one commit ahead and not merged** — that is PR #34. Leave the remote alone until that commit lands or is dropped. |
+| `feature/sqlite-postgres` | Merged into `laravel`. The *code* is in; the cut-over itself has not happened — see Open threads. |
+| `main` | **Not the deploy branch.** An unrelated "Initial commit" history plus merges of `laravel` (`9b51add3`, same tree). Branch from `laravel`. |
+
+**Deleted locally on 2026-10-01**, all fully merged into `laravel`, and all still
+on the remote: `feature/whats-new-page` (`e3253197`),
+`feature/course-publishing-workflow` (`1a6fc0f7`), `feature/creator-role`
+(`40f7896e`), `feature/learner-experience` (`3ffd68fe`). Recover one with
+`git branch <name> <sha>`. `feature/postgres-migration` no longer exists
+anywhere.
+
+**The remote still holds 26 branches already merged into `origin/laravel`.**
+Tidying those is a push, so it is the owner's call, not an agent's.
 
 ### Open threads
 
@@ -350,11 +359,13 @@ There are no tags in this repo yet, so `v2.0.0` will be the first.
   but production still runs SQLite. It is a downtime window, not a normal
   deploy — follow `docs/postgres-cutover.md` exactly, and note the rollback
   order: **roll the migration back before reverting the code.**
-- **`feature/admin-dashboard` is large** — widgets, bulk actions, an export, a
-  learner-facing change, branding. Worth splitting before review; the
-  content-health fix stands alone as a genuine bug fix.
-- **PRs still need opening**: sqlite-postgres, admin-dashboard and
-  support-engine-ports.
+- **One commit of `feature/admin-dashboard` never landed.** Its work — widgets,
+  bulk actions, an export, branding — is in `laravel`, but the remote branch
+  holds one further commit (PR #34). Decide whether it goes in or goes away,
+  rather than leaving the branch to rot.
+- **`feature/support-engine-ports` still needs a PR into `laravel`.** The other
+  two named here before — sqlite-postgres and admin-dashboard — are merged into
+  `laravel`, bar the one commit still sitting on `origin/feature/admin-dashboard`.
 - **Two bigger features are waiting on decisions**, not code: video engagement
   and multilingual. See `docs/plans/support-engine-features.md` — each has a
   "Decide first" list. Do not start either without answers.
@@ -381,6 +392,31 @@ Newest first.
 ## Work log
 
 Newest first. Add to this every time.
+
+### 2026-10-01 — Branches tidied, and the table that described them corrected
+
+Before merging `feature/support-engine-ports` into `laravel`, a `stable` branch
+was cut as a snapshot of the deployed tree (`9b51add3`, byte-identical to
+`laravel`). Local only; it is a rollback point for the owner, not a shared one,
+until somebody pushes it.
+
+Four local branches were deleted, each confirmed merged by `git branch -d`
+rather than forced: `feature/whats-new-page`,
+`feature/course-publishing-workflow`, `feature/creator-role` and
+`feature/learner-experience`. Their remotes are untouched and the shas are in
+the Branches table, so any of them comes back with one command.
+`feature/sqlite-postgres` and `feature/admin-dashboard` were kept: their remote
+counterparts are still live, and `origin/feature/admin-dashboard` has a commit
+that is not in `laravel`.
+
+**The Branches table had drifted far enough to mislead.** It called
+`feature/learner-experience` unmerged and stacked, called `feature/admin-dashboard`
+an open PR with nothing merged, and told the reader to delete
+`feature/postgres-migration`, which no longer exists on any remote. All of that
+was read off git rather than trusted. The table now also says plainly that
+`laravel` is the production branch, and records that the remote still carries 26
+branches already merged into `origin/laravel` — tidying those is a push, so it
+is the owner's call.
 
 ### 2026-10-01 — A lesson can be written from inside its course
 
