@@ -49,6 +49,9 @@ class CompletionsByCompany extends TableWidget
                 TextColumn::make('learners_count')
                     ->label(__t('admin_widgets.companies.learners'))
                     ->badge()
+                    // Said out loud: an uncoloured badge falls back to primary,
+                    // which is Amber here, and amber means attention.
+                    ->color('info')
                     ->sortable(),
                 TextColumn::make('active_learners_count')
                     ->label(__t('admin_widgets.companies.active'))
@@ -58,12 +61,12 @@ class CompletionsByCompany extends TableWidget
                 TextColumn::make('completions_count')
                     ->label(__t('admin_widgets.companies.completions'))
                     ->badge()
-                    ->color('success')
+                    ->color('info')
                     ->sortable(),
                 TextColumn::make('certificates_count')
                     ->label(__t('admin_widgets.companies.certificates'))
                     ->badge()
-                    ->color('success')
+                    ->color('info')
                     ->sortable(),
                 TextColumn::make('last_activity_at')
                     ->label(__t('admin_widgets.companies.last_activity'))

@@ -74,7 +74,7 @@ class MostOpenedCourses extends ChartWidget
             'datasets' => [[
                 'label' => __t('admin_widgets.opened.times_opened'),
                 'data' => $opens->values()->all(),
-                'backgroundColor' => '#7c3aed',
+                'backgroundColor' => '#2563eb',
             ]],
             'labels' => $labels->all(),
         ];

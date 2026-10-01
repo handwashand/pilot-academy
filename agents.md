@@ -393,6 +393,34 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-01 — The dashboard down to two colours
+
+It had seven: blue, cyan, green, yellow and purple in the charts, amber and red
+in the badges, and a different ink under every headline figure. The owner asked
+for the row to read as one, then for the whole dashboard to settle on two.
+
+**Blue is ordinary, amber is attention.** `info` and `warning` for badges —
+`primary` is Amber in this panel, so `warning` is the one amber token and there
+is no third. Blue hexes for charts, with a five-step ramp
+(`#1e3a8a → #93c5fd`) where a chart shows five things, because five hues made
+five unrelated things out of one funnel. Amber only on: lessons students keep
+failing, learners not yet reminded, and the remind actions.
+
+**A stat's colour reaches only the line under the figure and its icon** — the
+blade uses it for the description and for a chart the stat does not have — so
+those `->color()` calls were doing nothing but breaking the row. They are gone,
+and the descriptions fall back to Filament's default grey. `band()` went with
+them: traffic-lighting engagement was its only caller.
+
+Where colour carried meaning, the words already did too, which is why none was
+lost: the engagement line prints its percentage, the certificates line the
+average score, a creator's card its draft count, and the fail-rate badge its
+own number. The fail-rate banding dropped from three colours to amber-or-plain
+at the same 30% threshold.
+
+**Verified:** dashboard, creator-role and changelog tests pass; Pint clean; and
+the dashboard was looked at in Chrome afterwards.
+
 ### 2026-10-01 — Branches tidied, and the table that described them corrected
 
 Before merging `feature/support-engine-ports` into `laravel`, a `stable` branch

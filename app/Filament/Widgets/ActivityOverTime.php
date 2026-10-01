@@ -101,8 +101,10 @@ class ActivityOverTime extends ChartWidget
                     'type' => 'bar',
                     'label' => __t('admin_widgets.activity.lessons_finished'),
                     'data' => $completions,
-                    'borderColor' => '#15803d',
-                    'backgroundColor' => 'rgba(22, 163, 74, 0.55)',
+                    // Amber, the dashboard's one accent beside blue — see the
+                    // palette note in StudentProgressOverview.
+                    'borderColor' => '#b45309',
+                    'backgroundColor' => 'rgba(217, 119, 6, 0.55)',
                     'borderWidth' => 1,
                     'borderRadius' => 3,
                     'maxBarThickness' => 20,

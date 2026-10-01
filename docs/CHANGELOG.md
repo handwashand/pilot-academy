@@ -229,6 +229,17 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Changed
 
+- **The dashboard is down to two colours.** It had grown seven — blue, cyan,
+  green, yellow, purple, amber and red, scattered across the charts, the badges
+  and the line under each headline figure. Now **blue carries the ordinary
+  numbers** and **amber marks only what wants your attention**: lessons students
+  keep failing, learners who have gone quiet and have not been reminded, and the
+  reminder buttons themselves. The line under each figure is one quiet grey, so
+  the top row reads straight across. Charts that show five things use five
+  shades of the one blue rather than five different colours. Nothing is lost,
+  because the words still say it: the engagement card prints its percentage, the
+  certificates card prints the average score, and a creator's content card
+  prints how many drafts are waiting.
 - **The Dashboard now distinguishes recent activity from historical progress.**
   **Active students** means learners who signed in or worked in the academy
   during the last 30 days; reminder emails and staff activity do not inflate the

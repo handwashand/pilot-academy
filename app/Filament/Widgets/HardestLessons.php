@@ -52,17 +52,15 @@ class HardestLessons extends TableWidget
                 TextColumn::make('failed')
                     ->label(__t('admin_widgets.hardest.failed'))
                     ->badge()
-                    ->color('danger'),
+                    ->color('warning'),
 
                 TextColumn::make('fail_rate')
                     ->label(__t('admin_widgets.hardest.fail_rate'))
                     ->badge()
                     ->formatStateUsing(fn ($state): string => round((float) $state).'%')
-                    ->color(fn ($state): string => match (true) {
-                        (float) $state >= 60 => 'danger',
-                        (float) $state >= 30 => 'warning',
-                        default => 'success',
-                    })
+                    // Amber once it is worth looking at, plain otherwise. The
+                    // dashboard has two colours; a third band would need a third.
+                    ->color(fn ($state): string => (float) $state >= 30 ? 'warning' : 'gray')
                     ->sortable(),
             ])
             ->recordActions([
