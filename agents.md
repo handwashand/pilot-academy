@@ -415,11 +415,32 @@ Two findings that shaped the design and are easy to get wrong. Descript has
 editor (`POST /jobs/agent`), whose result does not say which composition it
 created; and **YouTube lessons cannot be sent** at all, only uploaded videos.
 
-Built so far: the migration (`descript_imports`, one per video;
-`video_translations`, one per video × language × kind, unique, so the database
-itself refuses a second one) and the two models. `php -l` clean and the
-migration runs in the suite; nothing else is built, and **nothing has touched a
-live Descript account** — the owner's setup steps 0.1–0.6 come first.
+**Built: transcript translation, steps 1–6 of the plan, switched off by
+default.** Two tables (`descript_imports`, one per video; `video_translations`,
+one per video × language × kind, unique, so the database itself refuses a
+second); `DescriptClient`; `TranslateLessonVideo`, which holds the rules and
+both state machines; `php artisan descript:sync`; **Translate video** and
+**Check progress** on the lesson edit page; strings in all six languages in a
+new `admin_descript` group. The owner set the token on 2026-10-01 under their
+own variable names (`DESCRIPT_API_BASE_URL`, `DESCRIPT_PROJECT_FOLDER`,
+`DESCRIPT_TIMEOUT_SECONDS`) — the code uses those.
+
+Three decisions a next agent should not undo. **Every start is a claim** — a
+conditional `UPDATE … WHERE status = 'pending'` — so two clicks or two editors
+cannot pay Descript twice. **Transient errors (`429`, `5xx`, connection) leave a
+row where it was**; anything else, including `402` out of credits, fails it, and
+only an editor re-requesting retries it. **The upload to Descript's signed
+storage URL goes through a plain client** — the Descript token must never be
+sent to a third-party host.
+
+**Verified:** `DescriptVideoTranslationTest`, 15 tests against a stateful fake
+of Descript — the ones that matter count calls: asking again for a done language
+makes zero, three languages make one import. The token answers free read-only
+calls (`GET /status`, `GET /projects`). **Not verified, and cannot be without
+spending credits:** the prompt's wording, that Descript names the composition as
+asked, and the real shape of a finished job — the owner's step 0.6, then step 9.
+`CHANGELOG.md` and the admin guides wait for step 9, so they describe what was
+proven.
 
 ### 2026-10-01 — Branches tidied, and the table that described them corrected
 

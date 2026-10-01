@@ -48,6 +48,10 @@ return new class extends Migration
             $table->string('status')->default('pending');
             $table->uuid('job_id')->nullable();
             $table->uuid('composition_id')->nullable();
+            // The project's compositions before the translation started. Descript
+            // does not say which composition it made, so if the name it was asked
+            // for does not turn up, the new one is the one not in this list.
+            $table->json('compositions_before')->nullable();
             // What Descript said it did, kept for when a result needs explaining.
             $table->text('agent_response')->nullable();
             $table->longText('transcript')->nullable();

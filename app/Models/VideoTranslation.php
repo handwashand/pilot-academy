@@ -40,6 +40,7 @@ class VideoTranslation extends Model
         'status',
         'job_id',
         'composition_id',
+        'compositions_before',
         'agent_response',
         'transcript',
         'subtitle_path',
@@ -51,6 +52,7 @@ class VideoTranslation extends Model
     ];
 
     protected $casts = [
+        'compositions_before' => 'array',
         'ai_credits_used' => 'integer',
         'completed_at' => 'datetime',
     ];

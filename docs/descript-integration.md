@@ -1,6 +1,8 @@
 # Descript integration plan
 
-> **Status: in progress — foundation built, API client and UI not started.**
+> **Status: transcript translation built and tested (steps 1–6); switched off
+> (`DESCRIPT_ENABLED=false`) until it is proven on the live account.** Next: the
+> owner's step 0.5, then step 0.6, then step 9. Dubbing not started.
 >
 > Branch: `feature/descript-integration`, cut from `laravel` at `49e15f25`.
 > Read [Before starting](#before-starting--what-the-owner-must-do-first) and
@@ -362,11 +364,66 @@ Nothing below can be done by an agent. Steps 0.1–0.5 unblock step 0.6, and ste
 | Descript API researched and documented | Done |
 | Owner decisions (output, trigger, storage) | Done |
 | Branch `feature/descript-integration` off `laravel` | Done |
-| Migration + `DescriptImport` / `VideoTranslation` models | **Done** — written; `php -l` clean; migration runs in the suite (one test, via `RefreshDatabase`); no tests of their own yet |
+| Migration + `DescriptImport` / `VideoTranslation` models | **Done**. The migration gained `video_translations.compositions_before` (json) for the composition diff — amended in place, as it had never run outside the suite |
 | Before starting 0.1–0.4 | **Done** by the owner; token verified with free calls |
 | Before starting 0.5 (data sign-off), 0.6 (prove the prompt) | Waiting — 0.6 spends credits and needs a synthetic test video with speech |
-| Steps 1–9 below | Not started |
+| Step 1 — configuration | **Done** |
+| Step 2 — `DescriptClient` | **Done** |
+| Step 3 — `TranslateLessonVideo` | **Done** |
+| Step 4 — `descript:sync` | **Done** |
+| Step 5 — the lesson buttons | **Done** |
+| Step 6 — strings in six languages | **Done** |
+| Step 7 — captions on the player | Not started — open question 1 |
+| Step 8 — documentation | Partly: `DEPLOY.md` and the `agents.md` work log done. **`docs/CHANGELOG.md` and the six admin guides wait for step 9** — What's new is read by admins, and announcing a switched-off button they cannot see would only confuse them; the guides should describe what was proven, not what was assumed |
+| Step 9 — live verification | Not started — needs 0.5 and 0.6 |
 | Dubbing | Not started — waits for 0.6 |
+
+**Steps 1–6 verified by** `tests/Feature/DescriptVideoTranslationTest.php`, 15
+tests against a stateful fake of Descript — no test talks to the real API. See
+[What was built](#what-was-built) for the details a next agent needs.
+
+## What was built
+
+Everything a next agent needs to know about steps 1–6, without reading it all.
+
+| File | What it is |
+| --- | --- |
+| `config/services.php` → `descript` | The owner's variables, plus `translate_prompt` (overridable with `DESCRIPT_TRANSLATE_PROMPT`). |
+| `app/Services/Descript/DescriptClient.php` | One method per endpoint. `enabled()` = flag **and** token. |
+| `app/Services/Descript/DescriptException.php` | Carries the HTTP status; `isOutOfCredits()` (402), `isAuthProblem()` (401/403). |
+| `app/Actions/TranslateLessonVideo.php` | The rules and both state machines. `request()`, `advance()`, `advanceImport()`, `advanceLesson()`, `advanceAll()`, `uploadedVideos()`, `targetLanguages()`. |
+| `app/Console/Commands/DescriptSync.php` | `php artisan descript:sync`. |
+| `app/Filament/Actions/TranslateVideoWithDescriptAction.php` | `make()` — **Translate video**; `check()` — **Check progress**. Both on `EditLesson`. |
+| `lang/{en,ru,es,fr,pt,ar}/admin_descript.php` | Every string; group added to `Translator::SHIPPED_GROUPS`. |
+| `tests/Feature/DescriptVideoTranslationTest.php` | 15 tests, stateful fake. |
+
+Behaviour worth knowing before changing anything:
+
+- **Every start is a claim.** `pending → importing` and `pending → translating`
+  are a conditional `UPDATE … WHERE status = 'pending'`; only the request that
+  wins calls Descript. Two clicks, two editors or the command racing a click
+  cannot pay twice. A transient failure during the start puts the row back to
+  `pending`.
+- **Transient vs failed.** `429`, `5xx` and connection errors leave the row
+  where it was, with the message in `error`, for the next advance. Anything else
+  — including `402` out of credits — marks it `failed`. Only an editor
+  re-requesting moves a failed row back to `pending`.
+- **The client retries `429`/`5xx` twice** inside one call, honouring
+  `Retry-After` capped at 10 seconds.
+- **Export happens straight after the translation succeeds**, in the same
+  advance — it spends nothing and answers at once.
+- **Import mode follows `APP_URL`.** A localhost, `127.0.0.1`, `.test`,
+  `.local` or `.localhost` host uploads the bytes (streamed, to the signed URL,
+  **without** the Descript token); anything else sends Descript the file's
+  public URL.
+- **The subtitle file** goes to the `public` disk at
+  `video-translations/lesson-{lesson}/{import}-{language}.srt`.
+- **A single project's response shape is unconfirmed.** `compositions()`
+  accepts `compositions` at the top level or under `data`, because the projects
+  *list* came back wrapped in `data`. Step 0.6 settles it.
+- **What is not tested, because it cannot be without a live account:** the
+  prompt's wording, that Descript names the composition as asked, the real
+  shape of a finished job, and how long jobs take.
 
 ## To do — in order
 
@@ -374,7 +431,7 @@ Each step can be handed to an agent on its own once the ones before it are done.
 Steps 1–7 can be built and fully tested **without a token**, with
 `Http::fake()`; only 0.6 and step 9 need the live account.
 
-### 1. Configuration
+### 1. Configuration — done
 
 - `config/services.php` — the `descript` block above.
 - `.env.example` — the three variables, `DESCRIPT_ENABLED=false`.
@@ -384,7 +441,7 @@ Steps 1–7 can be built and fully tested **without a token**, with
 **Done when:** with no token, `enabled()` is false and nothing in steps 2–6
 makes any HTTP call.
 
-### 2. The HTTP client — `App\Services\Descript\DescriptClient`
+### 2. The HTTP client — `App\Services\Descript\DescriptClient` — done
 
 Laravel's `Http` facade, no package (none is used in the app yet; this is the
 first). One method per endpoint above: `createImport()`, `upload()`, `job()`,
@@ -404,7 +461,7 @@ first). One method per endpoint above: `createImport()`, `upload()`, `job()`,
 body, the upload being a stream, `402` / `401` / `429` handling, and that the
 token appears in no log line.
 
-### 3. The orchestrator — `App\Actions\TranslateLessonVideo`
+### 3. The orchestrator — `App\Actions\TranslateLessonVideo` — done
 
 `request(Lesson, string $videoPath, array $languages, User)` creates rows by
 rules 1–2 and returns which languages were newly requested, which were already
@@ -422,7 +479,7 @@ done, and which were already running. `advance(VideoTranslation)` and
 - a `402` marks the row `failed` with a readable message and stores nothing;
 - with Descript disabled, nothing is called.
 
-### 4. Artisan command — `descript:sync`
+### 4. Artisan command — `descript:sync` — done
 
 Advances every in-flight import and translation. Safe to run repeatedly; safe
 to put on cron later. Prints a one-line summary.
@@ -430,7 +487,7 @@ to put on cron later. Prints a one-line summary.
 **Done when:** a test runs it twice over faked jobs and the second run makes no
 calls for rows already `done`.
 
-### 5. The lesson button
+### 5. The lesson button — done
 
 `App\Filament\Actions\TranslateVideoWithDescriptAction`, added to
 `EditLesson::getHeaderActions()`, plus **Check progress**. See
@@ -442,7 +499,7 @@ when Descript is disabled; that done languages cannot be ticked; that a creator
 cannot reach another product's lesson; and that submitting twice does not create
 duplicate rows.
 
-### 6. Strings, in six languages
+### 6. Strings, in six languages — done
 
 `lang/{en,ru,es,fr,pt,ar}/admin_descript.php`, and `'admin_descript'` in
 `Translator::SHIPPED_GROUPS`. Arabic plural lines take six forms.

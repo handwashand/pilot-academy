@@ -100,6 +100,45 @@ php artisan optimize        # re-cache config/routes/views
 > the admin sidebar) and in the heading in `docs/CHANGELOG.md`. Tag the merge
 > commit on `laravel` to match, e.g. `git tag v2.0.0 && git push origin v2.0.0`.
 
+## Descript video translation (optional)
+
+Translates the speech in uploaded lesson videos. **Off by default**; leave it off
+until it has been proven on the live account — see
+`docs/descript-integration.md`, steps 0.5, 0.6 and 9.
+
+In `.env` (the token goes here only — never in the repository):
+
+```bash
+DESCRIPT_ENABLED=true
+DESCRIPT_API_TOKEN=<from Descript, Settings → API>
+DESCRIPT_API_BASE_URL=https://descriptapi.com/v1
+DESCRIPT_PROJECT_FOLDER="Pilot Academy/Transcriptions"
+DESCRIPT_TIMEOUT_SECONDS=30
+```
+
+then `php8.4 artisan optimize` so the cached config picks it up.
+
+`APP_URL` must be the real public address: Descript fetches each video from
+`APP_URL/storage/…` itself. On a server it cannot reach, the app uploads the file
+instead, which ties up a web request for the length of the upload.
+
+There is no queue worker, so translations move on when an editor presses
+**Check progress** on the lesson — or when this runs. Safe to run as often as
+you like; it never pays for a translation twice:
+
+```bash
+php8.4 artisan descript:sync
+```
+
+To have it run on its own, a cron line every five minutes does it:
+
+```cron
+*/5 * * * * cd /var/www/pilot-academy && php8.4 artisan descript:sync >> /dev/null 2>&1
+```
+
+**Rollback:** set `DESCRIPT_ENABLED=false` and run `optimize` again. The buttons
+disappear; every translation already saved stays, and lessons keep showing it.
+
 ## Moving an existing SQLite database to PostgreSQL
 
 One-time cut-over for a server still on the old SQLite file. Full runbook with

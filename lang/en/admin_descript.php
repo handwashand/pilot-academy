@@ -1,0 +1,47 @@
+<?php
+
+/*
+ * Translating lesson videos with Descript. Keys mirror in every language (see
+ * StudentSiteTranslationTest). See docs/descript-integration.md.
+ */
+
+return [
+    'action' => [
+        'button' => 'Translate video',
+        'heading' => 'Translate the video with Descript',
+        'description' => 'Descript translates what is said in the video. Each language is translated once and kept here, so asking again never spends credits twice. Only uploaded videos can be sent — not YouTube links.',
+        'video' => 'Video',
+        'languages' => 'Languages',
+        'languages_help' => 'Languages already translated or under way are shown but cannot be sent again.',
+        'submit' => 'Translate',
+        'requested' => 'Translation started',
+        'requested_body' => 'Descript is working on: :languages. Translating takes a few minutes — use Check progress.',
+        'nothing_new' => 'Nothing new to translate',
+        'nothing_new_body' => 'Every language you chose is already translated or under way.',
+        'check' => 'Check progress',
+        'checked' => 'Progress checked',
+        'checked_body' => ':done done, :running still working, :failed failed.',
+        'option' => ':language — :status',
+    ],
+
+    'status' => [
+        'pending' => 'waiting',
+        'translating' => 'translating',
+        'exporting' => 'saving',
+        'done' => 'done',
+        'failed' => 'failed — tick to try again',
+    ],
+
+    'errors' => [
+        'unreachable' => 'Descript could not be reached. Try again in a few minutes.',
+        'out_of_credits' => 'Descript has run out of AI credits or media minutes on this plan.',
+        'auth' => 'Descript refused the API token. Check DESCRIPT_API_TOKEN on the server.',
+        'busy' => 'Descript is busy. It will be tried again on the next check.',
+        'unavailable' => 'Descript is having trouble right now. It will be tried again on the next check.',
+        'rejected' => 'Descript turned the request down.',
+        'translation_failed' => 'Descript could not translate this video.',
+        'composition_not_found' => 'Descript finished, but its translated version could not be identified.',
+        'file_missing' => 'The uploaded video file is missing from storage.',
+        'import_failed' => 'Descript could not import this video.',
+    ],
+];

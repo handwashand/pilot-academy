@@ -35,4 +35,24 @@ return [
         ],
     ],
 
+    /*
+     * Descript translates the speech in uploaded lesson videos. Off until it is
+     * switched on and a token is set. See docs/descript-integration.md.
+     */
+    'descript' => [
+        'enabled' => (bool) env('DESCRIPT_ENABLED', false),
+        'token' => env('DESCRIPT_API_TOKEN'),
+        'base_url' => env('DESCRIPT_API_BASE_URL', 'https://descriptapi.com/v1'),
+        // Every project the academy creates goes in here; nested with "/".
+        'project_folder' => env('DESCRIPT_PROJECT_FOLDER', 'Pilot Academy/Transcriptions'),
+        'timeout' => (int) env('DESCRIPT_TIMEOUT_SECONDS', 30),
+        // Descript has no translate endpoint: translation is an instruction to
+        // its AI editor. {language} is the target's English name, {name} the
+        // composition to create — the app finds the result by that name.
+        'translate_prompt' => env(
+            'DESCRIPT_TRANSLATE_PROMPT',
+            'Translate the captions of this composition into {language}. Create the translation as a new composition named "{name}". Do not change the original composition.',
+        ),
+    ],
+
 ];

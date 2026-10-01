@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Lessons\Pages;
 
 use App\Actions\FindContentProblems;
 use App\Filament\Actions\TranslateContentAction;
+use App\Filament\Actions\TranslateVideoWithDescriptAction;
 use App\Filament\Resources\Lessons\LessonResource;
 use App\Models\Course;
 use Filament\Actions\DeleteAction;
@@ -25,6 +26,10 @@ class EditLesson extends EditRecord
     {
         return [
             TranslateContentAction::make(),
+            // Both hidden unless Descript is switched on, configured, and the
+            // lesson has an uploaded video. See docs/descript-integration.md.
+            TranslateVideoWithDescriptAction::make(),
+            TranslateVideoWithDescriptAction::check(),
             DeleteAction::make(),
         ];
     }
