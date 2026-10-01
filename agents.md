@@ -399,6 +399,23 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-01 — DeepL integration refined into an approval-gated plan
+
+The raw DeepL integration drop is now a concise implementation handoff in
+`docs/deepL-integration.md`. It records the six locale mappings, the existing
+`content_translations` and Translate-action paths to reuse, the production
+queue limitation, safe missing-only generation, API failure and privacy rules,
+agent-sized implementation phases, acceptance checks, rollout and rollback.
+
+No integration code, configuration, dependency or schema change was made. The
+plan is deliberately blocked on the owner's choices about trigger, scope,
+review, regeneration, provenance, English variant, creator access,
+subscription/cost control and data-processing approval. Quiz prompts and answer
+options are called out separately because they do not currently use the
+dynamic-content translation model. Official DeepL documentation was checked on
+2026-10-01; implementation must query `/v3/languages?resource=translate_text`
+again rather than assuming support stayed unchanged.
+
 ### 2026-10-01 — Branches tidied, and the table that described them corrected
 
 Before merging `feature/support-engine-ports` into `laravel`, a `stable` branch
