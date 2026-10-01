@@ -399,6 +399,28 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-01 — Descript video translation started (in progress)
+
+**The plan, its findings and the ordered to-do list are in
+`docs/descript-integration.md`. Read it before touching this work, and update
+its Progress table when you finish a step.** Branch:
+`feature/descript-integration`, off `laravel`.
+
+The owner's goal: anything Descript translates is stored in the app, and is
+never requested from the API twice. Decided: translated transcripts first,
+dubbed video later; started by a button on the lesson, never automatically.
+
+Two findings that shaped the design and are easy to get wrong. Descript has
+**no translate endpoint** — translation is a natural-language prompt to its AI
+editor (`POST /jobs/agent`), whose result does not say which composition it
+created; and **YouTube lessons cannot be sent** at all, only uploaded videos.
+
+Built so far: the migration (`descript_imports`, one per video;
+`video_translations`, one per video × language × kind, unique, so the database
+itself refuses a second one) and the two models. `php -l` clean and the
+migration runs in the suite; nothing else is built, and **nothing has touched a
+live Descript account** — the owner's setup steps 0.1–0.6 come first.
+
 ### 2026-10-01 — Branches tidied, and the table that described them corrected
 
 Before merging `feature/support-engine-ports` into `laravel`, a `stable` branch
