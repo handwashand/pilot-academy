@@ -85,3 +85,41 @@
     border-top: 1px solid rgb(128 128 128 / 0.25);
     margin: 0.75rem 0;
 }
+
+/*
+ * A compact sidebar.
+ *
+ * The menu has grown to nineteen items across six groups, and at Filament's
+ * own spacing that came to 936px — taller than a 1000px window and well past
+ * the bottom of a 768px laptop, so the menu scrolled while the page beside it
+ * did not. These four numbers pull it back to roughly three quarters of that:
+ * the rows sit closer, the groups are separated by a gap rather than a gulf,
+ * and each row is a little shorter.
+ *
+ * The panel is desktop-first and exempt from the student site's ~44px tap-target
+ * rule (see Mobile in agents.md), so a 36px row is a mouse target, not a thumb
+ * one. Below `md` Filament shows this as a slide-over sheet, where the rows stay
+ * comfortable because the sheet is its own full-height surface.
+ */
+.fi-sidebar-nav {
+    padding-top: 1.25rem;      /* was 32px */
+    padding-bottom: 1.25rem;
+}
+
+/* The groups are spaced by their own list, not by the nav. */
+.fi-sidebar-nav-groups {
+    gap: 0.875rem;             /* between groups: was 28px */
+}
+
+/* And the items by theirs. `.fi-sidebar-group` only spaces a group's label
+   from its items, which is why setting it alone changed nothing visible. */
+.fi-sidebar-group-items {
+    gap: 0.125rem;             /* between items: was 4px */
+}
+
+/* The row itself is `-btn`, not `-button`. */
+.fi-sidebar-item-btn,
+.fi-sidebar-group-btn {
+    padding-top: 0.375rem;     /* row height 40px -> 36px */
+    padding-bottom: 0.375rem;
+}

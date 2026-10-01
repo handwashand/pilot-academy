@@ -739,6 +739,55 @@ five languages, and `HelpPageTest` caught Help leaving the header.
 **Verified:** the whole suite in Docker. Pint clean. `npm run build` for the
 new classes.
 
+### 2026-10-01 — A compact admin sidebar
+
+Nineteen items across six groups came to 1,166px of menu in an 896px nav, so
+the sidebar scrolled while the page beside it did not, and **Docs** was below
+the fold on a laptop. Four numbers in the panel theme bring the groups list to
+984px — rows 40px → 36px, items 4px → 2px apart, groups 28px → 14px, nav
+padding 32px → 20px. The panel is desktop-first and exempt from the student
+site's ~44px tap rule, so a 36px row is a mouse target.
+
+**The class names are not the obvious ones, and the first attempt did nothing
+visible.** Read them off the rendered DOM rather than guessing:
+
+| What you want to space | The element that does it |
+| --- | --- |
+| between groups | `ul.fi-sidebar-nav-groups` |
+| between items in a group | `ul.fi-sidebar-group-items` |
+| a group's label from its items | `li.fi-sidebar-group` |
+| the row itself | `a.fi-sidebar-item-btn` — **`-btn`, not `-button`** |
+
+**The preview container serves the image's `public/build`, not the host's.**
+A rebuilt bundle changes nothing there until it is mounted or copied in
+(`docker cp public/build <container>:/var/www/html/public/`), which is why the
+first measurement after `npm run build` was identical to the one before it.
+
+### 2026-10-01 — The student site renders at 90% on a desktop
+
+The owner reads the academy more comfortably at 85–90% browser zoom and asked
+for that to be the normal. Measuring first showed nothing was actually
+oversized: root and body were the browser's own 16px, `h1` 30px, header 65px.
+What makes it feel large is the column being capped at `max-w-6xl` (1112px) on
+a wide screen, plus Inter's tall x-height.
+
+So: `@media (min-width: 768px) { html { font-size: 90%; } }`, in the layout's
+existing inline `<style>`. Tailwind sizes are rem, so one number takes the type,
+the spacing and the max-width column down together — 14.4px root, `h1` 27px,
+column 1037px.
+
+**Scoped above 768px on purpose.** Shrinking the root everywhere would shrink
+every tap target with it: `h-11` is 2.75rem, 44px at 16px but 39px at 90%,
+under the ~44px rule the student site is held to. Measured after the change:
+44px at 375px and 767px, 40px from 1024px up, where the rule is about a mouse
+rather than a thumb. Nothing below 768px moved at all.
+
+Inline CSS rather than a utility class, so it needs no CI rebuild — and
+`max-w-7xl`, the other way to use a wide screen better, is **not in the
+committed bundle**, so it would have done nothing until CI caught up.
+
+The `/admin` panel is untouched: it has its own layout and stylesheet.
+
 ### 2026-10-01 — The dashboard down to two colours
 
 It had seven: blue, cyan, green, yellow and purple in the charts, amber and red

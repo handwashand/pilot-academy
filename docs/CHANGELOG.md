@@ -244,11 +244,16 @@ Add a new entry here whenever something visible to admins or students changes.
   entries. The student lesson page renders each saved video in order.
 
 ### Changed
-
-- **The dashboard is down to two colours.
-**numbers** and **amber marks only what wants your attention**: lessons students
-  keep failing, learners who have gone quiet and have not been reminded, and the
-  reminder buttons themselves.
+- **The admin menu is more compact.** The sidebar had grown to nineteen items
+  across six groups and ran off the bottom of a normal screen, so you had to
+  scroll the menu to reach **Docs**. The rows are a little shorter and sit
+  closer together, and the gap between groups is smaller — about a sixth less
+  height, enough to see the whole menu on a laptop.
+- **The dashboard is down to two colours.** Blue carries the ordinary numbers,
+  and amber marks only what wants your attention: lessons students keep failing,
+  learners who have gone quiet and have not been reminded, and the reminder
+  buttons themselves. The line under each headline figure is one quiet grey, so
+  the top row reads straight across.
 - **The Dashboard now distinguishes recent activity from historical progress.**
   **Active students** means learners who signed in or worked in the academy
   during the last 30 days; reminder emails and staff activity do not inflate the

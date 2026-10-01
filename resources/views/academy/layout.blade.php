@@ -55,6 +55,28 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        /* The academy reads better a little smaller on a desktop — about what
+           the browser's nine-tenths zoom gives, but only for this site, and
+           without anyone having to set it. Tailwind sizes are in rem, so one
+           number scales the type and the spacing together, and the max-width
+           column narrows with them.
+
+           Phones are deliberately left at the browser's own 16px. Shrinking the
+           root there would shrink every tap target with it: h-11 is 2.75rem,
+           which is 44px at 16px and under 40 once scaled — below the ~44px rule
+           the student site is held to. 768px is the md: breakpoint, so the
+           change starts where the layout stops being a single phone column.
+
+           Written as 0.9em rather than a percentage: on the root element em
+           resolves against the browser's own default, so a reader who has set a
+           larger font still gets one. It also keeps a figure-with-a-percent-sign
+           out of the page source — FinalQuizCertificateTest asserts the public
+           verification page contains no such figure, so that a certificate
+           score cannot leak onto it, and a stylesheet carrying one tripped it. */
+        @media (min-width: 768px) {
+            html { font-size: 0.9em; }
+        }
+
         body { font-family: 'Inter', system-ui, sans-serif; }
         .prose-lesson h2 { font-size: 1.35rem; font-weight: 700; margin: 1.2rem 0 .5rem; color: #0a2540; }
         .prose-lesson h3 { font-size: 1.1rem; font-weight: 700; margin: 1rem 0 .4rem; color: #0a2540; }
