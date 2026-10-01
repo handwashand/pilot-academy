@@ -77,7 +77,8 @@ class CreatorContentOverview extends StatsOverviewWidget
                 'archived' => $archived,
             ]))
             ->descriptionIcon($icon)
-            ->color($drafts > 0 ? 'warning' : 'success')
+            // Default grey, like the admin cards: the line already says how many
+            // drafts there are, so amber said it a second time in a weaker way.
             ->url($url);
     }
 }

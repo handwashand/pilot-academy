@@ -245,6 +245,10 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Changed
 
+- **The dashboard is down to two colours.
+**numbers** and **amber marks only what wants your attention**: lessons students
+  keep failing, learners who have gone quiet and have not been reminded, and the
+  reminder buttons themselves.
 - **The Dashboard now distinguishes recent activity from historical progress.**
   **Active students** means learners who signed in or worked in the academy
   during the last 30 days; reminder emails and staff activity do not inflate the

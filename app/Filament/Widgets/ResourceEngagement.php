@@ -54,7 +54,9 @@ class ResourceEngagement extends ChartWidget
             'datasets' => [[
                 'label' => __t('admin_widgets.resources.opens'),
                 'data' => collect($types)->map(fn (string $type): int => (int) ($counts[$type] ?? 0))->all(),
-                'backgroundColor' => ['#2563eb', '#0891b2', '#ca8a04', '#16a34a', '#7c3aed'],
+                // Shades of the one blue, not five hues — the bars are five of
+                // the same thing, and the labels already say which is which.
+                'backgroundColor' => ['#1e3a8a', '#1d4ed8', '#2563eb', '#60a5fa', '#93c5fd'],
                 'borderRadius' => 3,
             ]],
             'labels' => [

@@ -44,7 +44,7 @@ class CertificatesByCourse extends TableWidget
                 TextColumn::make('issued_count')
                     ->label(__t('admin_widgets.overview.certificates'))
                     ->badge()
-                    ->color('success'),
+                    ->color('info'),
             ])
             ->paginated([5, 10, 25]);
     }

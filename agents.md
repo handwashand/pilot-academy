@@ -739,6 +739,40 @@ five languages, and `HelpPageTest` caught Help leaving the header.
 **Verified:** the whole suite in Docker. Pint clean. `npm run build` for the
 new classes.
 
+### 2026-10-01 — The dashboard down to two colours
+
+It had seven: blue, cyan, green, yellow and purple in the charts, amber and red
+in the badges, and a different ink under every headline figure. The owner asked
+for the row to read as one, then for the whole dashboard to settle on two.
+
+**Blue is ordinary, amber is attention.** `info` and `warning` for badges —
+`primary` is Amber in this panel, so `warning` is the one amber token and there
+is no third. Blue hexes for charts, with a five-step ramp
+(`#1e3a8a → #93c5fd`) where a chart shows five things, because five hues made
+five unrelated things out of one funnel. Amber only on: lessons students keep
+failing, learners not yet reminded, and the remind actions.
+
+**A stat's colour reaches only the line under the figure and its icon** — the
+blade uses it for the description and for a chart the stat does not have — so
+those `->color()` calls were doing nothing but breaking the row. They are gone,
+and the descriptions fall back to Filament's default grey. `band()` went with
+them: traffic-lighting engagement was its only caller.
+
+**An uncoloured badge is not neutral — it is `primary`, which is Amber here.**
+Removing a colour to make the course name in *Students who have gone quiet*
+read as context turned it amber instead, the opposite of the intent. Grey has
+to be said out loud: `->color('gray')`.
+
+Where colour carried meaning, the words already did too, which is why none was
+lost: the engagement line prints its percentage, the certificates line the
+average score, a creator's card its draft count, and the fail-rate badge its
+own number. The fail-rate banding dropped from three colours to amber-or-plain
+at the same 30% threshold.
+
+**Verified:** Pint clean, the dashboard, creator-role, remind and changelog
+tests pass, and the rendered page reports only `fi-color-info` and
+`fi-color-warning` — no `fi-color-primary` left over.
+
 ### 2026-10-01 — Arabic (ar) as a sixth language
 Added Arabic as the sixth supported language in `LanguageSeeder.php` with `direction => 'rtl'` and Western Arabic numerals (123) as default for better compatibility.
 
