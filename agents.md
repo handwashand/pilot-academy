@@ -385,6 +385,8 @@ Newest first.
 
 | Date | Decision |
 | --- | --- |
+| 2026-10-02 | **Descript supplements manual translation; it never replaces it.** A lesson keeps its existing manual **Translate** action for editor-written content. Descript has a separate, conditional video-translation action and must not hide, rename or trigger the manual workflow. |
+| 2026-10-02 | **DeepL is parked and may not be integrated.** Do not implement or configure it unless the owner explicitly reopens the decision. Descript's media transcript translation does not start a general Academy text-translation rollout. |
 | 2026-09-14 | **Content problems are not dashboard material.** The card moved to Content → Content health (menu badge), with flags on the Courses/Lessons lists and edit pages, checks before publishing, and bell alerts to the content's owner. |
 | 2026-09-14 | **The student header uses the PILOT ACADEMY lockup** at the panel's 1.75rem — owner's request, replacing the earlier mark-plus-text choice. |
 | 2026-09-10 | **Refreshers declined.** Pilot Academy certifies partners on a course; Support Training Hub (`support-engine`) tracks staff competency over time. The two serve different purposes, so its competency features — levels, refreshers, rubric marking, trainer cohorts — are not ported here by default. |
@@ -398,6 +400,31 @@ Newest first.
 ## Work log
 
 Newest first. Add to this every time.
+
+### 2026-10-02 — Manual and Descript translation kept separate
+
+Confirmed that the lesson editor still composes two independent actions: the
+existing manual **Translate** action and the conditional **Translate video**
+action backed by Descript. Added a regression test that uses the manual action
+while Descript is enabled, proves the translated lesson title is saved without
+an API call, and proves the manual action remains visible when Descript is
+disabled. The implementation plan and nearby code now state this invariant
+plainly. No changelog or admin-guide entry is needed because the visible
+behaviour did not change.
+
+**Verified:** Pint passed for both changed PHP files; the full
+`DescriptVideoTranslationTest` class exited successfully, and the new focused
+test passed with 19 assertions.
+
+### 2026-10-02 — DeepL integration parked
+
+The owner decided to leave DeepL unimplemented and may choose not to integrate
+it at all. No DeepL code, configuration, dependency or user-facing workflow was
+added. The Descript plan's stale link to a DeepL document that is not present on
+this branch was removed; its no-queue-worker constraint now points to this
+repository guide directly. Existing manual content translation and Descript's
+separate media transcript workflow are unchanged. No changelog or guide update
+is needed because application behaviour did not change.
 
 ### 2026-10-01 — Descript video translation started (in progress)
 

@@ -37,6 +37,7 @@ Taken by the product owner on 2026-10-01. Do not reopen without a new reason.
 | What Descript produces | **Both** — translated transcripts first, dubbed video after. Transcripts ship while dubbing is proven against a real account. |
 | When it runs | **A button on the lesson.** An editor picks languages; nothing runs automatically on upload. |
 | Storage | Every result is kept in the app; a done translation is never re-requested. |
+| Existing manual translation | **Keep it.** Descript is a separate video action and must never replace, hide or trigger the existing manual **Translate** action. |
 
 Still open — see [Open questions](#open-questions).
 
@@ -156,8 +157,8 @@ This is why dubbing waits for a live account.
    watch link is not one, and downloading YouTube content is not an option. Only
    `type: upload` entries from `Lesson::videoEntries()` qualify. The button must
    not appear for a lesson with no uploaded video.
-2. **No queue worker in production** (see `agents.md` and
-   `docs/deepL-integration.md`). Jobs take minutes. Progress is advanced **on
+2. **No queue worker in production** (see `agents.md`). Jobs take minutes.
+   Progress is advanced **on
    demand** — the editor's button, a "Check progress" action, and an artisan
    command that can be run by hand or by cron. Nothing may depend on a
    background worker. A `callback_url` webhook is an optional extra later.
@@ -300,11 +301,14 @@ The token never reaches the browser, a log line, or the repository.
 
 `app/Filament/Resources/Lessons/Pages/EditLesson.php` → `getHeaderActions()`,
 beside the existing `TranslateContentAction` (read it — it is the pattern to
-follow). Visible only when Descript is enabled and configured **and** the lesson
-has at least one uploaded video. The modal: choose the video (if more than one
-upload), tick target languages (every active language except the lesson's own),
-with done and in-flight languages shown as such and not tickable. A second
-action, **Check progress**, appears while anything is in flight.
+follow). **This is additive:** the existing **Translate** action remains the
+manual editor for lesson text and is available independently of Descript. The
+Descript action is visible only when Descript is enabled and configured **and**
+the lesson has at least one uploaded video. Its modal lets the editor choose the
+video (if more than one upload) and tick target languages (every active language
+except the lesson's own), with done and in-flight languages shown as such and
+not tickable. A second action, **Check progress**, appears while anything is in
+flight.
 
 ## Before starting — what the owner must do first
 
@@ -495,9 +499,10 @@ calls for rows already `done`.
 own edit permission — creators stay scoped to their products.
 
 **Done when:** Livewire tests prove it is hidden without an uploaded video and
-when Descript is disabled; that done languages cannot be ticked; that a creator
-cannot reach another product's lesson; and that submitting twice does not create
-duplicate rows.
+when Descript is disabled; that the existing manual **Translate** action stays
+visible and saves without calling Descript; that done languages cannot be
+ticked; that a creator cannot reach another product's lesson; and that
+submitting twice does not create duplicate rows.
 
 ### 6. Strings, in six languages — done
 

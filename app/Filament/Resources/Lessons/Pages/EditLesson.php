@@ -26,8 +26,9 @@ class EditLesson extends EditRecord
     {
         return [
             TranslateContentAction::make(),
-            // Both hidden unless Descript is switched on, configured, and the
-            // lesson has an uploaded video. See docs/descript-integration.md.
+            // Descript supplements the manual Translate action above; it must
+            // never replace it. These two actions are hidden unless Descript
+            // is configured and the lesson has an uploaded video.
             TranslateVideoWithDescriptAction::make(),
             TranslateVideoWithDescriptAction::check(),
             DeleteAction::make(),

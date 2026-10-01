@@ -104,6 +104,31 @@ class DescriptVideoTranslationTest extends TestCase
         return collect($this->calls)->filter(fn (array $call): bool => $call[0] === $method && Str::is($path, $call[1]))->count();
     }
 
+    public function test_descript_supplements_the_existing_manual_translation_action(): void
+    {
+        $lesson = $this->lesson();
+        $admin = $this->admin();
+
+        Livewire::actingAs($admin)
+            ->test(EditLesson::class, ['record' => $lesson->getRouteKey()])
+            ->assertActionVisible('translateContent')
+            ->assertActionHasLabel('translateContent', __t('admin_common.translate.button'))
+            ->assertActionVisible('translateVideoWithDescript')
+            ->assertActionHasLabel('translateVideoWithDescript', __t('admin_descript.action.button'))
+            ->callAction('translateContent', data: ['fr' => ['title' => 'Prise en main']])
+            ->assertHasNoActionErrors();
+
+        $this->assertSame('Prise en main', $lesson->fresh()->translated('title', 'fr'));
+        $this->assertSame([], $this->calls, 'Manual translation must not call Descript.');
+
+        config(['services.descript.enabled' => false]);
+
+        Livewire::actingAs($admin)
+            ->test(EditLesson::class, ['record' => $lesson->getRouteKey()])
+            ->assertActionVisible('translateContent')
+            ->assertActionHidden('translateVideoWithDescript');
+    }
+
     public function test_a_language_is_translated_and_what_comes_back_is_stored(): void
     {
         $lesson = $this->lesson();
