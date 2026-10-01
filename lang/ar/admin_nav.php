@@ -3,133 +3,134 @@
 /*
  * The admin panel's menu, page titles and record names. Keys mirror in every
  * language (see StudentSiteTranslationTest). Record names are lower case —
- * Filament capitalises them where a title needs it ("New course").
+ * Filament capitalises them where a title needs it ("New course"). Arabic has
+ * no letter case, so these read the same wherever they are used.
  */
 
 return [
     'groups' => [
-        'content' => 'Content',
-        'people' => 'People',
-        'results' => 'Results',
-        'docs' => 'Docs',
-        'settings' => 'Settings',
+        'content' => 'المحتوى',
+        'people' => 'الأشخاص',
+        'results' => 'النتائج',
+        'docs' => 'الوثائق',
+        'settings' => 'الإعدادات',
     ],
 
     'account' => [
-        'guide' => 'Guide',
-        'student_site' => 'Student site',
+        'guide' => 'الدليل',
+        'student_site' => 'موقع الطلاب',
     ],
 
     'courses' => [
-        'nav' => 'Courses',
-        'one' => 'course',
-        'many' => 'courses',
-        'badge' => 'Courses still in draft — students cannot see them yet',
+        'nav' => 'الدورات',
+        'one' => 'دورة',
+        'many' => 'دورات',
+        'badge' => 'دورات ما زالت مسودات — لا يراها الطلاب بعد',
     ],
     'lessons' => [
-        'nav' => 'Lessons',
-        'one' => 'lesson',
-        'many' => 'lessons',
-        'badge' => 'Lessons still in draft — hidden even in a published course',
+        'nav' => 'الدروس',
+        'one' => 'درس',
+        'many' => 'دروس',
+        'badge' => 'دروس ما زالت مسودات — مخفية حتى داخل دورة منشورة',
     ],
     'products' => [
-        'nav' => 'Products',
-        'one' => 'product',
-        'many' => 'products',
+        'nav' => 'المنتجات',
+        'one' => 'منتج',
+        'many' => 'منتجات',
     ],
     'media' => [
-        'nav' => 'Media Items',
-        'one' => 'media item',
-        'many' => 'media items',
+        'nav' => 'عناصر الوسائط',
+        'one' => 'عنصر وسائط',
+        'many' => 'عناصر وسائط',
     ],
     'content_health' => [
-        'nav' => 'Content health',
-        'badge' => 'Broken for students right now',
+        'nav' => 'سلامة المحتوى',
+        'badge' => 'معطّل أمام الطلاب الآن',
     ],
     'users' => [
-        'nav' => 'Users',
-        'one' => 'user',
-        'many' => 'users',
+        'nav' => 'المستخدمون',
+        'one' => 'مستخدم',
+        'many' => 'مستخدمون',
     ],
     'companies' => [
-        'nav' => 'Companies',
-        'one' => 'company',
-        'many' => 'companies',
+        'nav' => 'الشركات',
+        'one' => 'شركة',
+        'many' => 'شركات',
     ],
     'certificates' => [
-        'nav' => 'Certificates',
-        'one' => 'certificate',
-        'many' => 'certificates',
+        'nav' => 'الشهادات',
+        'one' => 'شهادة',
+        'many' => 'شهادات',
     ],
     'final_quiz_health' => [
-        'nav' => 'Final quiz health',
+        'nav' => 'أداء الاختبار النهائي',
     ],
     'quiz_attempts' => [
-        'nav' => 'Quiz attempts',
-        'one' => 'quiz attempt',
-        'many' => 'quiz attempts',
-        'badge' => 'Students out of attempts at a quiz they have not passed',
+        'nav' => 'محاولات الاختبار',
+        'one' => 'محاولة اختبار',
+        'many' => 'محاولات الاختبار',
+        'badge' => 'طلاب استنفدوا محاولات اختبار لم ينجحوا فيه',
     ],
     'feedback' => [
-        'nav' => 'Student feedback',
-        'one' => 'feedback',
-        'many' => 'student feedback',
+        'nav' => 'آراء الطلاب',
+        'one' => 'رأي',
+        'many' => 'آراء الطلاب',
     ],
     'guide' => [
-        'nav' => 'Guide',
-        'title' => 'Admin guide',
+        'nav' => 'الدليل',
+        'title' => 'دليل المسؤول',
     ],
     'whats_new' => [
-        'nav' => "What's new",
+        'nav' => 'ما الجديد',
     ],
     'questions' => [
-        'one' => 'question',
-        'many' => 'questions',
+        'one' => 'سؤال',
+        'many' => 'أسئلة',
     ],
     'activities' => [
-        'one' => 'activity',
-        'many' => 'activities',
+        'one' => 'نشاط',
+        'many' => 'أنشطة',
     ],
     'translations' => [
-        'one' => 'translation',
-        'many' => 'translations',
+        'one' => 'ترجمة',
+        'many' => 'ترجمات',
     ],
     'languages' => [
-        'one' => 'language',
-        'many' => 'languages',
+        'one' => 'لغة',
+        'many' => 'لغات',
     ],
     'mail' => [
-        'nav' => 'Mail',
+        'nav' => 'البريد',
     ],
 
     'tabs' => [
-        'lessons' => 'Lessons',
-        'final_questions' => 'Final questions',
-        'feedback' => 'Student feedback',
-        'completed_lessons' => 'Completed lessons',
-        'quiz_attempts' => 'Quiz attempts',
-        'certificates' => 'Certificates',
-        'activity' => 'Activity',
+        'lessons' => 'الدروس',
+        'final_questions' => 'أسئلة الاختبار النهائي',
+        'feedback' => 'آراء الطلاب',
+        'completed_lessons' => 'الدروس المكتملة',
+        'quiz_attempts' => 'محاولات الاختبار',
+        'certificates' => 'الشهادات',
+        'activity' => 'النشاط',
     ],
 
     'tutorials' => [
-        'nav' => 'Tutorials',
-        'one' => 'tutorial',
-        'many' => 'tutorials',
-        'badge' => 'Tutorials still in draft — partners cannot see them yet',
+        'nav' => 'الشروحات',
+        'one' => 'شرح',
+        'many' => 'شروحات',
+        'badge' => 'شروحات ما زالت مسودات — لا يراها الشركاء بعد',
     ],
 
     'webinars' => [
-        'nav' => 'Webinars',
-        'one' => 'webinar',
-        'many' => 'webinars',
-        'badge' => 'Webinars still in draft — partners cannot see them yet',
+        'nav' => 'الندوات',
+        'one' => 'ندوة',
+        'many' => 'ندوات',
+        'badge' => 'ندوات ما زالت مسودات — لا يراها الشركاء بعد',
     ],
 
     'case_studies' => [
-        'nav' => 'Case Studies',
-        'one' => 'case study',
-        'many' => 'case studies',
-        'badge' => 'Case studies still in draft — partners cannot see them yet',
+        'nav' => 'دراسات الحالة',
+        'one' => 'دراسة حالة',
+        'many' => 'دراسات حالة',
+        'badge' => 'دراسات حالة ما زالت مسودات — لا يراها الشركاء بعد',
     ],
 ];

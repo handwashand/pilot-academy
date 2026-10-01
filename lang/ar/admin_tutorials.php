@@ -7,18 +7,18 @@
 
 return [
     'sections' => [
-        'main' => 'Tutorial',
-        'video' => 'The video',
-        'video_hint' => 'A YouTube link or a file you upload — the same two sources a lesson video takes.',
+        'main' => 'الشرح',
+        'video' => 'الفيديو',
+        'video_hint' => 'رابط يوتيوب أو ملف ترفعه — المصدران نفسهما اللذان يقبلهما فيديو الدرس.',
     ],
     'form' => [
-        'summary' => 'Short summary',
-        'before_publishing' => 'Add a working video before publishing.',
+        'summary' => 'ملخّص قصير',
+        'before_publishing' => 'أضف فيديو يعمل قبل النشر.',
     ],
     'notify' => [
-        'published' => 'Tutorial published',
-        'drafted' => 'Tutorial returned to draft',
-        'incomplete' => 'Add the video first',
-        'incomplete_body' => 'A tutorial needs a YouTube link that points at one video, or an uploaded file, before it can be published.',
+        'published' => 'نُشر الشرح',
+        'drafted' => 'أُعيد الشرح إلى المسودات',
+        'incomplete' => 'أضف الفيديو أولًا',
+        'incomplete_body' => 'يحتاج الشرح إلى رابط يوتيوب يشير إلى فيديو واحد، أو إلى ملف مرفوع، قبل أن يمكن نشره.',
     ],
 ];

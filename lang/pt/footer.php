@@ -4,5 +4,5 @@
 // the translations table with the same key overrides a line.
 
 return [
-    'internal_training' => 'treinamento interno',
+    'internal_training' => 'Treinamento em movimento',
 ];
