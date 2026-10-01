@@ -355,10 +355,16 @@ Tidying those is a push, so it is the owner's call, not an agent's.
 
 ### Open threads
 
-- **PostgreSQL cut-over has not happened.** The code is written and rehearsed,
-  but production still runs SQLite. It is a downtime window, not a normal
-  deploy — follow `docs/postgres-cutover.md` exactly, and note the rollback
-  order: **roll the migration back before reverting the code.**
+- **PostgreSQL cut-over is done — production runs Postgres as of 2026-10-01.**
+  The long-standing "it is written and rehearsed but not live" note is retired.
+  What this changes for everyone working here: **SQLite leniency no longer
+  hides anything in production.** The suite still runs on SQLite in memory, so
+  it cannot see a Postgres-only failure — the `select distinct lessons.*` bug
+  under *Traps* passed every test and broke the real panel. Anything using
+  `distinct`, JSON operators, `LIKE` case, or boolean literals wants checking
+  against the Postgres container, not just the suite. The rollback order in
+  `docs/postgres-cutover.md` still applies if it ever has to go back: **roll the
+  migration back before reverting the code.**
 - **One commit of `feature/admin-dashboard` never landed.** Its work — widgets,
   bulk actions, an export, branding — is in `laravel`, but the remote branch
   holds one further commit (PR #34). Decide whether it goes in or goes away,
