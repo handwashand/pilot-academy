@@ -768,14 +768,30 @@ language goes in, because three of them came from editing files with a script.
   supported without saying the interface text is still English. It now says so
   plainly, and says why certificates stay English.
 
-**What is actually true today:** the scaffolding is sound and the translations
-are not written. `lang/ar/` holds English strings in Arabic-shaped files — 4 of
-26 files contain any Arabic at all. The RTL work is real and correct (logical
-properties, `rtl:rotate-180` on the arrows, and every new class verified present
-in the committed CSS bundle), the six plural forms are in place, and both guides
-are genuinely in Arabic. The admin panel claim was checked rather than taken on
-trust: Filament ships `ar` with `'direction' => 'rtl'` and its layout reads that
-key, so the panel does flip on its own.
+**Then the translation itself was written**, because English strings in
+Arabic-shaped files are not an Arabic academy. All **1,095 strings across 26
+files** are now Arabic, the student site and the panel alike, with the six
+plural forms written as real grammar rather than one string copied six times
+(`لا دروس|درس واحد|درسان|:count دروس|:count درسًا|:count درس`).
+
+**A slash between two numbers reverses under RTL.** The progress line was
+`:done / :total`, and bidi treats that whole run as one number, so "0 / 8"
+rendered as "8 / 0" — reading as 8 of 0. It is `:done من :total` now. Anywhere
+a neutral character sits between two numbers has the same problem; use a word.
+
+**Still true, and checked rather than assumed:** the RTL work is correct
+(logical properties, `rtl:rotate-180` on the arrows, and every new class
+verified present in the committed CSS bundle); both guides are in Arabic, and
+the admin guide's menu table now uses the Arabic menu names, as the other
+translated guides use theirs; and Filament ships `ar` with
+`'direction' => 'rtl'`, its layout reading that key, so the panel flips on its
+own. **The wording has not been read by a native speaker** — that review is the
+one thing still outstanding before partners see it.
+
+**Verified:** every `lang/ar` file passes `php -l`; Pint clean over 368 files;
+the full suite 450 passed, 7,029 assertions; and the academy driven in Chrome
+against PostgreSQL in Arabic — home, courses, case studies and help, at 1280px
+and 375px, all reporting `dir="rtl"`, `lang="ar"` and zero sideways scroll.
 
 ### 2026-09-29 — Case Studies in every language, after a review of the new section
 

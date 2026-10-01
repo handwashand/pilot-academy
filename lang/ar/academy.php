@@ -58,7 +58,10 @@ return [
             'advanced' => 'متقدّم',
         ],
         'lessons' => 'لا دروس|درس واحد|درسان|:count دروس|:count درسًا|:count درس',
-        'lessons_done' => ':done / :total درس',
+        // "من" rather than a slash: a slash is a neutral character, so bidi
+        // treats ":done / :total" as one run and mirrors it — "0 / 8" renders
+        // as "8 / 0" and reads as the wrong way round.
+        'lessons_done' => ':done من :total درس',
         'progress_aria' => 'التقدّم: أنهيت :done من :total درس',
         'course_progress_aria' => 'تقدّم :course: أنهيت :done من :total درس',
         'completed' => 'مكتملة',

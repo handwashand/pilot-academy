@@ -30,13 +30,16 @@ Add a new entry here whenever something visible to admins or students changes.
   "back" turn with it. The admin panel turns around too. Dates and numbers stay
   in the figures you already know (1 2 3). The Help page and the admin guide are
   written in Arabic.
-  **Two things to know.** The buttons and labels themselves are still in
-  English: the Arabic wording is being written, and until it is, an Arabic
-  reader sees English text in an Arabic layout. You can fill any of it in
-  yourself under **Settings → Translations**, and what you save shows straight
-  away. Certificates are still issued in English for Arabic learners, because
-  the PDF cannot yet shape Arabic script correctly — an Arabic certificate would
-  print its letters disconnected and in the wrong order.
+  Every button, label and message is written in Arabic — the student site, the
+  emails, and the admin panel.
+  **Two things to know.** The wording is a first translation and has not yet
+  been read by a native speaker, so if a phrase sounds wrong, correct it under
+  **Settings → Translations** and it changes straight away, with no deploy. And
+  certificates are still issued in English for Arabic learners, because the PDF
+  cannot yet shape Arabic script correctly — an Arabic certificate would print
+  its letters disconnected and in the wrong order.
+  Course and lesson content is separate: it stays in whatever language the
+  trainer wrote it in until somebody adds an Arabic version with **Translate**.
 - **Write a lesson without leaving the course.** The course's **Lessons** tab
   now has **New lesson** beside **Add existing lesson**. Give it a title and a
   web address and it joins the end of that course, written in the course's
