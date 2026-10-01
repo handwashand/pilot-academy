@@ -10,6 +10,8 @@ Vous arrivez sur le **Tableau**, qui résume les étudiants, la progression, les
 
 Modifiez votre nom, e-mail ou mot de passe depuis le menu du compte, en haut à droite, puis **Profil**.
 
+Les administrateurs voient l'activité des étudiants, leur progression et les certificats. **Étudiants actifs** compte ceux qui se sont connectés ou ont travaillé dans l'académie au cours des 30 derniers jours ; les rappels et l'activité du personnel ne comptent pas. Le graphique affiche les apprenants actifs uniques sous forme de ligne et les leçons terminées sous forme de barres ; plusieurs actions d'une même personne dans la journée ne comptent qu'une fois. Les leçons publiées et la progression par entreprise comprennent uniquement les leçons accessibles dans un cours publié. Les créateurs voient des cartes liées aux Cours, Études de cas, Tutoriels et Webinaires de leurs produits attribués, réparties entre publiés, brouillons et archivés, sans données sur les étudiants ni les entreprises.
+
 ## 2. Le menu en bref
 
 | Élément | Utilité |
@@ -17,6 +19,9 @@ Modifiez votre nom, e-mail ou mot de passe depuis le menu du compte, en haut à 
 | **Tableau de bord** | Indicateurs, progression par entreprise et étudiants inactifs. |
 | **Contenu → Cours** | Créer les cours, activer quiz final et certificat. |
 | **Contenu → Leçons** | Ajouter vidéo, texte et questions. |
+| **Contenu → Études de cas** | Créer, prévisualiser et publier des guides pratiques de déploiement pour les partenaires. |
+| **Contenu → Webinaires** | Programmer des sessions en direct, partager le lien pour rejoindre et ajouter l’enregistrement ensuite. |
+| **Contenu → Tutoriels** | Vidéos pratiques indépendantes, par lien YouTube ou fichier téléversé. |
 | **Contenu → Produits** | Produits ou modules et leurs responsables. |
 | **Contenu → Médias** | Bibliothèque d'images réutilisables. |
 | **Personnes → Utilisateurs** | Comptes, rôles, progression et certificats. |
@@ -40,7 +45,7 @@ Dans **Courses**, cliquez **New course**. Renseignez titre, description courte, 
 
 Dans **Lessons**, créez une leçon, choisissez le cours, ajoutez vidéo, texte, durée, transcription et questions. Une leçon doit avoir un contrôle de connaissances pour être terminée.
 
-Réordonnez les leçons depuis l'onglet **Lessons** du cours. Déplacer une leçon existante la retire de son ancien cours ; pour copier, utilisez **Duplicate** sur le cours.
+Réordonnez les leçons depuis l'onglet **Lessons** du cours. Au même endroit, **Nouvelle leçon** crée une leçon directement dans ce cours, et **Ajouter une leçon existante** ouvre la liste des leçons des autres cours : la leçon est partagée, elle reste aussi dans son cours d'origine. Pour une copie distincte, utilisez **Duplicate** sur le cours.
 
 ### Étape 3 · Activer le quiz final
 
@@ -60,6 +65,8 @@ Après réussite, le certificat est généré automatiquement en PDF avec nom, c
 
 ## 4. Paramétrer
 
+**Études de cas.** Dans **Contenu → Études de cas**, cliquez sur **New case study**, puis indiquez le problème en bref, le secteur, les fonctionnalités Pilot, la difficulté et le temps estimé. Complétez le scénario, le résultat recherché, les étapes de configuration et la vérification. Une note **Source or verification note** est obligatoire avant publication ; utilisez **Performance claim note** pour conserver la preuve de tout résultat chiffré. Laissez **Anonymized** activé sauf accord explicite du client et n'activez **Customer approved** que lorsque cet accord est consigné. Chaque étape accepte des images depuis le trombone de sa barre d’outils ou depuis la zone située dessous, où vous pouvez coller, déposer ou choisir des fichiers ; les images de cette zone apparaissent sous l’étape. Utilisez uniquement des images nettoyées, sans noms, lieux précis, identifiants ni données de véhicules réels. Enregistrez le brouillon, contrôlez-le avec **Preview**, puis utilisez **Publish** dans la liste. Les partenaires ordinaires ne peuvent pas ouvrir un brouillon. **Written in** est la langue de l’étude elle-même : rédigez dans la vôtre, puis ajoutez les autres langues avec **Translate** sur la page d’édition. Les notes de source et d’affirmation chiffrée sont réservées aux éditeurs : les partenaires ne les voient pas. Les creators ne gèrent que les études des produits qui leur sont attribués.
+
 Modifiez les questions du quiz final depuis l'onglet **Final questions** du cours. Une question venue d'une leçon reste la même question ; la modifier change aussi la leçon.
 
 Ajoutez un fond de certificat depuis **Final quiz & certificate → Certificate background**. Utilisez une image A4 paysage ou laissez vide pour le modèle intégré.
@@ -74,7 +81,9 @@ Pour ajouter une entreprise et un étudiant, créez d'abord l'entreprise dans **
 
 Utilisez **Users** pour filtrer par rôle et ouvrir la progression d'un étudiant.
 
-Le **Tableau** montre les contenus à corriger, les indicateurs, la progression par entreprise, les étudiants inactifs, les leçons difficiles, l'activité et les cours les plus ouverts.
+Les **Filtres du tableau de bord** permettent de choisir une période, un partenaire, un produit ou un cours ; la période par défaut est de 30 jours. Les créateurs ne voient ni ces filtres ni les données des apprenants.
+
+Le **Tableau** montre l’**Engagement des partenaires**, le **Parcours apprenant**, l’activité quotidienne, les ressources ouvertes et les cours les plus ouverts. La liste des apprenants inactifs est calculée par cours : terminer ou certifier un autre cours ne masque plus un cours abandonné. L’engagement avec les études de cas, les tutoriels et les webinaires ne compte que les utilisateurs connectés ; les visites anonymes ne sont pas enregistrées.
 
 Dans **Student feedback**, sur le cours, lisez les avis privés des étudiants.
 

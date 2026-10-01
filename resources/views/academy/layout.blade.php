@@ -101,8 +101,17 @@
     <a href="#main" class="skip-link">{{ __t('nav.skip') }}</a>
 
     <header class="sticky top-0 z-20 bg-white border-b border-slate-200">
-        <div class="max-w-6xl mx-auto px-4 sm:px-5 h-16 flex items-center justify-between gap-2">
-            <a href="{{ route('academy.home') }}" class="flex min-w-0 sm:shrink-0 items-center">
+        {{-- Three zones: the logo, the four content areas in the middle, and
+             everything about you on the right. The side zones are flex-1 and
+             the middle one flex-none, which centres the nav on the header
+             itself rather than in whatever space the sides leave over.
+
+             From md: up only. Exact centring needs the two sides to be equal,
+             and on a 375px phone the right side needs more room than that
+             leaves — Log in ran into the icons. Below md the nav takes the
+             space left over instead, which is what fitted before. --}}
+        <div class="max-w-6xl mx-auto px-4 sm:px-5 h-16 flex items-center gap-0.5 md:gap-2">
+            <a href="{{ route('academy.home') }}" class="flex min-w-0 md:flex-1 items-center">
                 {{-- The same PILOT ACADEMY lockup as the admin panel, at the same
                      1.75rem, so both sides of the academy read as one product.
                      It replaced the mark plus HTML text on 2026-09-14 at the
@@ -118,16 +127,30 @@
                      class="h-7 w-auto max-w-full flex-none" width="89" height="28"
                      style="object-fit: contain; object-position: left center;">
             </a>
-            <div class="flex flex-none sm:flex-initial sm:min-w-0 items-center gap-0.5 sm:gap-3">
-                {{-- Help, for everyone: anonymous visitors take lessons too.
-                     Icon-only below sm: like Certificates — the header has no
-                     room for another word on a 375px phone. --}}
-                <a href="{{ route('academy.help') }}"
-                   class="flex flex-none items-center gap-2 h-11 px-1 sm:px-2 rounded-lg text-sm text-slate-600 hover:text-brand hover:bg-slate-50 active:bg-slate-100 font-medium"
-                   aria-label="{{ __t('nav.help') }}">
-                    <span aria-hidden="true" class="w-6 h-6 rounded-full border border-slate-300 text-xs font-bold flex items-center justify-center">?</span>
-                    <span class="hidden sm:block">{{ __t('nav.help') }}</span>
-                </a>
+            {{-- The four things a partner comes here for. The word joins
+                 the glyph from md: up; below that the header has no room
+                 for four labels on a 375px phone, so each link is its
+                 glyph alone with the name in aria-label. Help moved to the
+                 account menu and the footer to make room. --}}
+            <nav class="flex flex-1 md:flex-none items-center justify-center sm:gap-1" aria-label="{{ __t('nav.sections') }}">
+                @foreach([
+                    ['name' => 'courses', 'route' => route('academy.courses'), 'label' => __t('nav.courses')],
+                    ['name' => 'case_studies', 'route' => route('academy.case-studies.index'), 'label' => __t('nav.case_studies')],
+                    ['name' => 'tutorials', 'route' => route('academy.tutorials'), 'label' => __t('nav.tutorials')],
+                    ['name' => 'webinars', 'route' => route('academy.webinars'), 'label' => __t('nav.webinars')],
+                ] as $item)
+                    <a href="{{ $item['route'] }}"
+                       class="flex flex-none items-center gap-2 h-11 px-1 sm:px-2 rounded-lg text-sm text-slate-600 hover:text-brand hover:bg-slate-50 active:bg-slate-100 font-medium"
+                       aria-label="{{ $item['label'] }}">
+                        @include('academy.partials.nav-icon', ['name' => $item['name']])
+                        <span class="hidden md:block">{{ $item['label'] }}</span>
+                    </a>
+                @endforeach
+            </nav>
+
+            {{-- Everything about you: certificates and your account, or the way
+                 in, and the language button at the very end. --}}
+            <div class="flex flex-none md:flex-1 min-w-0 items-center justify-end gap-0.5 sm:gap-3">
                 @auth
                     @php
                         $account = auth()->user();
@@ -178,6 +201,14 @@
                             <a href="{{ route('certificates.index') }}"
                                class="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-brand">
                                 {{ __t('nav.certificates') }}
+                            </a>
+
+                            {{-- Help left the header when the four content areas
+                                 arrived. Guests reach it from the footer, which
+                                 carries it on every page. --}}
+                            <a href="{{ route('academy.help') }}"
+                               class="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-brand">
+                                {{ __t('nav.help') }}
                             </a>
 
                             @if($account->isAdmin())

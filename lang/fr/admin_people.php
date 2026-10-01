@@ -20,6 +20,7 @@ return [
         'permissions_help' => 'Accordées compte par compte. Elles ne sont pas incluses par défaut dans les rôles Administrateur ou Créateur.',
         'manage_languages' => 'Gérer les langues',
         'manage_translations' => 'Gérer les traductions',
+        'check_mail' => 'Vérifier l’envoi des e-mails',
         'lessons_done' => 'Leçons terminées',
         'last_login' => 'Dernière connexion',
         'export' => 'Exporter la progression des apprenants',

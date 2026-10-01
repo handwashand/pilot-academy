@@ -111,4 +111,25 @@ return [
         'certificates' => 'Certificates',
         'activity' => 'Activity',
     ],
+
+    'tutorials' => [
+        'nav' => 'Tutorials',
+        'one' => 'tutorial',
+        'many' => 'tutorials',
+        'badge' => 'Tutorials still in draft — partners cannot see them yet',
+    ],
+
+    'webinars' => [
+        'nav' => 'Webinars',
+        'one' => 'webinar',
+        'many' => 'webinars',
+        'badge' => 'Webinars still in draft — partners cannot see them yet',
+    ],
+
+    'case_studies' => [
+        'nav' => 'Case Studies',
+        'one' => 'case study',
+        'many' => 'case studies',
+        'badge' => 'Case studies still in draft — partners cannot see them yet',
+    ],
 ];

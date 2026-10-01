@@ -58,10 +58,47 @@ class MailCheckTest extends TestCase
         Mail::assertSent(MailCheckMessage::class, fn (MailCheckMessage $mail): bool => $mail->hasTo($admin->email));
     }
 
-    public function test_only_admins_can_open_it(): void
+    public function test_without_the_permission_nobody_but_an_admin_gets_in(): void
     {
         $this->actingAs($this->user(User::ROLE_CREATOR))
             ->get(MailCheck::getUrl())
             ->assertForbidden();
+    }
+
+    /**
+     * An admin can hand the page to a colleague — answering "did that
+     * certificate email go out?" should not need running the whole academy.
+     */
+    public function test_the_permission_opens_it_for_someone_who_is_not_an_admin(): void
+    {
+        $creator = $this->user(User::ROLE_CREATOR);
+        $creator->permissions()->create(['permission' => User::PERMISSION_MAIL_CHECK]);
+
+        $this->actingAs($creator)
+            ->get(MailCheck::getUrl())
+            ->assertOk()
+            // The question the page opens with.
+            ->assertSee('Not getting emails?');
+
+        // And it is in their sidebar, not just reachable by its address.
+        $this->actingAs($creator)
+            ->get('/admin')
+            ->assertOk()
+            ->assertSee(MailCheck::getUrl(), false);
+
+        // Taking it away closes the page again.
+        $creator->permissions()->where('permission', User::PERMISSION_MAIL_CHECK)->delete();
+
+        $this->actingAs($creator)
+            ->get(MailCheck::getUrl())
+            ->assertForbidden();
+    }
+
+    public function test_an_admin_still_sees_it_in_the_sidebar(): void
+    {
+        $this->actingAs($this->user(User::ROLE_ADMIN))
+            ->get('/admin')
+            ->assertOk()
+            ->assertSee(MailCheck::getUrl(), false);
     }
 }

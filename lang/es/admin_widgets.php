@@ -3,11 +3,24 @@
 // Spanish. Keys mirror lang/en/admin_widgets.php — see the note there.
 
 return [
+    'filters' => [
+        'heading' => 'Filtros del panel',
+        'description' => 'Se aplican a la actividad y los resultados; vacía un campo para incluir todo.',
+        'start_date' => 'Desde',
+        'end_date' => 'Hasta',
+        'partner' => 'Socio',
+        'all_partners' => 'Todos los socios',
+        'product' => 'Producto',
+        'all_products' => 'Todos los productos',
+        'course' => 'Curso',
+        'all_courses' => 'Todos los cursos',
+    ],
+
     'overview' => [
         'students' => 'Estudiantes',
         'students_help' => 'Cuentas de socios',
         'active' => 'Estudiantes activos',
-        'active_help' => ':percent% empezó al menos una lección',
+        'active_help' => ':percent% tuvo actividad en el período seleccionado',
         'completions' => 'Lecciones completadas',
         'completions_help' => 'Entre todos los estudiantes',
         'published_courses' => 'Cursos publicados',
@@ -19,10 +32,20 @@ return [
         'average_score' => 'Puntuación media :score%',
     ],
 
+    'creator' => [
+        'status' => ':published publicados · :drafts borradores · :archived archivados',
+    ],
+
     'companies' => [
-        'heading' => 'Progreso por empresa socia',
-        'description' => 'Proporción de todas las lecciones publicadas completadas por los estudiantes de cada empresa.',
-        'dataset' => '% de lecciones publicadas completadas',
+        'heading' => 'Participación de socios',
+        'description' => 'Alcance y resultados de estudiantes en el período seleccionado.',
+        'learners' => 'Estudiantes',
+        'active' => 'Activos',
+        'completions' => 'Lecciones terminadas',
+        'certificates' => 'Certificados',
+        'last_activity' => 'Última actividad',
+        'open' => 'Abrir socio',
+        'empty' => 'Ningún socio coincide con estos filtros',
     ],
 
     'certificates' => [
@@ -63,14 +86,37 @@ return [
 
     'activity' => [
         'heading' => 'Actividad de estudiantes',
-        'description' => 'Lecciones terminadas e inicios de sesión por día, solo estudiantes.',
+        'description' => 'Estudiantes activos únicos y lecciones terminadas por día en el período seleccionado.',
+        'active_learners' => 'Estudiantes activos',
         'lessons_finished' => 'Lecciones terminadas',
-        'sign_ins' => 'Inicios de sesión',
+    ],
+
+    'journey' => [
+        'heading' => 'Recorrido del estudiante',
+        'description' => 'Estudiantes únicos que llegaron a cada etapa durante el período seleccionado. Terminar cuenta los pasos anteriores.',
+        'learners' => 'Estudiantes',
+        'course_opened' => 'Abrió un curso',
+        'lesson_opened' => 'Abrió una lección',
+        'lesson_completed' => 'Terminó una lección',
+        'course_completed' => 'Terminó un curso',
+        'certified' => 'Obtuvo un certificado',
+    ],
+
+    'resources' => [
+        'heading' => 'Participación con recursos',
+        'description' => 'Acciones de socios con sesión iniciada durante el período seleccionado.',
+        'opens' => 'Acciones',
+        'case_studies' => 'Casos prácticos abiertos',
+        'tutorials' => 'Tutoriales abiertos',
+        'webinars' => 'Seminarios abiertos',
+        'joins' => 'Uniones a seminarios',
+        'recordings' => 'Grabaciones abiertas',
     ],
 
     'opened' => [
         'heading' => 'Cursos más abiertos',
-        'description' => 'Veces que los estudiantes abrieron cada curso en los últimos :days días.',
+        'description' => 'Veces que los estudiantes abrieron cada curso en el período seleccionado.',
         'times_opened' => 'Veces abierto',
+        'removed_course' => 'Curso eliminado',
     ],
 ];

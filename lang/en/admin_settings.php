@@ -36,6 +36,9 @@ return [
         'module' => 'Module',
         'corrected' => 'Corrected',
         'correct' => 'Correct',
+        'correct_in' => 'Correct the :language line',
+        'click_hint' => 'One line per key, in every language. Click any cell to correct that language — students see the change straight away.',
+        'save_correction' => 'Save the correction',
         'states' => [
             'corrected' => 'Corrected',
             'shipped' => 'Shipped',

@@ -37,7 +37,7 @@
             @endif
 
             {{-- Videos, up to five, in the order the lesson lists them. Only
-                 block-form PHP sections here — see the Blade trap in agent.md.
+                 block-form PHP sections here — see the Blade trap in agents.md.
                  (Never write the directive's name in a Blade comment: the
                  compiler matches it before comments are removed.) --}}
             @php

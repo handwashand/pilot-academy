@@ -4,7 +4,11 @@ Como a Pilot Academy funciona, da primeira aula até o certificado.
 
 ## Primeiros passos
 
+A barra superior reúne quatro coisas: **Cursos**, todos os cursos publicados com pesquisa e filtros por nível e público; **Estudos de caso**; **Tutoriais**, todos os vídeos das aulas reunidos sob o seu curso; e **Webinars**, as sessões ao vivo com a equipe do Pilot e suas gravações. Os tutoriais reúnem vídeos práticos curtos e todos os vídeos das aulas: dá para assistir a um sem começar um curso. A ajuda está no menu sob as suas iniciais e no rodapé de cada página.
+
 **Você pode começar uma aula sem conta.** Abra um curso na página inicial e siga em frente. Nesse caso, seu progresso fica salvo apenas neste navegador.
+
+**Esqueceu a senha?** Use **Esqueceu a senha?** na página de entrada. Um link para definir outra chega por e-mail: ele vale por uma hora e funciona uma vez.
 
 **Entre para manter seu progresso em todos os dispositivos** e para fazer o teste final. Use **Entrar** ou **Cadastrar**. Se sua empresa enviou um link pessoal, abra-o: ele entra direto, sem senha.
 
@@ -19,6 +23,18 @@ Algumas aulas fazem parte de mais de um curso. Você só precisa fazê-las uma v
 O cartão no topo da página inicial sempre mostra o próximo passo: começar, continuar de onde parou ou abrir o teste final quando ele estiver pronto.
 
 A busca encontra cursos e aulas pelo nome, e também palavras faladas em um vídeo quando há transcrição.
+
+## Usar estudos de caso
+
+Abra **Estudos de caso** na navegação da academia para encontrar guias práticos de implantação do Pilot. No celular, o botão pode aparecer como **CS**.
+
+Use **Pesquisar** para procurar um problema ou uma solução, ou filtre a lista por setor (**Setor**), recurso (**Função**) e dificuldade (**Dificuldade**). Cada cartão também mostra o tempo estimado de implantação.
+
+Cada estudo apresenta o cenário do cliente, os pré-requisitos, os recursos do Pilot, as etapas de configuração, como testar a solução, os resultados esperados e limitações, os erros comuns e formas de adaptação. Ao final, podem aparecer aulas da Academia e links de documentação relacionados.
+
+Um estudo aparece no seu idioma onde alguém o traduziu e no idioma original no restante.
+
+Os estudos de caso são materiais de referência: não registram progresso, não têm teste e não emitem certificado. Os parceiros veem apenas os estudos publicados.
 
 ## Concluir uma aula
 

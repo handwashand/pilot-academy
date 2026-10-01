@@ -1,18 +1,30 @@
 <?php
 
 use App\Http\Controllers\AcademyController;
+use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\StudentAuthController;
+use App\Http\Controllers\CaseStudyController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\ChangelogPdfController;
 use App\Http\Controllers\FinalQuizController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WebinarController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AcademyController::class, 'home'])->name('academy.home');
 Route::post('/name', [AcademyController::class, 'setName'])->name('academy.name');
+Route::get('/courses', [AcademyController::class, 'courses'])->name('academy.courses');
+Route::get('/tutorials', [AcademyController::class, 'tutorials'])->name('academy.tutorials');
+Route::get('/tutorials/{tutorial:slug}', [AcademyController::class, 'tutorial'])->name('academy.tutorial');
+Route::get('/webinars', [WebinarController::class, 'index'])->name('academy.webinars');
+Route::get('/webinars/{webinar:slug}', [WebinarController::class, 'show'])->name('academy.webinar');
+Route::get('/webinars/{webinar:slug}/join', [WebinarController::class, 'join'])->name('academy.webinar.join');
+Route::get('/webinars/{webinar:slug}/recording', [WebinarController::class, 'recording'])->name('academy.webinar.recording');
 Route::get('/search', [AcademyController::class, 'search'])->name('academy.search');
 Route::get('/help', [AcademyController::class, 'help'])->name('academy.help');
+Route::get('/case-studies', [CaseStudyController::class, 'index'])->name('academy.case-studies.index');
+Route::get('/case-studies/{caseStudy:slug}', [CaseStudyController::class, 'show'])->name('academy.case-studies.show');
 Route::get('/sitemap.xml', [AcademyController::class, 'sitemap'])->name('sitemap');
 Route::post('/locale', LocaleController::class)->name('locale.switch');
 
@@ -24,6 +36,18 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [StudentAuthController::class, 'register']);
     Route::get('/join', [StudentAuthController::class, 'showJoin'])->name('join');
     Route::post('/join', [StudentAuthController::class, 'join']);
+
+    // Forgot password, for partners and staff alike — the panel's login links
+    // here too. Throttled so nobody can walk a list of addresses through it;
+    // the broker adds one link per minute per person on top.
+    Route::get('/forgot-password', [PasswordResetController::class, 'showRequest'])->name('password.request');
+    Route::post('/forgot-password', [PasswordResetController::class, 'sendLink'])
+        ->middleware('throttle:6,1')
+        ->name('password.email');
+    Route::get('/reset-password/{token}', [PasswordResetController::class, 'showReset'])->name('password.reset');
+    Route::post('/reset-password', [PasswordResetController::class, 'reset'])
+        ->middleware('throttle:6,1')
+        ->name('password.update');
 });
 // Personal passwordless access link (magic link)
 Route::get('/enter/{token}', [StudentAuthController::class, 'enter'])->name('academy.enter');

@@ -20,6 +20,7 @@ return [
         'permissions_help' => 'Se conceden por cuenta. No están incluidos por defecto en los roles Administrador o Creador.',
         'manage_languages' => 'Gestionar idiomas',
         'manage_translations' => 'Gestionar traducciones',
+        'check_mail' => 'Comprobar el envío de correo',
         'lessons_done' => 'Lecciones hechas',
         'last_login' => 'Último acceso',
         'export' => 'Exportar progreso de estudiantes',

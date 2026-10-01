@@ -9,9 +9,19 @@ How Pilot Academy works, from your first lesson to your certificate.
 
 ## Getting started
 
+The top bar holds four things: **Courses**, every published course with a
+search box and filters for level and audience; **Case Studies**; **Tutorials**,
+every lesson video gathered under its course; and **Webinars**, live sessions
+with the Pilot team and their recordings. Tutorials holds both short how-to
+videos and every lesson video, so you can watch one without starting a course. Help is in the menu behind your
+initials, and at the foot of every page.
+
 **You can start a lesson without an account.** Open a course from the home
 page and go. Your progress is then kept in this browser only — switch phone or
 computer and it is gone.
+
+**Forgotten your password?** Use **Forgot password?** on the login page. A link
+to set a new one arrives by email; it lasts an hour and works once.
 
 **Log in to keep your progress everywhere** and to take the final quiz. Use
 **Log in** or **Register** in the top bar. If your company sent you a personal
@@ -40,6 +50,26 @@ last final quiz — including how many attempts you have left.
 
 Looking for something? **Search** finds courses and lessons by name, and also
 by words spoken in a video that has a transcript.
+
+## Using case studies
+
+Open **Case Studies** in the academy navigation to find practical Pilot
+deployment guides. On a phone, the navigation button may show **CS**.
+
+Use **Search** to look for a problem or solution, or narrow the list by
+**Industry**, **Feature** and **Difficulty**. Each card also shows the estimated
+implementation time.
+
+A case study explains the customer scenario, prerequisites, Pilot features,
+configuration steps, how to test the setup, expected results and limitations,
+common mistakes, and ways to adapt the solution. Related Academy lessons and
+documentation are listed at the end when available.
+
+A study is shown in your language wherever someone has translated it, and in
+the language it was written in everywhere else.
+
+Case studies are reference guides. They do not record progress, have a quiz or
+issue a certificate. Only published studies appear to partners.
 
 ## Finishing a lesson
 

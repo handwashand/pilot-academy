@@ -24,6 +24,95 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **Write a lesson without leaving the course.** The course's **Lessons** tab
+  now has **New lesson** beside **Add existing lesson**. Give it a title and a
+  web address and it joins the end of that course, written in the course's
+  language — no more going to **Lessons**, creating one, and picking the course
+  back again. Open it with **Edit** when you are ready for the content, the
+  videos and the knowledge check. **Add existing lesson** now opens with the
+  lessons you can add already listed, each showing which course it comes from,
+  instead of an empty box that only filled in once you typed; lessons this
+  course already has are left out.
+- **Dashboard filters and partner engagement you can act on.** Administrators
+  can filter learner reporting by date, partner, product and course. The old
+  company percentage has been replaced by a partner table with learners,
+  active learners, lesson completions, certificates and last activity, plus a
+  direct link to each partner. A new learner journey shows how many signed-in
+  learners opened a course, opened and finished a lesson, finished a course and
+  earned a certificate. Resource engagement now covers case study and tutorial
+  opens, webinar page opens, joins and recording opens. Stalled follow-up is
+  course-specific, so a certificate or recent work in one course no longer
+  hides a learner who went quiet in another.
+- **A top bar with the four things partners come for.** **Courses** is a
+  catalogue of every published course, with a search box and filters for level
+  and who the course is written for. **Case Studies** is beside it, then
+  **Tutorials** — every lesson video in the academy gathered under its course —
+  and **Webinars**. The home page is unchanged: it stays your own starting
+  point, with where you left off at the top. Help moved into the account menu
+  and stays in the footer of every page.
+- **Pictures on every step of a case study.** Each of the ten steps now takes
+  screenshots two ways: the paperclip in its toolbar, for an image that belongs
+  mid-sentence, and a box beneath it that accepts a paste from the clipboard, a
+  file dropped on it, or a normal file pick. They appear under that step on the
+  partner's page, in the order you put them. Images added inside a step are
+  stored where partners can actually see them — before this they were saved
+  privately and would have shown as broken.
+- **The dashboard funnel and the completion count tell the same story.**
+  **Learner journey** used to read every stage from the activity log, which
+  only goes back to the day the academy started recording it — so an academy
+  with older certificates saw no opens, no completions and a full bar of
+  certificates. Each stage now also counts the learners the later stages prove
+  were there, so no bar can stand taller than the one before it, and
+  **Lesson completions** counts finished lessons from the record rather than
+  the log. **Most opened courses** is full width like the other charts.
+- **Forgot your password? Set a new one yourself.** Both login pages — the
+  academy and the panel — now offer **Forgot password?**. Give the address you
+  sign in with and a link arrives, written in your language, good for one hour
+  and one use. The page says the same thing whether or not the address has an
+  account, so it cannot be used to find out who is a customer.
+- **Someone other than an admin can check whether emails are arriving.**
+  **Settings → Mail** now opens with the question it answers — not getting
+  emails? — and a test you send yourself. Admins still see it, and an admin can
+  now hand **Check mail delivery** to anyone else under **People → Users →
+  Permissions**, so a support colleague can answer "did that certificate email
+  go out?" without being made an admin of the whole academy. The settings
+  themselves stay in the server’s `.env`, out of the panel.
+- **Translations read across, not down.** **Settings → Translations** now
+  shows one row per line of text with a column for each language, so you can
+  see at a glance where a wording is still the shipped one — or missing. Click
+  the cell in the language you want to fix. Searching still finds a line by
+  words from any language.
+- **Tutorials you add yourself, by link or upload.** Alongside the lesson
+  videos gathered from the courses, admins and product creators can add
+  standalone how-to videos under **Content → Tutorials** — a YouTube link or a
+  file you upload, the same two sources a lesson video takes. They appear above
+  the course videos on **Tutorials**, each on its own page with the player. A
+  tutorial cannot be published until its video actually works, and it can be
+  written in any language and translated like a course.
+- **Webinars: live sessions, and the recordings afterwards.** Partners see what
+  is coming up with a **Join** button, and past sessions with **Watch the
+  recording**. Times are shown in UTC, with the zone named, so nobody joins an
+  hour late. Admins and product creators schedule them under **Content →
+  Webinars**: a session needs a date and either a join link or a recording
+  before it can be published, and it can be written in any language and
+  translated like a course.
+- **Case Studies turn proven deployments into reusable partner playbooks.**
+  Partners can open **Case Studies** from the academy, search by problem or
+  solution, and filter by industry, Pilot feature and difficulty. Each
+  published study covers the scenario, prerequisites, Pilot features,
+  configuration, testing, expected results, limitations, troubleshooting,
+  adaptations and related lessons or documentation. Admins and product
+  creators can prepare studies under **Content → Case Studies**, preview drafts
+  privately, add sanitized media and verification notes, and publish only when
+  the required sections are complete. Three anonymized starter studies are
+  included as drafts for geofence arrivals and departures, overspeeding
+  escalation and fuel-event investigation. Both the partner pages and the
+  editor's screens read in the reader's language, like the rest of the academy.
+  A study itself has **Written in** and **Translate**, exactly like a course, so
+  a Russian or French author writes in their own language and the others can be
+  added — search finds a study by its translations too. The source and
+  performance-claim notes are for editors only and are no longer shown to
+  partners.
 - **The whole admin panel follows your language.** Menus, page titles, every
   form label and help text, table columns, buttons, confirmation messages,
   notifications, the dashboard, Content health, Final quiz health, Mail and
@@ -140,6 +229,17 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Changed
 
+- **The Dashboard now distinguishes recent activity from historical progress.**
+  **Active students** means learners who signed in or worked in the academy
+  during the last 30 days; reminder emails and staff activity do not inflate the
+  number. Published lesson totals and partner progress now include only lessons
+  that learners can actually reach through a published course. The activity
+  graph now plots unique active learners as a line and completed lessons as bars,
+  so repeated sign-ins by one person no longer look like wider adoption.
+- **Product creators now have a useful, private Dashboard.** It summarizes their
+  assigned products' Courses, Case Studies, Tutorials and Webinars by published,
+  draft and archived status, with each card linking to its content list. It does
+  not expose learner, company, quiz, feedback or certificate data.
 - **The left menu is grouped by what you are doing**: **Content** (Courses,
   Lessons, Products, Media Items), **People** (Users, Companies), **Results**
   (Certificates, Final quiz health) and **Docs** (Guide, What's new). Nothing was
@@ -190,6 +290,11 @@ Add a new entry here whenever something visible to admins or students changes.
   as *YouTube link that is not a playable video*, each with a link straight to
   the lesson.
 
+<!-- For contributors, not for the panel: this section explains how the page
+     itself works, which is our business rather than an admin's. It stays in
+     this file and is stripped before anything is rendered — see
+     Changelog::parse(). Keep notes like this inside a comment.
+
 ### What's new is now a filterable list
 
 **This page is built from `docs/CHANGELOG.md` itself**, read fresh on every
@@ -200,6 +305,7 @@ there is no second copy to update and no way for the two to fall out of step.
 category pill** to narrow to just the additions, the fixes, or the known
 limitations. Months with nothing left in them drop out of the way rather than
 sitting there empty.
+-->
 
 ## 2.0.0 — September 2026
 

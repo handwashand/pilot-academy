@@ -173,6 +173,28 @@ class ChangelogPageTest extends TestCase
             ->assertSee('final quiz');
     }
 
+    /**
+     * Notes to whoever works on the academy live in HTML comments in
+     * docs/CHANGELOG.md. They stay in the file for contributors and must never
+     * reach the panel, which admins at partner companies read.
+     */
+    public function test_contributor_notes_stay_out_of_the_panel(): void
+    {
+        $this->actingAs($this->user('notes@pilot.local', User::ROLE_ADMIN))
+            ->get('/admin/changelog')
+            ->assertStatus(200)
+            ->assertDontSee('docs/CHANGELOG.md')
+            ->assertDontSee('For contributors, not for the panel')
+            ->assertDontSee('Changelog::parse');
+
+        // The PDF reads the same file through the same parser, so checking what
+        // the parser hands back covers both without unzipping a PDF.
+        $rendered = json_encode(Changelog::releasesFrom(Changelog::changelogPath()));
+
+        $this->assertStringNotContainsString('For contributors', $rendered);
+        $this->assertStringNotContainsString('docs/CHANGELOG.md', $rendered);
+    }
+
     public function test_the_page_renders_for_a_creator(): void
     {
         $this->actingAs($this->user('creator@pilot.local', User::ROLE_CREATOR))

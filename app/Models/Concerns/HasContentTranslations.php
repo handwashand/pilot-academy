@@ -59,6 +59,15 @@ trait HasContentTranslations
         return $this->translatable ?? [];
     }
 
+    /**
+     * What to call a field in the Translate box. Overridden where a model
+     * already names its own fields elsewhere — see CaseStudy.
+     */
+    public function translatableFieldLabel(string $field): string
+    {
+        return __t("admin_common.translate.fields.{$field}");
+    }
+
     public function setTranslation(string $field, string $code, ?string $value): void
     {
         if (! in_array($field, $this->translatable ?? [], true)) {

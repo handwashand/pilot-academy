@@ -45,4 +45,12 @@ return [
         'number' => 'Certificate No.',
         'issued' => 'Issued',
     ],
+    'password_reset' => [
+        'subject' => 'Set a new Pilot Academy password',
+        'heading' => 'Hello :name,',
+        'intro' => 'Somebody asked to set a new password for your Pilot Academy account. If that was you, the button below takes you to the page.',
+        'button' => 'Set a new password',
+        'expires' => 'The link works for :count minute.|The link works for :count minutes, and only once.',
+        'ignore' => 'If it was not you, nothing has changed — ignore this email and your password stays as it is.',
+    ],
 ];

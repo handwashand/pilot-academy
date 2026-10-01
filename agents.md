@@ -5,8 +5,8 @@ The one file for whoever picks this repo up next, human or AI: **the rules**
 and which traps have already cost someone an afternoon). Read it before you
 start anything.
 
-`CLAUDE.md` only points here, because Claude Code loads that file on its own.
-Do not add rules there. Put them in this file.
+This is the repository's only agent instruction file. Keep rules and project
+memory here so every coding agent works from the same source.
 
 **Contents:** [Project](#project) · [How to work](#how-to-work) ·
 [Standing instructions](#standing-instructions--read-before-you-start-follow-before-you-finish) ·
@@ -88,7 +88,7 @@ would have designed it differently.
 - Do not create a Repository pattern, DTOs, Interfaces or Services unless they
   are clearly required. Single-purpose classes live in `app/Actions`.
 - Reuse before creating: no second copy of a component, a validation rule, a
-  query or a business rule. If the existing one falls short, improve it.
+  query or a business rule. If the existing one falls short, improve it. Code should be maintainable and understable.
 - Complexity must earn its place. Three readable lines beat an abstraction used
   once. Do not add a package, table or config layer a small change does not
   need.
@@ -299,7 +299,7 @@ is wrong, not the test.
 
 ## Where things stand
 
-Last updated: **2026-09-14**
+Last updated: **2026-10-01**
 
 **2.0.0 is released** — tagged `v2.0.0` at `4fa98c7c`, the first version number
 this project has had. **Next release is 2.1.0** (`feature/support-engine-ports`
@@ -331,18 +331,27 @@ There are no tags in this repo yet, so `v2.0.0` will be the first.
 
 ### Branches
 
+**`laravel` is the production branch** — the one to maintain. Everything else
+serves it.
+
 | Branch | State |
 | --- | --- |
-| `laravel` | Main. Deploys to production by `git pull`. At the merge of PR #33. |
-| `feature/support-engine-ports` | Off `laravel`. Ports from support-engine: Help page, What's new PDF, profile page, Docs group, guide search, privacy-enhanced YouTube, header fit at 360px. |
-| `feature/whats-new-page` | Merged into `laravel` (e3253197). Safe to delete. |
-| `main` | **Not the deploy branch.** Carries an unrelated "Initial commit" history plus a merge of `laravel`. Branch from `laravel`, not from here. |
-| `feature/sqlite-postgres` | **Pushed, no PR opened.** SQLite → PostgreSQL move. Ready for review. |
-| `feature/admin-dashboard` | PR #34, open. Dashboard, branding, nudge, mobile fixes. |
-| `feature/learner-experience` | **Stacked on `feature/admin-dashboard`, not on `laravel`.** Duration, search, video controls, accessibility, quiz cost, course completion. Merge #34 first. |
-| `feature/course-publishing-workflow` | Merged as PR #32. Safe to delete. |
-| `feature/creator-role` | Merged as PR #33. Safe to delete. |
-| `feature/postgres-migration` | Duplicate of `feature/sqlite-postgres`, same commit. **Delete it** so nobody reviews the wrong one. |
+| `laravel` | **Production.** Deploys by `git pull`, at `e8ac5dcc`. Merging `feature/support-engine-ports` brings 15 commits and **six migrations** (case studies, their language column and step images, webinars, tutorials, activity-event subject context), so that deploy must run `php8.4 artisan migrate --force` — not a plain pull. |
+| `stable` | A snapshot of the deployed tree, taken 2026-10-01 before that merge, at `9b51add3`. Its tree is byte-identical to `laravel`. **Local only** — push it if it is to be a rollback point anyone else can reach. |
+| `feature/support-engine-ports` | **15 commits ahead of `laravel`, not merged.** Case Studies, Webinars, Tutorials, the dashboard rework, password reset, the translations matrix, and writing a lesson from inside its course. The current guide (this file) lives here: `laravel` still carries the old `CLAUDE.md` + `agent.md` pair, and the consolidation arrives with this merge. |
+| `feature/admin-dashboard` | The local copy is merged into `laravel`, but **`origin/feature/admin-dashboard` is one commit ahead and not merged** — that is PR #34. Leave the remote alone until that commit lands or is dropped. |
+| `feature/sqlite-postgres` | Merged into `laravel`. The *code* is in; the cut-over itself has not happened — see Open threads. |
+| `main` | **Not the deploy branch.** An unrelated "Initial commit" history plus merges of `laravel` (`9b51add3`, same tree). Branch from `laravel`. |
+
+**Deleted locally on 2026-10-01**, all fully merged into `laravel`, and all still
+on the remote: `feature/whats-new-page` (`e3253197`),
+`feature/course-publishing-workflow` (`1a6fc0f7`), `feature/creator-role`
+(`40f7896e`), `feature/learner-experience` (`3ffd68fe`). Recover one with
+`git branch <name> <sha>`. `feature/postgres-migration` no longer exists
+anywhere.
+
+**The remote still holds 26 branches already merged into `origin/laravel`.**
+Tidying those is a push, so it is the owner's call, not an agent's.
 
 ### Open threads
 
@@ -350,11 +359,13 @@ There are no tags in this repo yet, so `v2.0.0` will be the first.
   but production still runs SQLite. It is a downtime window, not a normal
   deploy — follow `docs/postgres-cutover.md` exactly, and note the rollback
   order: **roll the migration back before reverting the code.**
-- **`feature/admin-dashboard` is large** — widgets, bulk actions, an export, a
-  learner-facing change, branding. Worth splitting before review; the
-  content-health fix stands alone as a genuine bug fix.
-- **PRs still need opening**: sqlite-postgres, admin-dashboard and
-  support-engine-ports.
+- **One commit of `feature/admin-dashboard` never landed.** Its work — widgets,
+  bulk actions, an export, branding — is in `laravel`, but the remote branch
+  holds one further commit (PR #34). Decide whether it goes in or goes away,
+  rather than leaving the branch to rot.
+- **`feature/support-engine-ports` still needs a PR into `laravel`.** The other
+  two named here before — sqlite-postgres and admin-dashboard — are merged into
+  `laravel`, bar the one commit still sitting on `origin/feature/admin-dashboard`.
 - **Two bigger features are waiting on decisions**, not code: video engagement
   and multilingual. See `docs/plans/support-engine-features.md` — each has a
   "Decide first" list. Do not start either without answers.
@@ -381,6 +392,419 @@ Newest first.
 ## Work log
 
 Newest first. Add to this every time.
+
+### 2026-10-01 — Branches tidied, and the table that described them corrected
+
+Before merging `feature/support-engine-ports` into `laravel`, a `stable` branch
+was cut as a snapshot of the deployed tree (`9b51add3`, byte-identical to
+`laravel`). Local only; it is a rollback point for the owner, not a shared one,
+until somebody pushes it.
+
+Four local branches were deleted, each confirmed merged by `git branch -d`
+rather than forced: `feature/whats-new-page`,
+`feature/course-publishing-workflow`, `feature/creator-role` and
+`feature/learner-experience`. Their remotes are untouched and the shas are in
+the Branches table, so any of them comes back with one command.
+`feature/sqlite-postgres` and `feature/admin-dashboard` were kept: their remote
+counterparts are still live, and `origin/feature/admin-dashboard` has a commit
+that is not in `laravel`.
+
+**The Branches table had drifted far enough to mislead.** It called
+`feature/learner-experience` unmerged and stacked, called `feature/admin-dashboard`
+an open PR with nothing merged, and told the reader to delete
+`feature/postgres-migration`, which no longer exists on any remote. All of that
+was read off git rather than trusted. The table now also says plainly that
+`laravel` is the production branch, and records that the remote still carries 26
+branches already merged into `origin/laravel` — tidying those is a push, so it
+is the owner's call.
+
+### 2026-10-01 — A lesson can be written from inside its course
+
+The Lessons tab could only reuse a lesson that already existed. Writing a new
+one meant going to **Lessons**, creating it, and picking the course back again.
+There is now a **New lesson** button beside **Add existing lesson**: title, slug
+and summary, and the lesson joins the end of that course.
+
+It saves through `$course->lessons()->create()`, which is `CourseLessons::create()`
+— the home course and the course's language come from there, and `Lesson::saved()`
+files it in the pivot. **Filament's `CreateAction` cannot be left to its own
+devices here:** it builds the record and attaches it afterwards, so the insert
+would run with no `course_id`, which the column forbids. Hence `->using()`.
+The fields are `LessonForm::insideCourse()` rather than the whole lesson form,
+whose `course_ids` select would contradict the course you are standing in.
+
+**Add existing lesson was worse than it looked.** It is a searchable select that
+Filament leaves empty until you type, so it read as "there is nothing to add".
+It is now `preloadRecordSelect()`, and lessons already in this course are
+excluded, since offering them does nothing.
+
+**That is when the real bug surfaced, and only in a browser against PostgreSQL.**
+Filament runs the picker's query as `select distinct lessons.*`, and `lessons`
+has two `json` columns (`doc_links`, `video_sources`). PostgreSQL has no
+equality operator for `json`, so the modal failed with
+`SQLSTATE[42883]: could not identify an equality operator for type json` and
+simply spun forever. **This was not new** — the same query runs on every search,
+so the picker has been broken on PostgreSQL all along; preloading only made it
+fail on open instead of on the first keystroke. Narrowing the select to
+`lessons.id, lessons.title, lessons.course_id` fixes it, and then `distinct`
+objects to the relation's pivot ordering not being selected, so the picker is
+`reorder`ed by title. **The suite cannot catch either one**: SQLite is happy
+with both. Only the browser check against the Postgres container found it.
+
+**Verified:** the whole suite in Docker, Pint clean, and the tab driven in
+Chrome against PostgreSQL — the New lesson modal creates a lesson into the
+course, and the picker lists "ZZ Temp lesson · from ZZ Temp check course" with
+nothing typed. That temporary course and lesson were deleted afterwards (back to
+8 lessons, 1 course). Four new tests in `CourseLessonsRelationTest`, one of them
+reading the mounted action's own select options.
+
+### 2026-09-30 — Pictures within each case-study step
+
+Editors can now attach sanitized screenshots to any individual case-study step,
+either inline through the rich-editor paperclip or as an ordered gallery by
+pasting, dropping or selecting files below the step. Gallery images are stored
+on the public disk and rendered beneath the matching step; image-only steps are
+kept visible. The migration adds nullable JSON storage, and the editor guidance
+is translated in all five UI languages and all five admin guides.
+
+The two ways in are not a duplicate: Filament's `RichEditor` cannot take a
+pasted image — the compiled TipTap bundle has no paste handler, and a synthetic
+paste produces no upload — while `FileUpload` documents `pasteable()`. So the
+paperclip carries a picture that belongs mid-sentence, and the box below the
+step takes a paste, a drop or a file. Rich-editor attachments were defaulting to
+the private `local` disk, which uploads happily and then shows a broken image to
+the partner; they are pinned to the public disk now, as the gallery is.
+
+**Verified:** PHP syntax checks passed for all fourteen changed PHP files,
+`git diff --check` passed, and Pint passed for those fourteen files. The focused
+Case Study, guide and translation tests passed: 36 tests with 5,463 assertions.
+The PostgreSQL migration ran successfully, and an authenticated Chrome check
+confirmed all nine step galleries and their sanitization guidance in the
+editor. On the partner page, an uploaded image rendered beneath its matching
+section without horizontal overflow at 1,440px or 390px; desktop and mobile
+screenshots were reviewed. The full suite reached 445 passing tests and one
+unrelated failure from concurrent lesson-form work: four new English
+`admin_courses.lessons_tab.create*` keys did not yet exist in French.
+
+`section_images` belongs in `$fillable` and `$casts` and **not** in
+`$translatable` — both arrays end with `'adaptation',`, and it was briefly added
+to the wrong one.
+
+### 2026-09-30 — Agent instructions consolidated
+
+Removed the redundant `CLAUDE.md` pointer after confirming that its short rule
+summary was already fully represented here. `agents.md` is now the sole agent
+guide and project work log.
+
+### 2026-09-30 — Dashboard filters, learner journey and resource engagement
+
+The administrator dashboard now has shared date, partner, product and course
+filters. The default date range is 30 days. The unsupported company-completion
+percentage is gone; `CompletionsByCompany` remains the class name for discovery
+compatibility but is now a partner engagement table with learner reach,
+completions, certificates, last activity and a direct company link.
+
+`activity_events` now stores nullable polymorphic subject IDs plus course and
+product context. New course, lesson, Case Study, Tutorial and Webinar actions
+write those IDs while retaining the historical label. This supports the new
+learner-journey and resource-engagement charts and lets course-open rankings use
+stable identity. Existing label-only events remain readable but cannot be
+retroactively product- or course-filtered.
+
+Stalled follow-up is now course-specific through `course_lesson`: a certificate
+or recent completion in one course does not hide an older stalled course. The
+course title, lesson count and last completion shown on the row all come from
+the same stalled course. Resource analytics deliberately cover signed-in users
+only; anonymous tracking needs a separate privacy and retention decision.
+
+**Verified:** 64 focused dashboard and resource tests passed with 265
+assertions; the final Docker suite passed 444 tests with 6,954 assertions. Pint
+passed for the six dashboard source and regression-test files, and authenticated
+desktop and mobile dashboard screenshots were reviewed in Chrome.
+
+### 2026-09-30 — Learner activity shows people, not repeated clicks
+
+The 30-day **Student activity** graph used to draw two overlapping filled lines
+for lesson completions and raw sign-ins. That made one learner signing in several
+times look like broader academy use. It now counts distinct learners per day
+across learner-generated activity and pairs that blue line with green lesson-
+completion bars. Reminder events and staff activity remain excluded.
+
+The chart has localized date labels, a bottom legend, indexed tooltips, integer
+ticks, fewer visible date labels on narrow screens, and a stable height. The
+aggregation now folds the queried events once instead of filtering the full set
+again for each of 30 days. Changelog, roadmap, English guide and all localized
+admin guides describe the new meaning.
+
+**Verified:** 101 focused tests passed with 5,427 assertions; Pint passed for
+`ActivityOverTime.php` and `DashboardTest.php`.
+
+### 2026-09-30 — A trustworthy dashboard for admins and a workspace for creators
+
+The dashboard roadmap now lives in `docs/plans/dashboard-improvements.md`, with
+completed, in-progress and planned work kept explicit. The first two phases are
+done. **Active students** now means learner activity during the last 30 days,
+not anyone who completed a lesson at any point; staff actions and reminders do
+not count. Published lesson totals and company progress share one
+`Lesson::availableToLearners()` scope, so a published lesson stranded inside a
+draft course no longer distorts the figures.
+
+Creators now get four linked content cards for Courses, Case Studies, Tutorials
+and Webinars. Counts are limited to their assigned products and show published,
+draft and archived content. Admins retain the learner dashboard, creators get no
+learner or company data, and learners still cannot enter the panel.
+
+The changed labels are translated in all five shipped languages. The visible
+behavior is recorded in What's new and in every localized admin guide. Later
+phases deliberately remain in the roadmap: shared filters and partner
+engagement, stable activity subject IDs and a course funnel, course-specific
+stalled tracking, and engagement reporting for the newer resource types.
+
+**Verified:** 102 focused feature tests passed with 5,427 assertions; Pint
+passed for all seven changed PHP source and test files; the rebuilt container's
+`/admin` route redirects guests to `/admin/login` as expected. No manual browser
+screenshot review was available, so that remains the only visual follow-up.
+
+### 2026-09-30 — A dashboard funnel that cannot contradict itself
+
+Reviewing the dashboard in a browser — the check phase 6 was still waiting on —
+showed **Learner journey** reading 0, 0, 0, 0, 11: no opens, no completions,
+eleven certificates. Nothing was broken in the filtering. `activity_events`
+holds only what has happened since the academy began recording it (in the local
+database, twenty logins and nothing else), while `lesson_user` and
+`certificates` go back to the beginning. Each stage counted from its own source
+alone, so they disagreed.
+
+Each stage now also counts the learners the later stages prove were there: a
+certificate means the course was finished, which means its lessons were, which
+means they were opened. Evidence read forwards. No bar can stand taller than
+the one before it, and nothing is invented — the test that locks this in
+creates a certificate with no events at all.
+
+Finished lessons come from the pivot through one shared filtered query,
+`UsesDashboardFilters::completedLessonRows()`, which the headline **Lesson
+completions** card now uses too; it read 0 beside a funnel full of
+certificates. **Most opened courses** was the one chart still at half width,
+leaving dead space beside it, and is now full width.
+
+The plan doc said the browser review "was not run because this repository has
+no browser automation dependency". It has been run now, from the session
+scratchpad, so nothing was added to the repository — and the doc says so.
+
+**Verified:** dashboard tests 41 passed, the whole suite passed in Docker, Pint
+was clean for the changed dashboard files, and the dashboard was re-checked in
+Chrome afterwards.
+
+### 2026-09-30 — Forgot password, for partners and staff alike
+
+There was no password reset at all: a partner who forgot theirs waited for an
+admin to send them their personal sign-in link. Both login pages now offer
+**Forgot password?** and land on the same two pages, so there is one flow and
+one email.
+
+Laravel's broker does the token work — hashed, an hour, one use, one link a
+minute per person. The `password_reset_tokens` table was already there, created
+by the first users migration; I wrote a second migration for it before noticing,
+which failed loudly on the first run. `User::sendPasswordResetNotification()` is
+overridden to send `PasswordResetLink`, our own mailable, in the person's
+language, rather than Laravel's English notification.
+
+**The page never says whether an address has an account.** Otherwise anyone
+could type addresses and learn which partners are customers. So: one message
+either way, no `exists` rule on the field (which would leak the same fact
+through a validation error), one message for every bad link, and `throttle:6,1`
+so nobody walks a list through it.
+
+**Timing was the leftover hole** — sending mail takes longer than not sending
+it, so a stopwatch could tell the answers apart. The email is now sent in a
+`defer()`, after the response has gone out, so both come back at the same
+speed. Not a queued mailable: the academy runs no queue worker, and a queued
+email would sit in the jobs table unsent.
+
+The panel's link is a render hook on `AUTH_LOGIN_FORM_AFTER`, the same way the
+language switcher and What's new reach the top bar.
+
+**Verified:** the whole suite in Docker. Pint clean.
+
+### 2026-09-30 — Contributor notes out of the panel, Mail out of the menu
+
+The **What's new** page showed an entry explaining that the page is built from
+`docs/CHANGELOG.md` — our business, not a partner admin's. The owner asked for
+it to stay in the file for contributors and leave the view. It is wrapped in an
+HTML comment now, which `Changelog::parse()` strips, so the page and the PDF
+both drop it while the text stays where whoever works on this next will read
+it. `ChangelogPageTest` now fails if an authoring note ever reaches either.
+
+**Mail briefly left the sidebar and came back with a permission.** It was taken
+off on the reasoning that mail is set in the server's `.env`; the owner then
+asked for it back, reframed, and gated by a right that can be given or taken
+away. So: `User::PERMISSION_MAIL_CHECK`, a **Check mail delivery** checkbox
+beside the existing two under **People → Users**, `canAccess()` reading
+admin-or-permission the way `TranslationResource` does, and
+`shouldRegisterNavigation()` following `canAccess()` so the menu item appears
+for exactly whoever may open it. The page now opens with the question it
+answers — "Not getting emails? Send yourself a test…" — as a subheading rather
+than starting with readings. Settings themselves stay in `.env`; nothing about
+that changed.
+
+A colleague can now answer "did that certificate email go out?" without being
+made an admin of the whole academy.
+
+**Verified:** the whole suite in Docker. Pint clean.
+
+### 2026-09-30 — Translations as a matrix, languages across the top
+
+Settings → Translations was one row per key **per language**: the same line
+appeared five times and you filtered by language to compare. It is now one row
+per key with a column per language, so a line reads across.
+
+The table query keeps one row per key (`MIN(id)` grouped by key, so a key that
+exists in only one language still lists), and `Translation::siblings()` — a
+`hasMany` on `key` — carries the other languages, eager-loaded, so a page of
+keys is not a query per language. Each cell is a `TextColumn` with an `action()`
+holding the correction box, and it writes to that language's own row,
+`firstOrNew` so a language with no row yet still gets one. Green where somebody
+corrected it, grey where the shipped line stands, red where the key is missing
+from that language.
+
+Search now also matches a correction written in any language, not only the
+row's own. The language filter went, since every row has them all; the "missing
+in" case is visible in the colour instead. The per-row edit page still exists
+and still works — the tests that use it were left alone.
+
+**Verified:** the whole suite in Docker. Pint clean. Chrome on the page at
+1680px: 1,004 rows where there were 5,020.
+
+### 2026-09-30 — Tutorials an admin adds, by link or upload
+
+Tutorials was derived entirely from lesson videos. It still is, but a
+`Tutorial` model now sits above that: a standalone how-to that belongs to no
+course, with one video — a YouTube link or an uploaded file. The form reuses
+the two sources and the validation `LessonForm` already had, including
+`Lesson::youtubeIdFrom()`, so a playlist link is refused here too; that is what
+stops publishing, since a tutorial with no working video is an empty page.
+
+The page shows the standalone ones first under **Pilot how-tos**, then the
+course videos under **From the courses**, and the count at the top covers both.
+Each standalone tutorial has its own page with the player — `youtube-nocookie`
+for links, a `<video>` element for uploads, as on a lesson.
+
+Same shape as case studies and webinars: `HasPublishStatus`, `Written in` plus
+Translate, product scoping, a draft preview banner, `canManageTutorial()` on
+the shared `canManageContentFor()`.
+
+**Verified:** the whole suite in Docker. Pint clean. `npm run build`.
+
+### 2026-09-29 — A top bar with four areas, and webinars
+
+The header was Help and Case Studies; the owner asked for Courses, Case
+Studies, Tutorials and Webinars, with Help moved out of the way.
+
+**Courses** (`/courses`) is the catalogue the home page had no room for: every
+published course, a search box, and filters for level and audience. The home
+page is untouched — it stays the student's own starting point. It was built as
+"Explore" and renamed before anything else referred to it.
+
+**Tutorials** (`/tutorials`) gathers every published lesson that has a video,
+under its course. Nothing to maintain: a lesson joins the moment it has a
+video, and opening one goes to the lesson, where the quiz is. `videoEntries()`
+reads a JSON column and the legacy single upload, so the filtering is in PHP,
+not the query.
+
+**Webinars** is a new content type, built like case studies: `HasPublishStatus`,
+`Written in` plus Translate, product scoping, a draft preview banner, and a
+Filament resource under Content. A session needs a date and either a join link
+or a recording before it can be published — one nobody can join and nobody can
+watch helps no one. Times are stored and shown in UTC with the zone named;
+per-viewer local time would need a timezone on each user, which the app has no
+field for.
+
+`canManageCaseStudy` and `canManageWebinar` were the same seven lines, so both
+now call one `canManageContentFor()`.
+
+**Help** moved to the account menu and the footer. A guest has no account menu,
+so the footer is their way in — `HelpPageTest` now checks that rather than the
+header icon it used to.
+
+**Two guards earned their keep:** `AdminGuideMenuTest` caught that the new
+Webinars sidebar item was missing from the admin guide's menu table, in all
+five languages, and `HelpPageTest` caught Help leaving the header.
+
+**Verified:** the whole suite in Docker. Pint clean. `npm run build` for the
+new classes.
+
+### 2026-09-29 — Case Studies in every language, after a review of the new section
+
+Reviewed the Case Studies commits and ran the whole suite: 394 passed, 1 failed.
+The failure was `test_no_panel_label_is_written_as_fixed_english_text` with 36
+offenders — the new admin screens were written as fixed English text, and so
+were both partner pages, the header link and the home-page card. A Russian
+trainer got a Russian menu and an English form.
+
+Put them through `__t()`: new `lang/{code}/admin_case_studies.php`,
+`academy.case_studies.*` for the partner pages, `admin_nav.case_studies` and
+`nav.case_studies`. The ten study headings live once, under
+`academy.case_studies.sections`, and `CaseStudy::SECTION_FIELDS` maps them to
+columns — the editor writes under the same headings a partner reads, so they
+cannot drift apart. Difficulty reuses `academy.common.level`, the same three
+names courses use. The feature suggestions said "Geofences" while the seeded
+studies say "GeoZones", and the listing filter matches exactly, so the
+suggestion now says GeoZones too.
+
+Also: restored the root agent guide after its filename and the `CLAUDE.md`
+pointer had drifted apart; moved the root `CASE_STUDY_PLAN.md`
+to `docs/plans/case-studies.md`; and translated the UI names the new guide
+sections had left in English.
+
+**Verified:** the whole suite in Docker — 399 passed, 0 failed. The four new
+tests: a Russian partner reading the listing, a French partner reading a study,
+a Russian editor opening the form, a study written in Russian and read in
+English, and the notes hidden from a learner but shown to the product's
+creator. Pint clean on `app tests lang`. Chrome at 375px and 1280px on the
+listing and a study, English and Russian: no sideways scroll, and a translated
+study reads in Russian down to its section bodies.
+
+Then, on the owner's decision, two more changes:
+
+**A study is written in a language and translated into the others**, like a
+course. `case_studies.language`, `HasContentTranslations` over the title, the
+summary and the nine section bodies, `CourseForm::writtenIn()` in the form and
+the existing `TranslateContentAction` on the edit page. The search matches
+translations too. The Translate box needed names for eleven fields that the
+page and the form already name, so `HasContentTranslations` grew
+`translatableFieldLabel()`; `CaseStudy` points it at the section headings
+instead of shipping the same words twice.
+
+**The source and performance-claim notes are editors' notes**, so they left the
+public sidebar — the controller passes `$isEditor`, and only someone who may
+edit the study reads them. They read as working notes ("Validate exact fuel
+module availability before publishing") and were public to everyone.
+
+### 2026-09-29 — Case Studies for partner deployment playbooks
+
+Added a searchable **Case Studies** area for partners and integrators, with
+industry, Pilot feature and difficulty filters, ten-part implementation guides,
+sanitized cover/diagram media, and related Academy lessons and documentation.
+Only published studies are public; authorized admins and product-scoped
+creators can create, edit, preview, publish and return studies to draft from
+the Filament panel. Publication requires the core scenario, outcome,
+configuration, verification and source-note fields. Privacy fields record
+whether a study is anonymized or customer approved, with a separate note for
+the evidence behind performance claims.
+
+Seeded three anonymized drafts: geofence arrival/departure monitoring,
+overspeeding escalation and fuel-event investigation. Partner submissions and
+a separate review state remain deferred because the application has no shared
+moderation/review workflow to reuse. Updated the current changelog, all admin
+guide copies, all learner Help copies, and `docs/plans/case-studies.md`.
+
+**Verified:** `CaseStudyTest` (6 tests, 28 assertions),
+`StudentSiteTranslationTest` (7 tests, 4,151 assertions),
+`CoursePublishingTest` (17 tests, 85 assertions), `CreatorRoleTest` (23 tests,
+80 assertions), and `npm.cmd run build` passed during implementation. After the
+documentation correction, the focused changelog, admin-guide menu, guide page
+and learner Help tests passed (36 tests, 114 assertions). Manual browser
+acceptance and Pilot subject-matter review of the seeded drafts remain open.
 
 ### 2026-09-15 — Russian and French checked on screen, and what that found (uncommitted)
 **How it was checked:** puppeteer-core with installed Chrome against the preview
@@ -796,13 +1220,13 @@ The page itself (search, category filters, PDFs, Latest) was already here.
   into the downloads folder with nothing on screen.
 - Pinned in `ChangelogPageTest`.
 
-### 2026-09-14 — One guide: CLAUDE.md merged into agent.md (uncommitted)
-Owner's request: keep `agent.md` as the single file. Its top is now the whole
+### 2026-09-14 — One guide: CLAUDE.md merged into agents.md (uncommitted)
+Owner's request: keep `agents.md` as the single file. Its top is now the whole
 rulebook: Project, How to work, and Standing instructions.
 - The generic "senior engineer" template from `f78556b3` was filled in for this
   project. Its placeholders are gone and its points are kept.
-- `CLAUDE.md` is a short pointer to this file, and stays only because Claude Code
-  loads it automatically.
+- `CLAUDE.md` was initially kept as a short pointer to this file. It was removed
+  when agent instructions were later consolidated here.
 - Stale facts fixed on the way: the `is_admin` flag is now roles, and
   `php artisan pint` is now `./vendor/bin/pint`.
 - The duplicated "Repo rules worth repeating" tail was removed, and its rules
@@ -1506,6 +1930,18 @@ purpose — `sidebar-version.blade.php`, `doc.blade.php`. They work; leave them.
 Filament's own API (`brandLogoHeight()`, `->extraAttributes()`) is still the
 better tool for anything Filament already models. This trap is what made the
 sign-in logo the wrong size *and* broke its dark-mode swap.
+
+**`select distinct lessons.*` cannot run on PostgreSQL.** `lessons` carries two
+`json` columns (`doc_links`, `video_sources`), and PostgreSQL has no equality
+operator for `json`, so any `distinct` over `lessons.*` dies with
+`SQLSTATE[42883]: could not identify an equality operator for type json`.
+Filament builds exactly that query for a relation manager's **Attach** picker,
+which is why Add existing lesson failed on Postgres while every test passed —
+SQLite compares json as text and never complains. Whenever a query over
+`lessons` needs `distinct`, name the columns. Watch for the sequel, too: once
+the select is narrowed, `distinct` refuses any ordering column that is not in
+it, and `Course::lessons()` is ordered by the pivot — so `reorder()` on a column
+you did select. Found in a browser, not by the suite.
 
 **Tailwind preflight makes form controls transparent.** An `<input>` with no
 `bg-*` class has no background. Fine on a white card, invisible on a coloured

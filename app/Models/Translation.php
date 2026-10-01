@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Services\Translator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Translation extends Model
 {
@@ -44,5 +45,15 @@ class Translation extends Model
     public function language(): BelongsTo
     {
         return $this->belongsTo(Language::class);
+    }
+
+    /**
+     * The same line in every language, this row included. Settings →
+     * Translations lists one row per key and reads the other languages from
+     * here, so a page of keys is not a query per language.
+     */
+    public function siblings(): HasMany
+    {
+        return $this->hasMany(self::class, 'key', 'key');
     }
 }

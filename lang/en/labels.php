@@ -32,6 +32,11 @@ return [
         'lesson_completed' => 'Completed lesson',
         'course_completed' => 'Completed course',
         'reminder_sent' => 'Sent a reminder',
+        'case_study_opened' => 'Opened case study',
+        'tutorial_opened' => 'Opened tutorial',
+        'webinar_opened' => 'Opened webinar',
+        'webinar_joined' => 'Joined webinar',
+        'webinar_recording_opened' => 'Opened webinar recording',
     ],
 
     // Standalone names, for a select or a badge. The student site words these

@@ -62,6 +62,18 @@
         @include('academy.partials.search-form', ['inputId' => 'home-search'])
     </div>
 
+    <a href="{{ route('academy.case-studies.index') }}"
+       class="group mb-8 block rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-brand/40 hover:shadow-md">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <span class="text-xs font-semibold uppercase tracking-wide text-brand">{{ __t('academy.case_studies.eyebrow') }}</span>
+                <h2 class="mt-1 text-lg font-extrabold text-navy group-hover:text-brand">{{ __t('academy.case_studies.title') }}</h2>
+                <p class="mt-1 text-sm text-slate-500">{{ __t('academy.case_studies.home_intro') }}</p>
+            </div>
+            <span class="inline-flex min-h-11 items-center rounded-lg bg-navy px-4 text-sm font-semibold text-white">{{ __t('academy.case_studies.browse') }}</span>
+        </div>
+    </a>
+
     {{-- The next step: one card, one action. Which card depends on where the
          student is — see AcademyController::nextStep(). --}}
     @if($next)

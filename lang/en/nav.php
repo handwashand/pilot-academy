@@ -5,7 +5,12 @@
 
 return [
     'skip' => 'Skip to content',
+    'sections' => 'Sections',
     'help' => 'Help',
     'certificates' => 'Certificates',
     'logout' => 'Log out',
+    'case_studies' => 'Case Studies',
+    'tutorials' => 'Tutorials',
+    'webinars' => 'Webinars',
+    'courses' => 'Courses',
 ];

@@ -107,4 +107,25 @@ return [
         'certificates' => 'Certificats',
         'activity' => 'Activité',
     ],
+
+    'tutorials' => [
+        'nav' => 'Tutoriels',
+        'one' => 'tutoriel',
+        'many' => 'tutoriels',
+        'badge' => 'Tutoriels encore en brouillon — les partenaires ne les voient pas',
+    ],
+
+    'webinars' => [
+        'nav' => 'Webinaires',
+        'one' => 'webinaire',
+        'many' => 'webinaires',
+        'badge' => 'Webinaires encore en brouillon — les partenaires ne les voient pas',
+    ],
+
+    'case_studies' => [
+        'nav' => 'Études de cas',
+        'one' => 'étude de cas',
+        'many' => 'études de cas',
+        'badge' => 'Études de cas encore en brouillon — les partenaires ne les voient pas',
+    ],
 ];

@@ -33,6 +33,9 @@ return [
         'module' => 'Módulo',
         'corrected' => 'Corrigido',
         'correct' => 'Corrigir',
+        'correct_in' => 'Corrigir a linha em :language',
+        'click_hint' => 'Uma linha por chave, em todos os idiomas. Clique em qualquer célula para corrigir esse idioma — os alunos veem a mudança na hora.',
+        'save_correction' => 'Salvar a correção',
         'states' => [
             'corrected' => 'Corrigido',
             'shipped' => 'Incluído',

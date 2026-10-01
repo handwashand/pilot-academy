@@ -10,6 +10,8 @@ Você chega ao **Painel**, com resumo de estudantes, progresso, cursos publicado
 
 Altere seu nome, e-mail ou senha pelo menu da conta, no canto superior direito, em **Perfil**.
 
+Administradores veem atividade dos estudantes, progresso e certificados. **Estudantes ativos** conta quem entrou ou trabalhou na academia nos últimos 30 dias; lembretes e atividade da equipe não contam. O gráfico mostra alunos ativos únicos como uma linha e aulas concluídas como barras; várias ações da mesma pessoa no mesmo dia contam apenas uma vez. As aulas publicadas e o progresso por empresa incluem apenas aulas disponíveis em um curso publicado. Criadores veem cartões com links para Cursos, Estudos de caso, Tutoriais e Webinars dos produtos atribuídos, separados em publicados, rascunhos e arquivados, sem dados de estudantes ou empresas.
+
 ## 2. O menu em resumo
 
 | Item | Para que serve |
@@ -17,6 +19,9 @@ Altere seu nome, e-mail ou senha pelo menu da conta, no canto superior direito, 
 | **Painel** | Indicadores gerais, progresso por empresa e estudantes parados. |
 | **Conteúdo → Cursos** | Criar cursos e ativar teste final e certificado. |
 | **Conteúdo → Aulas** | Adicionar vídeo, texto e perguntas. |
+| **Conteúdo → Estudos de caso** | Criar, visualizar e publicar guias práticos de implantação para parceiros. |
+| **Conteúdo → Webinars** | Agendar sessões ao vivo, compartilhar o link para participar e adicionar a gravação depois. |
+| **Conteúdo → Tutoriais** | Vídeos práticos independentes, por link do YouTube ou arquivo enviado. |
 | **Conteúdo → Produtos** | Produtos ou módulos e seus responsáveis. |
 | **Conteúdo → Mídias** | Biblioteca de imagens reutilizáveis. |
 | **Pessoas → Usuários** | Contas, funções, progresso e certificados. |
@@ -40,7 +45,7 @@ Em **Courses**, clique em **New course**. Preencha título, descrição curta, d
 
 Em **Lessons**, crie uma aula, escolha o curso, adicione vídeo, texto, duração, transcrição e perguntas. A aula precisa de uma verificação de conhecimento para que o estudante consiga concluí-la.
 
-Ordene as aulas na aba **Lessons** do curso. Mover uma aula existente a remove do curso anterior; para copiar material, use **Duplicate** no curso.
+Ordene as aulas na aba **Lessons** do curso. No mesmo lugar, **Nova aula** cria uma aula direto neste curso, e **Adicionar aula existente** abre a lista de aulas dos outros cursos: a aula é compartilhada, continua também no curso anterior. Para uma cópia separada, use **Duplicate** no curso.
 
 ### Etapa 3 · Ativar o teste final
 
@@ -60,6 +65,8 @@ Ao passar, o certificado é gerado automaticamente em PDF com nome, curso, data,
 
 ## 4. Como configurar
 
+**Estudos de caso.** Em **Conteúdo → Estudos de caso**, clique em **New case study** e informe o problema resumido, o setor, os recursos do Pilot, a dificuldade e o tempo estimado. Preencha o cenário, o resultado desejado, as etapas de configuração e a verificação. A nota **Source or verification note** é obrigatória antes da publicação; use **Performance claim note** para guardar a evidência de qualquer resultado quantificado. Mantenha **Anonymized** ativado, exceto quando houver aprovação explícita do cliente, e ative **Customer approved** somente quando essa aprovação estiver registrada. Cada etapa aceita imagens pelo clipe da barra de ferramentas ou pela caixa abaixo, onde você pode colar, soltar ou escolher arquivos; as imagens da caixa aparecem abaixo dessa etapa. Use apenas imagens higienizadas, sem nomes, locais exatos, credenciais ou dados de veículos reais. Salve o rascunho, confira com **Preview** e depois use **Publish** na lista. Parceiros comuns não conseguem abrir um rascunho. **Written in** é o idioma do próprio estudo: escreva no seu e acrescente os outros com **Translate** na página de edição. As notas de fonte e de afirmações quantificadas são apenas para editores — os parceiros não as veem. Creators gerenciam somente os estudos dos produtos atribuídos a eles.
+
 Edite perguntas do teste final na aba **Final questions** do curso. Uma pergunta vinda de uma aula é a mesma pergunta; editá-la muda também a aula.
 
 Envie um fundo de certificado em **Final quiz & certificate → Certificate background**. Use imagem A4 paisagem ou deixe em branco para usar o modelo integrado.
@@ -74,7 +81,9 @@ Para adicionar empresa e estudante, crie a empresa em **Companies** e depois cri
 
 Use **Users** para filtrar por função e abrir o progresso de um estudante.
 
-O **Painel** mostra conteúdo com problemas, indicadores, progresso por empresa, estudantes parados, aulas difíceis, atividade e cursos mais abertos.
+Os **Filtros do painel** permitem escolher período, parceiro, produto ou curso; o período padrão é de 30 dias. Criadores não veem esses filtros nem dados dos alunos.
+
+O **Painel** mostra o **Engajamento dos parceiros**, a **Jornada do aluno**, a atividade diária, os recursos abertos e os cursos mais abertos. A lista de alunos parados agora é calculada por curso: concluir ou receber um certificado em outro curso não esconde um curso abandonado. O engajamento com estudos de caso, tutoriais e webinars registra apenas usuários conectados; visitas anônimas não são registradas.
 
 Em **Student feedback**, dentro do curso, leia comentários privados dos estudantes.
 

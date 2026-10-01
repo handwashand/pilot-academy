@@ -71,6 +71,13 @@ class Lesson extends Model
             ->withTimestamps();
     }
 
+    /** Published lessons partners can actually reach through a live course. */
+    public function scopeAvailableToLearners(Builder $query): Builder
+    {
+        return $query->published()
+            ->whereHas('courses', fn (Builder $courses): Builder => $courses->published());
+    }
+
     /** Tell the owners of every course this lesson is in to look again. */
     public static function notifyOwnersOf(mixed $lessonId): void
     {

@@ -1,0 +1,77 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\ActivityEvent;
+use App\Models\CaseStudy;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
+
+class CaseStudyController extends Controller
+{
+    public function index(Request $request)
+    {
+        $term = trim((string) $request->query('q', ''));
+        $industry = trim((string) $request->query('industry', ''));
+        $feature = trim((string) $request->query('feature', ''));
+        $difficulty = trim((string) $request->query('difficulty', ''));
+
+        $base = CaseStudy::published();
+
+        $industries = (clone $base)
+            ->whereNotNull('industry')
+            ->orderBy('industry')
+            ->pluck('industry')
+            ->filter()
+            ->unique()
+            ->values();
+
+        $features = (clone $base)
+            ->pluck('features_used')
+            ->flatten()
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values();
+
+        $caseStudies = CaseStudy::published()
+            // Loaded up front so a page of titles is not a query per title.
+            ->with(['product', 'coverMediaItem', 'contentTranslations'])
+            ->matchingSearch($term)
+            ->when($industry !== '', fn (Builder $query) => $query->where('industry', $industry))
+            ->when($feature !== '', fn (Builder $query) => $query->whereJsonContains('features_used', $feature))
+            ->when($difficulty !== '', fn (Builder $query) => $query->where('difficulty', $difficulty))
+            ->orderBy('sort_order')
+            ->orderBy('title')
+            ->paginate(12)
+            ->withQueryString();
+
+        return view('academy.case-studies.index', [
+            'caseStudies' => $caseStudies,
+            'term' => $term,
+            'industry' => $industry,
+            'feature' => $feature,
+            'difficulty' => $difficulty,
+            'industries' => $industries,
+            'features' => $features,
+            'difficulties' => CaseStudy::difficultyLabels(),
+        ]);
+    }
+
+    public function show(Request $request, CaseStudy $caseStudy)
+    {
+        abort_unless($caseStudy->isVisibleTo($request->user()), 404);
+
+        $caseStudy->load(['product', 'coverMediaItem', 'diagramMediaItem', 'contentTranslations']);
+
+        ActivityEvent::record($request->user(), ActivityEvent::TYPE_CASE_STUDY_OPENED, $caseStudy->title, $request->path(), $caseStudy);
+
+        return view('academy.case-studies.show', [
+            'caseStudy' => $caseStudy,
+            'relatedLessons' => $caseStudy->relatedLessons(),
+            // The source and performance notes are the editor's own working
+            // notes, so only someone who may edit the study reads them.
+            'isEditor' => (bool) $request->user()?->canManageCaseStudy($caseStudy),
+        ]);
+    }
+}

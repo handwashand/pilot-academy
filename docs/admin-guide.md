@@ -10,7 +10,11 @@
 
 Open your site address in a browser and add `/admin` at the end. Sign in with your admin email and password.
 
-You land on the **Dashboard** — a quick summary of how many students you have, how many lessons they finished, and how many certificates were issued. The menu on the left takes you to every part of the academy.
+You land on the **Dashboard**. Admins see student activity, lesson progress and
+certificates. Creators see the Courses, Case Studies, Tutorials and Webinars in
+their assigned products, split into published, draft and archived content, with
+links to each list. Creators never see learner or partner reporting. The menu on
+the left takes you to every part of the academy.
 
 **Change your own name, email or password** from the account menu: click your initials in the top right → **Profile**. You are asked for your current password before a new one is saved. This works for creators too, who cannot open **Users**.
 
@@ -18,7 +22,7 @@ You land on the **Dashboard** — a quick summary of how many students you have,
 
 **Change the language** with the language button at the far right of the top bar — it shows the current code, such as **EN**. Pick a language from its menu; the whole panel reloads in it — menus, forms, buttons, messages and the dashboard — and your choice is saved to your account, so the student site follows it too. Alerts in the notification bell are written in your language as well. Emails and certificates go to each student in the language they chose, whoever sends them — so a certificate you regenerate for a French student is still printed in French.
 
-**Correct a translation** under **Settings → Translations**. Search for the words you saw on the student site or in the panel, in any language, click **Correct**, type the new wording in **Correction** and save — everyone sees it straight away. Keep words that start with a colon, such as `:name`, as they are. To go back to the original text, empty **Correction** and save.
+**Correct a translation** under **Settings → Translations**. Each line of text is one row, with a column per language, so you can read a line across all five at once. Search for the words you saw on the student site or in the panel, in any language, then click the cell in the language you want to fix, type the new wording in **Correction** and save — everyone sees it straight away. Keep words that start with a colon, such as `:name`, as they are. To go back to the original text, empty **Correction** and save.
 
 **Write in your own language.** Every course and lesson has a **Written in** field — English unless you choose another. A new lesson takes the language of its first course.
 
@@ -38,6 +42,9 @@ doing: building the training (**Content**), looking after the people taking it
 | **Dashboard** | The home screen: overall numbers, progress by partner, and who has gone quiet. |
 | **Content → Courses** | Create courses and turn on the final quiz and certificate. |
 | **Content → Lessons** | Add lessons to a course: a video, text, and quiz questions. |
+| **Content → Case Studies** | Build, preview and publish reusable deployment playbooks for partners. |
+| **Content → Webinars** | Schedule live sessions, share the join link, and add the recording afterwards. |
+| **Content → Tutorials** | Standalone how-to videos, by YouTube link or uploaded file. |
 | **Content → Products** | The products/modules your training is about (GARM, PTM, …) and who owns each one. |
 | **Content → Media Items** | A shared image library you can reuse as lesson covers. |
 | **Content → Content health** | Everything broken for students right now, each with a link to fix it. A red number beside it means something needs fixing. |
@@ -49,7 +56,7 @@ doing: building the training (**Content**), looking after the people taking it
 | **Results → Student feedback** | What students said about every course, in one list. Admins only. |
 | **Docs → Guide** | This guide, with a contents list and a search box. |
 | **Docs → What's new** | Everything that has changed in the academy, newest first. Search it, filter it by category, or open it as a PDF. |
-| **Settings → Mail** | Whether the academy really sends email, and a button to send yourself a test. Admins only. |
+| **Settings → Mail** | Are emails arriving? What the server is set to do, and a button to send yourself a test. Admins, and anyone given **Check mail delivery**. |
 | **Settings → Translations** | The wording students see, in every language — correct any of it without waiting for a developer. Admins only. |
 
 Students have their own guide on the public site: **Help**, the **?** in the top bar. Point a stuck student there first — it covers what finishes a lesson, when the final quiz unlocks, and where certificates are.
@@ -117,8 +124,15 @@ lists every lesson in that course.
 - **To change the order**, drag a row by the handle on its left. The order you
   set here is the order students work through, on the course page, in the lesson
   sidebar and in "Continue where you left off". There is nothing to save.
-- **To reuse a lesson that already exists**, click **Add existing lesson** and
-  search for it. The search shows which course each lesson comes from.
+- **To write a new lesson**, click **New lesson**. Give it a title and a web
+  address and it is added to the end of this course, in the course's language —
+  there is no need to go to **Lessons** first and pick the course afterwards.
+  Open it with **Edit** when you are ready to write the content, add videos and
+  set the knowledge check.
+- **To reuse a lesson that already exists**, click **Add existing lesson**. The
+  list opens with every lesson you can add, each showing which course it comes
+  from, and you can type to narrow it. Lessons already in this course are not
+  listed, because they are here.
 - **To take a lesson out of this course**, click **Remove from course** on its
   row. It stays in its other courses. A lesson's only course cannot be removed —
   delete the lesson under **Lessons** instead.
@@ -233,6 +247,47 @@ When a student passes, the certificate is made **automatically**: a PDF with the
 
 ## 4. How to set things up
 
+### Create and publish a case study
+
+Use **Content → Case Studies** for a practical deployment guide that partners
+can reproduce. A case study is reference material rather than a course: it does
+not track completion or issue a certificate.
+
+1. Click **New case study** and choose the **Product** where relevant. Creators
+   must choose one of their assigned products and can only manage studies for
+   those products.
+2. Add the title, short problem statement, industry, relevant Pilot features,
+   difficulty and estimated implementation time. **Written in** is the study's
+   own language — write in yours, then use **Translate** on the edit page to
+   add the other languages. A partner reads the translation where one exists
+   and the original everywhere else.
+3. Complete the study sections. Before publishing, the academy requires the
+   customer scenario and problem, desired outcome, step-by-step configuration,
+   testing and verification, and a **Source or verification note**.
+4. Under **Privacy and verification**, leave **Anonymized** on unless the
+   customer has explicitly approved identification. Turn on **Customer
+   approved** only when that approval is recorded. Use **Performance claim
+   note** to record the evidence behind any measured saving, reduction, uptime
+   or other quantified result. Both notes are for editors: partners never see
+   them, so write them for your colleagues.
+5. Add pictures to any step, two ways: the paperclip in that step's toolbar
+   puts an image inside the text, and the box under the step takes a pasted
+   screenshot, a dropped file or a normal file pick, showing them beneath that
+   step. Optional: add a sanitized cover image or diagram, related Academy
+   lessons, and documentation links. Do not upload customer names, exact locations,
+   credentials, live vehicle data or identifying screenshots.
+6. Save the study as **Draft**, then use **Preview** to inspect its public page.
+   The preview is available to authorized editors, but ordinary partners cannot
+   open the draft.
+7. Return to the Case Studies list and click **Publish**. A study missing a
+   required section or source note stays a draft and the panel explains what
+   needs to be completed. **Unpublish** returns a live study to Draft without
+   deleting it.
+
+Published studies appear under **Case Studies** on the public academy. Check
+that the study can be found with its industry, feature and difficulty filters,
+and that its related lessons and documentation open correctly.
+
 ### Edit the final quiz questions
 
 Open the course → **Final questions** tab. Here you can **Attach lesson question** (add one existing question), **Add all lesson questions** (add them all at once), or **New final question** (write a control question that lives only in the final).
@@ -341,16 +396,25 @@ the complaints, and **Course** or **Partner** to narrow it down.
 
 ### Read the Dashboard
 
+Administrators can use **Dashboard filters** to choose a date range, partner,
+product or course. The default range is the last 30 days. Dates apply to
+activity and results; product and course also narrow the content totals. The
+stalled list keeps its fixed 14-day rule, while its partner, product and course
+filters still apply. Creators do not see these filters or any learner data.
+
 The home screen has these panels:
 
 | Panel | What it tells you |
 |---|---|
-| The numbers along the top | Students and how many are active, lesson completions, published courses and lessons, certificates issued with the average score. |
-| **Progress by partner company** | How much of the published material each partner's students have worked through. A partner with no students yet reads as 0. |
-| **Students who have gone quiet** | Started a course, completed nothing for two weeks, and no certificate. The one list here worth acting on — **Send reminder** emails them a link straight back to their next lesson, or **Open** to see the person. |
+| The numbers along the top | Students, active students and lesson completions in the selected period, published courses and available lessons, and certificates issued with the average score. A login or learner activity counts; reminder emails and staff activity do not. |
+| **Partner engagement** | Learners, active learners, lesson completions, certificates and last activity for each partner in the selected period. **Open partner** goes straight to that company. A partner with no activity remains visible with zeroes. |
+| Creator content cards | Creators see totals for Courses, Case Studies, Tutorials and Webinars in their assigned products, split into published, draft and archived. Click a card to open that list. Admins do not see these cards. |
+| **Students who have gone quiet** | Started the named course, completed nothing in that course for two weeks, and has no certificate for that course. Work or a certificate in another course does not hide the row. **Send reminder** emails a link back to their next lesson, or **Open** to see the person. |
 | **Lessons students struggle with** | Lessons ranked by how often students fail the quiz. |
-| **Student activity** | Lessons finished and sign-ins per day over the last 30 days — whether use is picking up or going quiet. |
-| **Most opened courses** | What students opened in the last 90 days, finished or not. |
+| **Learner journey** | Unique signed-in learners who opened a course, opened a lesson, finished a lesson, finished a course and earned a certificate in the selected period. |
+| **Student activity** | Unique active students as a line and lessons finished as bars for each day in the selected period. Several actions by one student on one day count as one active student, so the line shows reach rather than clicks. |
+| **Most opened courses** | Which courses signed-in students opened in the selected period, finished or not. |
+| **Resource engagement** | Signed-in learner actions for case studies, tutorials and webinars, including webinar joins and recording opens. Anonymous visits are not recorded. |
 
 > **Lessons students struggle with** is usually telling you a question is
 > unclear, not that the students are weak. A lesson needs at least three graded
@@ -486,7 +550,7 @@ Open your site address + `/certificates/` + the certificate number (or scan the 
 | A certificate was issued by mistake | **Certificates** → **Revoke**. Public check shows "Revoked". Changed your mind? **Restore**. |
 | The PDF is empty or won't download | **Certificates** → **Regenerate PDF**, then **Download** again. |
 | The name on a certificate is wrong | **Certificates** → the row → **Edit name**. The PDF is reprinted with the same number. Use **Resend email** if the student should get the corrected copy. |
-| Certificate emails never arrive | **Settings → Mail** says whether the academy is really sending email. **Send test email** to check. |
+| Certificate emails never arrive | **Settings → Mail** says whether the academy is really sending email. **Send test email** to check. The settings themselves live in the server’s `.env`. |
 | You need a list for a report | **Certificates** → **Export CSV** (open in Excel or Google Sheets). |
 | You need everyone's progress, not just certificates | **Users** → **Export learner progress**. One row per student: lessons done, certificates, last activity. |
 | A student ran out of attempts | **Results → Quiz attempts** → turn on the **Out of attempts, not passed** filter → **Grant another attempt** on their row. Only that student gets one more try. To change it for everyone, raise **Max attempts** on the course or lesson. |

@@ -4,7 +4,11 @@ Cómo funciona Pilot Academy, desde tu primera lección hasta tu certificado.
 
 ## Primeros pasos
 
+La barra superior reúne cuatro cosas: **Cursos**, todos los cursos publicados con búsqueda y filtros por nivel y público; **Casos prácticos**; **Tutoriales**, todos los vídeos de las lecciones reunidos bajo su curso; y **Seminarios web**, las sesiones en directo con el equipo de Pilot y sus grabaciones. Los tutoriales reúnen vídeos prácticos cortos y todos los vídeos de las lecciones: puedes ver uno sin empezar un curso. La ayuda está en el menú bajo tus iniciales y al pie de cada página.
+
 **Puedes empezar una lección sin cuenta.** Abre un curso desde la página principal y continúa. Tu progreso queda guardado solo en este navegador.
+
+**¿Olvidaste tu contraseña?** Usa **¿Olvidaste tu contraseña?** en la página de inicio de sesión. Recibirás un enlace por correo para elegir otra: dura una hora y sirve una sola vez.
 
 **Inicia sesión para conservar tu progreso en todos tus dispositivos** y para hacer el examen final. Usa **Iniciar sesión** o **Registrarse**. Si tu empresa te envió un enlace personal, ábrelo: te inicia sesión directamente.
 
@@ -19,6 +23,18 @@ Algunas lecciones forman parte de más de un curso. Solo tienes que hacerlas una
 La tarjeta superior de la página principal siempre muestra tu siguiente paso: empezar, continuar donde lo dejaste o abrir el examen final cuando esté listo.
 
 La búsqueda encuentra cursos y lecciones por nombre, y también palabras dichas en un video si tiene transcripción.
+
+## Usar casos prácticos
+
+Abre **Casos prácticos** en la navegación de la academia para encontrar guías prácticas de implementación de Pilot. En un teléfono, el botón puede mostrarse como **CS**.
+
+Usa **Buscar** para buscar un problema o una solución, o filtra la lista por sector (**Sector**), función (**Función**) y dificultad (**Dificultad**). Cada tarjeta también muestra el tiempo estimado de implementación.
+
+Cada caso explica el escenario del cliente, los requisitos previos, las funciones de Pilot, los pasos de configuración, cómo probar la solución, los resultados y limitaciones esperados, los errores comunes y las posibles adaptaciones. Al final puede incluir lecciones de la Academia y documentación relacionadas.
+
+Un caso se muestra en tu idioma donde alguien lo haya traducido, y en su idioma original en el resto.
+
+Los casos prácticos son material de consulta: no registran progreso, no tienen examen y no emiten certificados. Los socios solo ven los casos publicados.
 
 ## Terminar una lección
 

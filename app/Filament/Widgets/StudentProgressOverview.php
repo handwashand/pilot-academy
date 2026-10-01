@@ -3,16 +3,19 @@
 namespace App\Filament\Widgets;
 
 use App\Filament\Widgets\Concerns\ReportsOnLearners;
+use App\Filament\Widgets\Concerns\UsesDashboardFilters;
+use App\Models\ActivityEvent;
 use App\Models\Certificate;
 use App\Models\Course;
 use App\Models\Lesson;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Builder;
 
 class StudentProgressOverview extends StatsOverviewWidget
 {
     use ReportsOnLearners;
+    use UsesDashboardFilters;
 
     protected static ?int $sort = 1;
 
@@ -25,21 +28,36 @@ class StudentProgressOverview extends StatsOverviewWidget
 
     protected function getStats(): array
     {
-        $students = $this->learners()->count();
-        $active = $this->learners()->whereHas('completedLessons')->count();
+        $learners = $this->learners()
+            ->when($this->dashboardCompanyId(), fn (Builder $query, int $companyId): Builder => $query->where('company_id', $companyId));
+        $students = (clone $learners)->count();
+        $active = (clone $learners)
+            ->whereHas('activities', fn (Builder $query): Builder => $this->filterActivity($query)
+                ->whereIn('type', ActivityEvent::LEARNER_ACTIVITY_TYPES))
+            ->count();
         $engagement = $students > 0 ? (int) round($active / $students * 100) : 0;
 
-        $completions = $this->scopeToLearners(DB::table('lesson_user'))->count();
+        // From the pivot, not from activity events: an academy that was busy
+        // before tracking began still has its finished lessons counted here,
+        // and this card no longer reads zero beside a funnel showing
+        // certificates. See UsesDashboardFilters::completedLessonRows().
+        $completions = $this->scopeToLearners($this->completedLessonRows(), 'lesson_user.user_id')->count();
 
-        $publishedCourses = Course::published()->count();
-        $totalCourses = Course::count();
+        $publishedCourses = Course::published()
+            ->when($this->dashboardProductId(), fn (Builder $query, int $productId): Builder => $query->where('product_id', $productId))
+            ->when($this->dashboardCourseId(), fn (Builder $query, int $courseId): Builder => $query->whereKey($courseId))
+            ->count();
+        $totalCourses = Course::query()
+            ->when($this->dashboardProductId(), fn (Builder $query, int $productId): Builder => $query->where('product_id', $productId))
+            ->when($this->dashboardCourseId(), fn (Builder $query, int $courseId): Builder => $query->whereKey($courseId))
+            ->count();
 
         $certificates = $this->scopeToLearners(
-            Certificate::query()->whereNull('revoked_at'),
+            $this->filteredCertificates(),
         )->count();
 
         $averageScore = $this->scopeToLearners(
-            Certificate::query()->whereNull('revoked_at'),
+            $this->filteredCertificates(),
         )->avg('score_percent');
 
         return [
@@ -49,7 +67,9 @@ class StudentProgressOverview extends StatsOverviewWidget
                 ->color('primary'),
 
             Stat::make(__t('admin_widgets.overview.active'), $active)
-                ->description(__t('admin_widgets.overview.active_help', ['percent' => $engagement]))
+                ->description(__t('admin_widgets.overview.active_help', [
+                    'percent' => $engagement,
+                ]))
                 ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->color($this->band($engagement)),
 
@@ -63,7 +83,12 @@ class StudentProgressOverview extends StatsOverviewWidget
                 ->descriptionIcon('heroicon-m-rectangle-stack')
                 ->color('success'),
 
-            Stat::make(__t('admin_widgets.overview.published_lessons'), Lesson::published()->count())
+            Stat::make(__t('admin_widgets.overview.published_lessons'), Lesson::availableToLearners()
+                ->when($this->dashboardProductId(), fn (Builder $query, int $productId): Builder => $query
+                    ->whereHas('courses', fn (Builder $courses): Builder => $courses->where('product_id', $productId)))
+                ->when($this->dashboardCourseId(), fn (Builder $query, int $courseId): Builder => $query
+                    ->whereHas('courses', fn (Builder $courses): Builder => $courses->whereKey($courseId)))
+                ->count())
                 ->description(__t('admin_widgets.overview.published_lessons_help'))
                 ->descriptionIcon('heroicon-m-book-open')
                 ->color('gray'),
@@ -77,6 +102,18 @@ class StudentProgressOverview extends StatsOverviewWidget
                 ->descriptionIcon('heroicon-m-academic-cap')
                 ->color($certificates > 0 ? 'success' : 'gray'),
         ];
+    }
+
+    private function filteredCertificates(): Builder
+    {
+        return Certificate::query()
+            ->whereNull('revoked_at')
+            ->whereBetween('issued_at', [$this->dashboardStart(), $this->dashboardEnd()])
+            ->when($this->dashboardCompanyId(), fn (Builder $query, int $companyId): Builder => $query
+                ->whereHas('user', fn (Builder $user): Builder => $user->where('company_id', $companyId)))
+            ->when($this->dashboardProductId(), fn (Builder $query, int $productId): Builder => $query
+                ->whereHas('course', fn (Builder $course): Builder => $course->where('product_id', $productId)))
+            ->when($this->dashboardCourseId(), fn (Builder $query, int $courseId): Builder => $query->where('course_id', $courseId));
     }
 
     /** Traffic-light banding, so a number is readable without doing the maths. */

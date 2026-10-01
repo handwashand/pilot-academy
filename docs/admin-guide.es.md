@@ -10,6 +10,8 @@ Entrarás al **Panel**, donde ves estudiantes, progreso, cursos publicados y cer
 
 Cambia tu nombre, correo o contraseña desde el menú de cuenta, arriba a la derecha, en **Perfil**.
 
+Los administradores ven la actividad de estudiantes, el progreso y los certificados. **Estudiantes activos** cuenta a quienes iniciaron sesión o trabajaron en la academia durante los últimos 30 días; los recordatorios y la actividad del personal no cuentan. El gráfico muestra estudiantes activos únicos como línea y lecciones terminadas como barras, por lo que varias acciones de una persona en un día cuentan una sola vez. Las lecciones publicadas y el progreso por empresa incluyen solo lecciones disponibles dentro de un curso publicado. Los creadores ven tarjetas enlazadas para Cursos, Casos prácticos, Tutoriales y Seminarios web de sus productos asignados, separadas por publicadas, borradores y archivadas, sin datos de estudiantes ni empresas.
+
 ## 2. El menú de un vistazo
 
 | Opción | Para qué sirve |
@@ -17,6 +19,9 @@ Cambia tu nombre, correo o contraseña desde el menú de cuenta, arriba a la der
 | **Panel** | Números generales, progreso por empresa y estudiantes inactivos. |
 | **Contenido → Cursos** | Crear cursos, activar examen final y certificado. |
 | **Contenido → Lecciones** | Añadir video, texto y preguntas. |
+| **Contenido → Casos prácticos** | Crear, previsualizar y publicar guías prácticas de implementación para socios. |
+| **Contenido → Seminarios web** | Programar sesiones en directo, compartir el enlace para unirse y añadir la grabación después. |
+| **Contenido → Tutoriales** | Vídeos prácticos independientes, por enlace de YouTube o archivo subido. |
 | **Contenido → Productos** | Productos o módulos de formación y sus responsables. |
 | **Contenido → Archivos multimedia** | Biblioteca compartida de imágenes. |
 | **Personas → Usuarios** | Cuentas, roles, progreso y certificados. |
@@ -40,7 +45,7 @@ En **Cursos**, pulsa **Nuevo curso**. Completa título, descripción corta, dura
 
 En **Lecciones**, crea una lección, elige el curso, añade video, texto, duración, transcripción y preguntas. La lección debe tener una verificación de conocimiento para que el estudiante pueda completarla.
 
-Ordena las lecciones desde la pestaña **Lecciones** dentro del curso. Mover una lección existente la saca de su curso anterior; para copiar material, usa **Duplicar** en el curso.
+Ordena las lecciones desde la pestaña **Lecciones** dentro del curso. Ahí mismo, **Nueva lección** crea una lección directamente en este curso, y **Añadir lección existente** abre la lista de lecciones de otros cursos: la lección se comparte, sigue también en su curso anterior. Para una copia aparte, usa **Duplicar** en el curso.
 
 ### Paso 3 · Activar el examen final
 
@@ -60,6 +65,8 @@ Al aprobar, el certificado se genera automáticamente como PDF con nombre, curso
 
 ## 4. Cómo configurar cosas
 
+**Casos prácticos.** En **Contenido → Casos prácticos**, pulsa **New case study** y añade el problema breve, el sector, las funciones de Pilot, la dificultad y el tiempo estimado. Completa el escenario, el resultado deseado, los pasos de configuración y la verificación. Antes de publicar es obligatorio incluir **Source or verification note**; usa **Performance claim note** para guardar la evidencia de cualquier resultado cuantificado. Mantén **Anonymized** activado salvo que exista aprobación explícita, y activa **Customer approved** solo cuando esa aprobación esté registrada. Cada paso acepta imágenes desde el clip de su barra de herramientas o desde el cuadro inferior, donde puedes pegar, arrastrar o elegir archivos; las imágenes del cuadro aparecen debajo de ese paso. Usa únicamente imágenes depuradas, sin nombres, ubicaciones exactas, credenciales ni datos de vehículos reales. Guarda el borrador, revísalo con **Preview** y después usa **Publish** en la lista. Los socios normales no pueden abrir un borrador. **Written in** es el idioma del propio caso: escribe en el tuyo y añade los demás con **Translate** en la página de edición. Las notas de fuente y de afirmaciones cuantificadas son solo para editores: los socios no las ven. Los creators solo gestionan casos de sus productos asignados.
+
 Edita preguntas del examen final desde el curso, pestaña **Preguntas finales**. Una pregunta tomada de una lección es la misma pregunta; editarla cambia también la lección.
 
 Sube un fondo de certificado desde **Examen final y certificado → Fondo del certificado**. Usa una imagen A4 horizontal o deja vacío para el diseño integrado.
@@ -74,7 +81,9 @@ Para añadir una empresa y estudiante: crea la empresa en **Empresas**, luego cr
 
 Usa **Usuarios** para filtrar por rol y abrir el progreso de un estudiante.
 
-El **Panel** muestra contenido con problemas, números generales, progreso por empresa, estudiantes inactivos, lecciones difíciles, actividad y cursos más abiertos.
+Los **Filtros del panel** permiten elegir un período, socio, producto o curso; el período predeterminado es de 30 días. Los creadores no ven estos filtros ni datos de estudiantes.
+
+El **Panel** muestra la **Participación de socios**, el **Recorrido del estudiante**, la actividad diaria, los recursos abiertos y los cursos más abiertos. La lista de estudiantes inactivos se calcula por curso: terminar o recibir un certificado en otro curso no oculta un curso abandonado. La participación con casos prácticos, tutoriales y seminarios solo registra a usuarios con sesión iniciada; las visitas anónimas no se registran.
 
 En **Comentarios de estudiantes**, dentro del curso, revisa si el curso fue útil y lee comentarios privados.
 

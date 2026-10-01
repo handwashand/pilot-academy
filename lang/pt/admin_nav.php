@@ -107,4 +107,25 @@ return [
         'certificates' => 'Certificados',
         'activity' => 'Atividade',
     ],
+
+    'tutorials' => [
+        'nav' => 'Tutoriais',
+        'one' => 'tutorial',
+        'many' => 'tutoriais',
+        'badge' => 'Tutoriais ainda em rascunho — os parceiros ainda não os veem',
+    ],
+
+    'webinars' => [
+        'nav' => 'Webinars',
+        'one' => 'webinar',
+        'many' => 'webinars',
+        'badge' => 'Webinars ainda em rascunho — os parceiros ainda não os veem',
+    ],
+
+    'case_studies' => [
+        'nav' => 'Estudos de caso',
+        'one' => 'estudo de caso',
+        'many' => 'estudos de caso',
+        'badge' => 'Estudos de caso ainda em rascunho — os parceiros ainda não os veem',
+    ],
 ];

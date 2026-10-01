@@ -42,4 +42,12 @@ return [
         'number' => 'Certificat n°',
         'issued' => 'Délivré le',
     ],
+    'password_reset' => [
+        'subject' => 'Nouveau mot de passe Pilot Academy',
+        'heading' => 'Bonjour :name,',
+        'intro' => 'Quelqu’un a demandé un nouveau mot de passe pour votre compte Pilot Academy. Si c’était vous, le bouton ci-dessous ouvre la page.',
+        'button' => 'Choisir un nouveau mot de passe',
+        'expires' => 'Le lien est valable :count minute.|Le lien est valable :count minutes, et ne sert qu’une fois.',
+        'ignore' => 'Si ce n’était pas vous, rien n’a changé : ignorez cet e-mail, votre mot de passe reste le même.',
+    ],
 ];

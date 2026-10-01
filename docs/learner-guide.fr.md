@@ -4,7 +4,11 @@ Comment fonctionne Pilot Academy, de votre première leçon à votre certificat.
 
 ## Premiers pas
 
+La barre supérieure réunit quatre choses : **Cours**, tous les cours publiés avec une recherche et des filtres par niveau et par public ; **Études de cas** ; **Tutoriels**, toutes les vidéos des leçons réunies sous leur cours ; et **Webinaires**, les sessions en direct avec l’équipe Pilot et leurs enregistrements. Les tutoriels réunissent de courtes vidéos pratiques et toutes les vidéos des leçons : vous pouvez en regarder une sans commencer un cours. L’aide est dans le menu sous vos initiales et au bas de chaque page.
+
 **Vous pouvez commencer une leçon sans compte.** Ouvrez un cours depuis l'accueil et avancez. Votre progression reste alors uniquement dans ce navigateur.
+
+**Mot de passe oublié ?** Utilisez **Mot de passe oublié ?** sur la page de connexion. Un lien pour en choisir un nouveau arrive par e-mail : il dure une heure et ne sert qu’une fois.
 
 **Connectez-vous pour conserver votre progression partout** et passer le quiz final. Utilisez **Connexion** ou **S’inscrire**. Si votre entreprise vous a envoyé un lien personnel, ouvrez-le : il vous connecte directement.
 
@@ -19,6 +23,18 @@ Certaines leçons font partie de plusieurs cours. Vous ne les suivez qu’une fo
 La carte en haut de l'accueil indique toujours la prochaine étape : commencer, reprendre où vous vous êtes arrêté ou ouvrir le quiz final lorsqu'il est prêt.
 
 La recherche trouve les cours et les leçons par nom, ainsi que les mots prononcés dans une vidéo lorsqu'une transcription existe.
+
+## Utiliser les études de cas
+
+Ouvrez **Études de cas** dans la navigation de l'académie pour trouver des guides pratiques de déploiement de Pilot. Sur un téléphone, le bouton peut afficher **CS**.
+
+Utilisez **Rechercher** pour rechercher un problème ou une solution, ou filtrez la liste par secteur (**Secteur**), fonctionnalité (**Fonction**) et difficulté (**Difficulté**). Chaque carte indique aussi le temps de mise en œuvre estimé.
+
+Chaque étude présente le scénario client, les prérequis, les fonctionnalités Pilot, les étapes de configuration, la méthode de test, les résultats attendus et leurs limites, les erreurs courantes et les adaptations possibles. Des leçons de l'Académie et des liens de documentation associés peuvent apparaître à la fin.
+
+Une étude s’affiche dans votre langue là où quelqu’un l’a traduite, et dans sa langue d’origine partout ailleurs.
+
+Les études de cas sont des documents de référence : elles ne suivent pas la progression, ne comportent pas de quiz et ne délivrent pas de certificat. Les partenaires ne voient que les études publiées.
 
 ## Terminer une leçon
 

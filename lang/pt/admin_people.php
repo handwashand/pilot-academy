@@ -20,6 +20,7 @@ return [
         'permissions_help' => 'Concedidas por conta. Não estão incluídas por padrão nas funções Administrador ou Criador.',
         'manage_languages' => 'Gerenciar idiomas',
         'manage_translations' => 'Gerenciar traduções',
+        'check_mail' => 'Verificar o envio de e-mails',
         'lessons_done' => 'Aulas concluídas',
         'last_login' => 'Último acesso',
         'export' => 'Exportar progresso dos alunos',

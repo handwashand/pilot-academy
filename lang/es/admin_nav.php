@@ -107,4 +107,25 @@ return [
         'certificates' => 'Certificados',
         'activity' => 'Actividad',
     ],
+
+    'tutorials' => [
+        'nav' => 'Tutoriales',
+        'one' => 'tutorial',
+        'many' => 'tutoriales',
+        'badge' => 'Tutoriales aún en borrador: los socios todavía no los ven',
+    ],
+
+    'webinars' => [
+        'nav' => 'Seminarios web',
+        'one' => 'seminario web',
+        'many' => 'seminarios web',
+        'badge' => 'Seminarios web aún en borrador: los socios todavía no los ven',
+    ],
+
+    'case_studies' => [
+        'nav' => 'Casos prácticos',
+        'one' => 'caso práctico',
+        'many' => 'casos prácticos',
+        'badge' => 'Casos prácticos aún en borrador: los socios todavía no los ven',
+    ],
 ];

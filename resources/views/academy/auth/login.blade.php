@@ -13,6 +13,13 @@
         <h1 class="text-2xl font-extrabold text-navy mb-1">{{ __t('auth.login') }}</h1>
         <p class="text-slate-500 text-sm mb-6">{{ __t('auth.login_intro') }}</p>
 
+        {{-- "Your password has been changed", after a reset. --}}
+        @if(session('status'))
+            <div class="mb-4 rounded-lg bg-green-50 border border-green-200 text-green-800 text-sm px-4 py-3" role="status">
+                {{ session('status') }}
+            </div>
+        @endif
+
         @if($errors->any())
             <div class="mb-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3">
                 {{ $errors->first() }}
@@ -31,9 +38,12 @@
                 <input type="password" name="password" required
                        class="w-full rounded-lg border border-slate-300 px-4 py-2.5 outline-none focus:border-brand">
             </div>
-            <label class="flex items-center gap-2 text-sm text-slate-600">
-                <input type="checkbox" name="remember" value="1"> {{ __t('auth.remember_me') }}
-            </label>
+            <div class="flex flex-wrap items-center justify-between gap-2">
+                <label class="flex items-center gap-2 text-sm text-slate-600">
+                    <input type="checkbox" name="remember" value="1"> {{ __t('auth.remember_me') }}
+                </label>
+                <a href="{{ route('password.request') }}" class="text-sm font-semibold text-brand">{{ __t('auth.forgot.link') }}</a>
+            </div>
             <button class="w-full rounded-lg bg-brand text-white font-semibold px-5 py-2.5 hover:bg-blue-700">
                 {{ __t('auth.login') }}
             </button>

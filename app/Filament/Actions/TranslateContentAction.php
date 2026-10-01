@@ -91,7 +91,7 @@ class TranslateContentAction
     private static function input(Model $record, string $code, string $field)
     {
         // A field without a shipped name reads as its own name, made readable.
-        $label = __t("admin_common.translate.fields.{$field}");
+        $label = $record->translatableFieldLabel($field);
         // The original as the placeholder, so a translator sees what they are translating.
         $original = Str::limit(trim(strip_tags((string) $record->getAttribute($field))), 150);
 

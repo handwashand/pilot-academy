@@ -66,6 +66,7 @@ return [
     ],
 
     'mail' => [
+        'subheading' => 'Not getting emails? Send yourself a test and see what the server is set to do.',
         'send_test' => 'Send test email',
         'send_test_heading' => 'Send a test email',
         'send_test_description' => 'A short test email goes to :email.',
