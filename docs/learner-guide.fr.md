@@ -60,7 +60,7 @@ Lorsque toutes les leçons d'un cours sont terminées, le **quiz final** se déb
 Après réussite, votre certificat est créé immédiatement : un PDF avec votre nom, le cours, la date, un numéro unique et un QR code.
 
 - Il vous est envoyé par e-mail.
-- Il reste disponible dans **Certificats** dans la barre supérieure.
+- Il reste disponible dans **Certificats** dans le menu du compte.
 - Toute personne peut le vérifier avec le QR code ou le lien de vérification.
 
 Les certificats n'expirent pas.

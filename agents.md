@@ -399,6 +399,37 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-01 - Certificates moved out of the student top bar
+
+The signed-in student header no longer repeats **Certificates** beside the
+account avatar. Certificates remain available inside the account menu, and the
+certificate page, downloads, course links, quiz links and dashboard links are
+unchanged. `AccountMenuTest` now proves the header response contains exactly one
+certificate-page link, inside that menu.
+
+The English learner guide and all five localized copies now direct learners to
+the account menu rather than the top bar, and What's new records the visible
+change. Verified in Docker: the focused account-menu, course-header, Help-page
+and changelog tests passed (43 tests, 160 assertions), and Pint passed for the
+changed PHP test.
+
+### 2026-10-01 - Descript integration rebuilt as an approval-gated plan
+
+The duplicated DeepL draft at `docs/descript-integration.md` has been replaced
+with a Descript-specific implementation handoff. It records the existing lesson
+video and transcript paths, current API endpoints and asynchronous job model,
+plain-text export, media-minute and rate-limit behavior, local audit data,
+review-before-apply workflow, failure recovery, security and privacy controls,
+agent-sized work packages, tests, rollout, and rollback.
+
+The plan deliberately limits its recommended first release to Academy-uploaded
+lesson videos in English, Spanish, French, and Brazilian Portuguese. Descript's
+current API does not import YouTube URLs, and its transcription does not support
+Russian or Arabic. No application code, schema, dependency, configuration, or
+environment file was changed, and the owner's token was not requested or stored.
+Implementation remains paused until the owner approves access, source, review,
+retention, cost, and third-party data-processing decisions.
+
 ### 2026-10-01 — DeepL integration refined into an approval-gated plan
 
 The raw DeepL integration drop is now a concise implementation handoff in

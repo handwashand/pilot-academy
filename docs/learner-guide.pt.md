@@ -60,7 +60,7 @@ Quando todas as aulas de um curso forem concluídas, o **teste final** é libera
 Ao passar, seu certificado é criado imediatamente: um PDF com seu nome, o curso, a data, um número único e um QR code.
 
 - Ele é enviado por e-mail.
-- Ele também fica em **Certificados** na barra superior.
+- Ele também fica em **Certificados** no menu da conta.
 - Qualquer pessoa pode verificar se ele é autêntico pelo QR code ou link de verificação.
 
 Certificados não expiram.

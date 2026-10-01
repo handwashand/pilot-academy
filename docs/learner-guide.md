@@ -109,7 +109,7 @@ Pass the final quiz and your certificate is made **straight away**: a PDF with
 your name, the course, the date, a unique number and a QR code.
 
 - It is **emailed** to you.
-- It is always in **🎓 Certificates** in the top bar, ready to download again.
+- It is always in **Certificates** in your account menu, ready to download again.
 - Anyone can **check it is genuine** by scanning the QR code or opening the
   verification link on it.
 
@@ -157,5 +157,5 @@ you another attempt.
 they can correct it and reprint the certificate. To get your name right on the
 certificates you earn later, set **Name on certificates** in your profile.
 
-**I did not get the certificate email.** Download it from **🎓 Certificates**
-instead.
+**I did not get the certificate email.** Open your account menu and download it
+from **Certificates** instead.

@@ -60,7 +60,7 @@ Cuando terminas todas las lecciones de un curso, se desbloquea el **examen final
 Al aprobar, tu certificado se crea de inmediato: un PDF con tu nombre, el curso, la fecha, un número único y un código QR.
 
 - Se envía por e-mail.
-- También está en **Certificados** en la barra superior.
+- También está en **Certificados** dentro del menú de la cuenta.
 - Cualquiera puede verificarlo con el QR o el enlace de verificación.
 
 Los certificados no vencen.

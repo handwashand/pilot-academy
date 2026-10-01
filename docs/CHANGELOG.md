@@ -244,6 +244,10 @@ Add a new entry here whenever something visible to admins or students changes.
   entries. The student lesson page renders each saved video in order.
 
 ### Changed
+- **Certificates now live in the account menu.** The separate certificate link
+  beside your avatar repeated the same destination and crowded the student top
+  bar. Open your account menu and choose **Certificates** instead; the page and
+  all downloads work as before.
 - **The admin menu is more compact.** The sidebar had grown to nineteen items
   across six groups and ran off the bottom of a normal screen, so you had to
   scroll the menu to reach **Docs** and **Settings**. The rows are shorter and
