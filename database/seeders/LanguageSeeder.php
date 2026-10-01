@@ -16,6 +16,7 @@ class LanguageSeeder extends Seeder
         'es' => ['name' => 'Spanish', 'native_name' => 'Español', 'position' => 3],
         'fr' => ['name' => 'French', 'native_name' => 'Français', 'position' => 4],
         'pt' => ['name' => 'Portuguese (Brazil)', 'native_name' => 'Português (Brasil)', 'position' => 5],
+        'ar' => ['name' => 'Arabic', 'native_name' => 'العربية', 'position' => 6, 'direction' => 'rtl'],
     ];
 
     /*
@@ -38,7 +39,7 @@ class LanguageSeeder extends Seeder
                     'native_name' => $data['native_name'],
                     'is_active' => true,
                     'is_default' => false,
-                    'direction' => 'ltr',
+                    'direction' => $data['direction'] ?? 'ltr',
                     'position' => $data['position'],
                 ],
             );

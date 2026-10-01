@@ -8,7 +8,7 @@
 
 @section('content')
     <div class="max-w-3xl">
-        <a href="{{ route('academy.tutorials') }}" class="text-sm font-semibold text-brand">&larr; {{ __t('academy.tutorials.title') }}</a>
+        <a href="{{ route('academy.tutorials') }}" class="text-sm font-semibold text-brand"><span class="inline-block rtl:rotate-180">&larr;</span> {{ __t('academy.tutorials.title') }}</a>
 
         @if(! $tutorial->isPublished())
             <div class="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">

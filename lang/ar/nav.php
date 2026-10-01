@@ -1,0 +1,16 @@
+<?php
+
+// Shipped with the code — see the note in lang/en/academy.php. A row in
+// the translations table with the same key overrides a line.
+
+return [
+    'skip' => 'Skip to content',
+    'sections' => 'Sections',
+    'help' => 'Help',
+    'certificates' => 'Certificates',
+    'logout' => 'Log out',
+    'case_studies' => 'Case Studies',
+    'tutorials' => 'Tutorials',
+    'webinars' => 'Webinars',
+    'courses' => 'Courses',
+];

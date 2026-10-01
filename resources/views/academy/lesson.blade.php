@@ -18,7 +18,7 @@
     <div class="grid lg:grid-cols-[1fr_280px] gap-6 lg:gap-8">
         {{-- Main column --}}
         <div>
-            <a href="{{ route('academy.course', $course) }}" class="text-sm text-brand font-semibold">&larr; {{ $course->translated('title') }}</a>
+            <a href="{{ route('academy.course', $course) }}" class="text-sm text-brand font-semibold"><span class="inline-block rtl:rotate-180">&larr;</span> {{ $course->translated('title') }}</a>
 
             @if(! $course->isPublished() || ! $lesson->isPublished())
                 {{-- Only admins ever reach this page for unpublished content. --}}
@@ -269,7 +269,7 @@
                             </div>
                         </div>
                     @elseif($timeup)
-                        <div role="status" class="rounded-xl bg-red-50 border border-red-200 text-red-700 px-5 py-4 mb-5">
+                        <div role="status" class="rounded-xl bg-red-50 border border-eed-200 text-red-700 px-5 py-4 mb-5">
                             ⏱ <strong>{{ __t('academy.lesson.times_up') }}</strong> {{ __t('academy.lesson.times_up_body') }}
                         </div>
                     @elseif($failed)
@@ -292,7 +292,7 @@
                             {{-- Pre-start: warn about time and attempts --}}
                             <div class="rounded-xl bg-amber-50 border border-amber-200 text-amber-900 px-5 py-4 mb-5">
                                 <div class="font-semibold mb-1">{{ __t('academy.common.before_you_start') }}</div>
-                                <ul class="text-sm space-y-1 list-disc pl-5">
+                                <ul class="text-sm space-y-1 list-disc ps-5">
                                     @if($quiz['timeLimit'])
                                         <li><strong>{{ __t('academy.lesson.time_limit', ['minutes' => $quiz['timeLimit']]) }}</strong> {{ __t('academy.lesson.time_limit_body') }}</li>
                                     @endif
@@ -390,7 +390,7 @@
                     @if($prev)
                         <a href="{{ route('academy.lesson', [$course, $prev]) }}"
                            class="inline-block rounded-lg border border-slate-300 px-5 py-2.5 font-semibold text-slate-600 hover:bg-white">
-                            &larr; {{ __t('academy.lesson.previous') }}
+                            <span class="inline-block rtl:rotate-180">&larr;</span> {{ __t('academy.lesson.previous') }}
                         </a>
                     @endif
                 </div>
@@ -398,7 +398,7 @@
                     @if($next && ($passed || $isDone))
                         <a href="{{ route('academy.lesson', [$course, $next]) }}"
                            class="inline-block rounded-lg bg-navy text-white px-5 py-2.5 font-semibold hover:bg-slate-800">
-                            {{ __t('academy.lesson.next_lesson') }} &rarr;
+                            {{ __t('academy.lesson.next_lesson') }} <span class="inline-block rtl:rotate-180">&rarr;</span>
                         </a>
                     @elseif(! $next && ($passed || $isDone))
                         @if($course->final_quiz_enabled && $certificate)
@@ -409,7 +409,7 @@
                         @elseif($course->final_quiz_enabled && $finalUnlocked)
                             <a href="{{ route('academy.final.show', $course) }}"
                                class="inline-block rounded-lg bg-brand text-white px-5 py-2.5 font-semibold hover:bg-blue-700">
-                                {{ __t('academy.home.take_final') }} &rarr;
+                                {{ __t('academy.home.take_final') }} <span class="inline-block rtl:rotate-180">&rarr;</span>
                             </a>
                         @else
                             {{-- The course page, not the home page: it shows what

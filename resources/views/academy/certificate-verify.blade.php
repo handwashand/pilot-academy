@@ -16,7 +16,7 @@
             </div>
         @else
             <div class="mt-6 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="px-6 py-5 {{ $certificate->isValid() ? 'bg-green-50 border-b border-green-100' : 'bg-red-50 border-b border-red-100' }}">
+                <div class="px-6 py-5 {{ $certificate->isValid() ? 'bg-green-50 border-b border-green-100' : 'bg-red-50 border-b border-eed-100' }}">
                     <div class="flex items-center gap-3">
                         <span class="w-10 h-10 flex-none rounded-full flex items-center justify-center text-white {{ $certificate->isValid() ? 'bg-ok' : 'bg-red-500' }}">
                             {{ $certificate->isValid() ? '✓' : '✕' }}
@@ -33,20 +33,20 @@
                 <dl class="divide-y divide-slate-100">
                     <div class="flex justify-between gap-4 px-6 py-4">
                         <dt class="text-slate-500">{{ __t('academy.certificates.issued_to') }}</dt>
-                        <dd class="font-semibold text-navy text-right">{{ $certificate->name }}</dd>
+                        <dd class="font-semibold text-navy text-end">{{ $certificate->name }}</dd>
                     </div>
                     <div class="flex justify-between gap-4 px-6 py-4">
                         <dt class="text-slate-500">{{ __t('academy.certificates.course') }}</dt>
-                        <dd class="font-semibold text-navy text-right">{{ $certificate->course->translated('title') }}</dd>
+                        <dd class="font-semibold text-navy text-end">{{ $certificate->course->translated('title') }}</dd>
                     </div>
                     <div class="flex justify-between gap-4 px-6 py-4">
                         <dt class="text-slate-500">{{ __t('academy.certificates.issued_on') }}</dt>
-                        <dd class="font-semibold text-navy text-right">{{ $certificate->issued_at->isoFormat('LL') }}</dd>
+                        <dd class="font-semibold text-navy text-end">{{ $certificate->issued_at->isoFormat('LL') }}</dd>
                     </div>
                     @unless($certificate->isValid())
                         <div class="flex justify-between gap-4 px-6 py-4">
                             <dt class="text-slate-500">{{ __t('academy.certificates.revoked_on') }}</dt>
-                            <dd class="font-semibold text-red-600 text-right">{{ $certificate->revoked_at->isoFormat('LL') }}</dd>
+                            <dd class="font-semibold text-red-600 text-end">{{ $certificate->revoked_at->isoFormat('LL') }}</dd>
                         </div>
                     @endunless
                 </dl>

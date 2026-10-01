@@ -9,7 +9,7 @@
         $needed = isset($result) ? (int) ceil($course->pass_percent / 100 * $result['total']) : null;
     @endphp
 
-    <a href="{{ route('academy.course', $course) }}" class="text-sm text-brand font-semibold">&larr; {{ $course->translated('title') }}</a>
+    <a href="{{ route('academy.course', $course) }}" class="text-sm text-brand font-semibold"><span class="inline-block rtl:rotate-180">&larr;</span> {{ $course->translated('title') }}</a>
 
     <div class="max-w-2xl">
         <h1 class="text-2xl sm:text-3xl font-extrabold text-navy mt-2">{{ __t('academy.final.heading') }}</h1>
@@ -96,7 +96,7 @@
                 <div class="rounded-xl bg-amber-50 border border-amber-200 text-amber-900 px-5 py-4">
                     🔒 {{ __t('academy.course.final_locked') }}
                 </div>
-                <a href="{{ route('academy.course', $course) }}" class="mt-4 inline-block text-brand font-semibold">&larr; {{ __t('academy.final.back_to_course') }}</a>
+                <a href="{{ route('academy.course', $course) }}" class="mt-4 inline-block text-brand font-semibold"><span class="inline-block rtl:rotate-180">&larr;</span> {{ __t('academy.final.back_to_course') }}</a>
             </div>
 
         {{-- UNAVAILABLE --}}
@@ -110,7 +110,7 @@
             <div class="mt-5 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
                 <div class="rounded-xl bg-blue-50 border border-blue-100 text-navy px-5 py-4 mb-5">
                     <div class="font-semibold mb-1">{{ __t('academy.common.before_you_start') }}</div>
-                    <ul class="text-sm space-y-1 list-disc pl-5 text-slate-600">
+                    <ul class="text-sm space-y-1 list-disc ps-5 text-slate-600">
                         <li>{{ __tc('academy.final.question_count', $state['questionCount']) }}</li>
                         <li>{{ __t('academy.final.pass_needed', ['percent' => $state['passPercent']]) }}</li>
                         @if($state['attemptsRemaining'] !== null)
@@ -135,7 +135,7 @@
                         <label for="certificate_name" class="block text-sm font-semibold text-navy mb-1">{{ __t('academy.final.certificate_name') }}</label>
                         <input type="text" id="certificate_name" name="certificate_name" required maxlength="255"
                                value="{{ old('certificate_name', $state['certificateName']) }}"
-                               class="w-full rounded-lg border border-slate-300 px-4 py-3 focus:border-brand focus:ring-brand @error('certificate_name') border-red-400 @enderror">
+                               class="w-full rounded-lg border border-slate-300 px-4 py-3 focus:border-brand focus:ring-brand @error('certificate_name') border-eed-400 @enderror">
                         <p class="text-xs text-slate-400 mt-1">{{ __t('academy.final.certificate_name_help') }}</p>
                         @error('certificate_name')
                             <p class="text-xs text-red-500 mt-1">{{ $message }}</p>

@@ -8,7 +8,7 @@
 
 @section('content')
     <div class="mb-6">
-        <a href="{{ route('academy.home') }}" class="text-sm text-brand font-semibold">&larr; {{ __t('academy.common.all_courses') }}</a>
+        <a href="{{ route('academy.home') }}" class="text-sm text-brand font-semibold"><span class="inline-block rtl:rotate-180">&larr;</span> {{ __t('academy.common.all_courses') }}</a>
         <h1 class="mt-2 text-2xl sm:text-3xl font-extrabold text-navy">{{ __t('academy.case_studies.title') }}</h1>
         <p class="mt-1 max-w-3xl text-slate-500">{{ __t('academy.case_studies.intro') }}</p>
     </div>

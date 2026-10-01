@@ -62,7 +62,7 @@
         .prose-lesson ul { list-style: disc; margin: .6rem 0 .6rem 1.4rem; color: #334155; line-height: 1.7; }
         .prose-lesson strong { color: #0a2540; }
         /* Keep embedded lesson media from overflowing on small screens */
-        .prose-lesson img, .prose-lesson video { max-width: 100%; height: auto; border-radius: 8px; }
+        .prose-lesson img, .prose-lesson video { max-width: 100%; height: auto; border-eadius: 8px; }
         .prose-lesson iframe { max-width: 100%; }
         .prose-lesson table { display: block; max-width: 100%; overflow-x: auto; }
 
@@ -81,13 +81,13 @@
         .skip-link {
             position: absolute; left: 12px; top: -64px; z-index: 50;
             background: #fff; color: #0a2540; font-weight: 600;
-            padding: 10px 16px; border-radius: 8px;
+            padding: 10px 16px; border-eadius: 8px;
             box-shadow: 0 4px 14px rgba(10, 37, 64, .18);
         }
         .skip-link:focus { top: 12px; }
 
         /* The default focus ring is invisible against the brand blue links. */
-        :focus-visible { outline: 2px solid #1463ff; outline-offset: 2px; border-radius: 4px; }
+        :focus-visible { outline: 2px solid #1463ff; outline-offset: 2px; border-eadius: 4px; }
 
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
@@ -187,7 +187,7 @@
                             <span aria-hidden="true" class="flex h-9 w-9 items-center justify-center rounded-full bg-navy text-sm font-bold text-white">{{ $initials }}</span>
                         </summary>
 
-                        <div class="absolute right-0 top-full z-30 mt-2 w-64 max-w-[calc(100vw-2rem)] rounded-xl border border-slate-200 bg-white p-1 shadow-lg">
+                        <div class="absolute end-0 top-full z-30 mt-2 w-64 max-w-[calc(100vw-2rem)] rounded-xl border border-slate-200 bg-white p-1 shadow-lg">
                             <div class="border-b border-slate-100 px-3 py-2.5">
                                 <p class="truncate text-sm font-bold text-navy">{{ $account->name }}</p>
                                 <p class="truncate text-xs text-slate-500">{{ $account->email }}</p>
@@ -222,7 +222,7 @@
                             <form method="POST" action="{{ route('logout') }}" class="mt-1 border-t border-slate-100 pt-1">
                                 @csrf
                                 <button type="submit"
-                                        class="flex min-h-11 w-full items-center rounded-lg px-3 text-left text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-brand">
+                                        class="flex min-h-11 w-full items-center rounded-lg px-3 text-start text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-brand">
                                     {{ __t('nav.logout') }}
                                 </button>
                             </form>
@@ -261,14 +261,14 @@
                         </summary>
 
                         <form method="POST" action="{{ route('locale.switch') }}"
-                              class="absolute right-0 top-full z-30 mt-2 w-48 max-w-[calc(100vw-2rem)] rounded-xl border border-slate-200 bg-white p-1 shadow-lg">
+                              class="absolute end-0 top-full z-30 mt-2 w-48 max-w-[calc(100vw-2rem)] rounded-xl border border-slate-200 bg-white p-1 shadow-lg">
                             @csrf
                             @foreach($locale['available'] as $language)
                                 {{-- In its own language, so a speaker finds theirs without
                                      knowing the English name. --}}
                                 <button type="submit" name="locale" value="{{ $language->code }}" lang="{{ $language->code }}"
                                         @if($language->code === ($locale['current'] ?? app()->getLocale())) aria-current="true" @endif
-                                        class="flex min-h-11 w-full items-center justify-between rounded-lg px-3 text-left text-sm {{ $language->code === ($locale['current'] ?? app()->getLocale()) ? 'font-semibold text-navy bg-slate-100' : 'font-medium text-slate-700 hover:bg-slate-50 hover:text-brand' }}">
+                                        class="flex min-h-11 w-full items-center justify-between rounded-lg px-3 text-start text-sm {{ $language->code === ($locale['current'] ?? app()->getLocale()) ? 'font-semibold text-navy bg-slate-100' : 'font-medium text-slate-700 hover:bg-slate-50 hover:text-brand' }}">
                                     <span>{{ $language->native_name }}</span>
                                     <span class="text-xs uppercase text-slate-400">{{ $language->code }}</span>
                                 </button>

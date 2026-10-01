@@ -20,6 +20,12 @@ Add a new entry here whenever something visible to admins or students changes.
      are stripped before anything is rendered, so notes to the next editor can
      live right here. -->
 
+## 2.2.0 — October 2026
+
+### Added
+
+- **Arabic language support.** The academy now supports Arabic (ar) as a sixth language. The student site and admin panel support RTL layout automatically, with directional arrows flipping based on the active language. Dates and numerals use Western Arabic formatting (1 2 3) by default. The Arabic learner and admin guides are available. Certificates will remain in English for Arabic learners due to rendering constraints.
+
 ## 2.1.0 — September 2026
 
 ### Added

@@ -14,7 +14,7 @@
         <p class="text-slate-500 text-sm mb-6">{{ __t('academy.signup.create_intro') }}</p>
 
         @if($errors->any())
-            <div class="mb-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3">
+            <div class="mb-4 rounded-lg bg-red-50 border border-eed-200 text-red-700 text-sm px-4 py-3">
                 <ul class="list-disc list-inside">
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>

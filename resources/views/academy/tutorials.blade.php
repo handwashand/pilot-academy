@@ -75,7 +75,7 @@
                                 </svg>
                             </span>
                             @if($isDone)
-                                <span class="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-ok text-sm text-white shadow">
+                                <span class="absolute end-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-ok text-sm text-white shadow">
                                     <span aria-hidden="true">✓</span>
                                     <span class="vh">{{ __t('academy.common.completed') }}</span>
                                 </span>

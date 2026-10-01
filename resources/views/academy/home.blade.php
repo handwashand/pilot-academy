@@ -112,7 +112,7 @@
                     <p class="text-sm text-slate-500">{{ $nextDetail }}</p>
                 </div>
 
-                <div class="shrink-0 sm:text-right">
+                <div class="shrink-0 sm:text-end">
                     @if($next['kind'] === 'lesson')
                         <div class="text-sm text-slate-500 mb-1">{{ __t('academy.common.lessons_done', ['done' => $next['done'], 'total' => $next['total']]) }}</div>
                         <div class="w-full sm:w-44 h-2 rounded-full bg-white overflow-hidden"
@@ -174,7 +174,7 @@
                             @endif
                         </span>
                     </span>
-                    <span aria-hidden="true" class="text-slate-400 flex-none">&rarr;</span>
+                    <span aria-hidden="true" class="text-slate-400 flex-none"><span class="inline-block rtl:rotate-180">&rarr;</span></span>
                 </a>
             @endif
         </section>
@@ -207,7 +207,7 @@
                             @endif
                         </div>
                     </div>
-                    <div class="text-right">
+                    <div class="text-end">
                         <div class="text-sm text-slate-500 mb-1">{{ __t('academy.common.lessons_done', ['done' => $done, 'total' => $total]) }}</div>
                         <div class="w-44 h-2 rounded-full bg-slate-100 overflow-hidden"
                              role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $pct }}"
@@ -230,7 +230,7 @@
                                 <span class="text-white/90 text-4xl font-extrabold">{{ $i + 1 }}</span>
                             @endif
                             @if($isDone)
-                                <span class="absolute top-3 right-3 w-7 h-7 rounded-full bg-ok text-white flex items-center justify-center text-sm shadow">
+                                <span class="absolute top-3 end-3 w-7 h-7 rounded-full bg-ok text-white flex items-center justify-center text-sm shadow">
                                     <span aria-hidden="true">✓</span>
                                     <span class="vh">{{ __t('academy.common.completed') }}</span>
                                 </span>

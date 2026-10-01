@@ -49,7 +49,7 @@
                                 <span class="block text-xs text-slate-400 mt-1">{{ $course->durationLabel() }}</span>
                             @endif
                         </span>
-                        <span aria-hidden="true" class="text-slate-400 flex-none">&rarr;</span>
+                        <span aria-hidden="true" class="text-slate-400 flex-none"><span class="inline-block rtl:rotate-180">&rarr;</span></span>
                     </a>
                 @endforeach
             </div>
@@ -72,7 +72,7 @@
                                 <span class="block text-xs text-slate-400 mt-1">{{ $lesson->durationLabel() }}</span>
                             @endif
                         </span>
-                        <span aria-hidden="true" class="text-slate-400 flex-none">&rarr;</span>
+                        <span aria-hidden="true" class="text-slate-400 flex-none"><span class="inline-block rtl:rotate-180">&rarr;</span></span>
                     </a>
                 @endforeach
             </div>

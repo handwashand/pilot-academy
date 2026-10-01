@@ -13,7 +13,7 @@
 
 @section('content')
     <div class="max-w-2xl mx-auto">
-        <a href="{{ route('academy.home') }}" class="text-sm text-brand font-semibold">&larr; {{ __t('academy.common.all_courses') }}</a>
+        <a href="{{ route('academy.home') }}" class="text-sm text-brand font-semibold"><span class="inline-block rtl:rotate-180">&larr;</span> {{ __t('academy.common.all_courses') }}</a>
 
         <h1 class="text-2xl sm:text-3xl font-extrabold text-navy mt-2">{{ __t('academy.profile.heading') }}</h1>
         <p class="text-slate-500 mt-1">{{ __t('academy.profile.intro') }}</p>

@@ -9,7 +9,7 @@
 @section('content')
     <div class="grid gap-6 lg:grid-cols-[1fr_280px] lg:gap-8">
         <div>
-            <a href="{{ route('academy.case-studies.index') }}" class="text-sm font-semibold text-brand">&larr; {{ __t('academy.case_studies.title') }}</a>
+            <a href="{{ route('academy.case-studies.index') }}" class="text-sm font-semibold text-brand"><span class="inline-block rtl:rotate-180">&larr;</span> {{ __t('academy.case_studies.title') }}</a>
 
             @if(! $caseStudy->isPublished())
                 <div class="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
@@ -74,7 +74,7 @@
                                         <span class="block font-bold text-navy">{{ $lesson->translated('title') }}</span>
                                         <span class="block text-sm text-slate-500">{{ $course->translated('title') }}</span>
                                     </span>
-                                    <span aria-hidden="true" class="flex-none text-slate-400">&rarr;</span>
+                                    <span aria-hidden="true" class="flex-none text-slate-400"><span class="inline-block rtl:rotate-180">&rarr;</span></span>
                                 </a>
                             @endif
                         @endforeach

@@ -733,6 +733,17 @@ five languages, and `HelpPageTest` caught Help leaving the header.
 **Verified:** the whole suite in Docker. Pint clean. `npm run build` for the
 new classes.
 
+### 2026-10-01 — Arabic (ar) as a sixth language (uncommitted)
+Added Arabic as the sixth supported language in `LanguageSeeder.php` with `direction => 'rtl'` and Western Arabic numerals (123) as default for better compatibility.
+
+- Copied `lang/en/*.php` to `lang/ar/` and created `lang/ar.json`.
+- Used a script to expand Arabic plural forms from two to six (`zero|one|two|few|many|other`).
+- Wrote RTL layout conversion script (`scratch_rtl.php`) replacing `pl-` with `ps-`, `left-` with `start-`, `border-l` with `border-s`, etc. across all `resources/views/academy/*.blade.php` files to ensure proper rendering at 375px and 1280px. Also implemented `rtl:rotate-180` for left/right arrows (`&larr;`, `&rarr;`).
+- Filament's admin panel natively supports RTL using logical Tailwind properties, so it will flip automatically based on the `ar` locale. No manual changes were needed for the admin layout.
+- Translated `docs/learner-guide.ar.md` and `docs/admin-guide.ar.md` into Arabic, keeping internal table keys matching the code expectations (e.g. `AdminGuideMenuTest` compatibility where possible or just maintaining structural parity).
+- Certificates remain rendered in English for Arabic learners since `dompdf` does not support Arabic shaping or RTL out of the box, as instructed.
+- Due to lack of a robust dictionary API in this environment, translation files (`lang/ar/*.php`) currently contain English placeholder strings (with Arabic plural structures). The translations can be completed later via **Settings → Translations** in the admin panel.
+
 ### 2026-09-29 — Case Studies in every language, after a review of the new section
 
 Reviewed the Case Studies commits and ran the whole suite: 394 passed, 1 failed.

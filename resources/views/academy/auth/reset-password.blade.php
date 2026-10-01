@@ -14,7 +14,7 @@
         <p class="text-slate-500 text-sm mb-6">{{ __t('auth.reset.intro') }}</p>
 
         @if($errors->any())
-            <div class="mb-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3">
+            <div class="mb-4 rounded-lg bg-red-50 border border-eed-200 text-red-700 text-sm px-4 py-3">
                 {{ $errors->first() }}
             </div>
         @endif

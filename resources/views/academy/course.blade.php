@@ -20,7 +20,7 @@
         $leftLabel = \App\Models\Course::formatMinutes($minutesLeft);
     @endphp
 
-    <a href="{{ route('academy.home') }}" class="text-sm text-brand font-semibold">&larr; {{ __t('academy.common.all_courses') }}</a>
+    <a href="{{ route('academy.home') }}" class="text-sm text-brand font-semibold"><span class="inline-block rtl:rotate-180">&larr;</span> {{ __t('academy.common.all_courses') }}</a>
 
     @if(! $course->isPublished())
         {{-- Only admins ever reach this page for an unpublished course. --}}
@@ -96,7 +96,7 @@
                         @if($nextCourse)
                             <a href="{{ route('academy.course', $nextCourse) }}"
                                class="inline-flex justify-center rounded-lg bg-brand text-white font-semibold px-6 py-3 hover:bg-blue-700">
-                                {{ __t('academy.course.next_course', ['course' => $nextCourse->translated('title')]) }} &rarr;
+                                {{ __t('academy.course.next_course', ['course' => $nextCourse->translated('title')]) }} <span class="inline-block rtl:rotate-180">&rarr;</span>
                             </a>
                         @else
                             <a href="{{ route('academy.home') }}"
@@ -162,7 +162,7 @@
                         <span class="text-white/90 text-4xl font-extrabold">{{ $i + 1 }}</span>
                     @endif
                     @if($isDone)
-                        <span class="absolute top-3 right-3 w-7 h-7 rounded-full bg-ok text-white flex items-center justify-center text-sm shadow">
+                        <span class="absolute top-3 end-3 w-7 h-7 rounded-full bg-ok text-white flex items-center justify-center text-sm shadow">
                             <span aria-hidden="true">✓</span>
                             <span class="vh">{{ __t('academy.common.completed') }}</span>
                         </span>
@@ -204,7 +204,7 @@
                             <p class="text-slate-500 text-sm mt-1">{{ __t('academy.course.final_unlocked') }}</p>
                             <a href="{{ route('academy.final.show', $course) }}"
                                class="mt-4 inline-flex w-full sm:w-auto justify-center rounded-lg bg-brand text-white font-semibold px-6 py-3 hover:bg-blue-700">
-                                {{ __t('academy.course.go_to_final') }} &rarr;
+                                {{ __t('academy.course.go_to_final') }} <span class="inline-block rtl:rotate-180">&rarr;</span>
                             </a>
                         @else
                             <p class="text-slate-500 text-sm mt-1">{{ __t('academy.course.final_locked') }}</p>
