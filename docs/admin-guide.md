@@ -606,6 +606,24 @@ Yes. Admins can open and take any course's final quiz straight away (from the co
 | Published | Live on the student site. Courses and lessons both get there via the **Publish** action in their list. |
 | Archived | Retired. Hidden from students, but its content, progress and certificates stay. |
 
+## Descript video translation
+
+Descript translation is separate from the normal **Translate** button. The
+normal button remains the way to translate course and lesson titles, summaries
+and lesson text manually.
+
+An admin first opens **People → Users**, opens the staff account, ticks **Use
+Descript video translation** under **Extra permissions**, and saves. The server
+must also have the optional Descript integration enabled. The right is not
+included automatically with either the Admin or Creator role.
+
+On a lesson with an uploaded video, the permitted editor can click **Translate
+video**, choose the upload and languages, then tick the acknowledgement that
+the video will be sent to Descript and may use media minutes and AI credits.
+Nothing is sent until **Start translation** is clicked. YouTube links cannot be
+sent. Use **Check progress** until the result is saved; a completed language
+cannot be charged twice.
+
 ---
 
 *This guide is also shown inside the admin panel under **Docs → Guide**. When admin features for courses, the final quiz, or certificates change, update this file (`docs/admin-guide.md`) in the same change.*

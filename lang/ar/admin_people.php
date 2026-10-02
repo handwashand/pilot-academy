@@ -25,6 +25,7 @@ return [
         'manage_languages' => 'إدارة اللغات',
         'manage_translations' => 'إدارة الترجمات',
         'check_mail' => 'فحص تسليم البريد',
+        'use_descript_translation' => 'استخدام ترجمة فيديو Descript',
         'lessons_done' => 'الدروس المنجزة',
         'last_login' => 'آخر تسجيل دخول',
         'export' => 'تصدير تقدّم المتعلّمين',

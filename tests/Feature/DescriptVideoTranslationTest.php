@@ -86,6 +86,14 @@ class DescriptVideoTranslationTest extends TestCase
         ]);
     }
 
+    private function descriptEditor(): User
+    {
+        $admin = $this->admin();
+        $admin->permissions()->create(['permission' => User::PERMISSION_DESCRIPT_TRANSLATE]);
+
+        return $admin;
+    }
+
     private function translator(): TranslateLessonVideo
     {
         return app(TranslateLessonVideo::class);
@@ -107,7 +115,7 @@ class DescriptVideoTranslationTest extends TestCase
     public function test_descript_supplements_the_existing_manual_translation_action(): void
     {
         $lesson = $this->lesson();
-        $admin = $this->admin();
+        $admin = $this->descriptEditor();
 
         Livewire::actingAs($admin)
             ->test(EditLesson::class, ['record' => $lesson->getRouteKey()])
@@ -298,7 +306,7 @@ class DescriptVideoTranslationTest extends TestCase
 
     public function test_the_button_shows_only_for_a_lesson_with_an_uploaded_video(): void
     {
-        $admin = $this->admin();
+        $admin = $this->descriptEditor();
         $withUpload = $this->lesson();
         $youtubeOnly = Lesson::query()->whereKeyNot($withUpload->id)->first();
         $youtubeOnly->update(['video_sources' => [['type' => 'youtube', 'youtube_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ']]]);
@@ -318,13 +326,53 @@ class DescriptVideoTranslationTest extends TestCase
             ->assertActionHidden('translateVideoWithDescript');
     }
 
+    public function test_descript_actions_require_an_explicit_account_permission(): void
+    {
+        $lesson = $this->lesson();
+        $admin = $this->admin();
+        $this->translator()->request($lesson, self::VIDEO, ['fr']);
+
+        Livewire::actingAs($admin)
+            ->test(EditLesson::class, ['record' => $lesson->getRouteKey()])
+            ->assertActionHidden('translateVideoWithDescript')
+            ->assertActionHidden('checkDescriptProgress');
+
+        $admin->permissions()->create(['permission' => User::PERMISSION_DESCRIPT_TRANSLATE]);
+
+        Livewire::actingAs($admin)
+            ->test(EditLesson::class, ['record' => $lesson->getRouteKey()])
+            ->assertActionVisible('translateVideoWithDescript')
+            ->assertActionVisible('checkDescriptProgress');
+    }
+
+    public function test_starting_a_translation_requires_an_intentional_confirmation(): void
+    {
+        $lesson = $this->lesson();
+
+        Livewire::actingAs($this->descriptEditor())
+            ->test(EditLesson::class, ['record' => $lesson->getRouteKey()])
+            ->callAction('translateVideoWithDescript', data: [
+                'video' => self::VIDEO,
+                'languages' => ['fr'],
+                'confirmed' => false,
+            ])
+            ->assertHasActionErrors(['confirmed' => 'accepted']);
+
+        $this->assertDatabaseCount('video_translations', 0);
+        $this->assertSame([], $this->calls, 'Validation must stop the request before Descript is called.');
+    }
+
     public function test_an_editor_starts_a_translation_from_the_lesson(): void
     {
         $lesson = $this->lesson();
 
-        Livewire::actingAs($this->admin())
+        Livewire::actingAs($this->descriptEditor())
             ->test(EditLesson::class, ['record' => $lesson->getRouteKey()])
-            ->callAction('translateVideoWithDescript', data: ['video' => self::VIDEO, 'languages' => ['fr', 'es']])
+            ->callAction('translateVideoWithDescript', data: [
+                'video' => self::VIDEO,
+                'languages' => ['fr', 'es'],
+                'confirmed' => true,
+            ])
             ->assertHasNoActionErrors()
             ->assertNotified(__t('admin_descript.action.requested'));
 
@@ -337,7 +385,7 @@ class DescriptVideoTranslationTest extends TestCase
         $lesson = $this->lesson();
         $this->translator()->request($lesson, self::VIDEO, ['fr']);
 
-        $page = Livewire::actingAs($this->admin())->test(EditLesson::class, ['record' => $lesson->getRouteKey()]);
+        $page = Livewire::actingAs($this->descriptEditor())->test(EditLesson::class, ['record' => $lesson->getRouteKey()]);
 
         for ($i = 0; $i < 4 && VideoTranslation::sole()->isInFlight(); $i++) {
             $page->callAction('checkDescriptProgress');

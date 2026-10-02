@@ -21,6 +21,7 @@ return [
         'manage_languages' => 'Управление языками',
         'manage_translations' => 'Управление переводами',
         'check_mail' => 'Проверка отправки почты',
+        'use_descript_translation' => 'Использовать перевод видео Descript',
         'lessons_done' => 'Пройдено уроков',
         'last_login' => 'Последний вход',
         'export' => 'Экспорт прогресса обучающихся',

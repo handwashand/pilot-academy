@@ -49,6 +49,9 @@ class User extends Authenticatable implements FilamentUser, HasLocalePreference
     /** Open Settings → Mail and send yourself a test email. */
     public const PERMISSION_MAIL_CHECK = 'mail.check';
 
+    /** Start and monitor credit-using Descript video translations. */
+    public const PERMISSION_DESCRIPT_TRANSLATE = 'descript.translate';
+
     /** New accounts are partners until an admin says otherwise. */
     protected $attributes = [
         'role' => self::ROLE_LEARNER,

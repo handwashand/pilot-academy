@@ -38,12 +38,14 @@ Taken by the product owner on 2026-10-01. Do not reopen without a new reason.
 | When it runs | **A button on the lesson.** An editor picks languages; nothing runs automatically on upload. |
 | Storage | Every result is kept in the app; a done translation is never re-requested. |
 | Existing manual translation | **Keep it.** Descript is a separate video action and must never replace, hide or trigger the existing manual **Translate** action. |
+| Who may spend credits | **Explicit per-account right.** Admins assign **Use Descript video translation** under a user's Extra permissions. Neither Admin nor Creator receives it automatically. |
+| General Academy text | **Do not replace manual translation with Descript.** Underlord can change text inside a Descript project, but the API has no dedicated arbitrary-text translation request/response contract. |
 
 Still open — see [Open questions](#open-questions).
 
 ## Findings — what Descript's API actually does
 
-Checked against Descript's own documentation on 2026-10-01. **None of this has
+Checked against Descript's own documentation on 2026-10-02. **None of this has
 been exercised against a live account yet** — that is step 0.6 below.
 
 ### Basics
@@ -121,6 +123,25 @@ translated text becomes that composition's transcript; 90+ languages including
 Arabic; it uses AI credits; re-translating **overwrites manual edits**; and a
 translation does not update when the original changes.
 
+### Can Descript replace general text translation?
+
+Checked again against Descript's current official API and Underlord
+documentation on 2026-10-02. **Not reliably for this application.** Underlord
+can translate subtitles and rewrite script text inside a Descript project, and
+the API can create a project from a prompt. However, the public API is built
+around projects and compositions: there is no dedicated endpoint that accepts
+an Academy field and returns its translation as structured text.
+
+Using it for a course title, lesson body or case-study section would mean
+creating a temporary project, asking the beta and explicitly non-deterministic
+Underlord agent to rewrite it, then exporting a composition transcript. That
+adds project cleanup, asynchronous polling and AI-credit use to a simple text
+field, while still needing a person to review the result. It is not a sound
+replacement for the Academy's existing **Translate** editor. Descript remains
+the media transcript/caption service; manual content translation remains
+available and independent. Revisit only if Descript publishes a supported
+general text-translation endpoint with a stable response contract.
+
 ### Project — `GET /projects/{project_id}`
 
 `compositions`: `[{ id, name, duration_seconds, created_at, updated_at }]`.
@@ -185,6 +206,10 @@ This is why dubbing waits for a live account.
 8. **The suite runs on SQLite; production is PostgreSQL** (since 2026-10-01).
    See the `distinct lessons.*` trap in `agents.md`. Check queries against the
    Postgres container, not only the suite.
+9. **Credit use is an extra permission.** The global environment flag and token
+   connect the service, but a panel user sees or invokes its actions only with
+   `descript.translate`. The start modal also requires an explicit
+   acknowledgement before any row or API request is created.
 
 ## Design
 
@@ -303,12 +328,14 @@ The token never reaches the browser, a log line, or the repository.
 beside the existing `TranslateContentAction` (read it — it is the pattern to
 follow). **This is additive:** the existing **Translate** action remains the
 manual editor for lesson text and is available independently of Descript. The
-Descript action is visible only when Descript is enabled and configured **and**
-the lesson has at least one uploaded video. Its modal lets the editor choose the
+Descript action is visible only when Descript is enabled and configured, the
+editor has the **Use Descript video translation** extra permission, **and** the
+lesson has at least one uploaded video. Its modal lets the editor choose the
 video (if more than one upload) and tick target languages (every active language
 except the lesson's own), with done and in-flight languages shown as such and
-not tickable. A second action, **Check progress**, appears while anything is in
-flight.
+not tickable. The editor must acknowledge that the upload goes to Descript and
+may use media minutes and AI credits before starting. A second action, **Check
+progress**, appears to permitted editors while anything is in flight.
 
 ## Before starting — what the owner must do first
 
@@ -375,14 +402,14 @@ Nothing below can be done by an agent. Steps 0.1–0.5 unblock step 0.6, and ste
 | Step 2 — `DescriptClient` | **Done** |
 | Step 3 — `TranslateLessonVideo` | **Done** |
 | Step 4 — `descript:sync` | **Done** |
-| Step 5 — the lesson buttons | **Done** |
+| Step 5 — the lesson buttons | **Done**. Both actions require the per-account right; starting also requires a credit/data acknowledgement |
 | Step 6 — strings in six languages | **Done** |
 | Step 7 — captions on the player | Not started — open question 1 |
-| Step 8 — documentation | Partly: `DEPLOY.md` and the `agents.md` work log done. **`docs/CHANGELOG.md` and the six admin guides wait for step 9** — What's new is read by admins, and announcing a switched-off button they cannot see would only confuse them; the guides should describe what was proven, not what was assumed |
+| Step 8 — documentation | **Done for the built transcript workflow:** deployment, changelog, six admin guides and agent memory describe the global switch, per-account right and confirmation. Update them again after live verification or dubbing |
 | Step 9 — live verification | Not started — needs 0.5 and 0.6 |
 | Dubbing | Not started — waits for 0.6 |
 
-**Steps 1–6 verified by** `tests/Feature/DescriptVideoTranslationTest.php`, 15
+**Steps 1–6 verified by** `tests/Feature/DescriptVideoTranslationTest.php`, 18
 tests against a stateful fake of Descript — no test talks to the real API. See
 [What was built](#what-was-built) for the details a next agent needs.
 
@@ -398,8 +425,9 @@ Everything a next agent needs to know about steps 1–6, without reading it all.
 | `app/Actions/TranslateLessonVideo.php` | The rules and both state machines. `request()`, `advance()`, `advanceImport()`, `advanceLesson()`, `advanceAll()`, `uploadedVideos()`, `targetLanguages()`. |
 | `app/Console/Commands/DescriptSync.php` | `php artisan descript:sync`. |
 | `app/Filament/Actions/TranslateVideoWithDescriptAction.php` | `make()` — **Translate video**; `check()` — **Check progress**. Both on `EditLesson`. |
+| `app/Models/User.php` and `app/Filament/Resources/Users/Schemas/UserForm.php` | The `descript.translate` extra permission and its assignable checkbox. |
 | `lang/{en,ru,es,fr,pt,ar}/admin_descript.php` | Every string; group added to `Translator::SHIPPED_GROUPS`. |
-| `tests/Feature/DescriptVideoTranslationTest.php` | 15 tests, stateful fake. |
+| `tests/Feature/DescriptVideoTranslationTest.php` | 18 tests, stateful fake. |
 
 Behaviour worth knowing before changing anything:
 
@@ -550,9 +578,7 @@ designed then.
 
 1. Offer the stored `.srt` as player captions (step 7)? Recommended: yes.
 2. Which Descript plan, and what monthly credit ceiling (0.1, 0.4)?
-3. May **creators** spend credits, or admins only? The plan assumes the lesson's
-   edit permission; narrow it if spend must be admin-only.
-4. Add the `callback_url` webhook later so progress arrives without anyone
+3. Add the `callback_url` webhook later so progress arrives without anyone
    clicking? Needs a signed public route; production only.
 
 ## Proven on a live account
@@ -582,7 +608,9 @@ named composition, its credits and time per job, and the answer on dubbing.
 
 ## References
 
-- [Descript API overview](https://help.descript.com/developers/api-reference/overview)
+- [Descript API overview](https://help.descript.com/api-and-mcp/api)
+- [Descript API reference](https://help.descript.com/developers)
+- [Underlord capabilities and limitations](https://help.descript.com/getting-started/underlord-beta-your-ai-co-editor-in-descript)
 - [OpenAPI specification](https://help.descript.com/developers/openapi.yaml)
 - [Rate limiting](https://help.descript.com/developers/guides/rate-limiting)
 - [Translate captions (app)](https://help.descript.com/repurpose/translate-captions.md)

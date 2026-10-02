@@ -144,3 +144,21 @@ En **Certificados**, filtra por curso, empresa o estado. La página pública `/c
 | Borrador | No visible para estudiantes. |
 | Publicado | Visible en el sitio del estudiante. |
 | Archivado | Retirado, pero conservado. |
+
+## Traducción de vídeo con Descript
+
+La traducción de Descript es independiente del botón normal **Traducir**, que
+sigue siendo la forma de traducir manualmente títulos, resúmenes y texto de
+cursos y lecciones.
+
+Primero, un administrador abre **Personas → Usuarios**, abre la cuenta del
+miembro del equipo, marca **Usar la traducción de vídeo de Descript** en
+**Permisos adicionales** y guarda. La integración opcional también debe estar
+activada en el servidor. Este permiso no se incluye automáticamente con los
+roles Admin o Creator.
+
+En una lección con un vídeo subido, la persona autorizada pulsa **Traducir
+vídeo**, elige el archivo y los idiomas, y confirma que el vídeo se enviará a
+Descript y puede consumir minutos y créditos de IA. Nada se envía hasta pulsar
+**Iniciar traducción**. Los enlaces de YouTube no se pueden enviar. Usa
+**Comprobar progreso** hasta que se guarde el resultado.

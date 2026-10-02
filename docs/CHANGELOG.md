@@ -24,6 +24,14 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **Descript video translation is an assignable right.** Enabling the Descript
+  connection on the server no longer gives every editor its credit-using
+  controls. An admin chooses each permitted account under **People → Users →
+  Extra permissions → Use Descript video translation**; the right is not part
+  of the Admin or Creator role automatically. Starting a translation opens a
+  confirmation that names the video upload and possible media-minute and AI
+  credit use, and nothing is sent until the editor accepts it. The normal
+  **Translate** button remains separate for manually translating lesson text.
 - **Arabic, and the academy reads right to left.** Arabic joins English,
   Russian, Spanish, French and Portuguese. Choosing it turns the whole student
   site around — the text runs right to left, and the arrows that say "next" and

@@ -5,8 +5,10 @@ namespace App\Filament\Actions;
 use App\Actions\TranslateLessonVideo;
 use App\Models\DescriptImport;
 use App\Models\Lesson;
+use App\Models\User;
 use App\Models\VideoTranslation;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
@@ -35,12 +37,14 @@ class TranslateVideoWithDescriptAction
             ->modalHeading(fn (): string => __t('admin_descript.action.heading'))
             ->modalDescription(fn (): string => __t('admin_descript.action.description'))
             ->modalSubmitActionLabel(fn (): string => __t('admin_descript.action.submit'))
+            ->authorize(fn (): bool => (bool) auth()->user()?->hasPermission(User::PERMISSION_DESCRIPT_TRANSLATE))
             ->visible(fn (Lesson $record): bool => app(TranslateLessonVideo::class)->enabled()
                 && TranslateLessonVideo::uploadedVideos($record) !== []
                 && TranslateLessonVideo::targetLanguages($record) !== [])
             ->fillForm(fn (Lesson $record): array => [
                 'video' => array_key_first(TranslateLessonVideo::uploadedVideos($record)),
                 'languages' => [],
+                'confirmed' => false,
             ])
             ->schema(fn (Lesson $record): array => [
                 Select::make('video')
@@ -56,6 +60,15 @@ class TranslateVideoWithDescriptAction
                     ->disableOptionWhen(fn (string $value, Get $get): bool => static::isTaken($record, (string) $get('video'), $value))
                     ->required()
                     ->columns(2),
+
+                Checkbox::make('confirmed')
+                    ->label(fn (): string => __t('admin_descript.action.confirmation'))
+                    ->accepted()
+                    ->required()
+                    ->validationMessages([
+                        'accepted' => fn (): string => __t('admin_descript.action.confirmation_required'),
+                    ])
+                    ->columnSpanFull(),
             ])
             ->action(function (Lesson $record, array $data): void {
                 $outcome = app(TranslateLessonVideo::class)->request(
@@ -94,6 +107,7 @@ class TranslateVideoWithDescriptAction
             ->label(fn (): string => __t('admin_descript.action.check'))
             ->icon(Heroicon::OutlinedArrowPath)
             ->color('gray')
+            ->authorize(fn (): bool => (bool) auth()->user()?->hasPermission(User::PERMISSION_DESCRIPT_TRANSLATE))
             ->visible(fn (Lesson $record): bool => app(TranslateLessonVideo::class)->enabled()
                 && VideoTranslation::query()->where('lesson_id', $record->id)->inFlight()->exists())
             ->action(function (Lesson $record): void {

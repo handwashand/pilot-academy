@@ -21,6 +21,7 @@ return [
         'manage_languages' => 'Gerenciar idiomas',
         'manage_translations' => 'Gerenciar traduções',
         'check_mail' => 'Verificar o envio de e-mails',
+        'use_descript_translation' => 'Usar a tradução de vídeo do Descript',
         'lessons_done' => 'Aulas concluídas',
         'last_login' => 'Último acesso',
         'export' => 'Exportar progresso dos alunos',

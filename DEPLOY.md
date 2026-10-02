@@ -118,6 +118,13 @@ DESCRIPT_TIMEOUT_SECONDS=30
 
 then `php8.4 artisan optimize` so the cached config picks it up.
 
+The environment values enable and connect the integration for the whole site;
+they do not grant anyone access to it. In the panel, an admin must open
+**People → Users**, open each permitted staff account, and tick **Use Descript
+video translation** under **Extra permissions**. Admins and creators do not
+receive this credit-using right automatically. Starting a translation also
+requires an acknowledgement in its confirmation dialog.
+
 `APP_URL` must be the real public address: Descript fetches each video from
 `APP_URL/storage/…` itself. On a server it cannot reach, the app uploads the file
 instead, which ties up a web request for the length of the upload.

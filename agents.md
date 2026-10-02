@@ -385,6 +385,7 @@ Newest first.
 
 | Date | Decision |
 | --- | --- |
+| 2026-10-02 | **Descript video translation is assigned per account.** The server environment connects the optional integration; `descript.translate` controls who may spend its credits, and every start requires an acknowledgement. Neither Admin nor Creator receives the right automatically. Underlord can edit project scripts, but its beta project/prompt/export API is not a stable general text-translation service for Academy fields. |
 | 2026-10-02 | **Descript supplements manual translation; it never replaces it.** A lesson keeps its existing manual **Translate** action for editor-written content. Descript has a separate, conditional video-translation action and must not hide, rename or trigger the manual workflow. |
 | 2026-10-02 | **DeepL is parked and may not be integrated.** Do not implement or configure it unless the owner explicitly reopens the decision. Descript's media transcript translation does not start a general Academy text-translation rollout. |
 | 2026-09-14 | **Content problems are not dashboard material.** The card moved to Content → Content health (menu badge), with flags on the Courses/Lessons lists and edit pages, checks before publishing, and bell alerts to the content's owner. |
@@ -400,6 +401,32 @@ Newest first.
 ## Work log
 
 Newest first. Add to this every time.
+
+### 2026-10-02 — Descript use is an assigned, confirmed action
+
+Descript's lesson actions now require the `descript.translate` extra permission,
+assigned by an admin under **People → Users**. It is intentionally not inherited
+from either Admin or Creator. Filament authorization protects both the visible
+button and a direct Livewire action request. The start dialog now requires the
+editor to acknowledge that the selected upload leaves the Academy and may use
+media minutes and AI credits; failed acknowledgement creates no translation row
+and makes no API call. The global environment flag and token remain the site-wide
+connection and emergency off switch.
+
+Descript's current official API and Underlord documentation were reviewed. It
+can translate subtitles and manipulate script text inside a Descript project,
+but offers no dedicated structured arbitrary-text translation endpoint.
+Replacing the Academy's manual field editor would require a temporary project,
+an asynchronous non-deterministic beta prompt and transcript export for every
+piece of text. That is not adopted; the manual **Translate** action remains
+independent and authoritative.
+
+**Verified so far:** the mounted `DescriptVideoTranslationTest` suite passed 18
+tests with 98 assertions, including denied access and required confirmation.
+The first bare-container attempt lacked `APP_KEY`; it was rerun with a
+disposable test key as required by this repository's Docker notes. Documentation
+and six-language strings were updated; broader translation tests and Pint are
+still to run.
 
 ### 2026-10-02 — Admin sidebar made narrower
 
