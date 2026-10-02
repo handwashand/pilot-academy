@@ -402,6 +402,24 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-02 — DeepL integration reopened; provider foundation complete
+
+The owner reopened the parked DeepL decision and asked to integrate it step by
+step. Step 1 is complete: disabled-by-default environment/config entries,
+`DeepLClient`, structured failures, current v3 language capability discovery,
+all six Academy locale mappings, HTML-aware translation, 120 KiB batching,
+bounded retry behavior, official-host restriction and secret-safe logging. It
+uses Laravel's HTTP client and the existing cache; no package or migration was
+added, and no real API request was made.
+
+The ordered plan and decisions are in `docs/deepL-integration.md`. The intended
+UI extends the existing manual **Translate** dialog: generate missing drafts,
+review, then save. It must not auto-save, overwrite existing translations, or
+turn Descript into a text translator.
+
+**Verified:** `DeepLClientTest` passed 11 tests with 31 assertions against HTTP
+fakes. Pint passed the four changed PHP files. Step 2 is in progress.
+
 ### 2026-10-02 — Descript use is an assigned, confirmed action
 
 Descript's lesson actions now require the `descript.translate` extra permission,

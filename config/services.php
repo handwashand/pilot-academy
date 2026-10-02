@@ -55,4 +55,17 @@ return [
         ),
     ],
 
+    /*
+     * DeepL drafts translations for editor review inside the existing
+     * Translate action. It remains inert until both the flag and key are set.
+     */
+    'deepl' => [
+        'enabled' => (bool) env('DEEPL_ENABLED', false),
+        'key' => env('DEEPL_API_KEY'),
+        'base_url' => env('DEEPL_API_BASE_URL', 'https://api-free.deepl.com'),
+        'english_target' => env('DEEPL_ENGLISH_TARGET', 'en-US'),
+        'timeout' => (int) env('DEEPL_TIMEOUT_SECONDS', 30),
+        'reporting_tag' => env('DEEPL_REPORTING_TAG', 'pilot-academy'),
+    ],
+
 ];
