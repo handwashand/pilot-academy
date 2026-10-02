@@ -401,6 +401,25 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-02 — Admin sidebar made narrower
+
+The desktop admin sidebar is `18rem` wide instead of Filament's `20rem`
+default, shortening the navigation rows horizontally by 32px. The change uses
+Filament's `sidebarWidth()` panel setting rather than styling its generated
+label span. Row height, padding, group spacing and mobile behaviour remain at
+their defaults. No item, label, group or permission changed. The visible change
+is recorded under 2.1.0 in
+`docs/CHANGELOG.md`; the admin guide remains accurate because the menu and its
+workflows did not change.
+
+**Verified:** `npm run build` completed; the panel theme returned to its
+original asset hash after the vertical CSS override was removed. Pint passed,
+and Filament reports the configured width as `18rem`. An authenticated
+1440 x 900 Chrome screenshot was reviewed in dark mode: long labels and badges
+remained readable, with original row heights and no overlap or clipping. The
+temporary local admin and Chrome files were removed. `ChangelogPageTest` passed
+22 tests with 68 assertions.
+
 ### 2026-10-02 — Manual and Descript translation kept separate
 
 Confirmed that the lesson editor still composes two independent actions: the

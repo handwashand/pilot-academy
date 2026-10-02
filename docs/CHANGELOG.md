@@ -245,6 +245,9 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Changed
 
+- **The admin sidebar is slightly narrower on desktop.** Navigation rows are
+  shorter horizontally, leaving more room for the page. Row height, group
+  spacing and the mobile menu are unchanged.
 - **The Dashboard now distinguishes recent activity from historical progress.**
   **Active students** means learners who signed in or worked in the academy
   during the last 30 days; reminder emails and staff activity do not inflate the
