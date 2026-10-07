@@ -4,10 +4,15 @@
 // with the same key overrides a line.
 
 return [
-    'subheading' => 'Switch on a translation provider and add its API token. Once enabled, people who have been given the right see a button to draft translations with it.',
-    'provider_description' => 'Translate course and lesson text with :provider. Text is sent to :provider only when someone presses the button and confirms.',
+    'subheading' => 'Switch on an integration and add its API token. Who may use each one is set per account under People → Users → Extra permissions.',
+    'description' => [
+        'descript' => 'Translates the speech in uploaded lesson videos (a lesson’s Translate video button). Each video is sent to Descript once and every translation is kept here. Uses your Descript media minutes and AI credits.',
+        'deepl' => 'Drafts course and lesson text translations in the Translate window. The text of empty boxes is sent to DeepL only when someone presses the button and confirms. A key ending in :fx is a DeepL API Free key.',
+        'chatgpt' => 'Drafts course and lesson text translations in the Translate window. Text is sent to ChatGPT only when someone presses the button and confirms.',
+        'deepseek' => 'Drafts course and lesson text translations in the Translate window. Text is sent to DeepSeek only when someone presses the button and confirms.',
+    ],
     'enabled' => 'Enable :provider',
-    'enabled_help' => 'Needs a token. Switching it off hides the button but keeps the token.',
+    'enabled_help' => 'Needs a token. Switching it off hides the buttons but keeps the token.',
     'token' => 'API token',
     'token_saved' => 'A token is saved — leave blank to keep it',
     'token_empty' => 'Paste the API token',

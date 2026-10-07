@@ -95,14 +95,15 @@ class TranslateContentAction
             return null;
         }
 
-        $provider = AiProvider::usable($config['provider']);
-
         if ($config['provider'] === AiProvider::DEEPL) {
-            // The key saved under Settings → Integrations, else the server's .env.
-            $client = $provider ? new DeepLClient($provider->deeplSettings()) : app(DeepLClient::class);
+            // The key saved under Settings → Integrations (and its switch), else the server's .env.
+            $saved = AiProvider::saved(AiProvider::DEEPL);
+            $client = $saved ? new DeepLClient($saved->deeplSettings()) : app(DeepLClient::class);
 
             return $client->enabled() ? $client : null;
         }
+
+        $provider = AiProvider::usable($config['provider']);
 
         return $provider ? new LlmTranslator($provider) : null;
     }

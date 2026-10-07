@@ -18,8 +18,17 @@ class AiProvider extends Model
 
     public const DEEPL = 'deepl';
 
+    public const DESCRIPT = 'descript';
+
     /** @var array<string, array{label: string, url: string, model: string}> */
     public const PROVIDERS = [
+        // Descript translates the speech in lesson videos, not text; it has no
+        // model setting either. Its token is used by DescriptClient.
+        self::DESCRIPT => [
+            'label' => 'Descript',
+            'url' => 'https://descriptapi.com/v1',
+            'model' => '',
+        ],
         // DeepL is not a chat model: it has no model setting, and its address
         // depends on the key (see deeplSettings()).
         self::DEEPL => [
@@ -58,6 +67,18 @@ class AiProvider extends Model
         return static::firstOrNew(['provider' => $provider]);
     }
 
+    /**
+     * The row if an admin saved a token for it, switched on or off; otherwise
+     * null. Descript and DeepL use this: a saved token overrides the server's
+     * .env, and its switch decides, so switching off here really is off.
+     */
+    public static function saved(string $provider): ?self
+    {
+        $row = static::where('provider', $provider)->first();
+
+        return $row && filled($row->api_key) ? $row : null;
+    }
+
     /** The provider if it is switched on and has a token; otherwise null. */
     public static function usable(string $provider): ?self
     {
@@ -80,7 +101,7 @@ class AiProvider extends Model
     public function deeplSettings(): array
     {
         return [
-            'enabled' => true,
+            'enabled' => (bool) $this->enabled,
             'key' => $this->api_key,
             'base_url' => str_ends_with((string) $this->api_key, ':fx')
                 ? 'https://api-free.deepl.com'

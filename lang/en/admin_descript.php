@@ -43,6 +43,7 @@ return [
         'rejected' => 'Descript turned the request down.',
         'translation_failed' => 'Descript could not translate this video.',
         'composition_not_found' => 'Descript finished, but its translated version could not be identified.',
+        'no_subtitles' => 'Descript finished, but its translated subtitles came back empty.',
         'file_missing' => 'The uploaded video file is missing from storage.',
         'import_failed' => 'Descript could not import this video.',
     ],

@@ -7,6 +7,7 @@ use App\Filament\Resources\Courses\Pages\EditCourse;
 use App\Models\AiProvider;
 use App\Models\Course;
 use App\Models\User;
+use App\Services\Descript\DescriptClient;
 use Database\Seeders\LanguageSeeder;
 use Database\Seeders\PilotQuickStartSeeder;
 use Filament\Actions\Exceptions\ActionNotResolvableException;
@@ -115,6 +116,32 @@ class IntegrationsTest extends TestCase
 
         Http::assertSent(fn (Request $request): bool => str_starts_with($request->url(), 'https://api-free.deepl.com/v2/translate')
             && $request->hasHeader('Authorization', 'DeepL-Auth-Key abc-123:fx'));
+    }
+
+    public function test_a_descript_token_saved_here_connects_descript_and_its_switch_decides(): void
+    {
+        config(['services.descript.enabled' => false, 'services.descript.token' => null]);
+        $this->assertFalse((new DescriptClient)->enabled(), 'Nothing saved and nothing in .env: off.');
+
+        Livewire::actingAs($this->admin())
+            ->test(Integrations::class)
+            ->fillForm(['descript' => ['enabled' => true, 'api_key' => 'dsc-secret']])
+            ->call('save');
+
+        $this->assertSame('dsc-secret', AiProvider::for('descript')->api_key);
+        $this->assertTrue((new DescriptClient)->enabled(), 'A saved, enabled token connects Descript.');
+
+        AiProvider::for('descript')->update(['enabled' => false]);
+        config(['services.descript.enabled' => true, 'services.descript.token' => 'env-token']);
+
+        $this->assertFalse((new DescriptClient)->enabled(), 'Once saved, the page’s switch beats .env.');
+    }
+
+    public function test_descript_still_works_from_the_servers_env_when_nothing_is_saved(): void
+    {
+        config(['services.descript.enabled' => true, 'services.descript.token' => 'env-token']);
+
+        $this->assertTrue((new DescriptClient)->enabled());
     }
 
     public function test_deepl_still_works_from_the_servers_env_when_nothing_is_saved(): void

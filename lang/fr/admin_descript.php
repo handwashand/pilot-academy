@@ -43,6 +43,7 @@ return [
         'rejected' => 'Descript a refusé la demande.',
         'translation_failed' => 'Descript n’a pas pu traduire cette vidéo.',
         'composition_not_found' => 'Descript a terminé, mais sa version traduite n’a pas pu être identifiée.',
+        'no_subtitles' => 'Descript a terminé, mais les sous-titres traduits sont revenus vides.',
         'file_missing' => 'Le fichier vidéo téléversé est introuvable dans le stockage.',
         'import_failed' => 'Descript n’a pas pu importer cette vidéo.',
     ],

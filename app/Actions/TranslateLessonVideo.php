@@ -34,6 +34,9 @@ use InvalidArgumentException;
  */
 class TranslateLessonVideo
 {
+    /** job_id while one request is publishing, so a second cannot. */
+    private const PUBLISH_STARTING = 'publishing';
+
     public function __construct(private DescriptClient $client) {}
 
     public function enabled(): bool
@@ -236,6 +239,7 @@ class TranslateLessonVideo
         }
 
         $prompt = strtr((string) config('services.descript.translate_prompt'), [
+            '{source}' => DescriptClient::ORIGINAL_COMPOSITION,
             '{language}' => $this->englishName($translation->language),
             '{name}' => $this->compositionName($translation->language),
         ]);
@@ -312,24 +316,91 @@ class TranslateLessonVideo
         $translation->update([
             'status' => VideoTranslation::STATUS_EXPORTING,
             'composition_id' => $compositionId,
+            // The agent job is finished with; from here job_id is the publish job.
+            'job_id' => null,
             'agent_response' => $result['agent_response'] ?? null,
             'ai_credits_used' => (int) ($result['ai_credits_used'] ?? 0),
         ]);
 
-        // Exporting spends no credits and answers at once, so do it now.
         $this->export($translation->refresh());
     }
 
-    /** Rule 3: store what comes back. Rule 4: never over a person's work. */
+    /**
+     * Rule 3: store what comes back. Rule 4: never over a person's work.
+     *
+     * The translated words are not in Descript's transcript export (that returns
+     * the original script — found on the live run). They are the subtitles of a
+     * published page, so the composition is published once, privately and as
+     * audio, and its WebVTT is stored. One call starts the publish, later calls
+     * wait for it; the claim means two clicks cannot publish twice.
+     */
     private function export(VideoTranslation $translation): void
     {
         $import = $translation->descriptImport;
 
-        $text = trim($this->client->exportTranscript($import->project_id, (string) $translation->composition_id, 'txt'));
-        $subtitles = $this->client->exportTranscript($import->project_id, (string) $translation->composition_id, 'srt');
+        if ($translation->job_id === self::PUBLISH_STARTING) {
+            return;
+        }
 
-        $subtitlePath = sprintf('video-translations/lesson-%d/%d-%s.srt', $translation->lesson_id, $import->id, $translation->language);
-        Storage::disk('public')->put($subtitlePath, $subtitles);
+        if ($translation->job_id === null) {
+            $claimed = VideoTranslation::query()
+                ->whereKey($translation->getKey())
+                ->where('status', VideoTranslation::STATUS_EXPORTING)
+                ->whereNull('job_id')
+                ->update(['job_id' => self::PUBLISH_STARTING]) === 1;
+
+            if (! $claimed) {
+                return;
+            }
+
+            try {
+                $job = $this->client->publish($import->project_id, (string) $translation->composition_id);
+            } catch (DescriptException $e) {
+                $translation->update(['job_id' => null]);
+
+                throw $e;
+            }
+
+            $translation->update(['job_id' => $job['job_id'] ?? null]);
+
+            // Publishing takes a few seconds; the next check collects it.
+            return;
+        }
+
+        $job = $this->client->job($translation->job_id);
+
+        if (($job['job_state'] ?? null) !== 'stopped') {
+            return;
+        }
+
+        $result = $job['result'] ?? [];
+        $slug = ($result['status'] ?? null) === 'success' && filled($result['share_url'] ?? null)
+            ? basename((string) parse_url((string) $result['share_url'], PHP_URL_PATH))
+            : null;
+
+        if (! $slug) {
+            $translation->update([
+                'status' => VideoTranslation::STATUS_FAILED,
+                'error' => $result['error_message'] ?? __t('admin_descript.errors.translation_failed'),
+            ]);
+
+            return;
+        }
+
+        $vtt = trim((string) ($this->client->publishedProject($slug)['subtitles'] ?? ''));
+        $text = VideoTranslation::textFromVtt($vtt);
+
+        if ($text === '') {
+            $translation->update([
+                'status' => VideoTranslation::STATUS_FAILED,
+                'error' => __t('admin_descript.errors.no_subtitles'),
+            ]);
+
+            return;
+        }
+
+        $subtitlePath = sprintf('video-translations/lesson-%d/%d-%s.vtt', $translation->lesson_id, $import->id, $translation->language);
+        Storage::disk('public')->put($subtitlePath, $vtt."\n");
 
         $translation->update([
             'status' => VideoTranslation::STATUS_DONE,

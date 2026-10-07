@@ -19,18 +19,21 @@ use Filament\Support\Icons\Heroicon;
 use UnitEnum;
 
 /**
- * Settings → Integrations: the translation providers an admin can switch on.
+ * Settings → Integrations: Descript (lesson video translation) and the text
+ * translation providers — DeepL, ChatGPT, DeepSeek — an admin can switch on.
  *
- * An enabled provider with a token adds a "Generate missing with ChatGPT" (or
- * DeepSeek) button to the Translate dialog for people given that right.
+ * An enabled text provider with a token adds a "Generate missing with …" button
+ * to the Translate dialog for people given that right; Descript adds the
+ * lesson's Translate video button the same way.
  *
  * The token is write-only. It is stored encrypted, the form never loads it
  * back, and a blank box keeps what is saved. Providers have fixed official
  * addresses (see AiProvider), so a token cannot be pointed at another host.
- * A DeepL key saved here is used instead of DEEPL_API_KEY in the server's
- * .env (which still works when nothing is saved). Mail and Descript keep their
- * secrets in .env only. A DeepL API Free key (ending in ":fx") is sent to the
- * Free host, any other key to the Pro host.
+ * A token saved here for DeepL or Descript is used instead of the server's
+ * .env values (DEEPL_*, DESCRIPT_API_TOKEN), which still work when nothing is
+ * saved; once saved, this page's switch decides. A DeepL API Free key (ending in
+ * ":fx") is sent to the Free host, any other key to the Pro host. Mail's
+ * settings stay in .env only.
  */
 class Integrations extends Page
 {
@@ -158,7 +161,7 @@ class Integrations extends Page
         $saved = filled(AiProvider::where('provider', $provider)->value('api_key'));
 
         return Section::make($label)
-            ->description(fn (): string => __t('admin_integrations.provider_description', ['provider' => $label]))
+            ->description(fn (): string => __t("admin_integrations.description.{$provider}"))
             ->statePath($provider)
             ->schema([
                 Toggle::make('enabled')
@@ -178,7 +181,7 @@ class Integrations extends Page
                     ->visible($saved),
 
                 TextInput::make('model')
-                    ->visible($provider !== AiProvider::DEEPL)
+                    ->visible(AiProvider::PROVIDERS[$provider]['model'] !== '')
                     ->label(fn (): string => __t('admin_integrations.model'))
                     ->maxLength(100)
                     ->placeholder(AiProvider::PROVIDERS[$provider]['model'])

@@ -43,6 +43,7 @@ return [
         'rejected' => 'رفض Descript الطلب.',
         'translation_failed' => 'تعذّر على Descript ترجمة هذا الفيديو.',
         'composition_not_found' => 'أنهى Descript عمله، لكن تعذّر تحديد نسخته المترجمة.',
+        'no_subtitles' => 'أنهى Descript عمله لكن الترجمة النصية عادت فارغة.',
         'file_missing' => 'ملف الفيديو المرفوع غير موجود في التخزين.',
         'import_failed' => 'تعذّر على Descript استيراد هذا الفيديو.',
     ],

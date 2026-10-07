@@ -2,6 +2,8 @@
 
 namespace App\Services\Descript;
 
+use App\Models\AiProvider;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\RequestException;
@@ -20,6 +22,9 @@ use Throwable;
  */
 class DescriptClient
 {
+    /** The composition the lesson video is placed in; translations are made from it. */
+    public const ORIGINAL_COMPOSITION = 'Original';
+
     /** Retried: rate limiting and Descript's own outages. Nothing else. */
     private const RETRYABLE = [429, 500, 502, 503, 504];
 
@@ -28,10 +33,35 @@ class DescriptClient
     /** These run inside an editor's request, so a long Retry-After is capped. */
     private const MAX_WAIT_SECONDS = 10;
 
+    /** The Descript row saved under Settings → Integrations, read once per instance. */
+    private bool|AiProvider|null $row = false;
+
+    /**
+     * The saved value, or the server's .env value when no token was saved on
+     * the Integrations page. A saved token is authoritative, including its
+     * switch: turning it off there turns Descript off.
+     */
+    private function saved(string $key, mixed $fallback): mixed
+    {
+        if ($this->row === false) {
+            try {
+                $this->row = AiProvider::saved(AiProvider::DESCRIPT);
+            } catch (QueryException) {
+                $this->row = null; // the table does not exist until the migration has run
+            }
+        }
+
+        return match (true) {
+            $this->row === null => $fallback,
+            $key === 'enabled' => (bool) $this->row->enabled,
+            default => $this->row->api_key,
+        };
+    }
+
     /** Switched on, and a token to switch on with. */
     public function enabled(): bool
     {
-        return (bool) config('services.descript.enabled') && filled(config('services.descript.token'));
+        return (bool) $this->saved('enabled', config('services.descript.enabled')) && filled($this->saved('token', config('services.descript.token')));
     }
 
     /** GET /status — which drive the token reaches. Spends nothing. */
@@ -51,10 +81,22 @@ class DescriptClient
      */
     public function createImport(string $projectName, string $mediaName, array $media): array
     {
+        $folder = config('services.descript.project_folder');
+        $access = config('services.descript.team_access');
+
         return $this->send('post', 'jobs/import/project_media', array_filter([
             'project_name' => $projectName,
-            'folder_name' => config('services.descript.project_folder'),
+            'folder_name' => $folder,
+            // Found on the first live run: a folder without this is refused.
+            'team_access' => filled($folder) ? (in_array($access, ['edit', 'comment', 'view'], true) ? $access : 'view') : null,
             'add_media' => [$mediaName => $media],
+            // Found on the first live run: without this the media sits in the
+            // project but in no composition, so there is nothing to transcribe,
+            // translate or export (duration 0, empty transcript).
+            'add_compositions' => [[
+                'name' => self::ORIGINAL_COMPOSITION,
+                'clips' => [['media' => $mediaName]],
+            ]],
         ]))->json();
     }
 
@@ -109,19 +151,35 @@ class DescriptClient
     }
 
     /**
-     * POST /export/transcript — the composition's words, returned as the file
-     * itself rather than a link, so it is stored the moment it arrives.
+     * POST /jobs/publish — publishes a composition as a private audio page.
      *
-     * @param  'txt'|'srt'  $format
+     * Not for the audio: Descript's transcript export returns the composition's
+     * *script*, which for a translation is still the original language (found on
+     * the live run). The translated captions only appear on the published page's
+     * subtitles, so a private audio publish — the cheapest one — is how they are
+     * reached.
+     *
+     * @return array{job_id: string}
      */
-    public function exportTranscript(string $projectId, string $compositionId, string $format): string
+    public function publish(string $projectId, string $compositionId): array
     {
-        return $this->send('post', 'export/transcript', [
+        return $this->send('post', 'jobs/publish', [
             'project_id' => $projectId,
             'composition_id' => $compositionId,
-            'format' => $format,
-            'include_speaker_labels' => 'off',
-        ])->body();
+            'media_type' => 'Audio',
+            'access_level' => 'private',
+        ])->json();
+    }
+
+    /**
+     * GET /published_projects/{slug} — its `subtitles` are the whole caption
+     * track as WebVTT, in the language of the composition that was published.
+     *
+     * @return array<string, mixed>
+     */
+    public function publishedProject(string $slug): array
+    {
+        return $this->send('get', 'published_projects/'.rawurlencode($slug))->json() ?? [];
     }
 
     private function send(string $method, string $path, array $payload = []): Response
@@ -144,7 +202,7 @@ class DescriptClient
     private function http(): PendingRequest
     {
         return Http::baseUrl(rtrim((string) config('services.descript.base_url'), '/'))
-            ->withToken((string) config('services.descript.token'))
+            ->withToken((string) $this->saved('token', config('services.descript.token')))
             ->acceptJson()
             ->asJson()
             ->timeout((int) config('services.descript.timeout') ?: 30)

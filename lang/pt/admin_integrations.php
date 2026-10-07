@@ -1,13 +1,18 @@
 <?php
 
-// Configurações → Configurações. Enviado com o código; uma linha da tabela
+// Configurações → Integrações. Enviado com o código; uma linha da tabela
 // translations com a mesma chave substitui uma linha.
 
 return [
-    'subheading' => 'Ative um provedor de tradução e adicione o token de API. Depois de ativado, quem tiver a permissão vê um botão para gerar rascunhos de tradução.',
-    'provider_description' => 'Traduza o texto de cursos e aulas com o :provider. O texto só é enviado ao :provider quando alguém clica no botão e confirma.',
+    'subheading' => 'Ative uma integração e adicione o token de API. Quem pode usar cada uma é definido por conta em Pessoas → Usuários → Permissões extras.',
+    'description' => [
+        'descript' => 'Traduz a fala dos vídeos de aula enviados (botão Traduzir vídeo de uma aula). Cada vídeo é enviado uma única vez ao Descript e cada tradução fica guardada aqui. Usa seus minutos de mídia e créditos de IA do Descript.',
+        'deepl' => 'Gera rascunhos de tradução do texto de cursos e aulas na janela Traduzir. O texto dos campos vazios só é enviado ao DeepL quando alguém clica no botão e confirma. Uma chave terminada em :fx é uma chave DeepL API Free.',
+        'chatgpt' => 'Gera rascunhos de tradução do texto de cursos e aulas na janela Traduzir. O texto só é enviado ao ChatGPT quando alguém clica no botão e confirma.',
+        'deepseek' => 'Gera rascunhos de tradução do texto de cursos e aulas na janela Traduzir. O texto só é enviado ao DeepSeek quando alguém clica no botão e confirma.',
+    ],
     'enabled' => 'Ativar o :provider',
-    'enabled_help' => 'Precisa de um token. Desativar oculta o botão, mas mantém o token.',
+    'enabled_help' => 'Precisa de um token. Desativar oculta os botões, mas mantém o token.',
     'token' => 'Token de API',
     'token_saved' => 'Há um token salvo — deixe em branco para mantê-lo',
     'token_empty' => 'Cole o token de API',

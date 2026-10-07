@@ -1,13 +1,18 @@
 <?php
 
-// Ajustes → Configuraciones. Se incluye con el código; una fila de la tabla
+// Ajustes → Integraciones. Se incluye con el código; una fila de la tabla
 // translations con la misma clave sustituye a una línea.
 
 return [
-    'subheading' => 'Activa un proveedor de traducción y añade su token de API. Una vez activado, quienes tengan el permiso verán un botón para generar borradores de traducción.',
-    'provider_description' => 'Traduce el texto de cursos y lecciones con :provider. El texto solo se envía a :provider cuando alguien pulsa el botón y confirma.',
+    'subheading' => 'Activa una integración y añade su token de API. Quién puede usar cada una se define por cuenta en Personas → Usuarios → Permisos adicionales.',
+    'description' => [
+        'descript' => 'Traduce el habla de los vídeos de lección subidos (botón Traducir vídeo de una lección). Cada vídeo se envía una sola vez a Descript y cada traducción se guarda aquí. Usa tus minutos de contenido y créditos de IA de Descript.',
+        'deepl' => 'Genera borradores de traducción del texto de cursos y lecciones en la ventana Traducir. El texto de los campos vacíos solo se envía a DeepL cuando alguien pulsa el botón y confirma. Una clave que termina en :fx es una clave de DeepL API Free.',
+        'chatgpt' => 'Genera borradores de traducción del texto de cursos y lecciones en la ventana Traducir. El texto solo se envía a ChatGPT cuando alguien pulsa el botón y confirma.',
+        'deepseek' => 'Genera borradores de traducción del texto de cursos y lecciones en la ventana Traducir. El texto solo se envía a DeepSeek cuando alguien pulsa el botón y confirma.',
+    ],
     'enabled' => 'Activar :provider',
-    'enabled_help' => 'Necesita un token. Desactivarlo oculta el botón pero conserva el token.',
+    'enabled_help' => 'Necesita un token. Desactivarlo oculta los botones pero conserva el token.',
     'token' => 'Token de API',
     'token_saved' => 'Hay un token guardado — déjalo en blanco para conservarlo',
     'token_empty' => 'Pega el token de API',

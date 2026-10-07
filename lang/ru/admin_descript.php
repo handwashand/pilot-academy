@@ -43,6 +43,7 @@ return [
         'rejected' => 'Descript отклонил запрос.',
         'translation_failed' => 'Descript не смог перевести это видео.',
         'composition_not_found' => 'Descript закончил работу, но его переведённую версию не удалось определить.',
+        'no_subtitles' => 'Descript завершил работу, но переведённые субтитры оказались пустыми.',
         'file_missing' => 'Загруженный файл видео отсутствует в хранилище.',
         'import_failed' => 'Descript не смог импортировать это видео.',
     ],

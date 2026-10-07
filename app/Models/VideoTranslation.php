@@ -36,11 +36,37 @@ class VideoTranslation extends Model
      * Browsers play captions only as WebVTT; Descript exports SRT. The two
      * differ in a header line and in the comma before the milliseconds.
      */
-    public static function toVtt(string $srt): string
+    public static function toVtt(string $subtitles): string
     {
-        $srt = str_replace(["\r\n", "\r"], "\n", ltrim($srt, "\xEF\xBB\xBF"));
+        $subtitles = trim(str_replace(["\r\n", "\r"], "\n", ltrim($subtitles, "\xEF\xBB\xBF")));
 
-        return "WEBVTT\n\n".preg_replace('/(\d{2}:\d{2}:\d{2}),(\d{3})/', '$1.$2', trim($srt))."\n";
+        // Descript's published subtitles are already WebVTT; older stored files are SRT.
+        if (str_starts_with($subtitles, 'WEBVTT')) {
+            return $subtitles."\n";
+        }
+
+        return "WEBVTT\n\n".preg_replace('/(\d{2}:\d{2}:\d{2}),(\d{3})/', '$1.$2', $subtitles)."\n";
+    }
+
+    /** The words of a caption track, without timings, as one running text. */
+    public static function textFromVtt(string $vtt): string
+    {
+        $cues = [];
+
+        foreach (preg_split('/\n{2,}/', str_replace(["\r\n", "\r"], "\n", trim($vtt))) ?: [] as $block) {
+            if (! str_contains($block, '-->')) {
+                continue; // the WEBVTT header, a NOTE, a STYLE block
+            }
+
+            $lines = array_filter(
+                explode("\n", $block),
+                fn (string $line): bool => $line !== '' && ! str_contains($line, '-->') && ! preg_match('/^\d+$/', $line),
+            );
+
+            $cues[] = trim(preg_replace('/\s+/u', ' ', implode(' ', $lines)));
+        }
+
+        return trim(implode(' ', array_filter($cues)));
     }
 
     /** Finished subtitle files for one uploaded video of a lesson. */

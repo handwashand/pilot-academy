@@ -45,13 +45,17 @@ return [
         'base_url' => env('DESCRIPT_API_BASE_URL', 'https://descriptapi.com/v1'),
         // Every project the academy creates goes in here; nested with "/".
         'project_folder' => env('DESCRIPT_PROJECT_FOLDER', 'Pilot Academy/Transcriptions'),
+        // Descript refuses a project in a folder unless it says what the
+        // drive's other members may do with it: edit, comment or view.
+        'team_access' => env('DESCRIPT_TEAM_ACCESS', 'view'),
         'timeout' => (int) env('DESCRIPT_TIMEOUT_SECONDS', 30),
         // Descript has no translate endpoint: translation is an instruction to
-        // its AI editor. {language} is the target's English name, {name} the
+        // its AI editor. {source} is the composition the video was placed in, {language}
+        // the target's English name, {name} the
         // composition to create — the app finds the result by that name.
         'translate_prompt' => env(
             'DESCRIPT_TRANSLATE_PROMPT',
-            'Translate the captions of this composition into {language}. Create the translation as a new composition named "{name}". Do not change the original composition.',
+            'Translate the captions of the composition named "{source}" into {language}. Create the translation as a new composition named "{name}". Do not change the original composition.',
         ),
     ],
 

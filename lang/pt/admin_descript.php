@@ -43,6 +43,7 @@ return [
         'rejected' => 'O Descript recusou o pedido.',
         'translation_failed' => 'O Descript não conseguiu traduzir este vídeo.',
         'composition_not_found' => 'O Descript terminou, mas a versão traduzida não pôde ser identificada.',
+        'no_subtitles' => 'O Descript terminou, mas as legendas traduzidas vieram vazias.',
         'file_missing' => 'O arquivo de vídeo enviado não está no armazenamento.',
         'import_failed' => 'O Descript não conseguiu importar este vídeo.',
     ],
