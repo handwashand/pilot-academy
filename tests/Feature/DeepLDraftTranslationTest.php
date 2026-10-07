@@ -10,6 +10,7 @@ use App\Models\Language;
 use App\Models\User;
 use Database\Seeders\LanguageSeeder;
 use Database\Seeders\PilotQuickStartSeeder;
+use Filament\Actions\Exceptions\ActionNotResolvableException;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
@@ -145,20 +146,26 @@ class DeepLDraftTranslationTest extends TestCase
 
     public function test_the_button_is_hidden_without_the_right_even_for_an_admin(): void
     {
+        // A hidden component's action cannot be resolved, so it cannot be called
+        // by a hand-made Livewire request either.
+        $this->expectException(ActionNotResolvableException::class);
+
         Livewire::actingAs($this->editor(false))
             ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
             ->mountAction('translateContent')
-            ->assertActionHidden(TestAction::make('draftWithDeepL')->schemaComponent('deeplActions'));
+            ->callAction(TestAction::make('draftWithDeepL')->schemaComponent('deeplActions'));
     }
 
     public function test_the_button_is_hidden_when_deepl_is_switched_off(): void
     {
         config(['services.deepl.enabled' => false]);
 
+        $this->expectException(ActionNotResolvableException::class);
+
         Livewire::actingAs($this->editor())
             ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
             ->mountAction('translateContent')
-            ->assertActionHidden(TestAction::make('draftWithDeepL')->schemaComponent('deeplActions'));
+            ->callAction(TestAction::make('draftWithDeepL')->schemaComponent('deeplActions'));
     }
 
     public function test_generating_fills_the_dialog_but_saves_nothing(): void

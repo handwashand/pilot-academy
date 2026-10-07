@@ -31,8 +31,8 @@ class DraftTranslationsWithDeepL
     /**
      * @param  Collection<int, Language>  $targets
      * @param  array<string, array<string, mixed>>  $current  The dialog's boxes, by language code then field.
-     *                                                         A failure stops the run — a quota or key problem would
-     *                                                         fail every language — but drafts already made are kept.
+     *                                                        A failure stops the run — a quota or key problem would
+     *                                                        fail every language — but drafts already made are kept.
      * @return array{drafts: array<string, array<string, string>>, error: ?DeepLException}
      */
     public function handle(Model $record, Collection $targets, array $current): array
