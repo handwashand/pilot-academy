@@ -24,6 +24,20 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **Lesson videos dubbed into other languages.** With Descript on, **Translate
+  video** on a lesson (and **Translate lesson videos** on a course) now asks
+  what to make: **Voice** — the video dubbed in that language — or **Subtitles
+  and transcript only**. A dubbed video is made once, saved in the academy, and
+  played automatically for anyone reading the academy in that language, with
+  **Play original audio** one click away. Descript uses the speaker's own voice
+  when the video has one it can copy, otherwise a stock voice. A voice uses more
+  AI credits than subtitles, and each dubbed language is a full extra video file
+  on the server.
+- **Download a lesson video.** Admins get a **Download video** button under each
+  uploaded lesson video. A learner gets it only when an admin ticks **Download
+  lesson videos** for their account under **People → Users → Extra
+  permissions**; without it, the player's own download entry is hidden too.
+  YouTube videos cannot be downloaded.
 - **Translate a whole course at once.** On a course, **Translate whole course**
   opens one window for the course's own text and every lesson's: pick a language
   and either write by hand or let DeepL, ChatGPT or DeepSeek (whichever is on for

@@ -633,6 +633,26 @@ already translated or under way are skipped and cost nothing. A finished
 translation also gives the lesson's player subtitles in that language (the
 **CC** button).
 
+**Voice or subtitles.** **Translate video** asks what to make. **Voice** dubs
+the video: Descript translates it, speaks it in that language (the speaker's
+own voice when it can copy one, otherwise a stock voice) and the academy keeps
+the dubbed video. A learner reading the academy in that language then hears it
+automatically, with **Play original audio** beside the player. **Subtitles and
+transcript only** is cheaper and gives the **CC** captions without changing the
+sound. A language already made is never charged again, and a voice requested
+after subtitles reuses that translation. Each dubbed language is a whole extra
+video file, so watch the server's disk on long lessons.
+
+## Letting people download lesson videos
+
+Admins see **Download video** under every uploaded lesson video on the student
+site. To let a learner download too, open **People → Users**, open their
+account, tick **Download lesson videos** under **Extra permissions** and save.
+Without that right the button is absent and the player's own download entry is
+hidden. Uploaded files are still served to the browser to be played, so this
+keeps honest people from downloading; it is not copy protection. YouTube videos
+cannot be downloaded.
+
 ## Translating text with DeepL, ChatGPT or DeepSeek
 
 An admin adds each provider's API token under **Settings → Integrations** and

@@ -403,6 +403,49 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-07 — Dubbing (the reason for Descript), and video download
+
+The owner clarified that **voice is why Descript was integrated**; subtitles are
+secondary. Dubbing is built and was proven live.
+
+**How a dub is made.** `video_translations.kind = dub` rows run
+pending → translating → **dubbing** → exporting → done. Dubbing is a second
+agent instruction on the translated composition (`services.descript.dub_prompt`);
+then the composition is published **with its picture** (no `media_type`, so
+Descript picks video, or audio for an audio-only source) and the file is
+downloaded at once from the job's `download_url` — it expires — into
+`video-translations/lesson-{id}/{import}-{lang}-dub.mp4`, through a plain client
+(no token to the storage host). A dub requested after subtitles **reuses that
+composition** instead of paying to translate again, and vice versa. `claimJob()`
+(job_id null → `starting`) guards both the dub and the publish against a double
+click. Editors choose **Voice** (default) or **Subtitles and transcript only**
+on the lesson and course actions.
+
+**Live, 2026-10-07 (8-second synthetic clip → French):** the probe dub cost 9.66
+credits; the full run through the app (translate + dub) 18. With no assigned
+speaker Descript used a stock voice ("Julien") and said so in `agent_response`,
+which is kept on the row. The dubbed audio differs from the original (md5), and
+its subtitles are French. The dub's first caption carried the voice's name
+("Julien: Bienvenue…"); it is stripped for dub rows. The agent replies "still
+generating" when its job stops, yet publishing right after returned the dub.
+**Unproven on a real lesson video:** whether a long dub is always finished when
+the publish runs, voice cloning of a real speaker, render time, and file size.
+
+**Player.** A reader in a dubbed language gets the dubbed file as the video
+source; **Play original audio** (`?audio=original`) switches back. Captions now
+come from either kind, one track per language.
+
+**Video download.** `GET …/lessons/{l}/videos/{n}/download` (auth): admins always,
+anyone else only with the new `videos.download` right, a per-account checkbox —
+so an admin can grant it to a learner. It serves the version being watched (the
+dub, or the original). Without the right the button is absent and the player gets
+`controlsList="nodownload"`. This is not copy protection: uploads are on the
+public disk and are streamed to the browser to be played.
+
+**Verified (run):** Descript, dub, download, caption, course and translation-parity
+suites green (67 tests) before the voice-name fix; Pint clean. Full suite run
+after this entry was written — see the final report in the conversation.
+
 ### 2026-10-07 — Translate menu, whole-course translation, course videos
 
 **Translate is now a menu** when an engine is available: *Translate by hand*, or

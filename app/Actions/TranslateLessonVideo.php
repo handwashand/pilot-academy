@@ -512,6 +512,13 @@ class TranslateLessonVideo
         }
 
         $vtt = trim((string) ($this->client->publishedProject($slug)['subtitles'] ?? ''));
+
+        if ($translation->isDub()) {
+            // A dub's first caption opens with the name of the voice Descript
+            // chose ("Julien: Bienvenue…", seen on the live run). Not the lesson's words.
+            $vtt = (string) preg_replace('/(-->[^\n]*\n)\p{Lu}[\p{L}\'’ .-]{0,30}: /u', '$1', $vtt, 1);
+        }
+
         $text = VideoTranslation::textFromVtt($vtt);
         $disk = Storage::disk('public');
         $base = sprintf('video-translations/lesson-%d/%d-%s', $translation->lesson_id, $import->id, $translation->language);

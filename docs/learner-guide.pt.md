@@ -43,6 +43,7 @@ Uma aula é concluída quando você **passa na verificação de conhecimento**. 
 - Assista ao vídeo. Se você estiver conectado, ele recomeça de onde você parou.
 - Prefere ler? Abra **Transcrição**.
 - Se o vídeo estiver traduzido para o seu idioma, o botão **CC** do player ativa as legendas.
+- Se o vídeo estiver dublado no seu idioma, ele toca assim automaticamente; **Ouvir o áudio original** volta ao original. **Baixar o vídeo** aparece se o administrador permitiu para a sua conta.
 - Responda todas as perguntas corretamente. Se errar, revise a aula e tente de novo.
 
 Algumas verificações têm limite de tempo ou número de tentativas. Essas regras aparecem antes de começar.

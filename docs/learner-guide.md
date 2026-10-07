@@ -81,6 +81,8 @@ alone does not finish it.
   device.
 - **Prefer to read?** Open **Transcript** under the video, where there is one.
 - **Need subtitles?** When a video has been translated into your language, a **CC** button on the player turns captions on. They start on automatically if the lesson page is in that language.
+- **A video in your language.** Where a lesson video has been dubbed into the language you read the academy in, it plays in that language by itself. **Play original audio** under the player switches back.
+- **Download video** appears under a video if your administrator has allowed it for your account.
 - **Take the knowledge check** at the end. Answer **every question correctly**
   to finish the lesson. Get something wrong and the answers to fix are marked,
   so you can correct them and submit again.

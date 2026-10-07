@@ -409,7 +409,7 @@ Nothing below can be done by an agent. Steps 0.1–0.5 unblock step 0.6, and ste
 | Step 8 — documentation | **Done for the built transcript workflow:** deployment, changelog, six admin guides and agent memory describe the global switch, per-account right and confirmation. Update them again after live verification or dubbing |
 | Step 9 — live verification | **Done** for transcript translation into French (the first 3 live runs failed usefully — see [Proven on a live account](#proven-on-a-live-account)). Not yet run: every language at once, a real lesson video, a URL import on a public server |
 | Whole course | **Done** (2026-10-07): "Translate lesson videos" + "Check progress" on a course queue every uploaded lesson video; see agents.md |
-| Dubbing | Not started — waits for 0.6 |
+| Dubbing | **Done and proven live 2026-10-07** — `kind = dub`: translate → dub → publish with picture → download. 18 AI credits for an 8-second clip. See agents.md and "Proven on a live account" |
 
 **Steps 1–6 verified by** `tests/Feature/DescriptVideoTranslationTest.php`, 18
 tests against a stateful fake of Descript — no test talks to the real API. See
