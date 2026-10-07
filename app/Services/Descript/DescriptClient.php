@@ -161,14 +161,36 @@ class DescriptClient
      *
      * @return array{job_id: string}
      */
-    public function publish(string $projectId, string $compositionId): array
+    public function publish(string $projectId, string $compositionId, bool $withPicture = false): array
     {
-        return $this->send('post', 'jobs/publish', [
+        return $this->send('post', 'jobs/publish', array_filter([
             'project_id' => $projectId,
             'composition_id' => $compositionId,
-            'media_type' => 'Audio',
+            // A dub is wanted as the lesson's video: left out, Descript publishes
+            // video when the composition has a picture and audio when it has none.
+            'media_type' => $withPicture ? null : 'Audio',
             'access_level' => 'private',
-        ])->json();
+        ]))->json();
+    }
+
+    /**
+     * Save a published file from its signed link, straight to disk. The link
+     * expires, so this happens the moment the publish finishes. A plain client:
+     * the link is on a storage host, and the Descript token must not go there.
+     */
+    public function download(string $url, string $absolutePath): void
+    {
+        try {
+            $response = Http::timeout(max((int) config('services.descript.timeout'), 600))->sink($absolutePath)->get($url);
+        } catch (ConnectionException) {
+            Log::warning('Descript download unreachable', ['endpoint' => 'download']);
+
+            throw new DescriptException(__t('admin_descript.errors.unreachable'), 0, 'connection');
+        }
+
+        if ($response->failed()) {
+            $this->fail('download', $response);
+        }
     }
 
     /**

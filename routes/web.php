@@ -67,6 +67,10 @@ Route::post('/courses/{course:slug}/lessons/{lesson:slug}/quiz', [AcademyControl
 Route::middleware('auth')->group(function () {
     Route::post('/courses/{course:slug}/lessons/{lesson:slug}/position', [AcademyController::class, 'saveVideoPosition'])
         ->name('academy.lesson.position');
+    // A file to keep: admins, and learners an admin gave the right to.
+    Route::get('/courses/{course:slug}/lessons/{lesson:slug}/videos/{video}/download', [AcademyController::class, 'downloadVideo'])
+        ->whereNumber('video')
+        ->name('academy.lesson.video.download');
     Route::post('/courses/{course:slug}/feedback', [AcademyController::class, 'saveFeedback'])
         ->name('academy.course.feedback');
 });

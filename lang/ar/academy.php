@@ -144,6 +144,7 @@ return [
         'preview_course' => 'الدورة: :status',
         'admin_preview' => '— لا يستطيع الطلاب رؤية هذا. أنت تعاينه بصفتك مسؤولًا.',
         'no_video_support' => 'متصفّحك لا يدعم تشغيل الفيديو.',
+        'download_video' => 'تنزيل الفيديو',
         'playback_speed' => 'سرعة التشغيل',
         'speed_normal' => 'عادية',
         'transcript' => 'النص المكتوب',

@@ -57,6 +57,12 @@ return [
             'DESCRIPT_TRANSLATE_PROMPT',
             'Translate the captions of the composition named "{source}" into {language}. Create the translation as a new composition named "{name}". Do not change the original composition.',
         ),
+        // Dubbing is a second instruction, on the translated composition. Proven
+        // live 2026-10-07: without an assigned speaker Descript picks a stock voice.
+        'dub_prompt' => env(
+            'DESCRIPT_DUB_PROMPT',
+            'Dub the speech of the composition named "{name}" into {language} with an AI voice, keeping the original speaker\'s voice if you can. Change only that composition. Do not change the composition named "{source}". Do not ask me any questions; choose sensible defaults.',
+        ),
     ],
 
     /*

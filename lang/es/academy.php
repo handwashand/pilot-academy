@@ -128,6 +128,7 @@ return [
         'preview_course' => 'Curso: :status',
         'admin_preview' => '— los estudiantes no pueden ver esto. Lo estás viendo como administrador.',
         'no_video_support' => 'Tu navegador no admite la reproducción de video.',
+        'download_video' => 'Descargar el video',
         'playback_speed' => 'Velocidad de reproducción',
         'speed_normal' => 'Normal',
         'transcript' => 'Transcripción',

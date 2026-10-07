@@ -15,6 +15,7 @@ use App\Services\Translator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class AcademyController extends Controller
 {
@@ -322,6 +323,7 @@ class AcademyController extends Controller
                 ? $course->certificates()->where('user_id', $user->id)->whereNull('revoked_at')->latest('issued_at')->first()
                 : null,
             'captionTracks' => $this->captionTracks($course, $lesson),
+            'canDownloadVideos' => (bool) $user?->canDownloadVideos(),
         ]);
     }
 
@@ -365,6 +367,27 @@ class AcademyController extends Controller
         }
 
         return $tracks;
+    }
+
+    /**
+     * An uploaded lesson video as a file to keep. Signed-in only (the route),
+     * the lesson must be one this person can see, and they must be an admin or
+     * hold the download right. YouTube videos are not ours to hand out.
+     */
+    public function downloadVideo(Request $request, Course $course, Lesson $lesson, int $video)
+    {
+        abort_unless($course->isVisibleTo($request->user()) && $lesson->isVisibleTo($request->user()), 404);
+        abort_unless($course->hasLesson($lesson), 404);
+        abort_unless($request->user()->canDownloadVideos(), 403);
+
+        $entry = $lesson->videoEntries()[$video] ?? null;
+        $path = ($entry['type'] ?? null) === 'upload' ? ($entry['video_path'] ?? null) : null;
+        $disk = Storage::disk('public');
+        abort_unless(filled($path) && $disk->exists($path), 404);
+
+        $extension = pathinfo($path, PATHINFO_EXTENSION) ?: 'mp4';
+
+        return $disk->download($path, Str::slug($lesson->title).'-'.($video + 1).'.'.$extension);
     }
 
     /** One finished Descript subtitle file, as WebVTT for the player's captions. */

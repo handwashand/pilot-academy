@@ -58,7 +58,8 @@
                             $remembersPosition = $videoIndex === $resumeIndex;
                         @endphp
                         <div class="mt-6 rounded-2xl overflow-hidden border border-slate-200 shadow-sm aspect-video bg-black">
-                            <video id="lesson-video-{{ $videoIndex }}" class="w-full h-full" controls playsinline preload="metadata">
+                            {{-- Without the right, the browser's own "Download" entry is left out of the player menu. --}}
+                            <video id="lesson-video-{{ $videoIndex }}" class="w-full h-full" controls playsinline preload="metadata"{!! $canDownloadVideos ? '' : ' controlsList="nodownload"' !!}>
                                 <source src="{{ $videoUrl }}">
                                 @foreach(($captionTracks[$videoIndex] ?? []) as $track)
                                     <track kind="captions" src="{{ $track['url'] }}" srclang="{{ $track['code'] }}" label="{{ $track['label'] }}"{{ $track['default'] ? ' default' : '' }}>
@@ -75,6 +76,12 @@
                                     {{ $caption }}
                                 </button>
                             @endforeach
+                            @if($canDownloadVideos)
+                                <a href="{{ route('academy.lesson.video.download', [$course, $lesson, $videoIndex]) }}"
+                                   class="inline-flex items-center h-11 px-3 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 active:bg-slate-100">
+                                    {{ __t('academy.lesson.download_video') }}
+                                </a>
+                            @endif
                         </div>
 
                         <script>

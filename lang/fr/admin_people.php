@@ -24,6 +24,7 @@ return [
         'use_descript_translation' => 'Utiliser la traduction vidéo de Descript',
         'use_deepl_translation' => 'Générer des brouillons de traduction avec DeepL',
         'use_ai_translation' => 'Générer des brouillons de traduction avec ChatGPT ou DeepSeek',
+        'download_videos' => 'Télécharger les vidéos des leçons',
         'lessons_done' => 'Leçons terminées',
         'last_login' => 'Dernière connexion',
         'export' => 'Exporter la progression des apprenants',

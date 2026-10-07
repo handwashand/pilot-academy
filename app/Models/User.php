@@ -58,6 +58,9 @@ class User extends Authenticatable implements FilamentUser, HasLocalePreference
     /** Draft translations with ChatGPT or DeepSeek, which bill per use. */
     public const PERMISSION_AI_TRANSLATE = 'ai.translate';
 
+    /** Download uploaded lesson videos. Admins always may; a learner only when given this. */
+    public const PERMISSION_VIDEO_DOWNLOAD = 'videos.download';
+
     /** New accounts are partners until an admin says otherwise. */
     protected $attributes = [
         'role' => self::ROLE_LEARNER,
@@ -108,6 +111,12 @@ class User extends Authenticatable implements FilamentUser, HasLocalePreference
     public function hasPermission(string $permission): bool
     {
         return $this->permissions()->where('permission', $permission)->exists();
+    }
+
+    /** Admins, and anyone an admin gave the right to — a learner included. */
+    public function canDownloadVideos(): bool
+    {
+        return $this->isAdmin() || $this->hasPermission(self::PERMISSION_VIDEO_DOWNLOAD);
     }
 
     public function permissions(): HasMany

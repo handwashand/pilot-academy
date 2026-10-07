@@ -23,6 +23,9 @@ class VideoTranslation extends Model
 
     public const STATUS_TRANSLATING = 'translating';
 
+    /** A dub only: Descript is generating the translated voice. */
+    public const STATUS_DUBBING = 'dubbing';
+
     public const STATUS_EXPORTING = 'exporting';
 
     public const STATUS_DONE = 'done';
@@ -30,7 +33,7 @@ class VideoTranslation extends Model
     public const STATUS_FAILED = 'failed';
 
     /** Still working: a page can show progress, and nothing new is started. */
-    public const IN_FLIGHT = [self::STATUS_PENDING, self::STATUS_TRANSLATING, self::STATUS_EXPORTING];
+    public const IN_FLIGHT = [self::STATUS_PENDING, self::STATUS_TRANSLATING, self::STATUS_DUBBING, self::STATUS_EXPORTING];
 
     /**
      * Browsers play captions only as WebVTT; Descript exports SRT. The two
@@ -74,7 +77,6 @@ class VideoTranslation extends Model
     {
         return $query
             ->where('lesson_id', $lesson->id)
-            ->where('kind', self::KIND_TRANSCRIPT)
             ->where('status', self::STATUS_DONE)
             ->whereNotNull('subtitle_path')
             ->whereHas('descriptImport', fn (Builder $import) => $import->where('video_path', $videoPath));
@@ -113,6 +115,23 @@ class VideoTranslation extends Model
     public function lesson(): BelongsTo
     {
         return $this->belongsTo(Lesson::class);
+    }
+
+    /** Wanted as a voice: the translated composition is dubbed and its file kept. */
+    public function isDub(): bool
+    {
+        return $this->kind === self::KIND_DUB;
+    }
+
+    /** Finished dubbed files for one uploaded video of a lesson. */
+    public function scopeDubsFor(Builder $query, Lesson $lesson, string $videoPath): Builder
+    {
+        return $query
+            ->where('lesson_id', $lesson->id)
+            ->where('kind', self::KIND_DUB)
+            ->where('status', self::STATUS_DONE)
+            ->whereNotNull('dub_path')
+            ->whereHas('descriptImport', fn (Builder $import) => $import->where('video_path', $videoPath));
     }
 
     public function isDone(): bool

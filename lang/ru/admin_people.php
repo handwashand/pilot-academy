@@ -24,6 +24,7 @@ return [
         'use_descript_translation' => 'Использовать перевод видео Descript',
         'use_deepl_translation' => 'Создавать черновики переводов через DeepL',
         'use_ai_translation' => 'Создавать черновики переводов через ChatGPT или DeepSeek',
+        'download_videos' => 'Скачивать видео уроков',
         'lessons_done' => 'Пройдено уроков',
         'last_login' => 'Последний вход',
         'export' => 'Экспорт прогресса обучающихся',
