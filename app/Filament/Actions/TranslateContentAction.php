@@ -12,15 +12,13 @@ use App\Services\Llm\LlmException;
 use App\Services\Llm\LlmTranslator;
 use App\Services\Translator;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -35,34 +33,61 @@ use Illuminate\Support\Str;
  * Saved through HasContentTranslations::setTranslation(), so an emptied box
  * deletes its translation rather than storing a blank.
  *
- * With DeepL connected, someone who has been given the right can also draft the
- * empty boxes. That only fills the form: an editor reads and changes the text,
- * and nothing is stored until Save translations. Typing by hand works the same
- * whether DeepL is on, off, out of quota or down.
+ * When DeepL, ChatGPT or DeepSeek is switched on (Settings → Integrations) and
+ * the person holds the right to use it, Translate becomes a small menu of what
+ * is available: by hand, or with each engine. Choosing an engine asks for
+ * confirmation, then opens the same window with the empty boxes drafted. That
+ * only fills the form — an editor reads and changes the text, and nothing is
+ * stored until Save translations. Typing by hand works the same whether an
+ * engine is on, off, out of quota or down.
  */
 class TranslateContentAction
 {
-    public static function make(): Action
+    /** The engines that can draft, by action name: their label and the right that spends their credit. */
+    public const ENGINES = [
+        'translateWithDeepL' => ['label' => 'DeepL', 'permission' => User::PERMISSION_DEEPL_TRANSLATE, 'provider' => AiProvider::DEEPL],
+        'translateWithChatgpt' => ['label' => 'ChatGPT', 'permission' => User::PERMISSION_AI_TRANSLATE, 'provider' => AiProvider::CHATGPT],
+        'translateWithDeepseek' => ['label' => 'DeepSeek', 'permission' => User::PERMISSION_AI_TRANSLATE, 'provider' => AiProvider::DEEPSEEK],
+    ];
+
+    /** The button: a plain Translate, or a menu of the ways to translate when an engine is available. */
+    public static function make(): Action|ActionGroup
     {
-        return Action::make('translateContent')
+        $engines = array_values(array_filter(array_keys(static::ENGINES), fn (string $name): bool => static::engine($name) !== null));
+
+        if ($engines === []) {
+            return static::dialog(grouped: false);
+        }
+
+        return ActionGroup::make([
+            static::dialog(grouped: true),
+            ...array_map(fn (string $name): Action => static::engineItem($name), $engines),
+        ])
             ->label(fn (): string => __t('admin_common.translate.button'))
             ->icon(Heroicon::OutlinedLanguage)
+            ->color('gray')
+            ->button();
+    }
+
+    /** The Translate window itself. */
+    private static function dialog(bool $grouped): Action
+    {
+        return Action::make('translateContent')
+            ->label(fn (): string => __t($grouped ? 'admin_common.translate.by_hand' : 'admin_common.translate.button'))
+            ->icon($grouped ? Heroicon::OutlinedPencilSquare : Heroicon::OutlinedLanguage)
             ->color('gray')
             ->modalHeading(fn (): string => __t('admin_common.translate.heading'))
             ->modalDescription(fn (Model $record): string => __t('admin_common.translate.description', ['language' => static::nameOf($record->contentLanguageCode())]))
             ->modalWidth('5xl')
             ->modalSubmitActionLabel(fn (): string => __t('admin_common.translate.submit'))
             ->visible(fn (Model $record): bool => static::targets($record)->isNotEmpty())
-            ->fillForm(fn (Model $record): array => static::current($record))
+            ->fillForm(fn (Model $record, array $arguments): array => static::initial($record, $arguments['engine'] ?? null))
             ->schema(fn (Model $record): array => [
-                Actions::make(array_map(fn (string $name): Action => static::draftAction($record, $name), array_keys(static::ENGINES)))
-                    ->key('draftActions')
-                    ->visible(fn (): bool => array_filter(array_keys(static::ENGINES), fn (string $name): bool => static::engine($name) !== null) !== []),
                 Tabs::make('languages')->tabs(
                     static::targets($record)
                         ->map(fn (Language $language): Tab => Tab::make($language->native_name)->schema(
                             collect($record->translatableFields())
-                                ->map(fn (string $field) => static::input($record, $language->code, $field))
+                                ->map(fn (string $field) => static::input($record, "{$language->code}.{$field}", $field))
                                 ->all(),
                         ))
                         ->all(),
@@ -79,15 +104,25 @@ class TranslateContentAction
             });
     }
 
-    /** The engines that can draft, by action name: their label and the right that spends their credit. */
-    private const ENGINES = [
-        'draftWithDeepL' => ['label' => 'DeepL', 'permission' => User::PERMISSION_DEEPL_TRANSLATE, 'provider' => AiProvider::DEEPL],
-        'draftWithChatgpt' => ['label' => 'ChatGPT', 'permission' => User::PERMISSION_AI_TRANSLATE, 'provider' => AiProvider::CHATGPT],
-        'draftWithDeepseek' => ['label' => 'DeepSeek', 'permission' => User::PERMISSION_AI_TRANSLATE, 'provider' => AiProvider::DEEPSEEK],
-    ];
+    /** "Translate with X": confirm the paid request, then open the window with drafts in it. */
+    private static function engineItem(string $name): Action
+    {
+        $provider = ['provider' => static::ENGINES[$name]['label']];
+
+        return Action::make($name)
+            ->label(fn (): string => __t('admin_common.translate.draft.button', $provider))
+            ->icon(Heroicon::OutlinedSparkles)
+            ->visible(fn (): bool => static::engine($name) !== null)
+            ->authorize(fn (): bool => static::engine($name) !== null)
+            ->requiresConfirmation()
+            ->modalHeading(fn (): string => __t('admin_common.translate.draft.confirm_heading', $provider))
+            ->modalDescription(fn (): string => __t('admin_common.translate.draft.confirm_description', $provider))
+            ->modalSubmitActionLabel(fn (): string => __t('admin_common.translate.draft.confirm_submit'))
+            ->action(fn ($livewire) => $livewire->replaceMountedAction('translateContent', ['engine' => $name]));
+    }
 
     /** The connected engine for this action — only for someone holding its right. */
-    private static function engine(string $name): DeepLClient|LlmTranslator|null
+    public static function engine(string $name): DeepLClient|LlmTranslator|null
     {
         $config = static::ENGINES[$name];
 
@@ -108,55 +143,57 @@ class TranslateContentAction
         return $provider ? new LlmTranslator($provider) : null;
     }
 
-    /** Fills the empty boxes with drafts; never touches a box that has text. */
-    private static function draftAction(Model $record, string $name): Action
+    /**
+     * What the window opens with: the saved translations, and — when an engine
+     * was chosen — a draft in every box that is still empty. The engine is looked
+     * up again here: the choice arrives from the browser.
+     *
+     * @return array<string, array<string, string>>
+     */
+    private static function initial(Model $record, ?string $engineName): array
     {
-        $provider = ['provider' => static::ENGINES[$name]['label']];
+        $values = static::current($record);
 
-        return Action::make($name)
-            ->label(fn (): string => __t('admin_common.translate.draft.button', $provider))
-            ->icon(Heroicon::OutlinedSparkles)
-            ->color('gray')
-            ->visible(fn (): bool => static::engine($name) !== null)
-            ->authorize(fn (): bool => static::engine($name) !== null)
-            ->requiresConfirmation()
-            ->modalHeading(fn (): string => __t('admin_common.translate.draft.confirm_heading', $provider))
-            ->modalDescription(fn (): string => __t('admin_common.translate.draft.confirm_description', $provider))
-            ->modalSubmitActionLabel(fn (): string => __t('admin_common.translate.draft.confirm_submit'))
-            ->action(function (Get $get, Set $set) use ($record, $name, $provider): void {
-                $targets = static::targets($record);
-                $current = [];
+        if ($engineName === null || ! isset(static::ENGINES[$engineName]) || ! ($engine = static::engine($engineName))) {
+            return $values;
+        }
 
-                foreach ($targets as $language) {
-                    foreach ($record->translatableFields() as $field) {
-                        $current[$language->code][$field] = $get("{$language->code}.{$field}");
-                    }
-                }
+        $result = app(DraftTranslations::class)->handle($record, static::targets($record), $values, $engine);
 
-                $result = app(DraftTranslations::class)->handle($record, $targets, $current, static::engine($name));
+        foreach ($result['drafts'] as $code => $fields) {
+            foreach ($fields as $field => $text) {
+                $values[$code][$field] = $text;
+            }
+        }
 
-                foreach ($result['drafts'] as $code => $fields) {
-                    foreach ($fields as $field => $text) {
-                        $set("{$code}.{$field}", $text);
-                    }
-                }
+        static::reportDraft($result, ['provider' => static::ENGINES[$engineName]['label']]);
 
-                $count = collect($result['drafts'])->flatten()->count();
+        return $values;
+    }
 
-                if ($result['error']) {
-                    Notification::make()
-                        ->title(__t('admin_common.translate.draft.failed', $provider))
-                        ->body(static::failureMessage($result['error'], $provider).($count ? ' '.__t('admin_common.translate.draft.kept', ['count' => $count]) : ''))
-                        ->danger()
-                        ->send();
+    /**
+     * Tell the editor how drafting went.
+     *
+     * @param  array{drafts: array<mixed>, error: DeepLException|LlmException|null}  $result
+     * @param  array{provider: string}  $provider
+     */
+    public static function reportDraft(array $result, array $provider): void
+    {
+        $count = collect($result['drafts'])->flatten()->count();
 
-                    return;
-                }
+        if ($result['error']) {
+            Notification::make()
+                ->title(__t('admin_common.translate.draft.failed', $provider))
+                ->body(static::failureMessage($result['error'], $provider).($count ? ' '.__t('admin_common.translate.draft.kept', ['count' => $count]) : ''))
+                ->danger()
+                ->send();
 
-                $count
-                    ? Notification::make()->title(__t('admin_common.translate.draft.drafted'))->body(__t('admin_common.translate.draft.drafted_body', ['count' => $count]))->success()->send()
-                    : Notification::make()->title(__t('admin_common.translate.draft.nothing'))->body(__t('admin_common.translate.draft.nothing_body', $provider))->warning()->send();
-            });
+            return;
+        }
+
+        $count
+            ? Notification::make()->title(__t('admin_common.translate.draft.drafted'))->body(__t('admin_common.translate.draft.drafted_body', ['count' => $count]))->success()->send()
+            : Notification::make()->title(__t('admin_common.translate.draft.nothing'))->body(__t('admin_common.translate.draft.nothing_body', $provider))->warning()->send();
     }
 
     /** @param  array{provider: string}  $provider */
@@ -201,7 +238,8 @@ class TranslateContentAction
         return $values;
     }
 
-    private static function input(Model $record, string $code, string $field)
+    /** One box for a translatable field, named $name in the form state. */
+    public static function input(Model $record, string $name, string $field)
     {
         // A field without a shipped name reads as its own name, made readable.
         $label = $record->translatableFieldLabel($field);
@@ -209,9 +247,9 @@ class TranslateContentAction
         $original = Str::limit(trim(strip_tags((string) $record->getAttribute($field))), 150);
 
         return match ($field) {
-            'content' => RichEditor::make("{$code}.{$field}")->label($label),
-            'title' => TextInput::make("{$code}.{$field}")->label($label)->maxLength(255)->placeholder($original),
-            default => Textarea::make("{$code}.{$field}")->label($label)->rows($field === 'transcript' ? 6 : 3)->placeholder($original),
+            'content' => RichEditor::make($name)->label($label),
+            'title' => TextInput::make($name)->label($label)->maxLength(255)->placeholder($original),
+            default => Textarea::make($name)->label($label)->rows($field === 'transcript' ? 6 : 3)->placeholder($original),
         };
     }
 }

@@ -408,6 +408,7 @@ Nothing below can be done by an agent. Steps 0.1–0.5 unblock step 0.6, and ste
 | Step 7 — captions on the player | **Done** (2026-10-07). `GET …/lessons/{lesson}/captions/{video}/{language}` converts the stored `.srt` to WebVTT; the lesson player gets a `<track>` per finished language, the viewer's own language `default`. Visibility follows the lesson; only `done` rows with a file are served. Tests: `VideoCaptionsTest` (6) |
 | Step 8 — documentation | **Done for the built transcript workflow:** deployment, changelog, six admin guides and agent memory describe the global switch, per-account right and confirmation. Update them again after live verification or dubbing |
 | Step 9 — live verification | **Done** for transcript translation into French (the first 3 live runs failed usefully — see [Proven on a live account](#proven-on-a-live-account)). Not yet run: every language at once, a real lesson video, a URL import on a public server |
+| Whole course | **Done** (2026-10-07): "Translate lesson videos" + "Check progress" on a course queue every uploaded lesson video; see agents.md |
 | Dubbing | Not started — waits for 0.6 |
 
 **Steps 1–6 verified by** `tests/Feature/DescriptVideoTranslationTest.php`, 18

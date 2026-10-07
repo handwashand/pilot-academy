@@ -4,6 +4,8 @@ namespace App\Filament\Resources\Courses\Pages;
 
 use App\Actions\FindContentProblems;
 use App\Filament\Actions\TranslateContentAction;
+use App\Filament\Actions\TranslateCourseAction;
+use App\Filament\Actions\TranslateVideoWithDescriptAction;
 use App\Filament\Resources\Courses\CourseResource;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
@@ -23,6 +25,9 @@ class EditCourse extends EditRecord
     {
         return [
             TranslateContentAction::make(),
+            TranslateCourseAction::make(),
+            TranslateVideoWithDescriptAction::course(),
+            TranslateVideoWithDescriptAction::checkCourse(),
             DeleteAction::make(),
         ];
     }

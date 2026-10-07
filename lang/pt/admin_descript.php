@@ -47,4 +47,12 @@ return [
         'file_missing' => 'O arquivo de vídeo enviado não está no armazenamento.',
         'import_failed' => 'O Descript não conseguiu importar este vídeo.',
     ],
+    'course' => [
+        'button' => 'Traduzir os vídeos das aulas',
+        'heading' => 'Traduzir todos os vídeos de aulas deste curso',
+        'description' => ':videos vídeos enviados de :lessons aulas serão mandados ao Descript para os idiomas marcados. Um vídeo ou idioma já traduzido ou em andamento é ignorado e não custa nada. Usa minutos de mídia e créditos de IA do Descript.',
+        'submit' => 'Colocar na fila',
+        'queued' => 'Traduções na fila',
+        'queued_body' => ':count traduções na fila. Clique em Verificar andamento para iniciá-las — cada uma leva alguns minutos.',
+    ],
 ];

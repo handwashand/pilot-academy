@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Models\Course;
 use App\Models\DescriptImport;
 use App\Models\Language;
 use App\Models\Lesson;
@@ -60,6 +61,30 @@ class TranslateLessonVideo
     }
 
     /**
+     * The uploaded videos across a course's lessons that this person may send:
+     * a lesson shared in from another product is theirs to translate only if the
+     * product is.
+     *
+     * @return array<int, array{lesson: Lesson, path: string}>
+     */
+    public static function courseVideos(Course $course, ?User $by): array
+    {
+        $videos = [];
+
+        foreach ($course->lessons()->with('course')->get() as $lesson) {
+            if (! $by?->canManageCourse($lesson->course)) {
+                continue;
+            }
+
+            foreach (array_keys(static::uploadedVideos($lesson)) as $path) {
+                $videos[] = ['lesson' => $lesson, 'path' => $path];
+            }
+        }
+
+        return $videos;
+    }
+
+    /**
      * Every language this lesson can be translated into: the active ones, less
      * the language it is written in.
      *
@@ -78,9 +103,11 @@ class TranslateLessonVideo
      * are not asked for again — that is the point of this class.
      *
      * @param  array<int, string>  $languages
+     * @param  bool  $advance  false only for a whole course: record the requests, and let Check progress
+     *                         and descript:sync start them a few at a time rather than in one web request.
      * @return array{requested: array<int, string>, done: array<int, string>, running: array<int, string>}
      */
-    public function request(Lesson $lesson, string $videoPath, array $languages, ?User $by = null): array
+    public function request(Lesson $lesson, string $videoPath, array $languages, ?User $by = null, bool $advance = true): array
     {
         if (! array_key_exists($videoPath, static::uploadedVideos($lesson))) {
             throw new InvalidArgumentException('That video is not an uploaded video of this lesson.');
@@ -130,7 +157,7 @@ class TranslateLessonVideo
             }
         }
 
-        if ($outcome['requested'] !== []) {
+        if ($advance && $outcome['requested'] !== []) {
             $this->advanceLesson($lesson);
         }
 

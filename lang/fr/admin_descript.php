@@ -47,4 +47,12 @@ return [
         'file_missing' => 'Le fichier vidéo téléversé est introuvable dans le stockage.',
         'import_failed' => 'Descript n’a pas pu importer cette vidéo.',
     ],
+    'course' => [
+        'button' => 'Traduire les vidéos des leçons',
+        'heading' => 'Traduire toutes les vidéos des leçons de ce cours',
+        'description' => ':videos vidéos téléversées dans :lessons leçons seront envoyées à Descript pour les langues cochées. Une vidéo ou une langue déjà traduite ou en cours est ignorée et ne coûte rien. Cela utilise des minutes de média et des crédits IA de Descript.',
+        'submit' => 'Mettre en file',
+        'queued' => 'Traductions mises en file',
+        'queued_body' => ':count traductions mises en file. Cliquez sur Vérifier l’avancement pour les lancer — chacune prend quelques minutes.',
+    ],
 ];

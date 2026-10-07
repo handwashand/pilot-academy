@@ -47,4 +47,12 @@ return [
         'file_missing' => 'The uploaded video file is missing from storage.',
         'import_failed' => 'Descript could not import this video.',
     ],
+    'course' => [
+        'button' => 'Translate lesson videos',
+        'heading' => 'Translate every lesson video in this course',
+        'description' => ':videos uploaded videos in :lessons lessons will be sent to Descript for the languages you tick. A video or language already translated or under way is skipped and costs nothing. This uses Descript media minutes and AI credits.',
+        'submit' => 'Queue translations',
+        'queued' => 'Translations queued',
+        'queued_body' => ':count translations queued. Press Check progress to start them — each takes a few minutes.',
+    ],
 ];

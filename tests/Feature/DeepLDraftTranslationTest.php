@@ -11,8 +11,6 @@ use App\Models\User;
 use App\Services\DeepL\DeepLClient;
 use Database\Seeders\LanguageSeeder;
 use Database\Seeders\PilotQuickStartSeeder;
-use Filament\Actions\Exceptions\ActionNotResolvableException;
-use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Cache;
@@ -142,32 +140,23 @@ class DeepLDraftTranslationTest extends TestCase
     {
         Livewire::actingAs($this->editor())
             ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
-            ->mountAction('translateContent')
-            ->assertActionVisible(TestAction::make('draftWithDeepL')->schemaComponent('draftActions'));
+            ->assertActionVisible('translateWithDeepL');
     }
 
     public function test_the_button_is_hidden_without_the_right_even_for_an_admin(): void
     {
-        // A hidden component's action cannot be resolved, so it cannot be called
-        // by a hand-made Livewire request either.
-        $this->expectException(ActionNotResolvableException::class);
-
         Livewire::actingAs($this->editor(false))
             ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
-            ->mountAction('translateContent')
-            ->callAction(TestAction::make('draftWithDeepL')->schemaComponent('draftActions'));
+            ->assertActionDoesNotExist('translateWithDeepL');
     }
 
     public function test_the_button_is_hidden_when_deepl_is_switched_off(): void
     {
         config(['services.deepl.enabled' => false]);
 
-        $this->expectException(ActionNotResolvableException::class);
-
         Livewire::actingAs($this->editor())
             ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
-            ->mountAction('translateContent')
-            ->callAction(TestAction::make('draftWithDeepL')->schemaComponent('draftActions'));
+            ->assertActionDoesNotExist('translateWithDeepL');
     }
 
     public function test_generating_fills_the_dialog_but_saves_nothing(): void
@@ -176,13 +165,42 @@ class DeepLDraftTranslationTest extends TestCase
 
         Livewire::actingAs($this->editor())
             ->test(EditLesson::class, ['record' => $lesson->getRouteKey()])
-            ->mountAction('translateContent')
-            ->callAction(TestAction::make('draftWithDeepL')->schemaComponent('draftActions'))
+            ->callAction('translateWithDeepL')
             ->assertHasNoActionErrors()
             ->assertSet('mountedActions.0.data.fr.title', '[fr] '.$lesson->title);
 
         $this->assertSame(0, $lesson->contentTranslations()->count());
         $this->assertGreaterThan(0, $this->translateCalls);
+    }
+
+    public function test_a_forged_engine_choice_drafts_nothing_without_the_right(): void
+    {
+        // The choice travels from the browser; the engine is checked again on the server.
+        Livewire::actingAs($this->editor(false))
+            ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
+            ->mountAction('translateContent', ['engine' => 'translateWithDeepL'])
+            ->assertSet('mountedActions.0.data.fr.title', null);
+
+        $this->assertSame(0, $this->translateCalls);
+    }
+
+    public function test_translate_stays_a_plain_button_when_no_engine_is_available(): void
+    {
+        config(['services.deepl.enabled' => false]);
+
+        Livewire::actingAs($this->editor())
+            ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
+            ->assertActionVisible('translateContent')
+            ->assertActionDoesNotExist('translateWithDeepL');
+    }
+
+    public function test_translate_offers_a_menu_of_what_is_available(): void
+    {
+        Livewire::actingAs($this->editor())
+            ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
+            ->assertActionVisible('translateContent')
+            ->assertActionVisible('translateWithDeepL')
+            ->assertActionDoesNotExist('translateWithChatgpt');
     }
 
     public function test_manual_translation_still_works_with_deepl_off(): void

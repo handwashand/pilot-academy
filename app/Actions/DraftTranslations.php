@@ -30,6 +30,52 @@ class DraftTranslations
     }
 
     /**
+     * The same, for several records into ONE language — a course and its
+     * lessons. All the empty boxes go out together, so a whole course is one or
+     * two requests (plain text, HTML) rather than one per lesson.
+     *
+     * Records must all be written in the same language.
+     *
+     * @param  array<string, Model>  $records  by the name the form uses for each
+     * @param  array<string, array<string, mixed>>  $current  the form's boxes, by record name then field
+     * @return array{drafts: array<string, array<string, string>>, error: DeepLException|LlmException|null}
+     */
+    public function handleMany(array $records, Language $target, array $current, DeepLClient|LlmTranslator $engine): array
+    {
+        $drafts = [];
+        $source = collect($records)->first()?->contentLanguageCode();
+
+        try {
+            foreach ([false, true] as $html) {
+                $texts = [];
+
+                foreach ($records as $name => $record) {
+                    foreach ($record->translatableFields() as $field) {
+                        if (self::isHtml($field) === $html
+                            && filled($record->getAttribute($field))
+                            && blank($current[$name][$field] ?? null)) {
+                            $texts["{$name}.{$field}"] = (string) $record->getAttribute($field);
+                        }
+                    }
+                }
+
+                if ($texts === [] || $source === null || ! $engine->supports($source, $target->code, $html)) {
+                    continue;
+                }
+
+                foreach ($engine->translate($texts, $source, $target->code, $html) as $key => $text) {
+                    [$name, $field] = explode('.', $key, 2);
+                    $drafts[$name][$field] = $text;
+                }
+            }
+        } catch (DeepLException|LlmException $exception) {
+            return ['drafts' => $drafts, 'error' => $exception];
+        }
+
+        return ['drafts' => $drafts, 'error' => null];
+    }
+
+    /**
      * @param  Collection<int, Language>  $targets
      * @param  array<string, array<string, mixed>>  $current  The dialog's boxes, by language code then field.
      *                                                        A failure stops the run — a quota or key problem would

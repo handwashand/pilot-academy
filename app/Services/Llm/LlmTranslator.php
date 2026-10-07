@@ -22,6 +22,9 @@ class LlmTranslator
     /** Keep one request modest: a model's answer is as long as its question. */
     private const MAX_PAYLOAD_BYTES = 60 * 1024;
 
+    /** A group of texts per request when many are sent together. */
+    private const GROUP_BYTES = 30 * 1024;
+
     public function __construct(private AiProvider $provider) {}
 
     public function label(): string
@@ -44,6 +47,19 @@ class LlmTranslator
 
         if ($texts === []) {
             return [];
+        }
+
+        // A whole course is many texts: send them in modest groups, one request each.
+        $groups = $this->groups($texts);
+
+        if (count($groups) > 1) {
+            $translated = [];
+
+            foreach ($groups as $group) {
+                $translated += $this->translate($group, $sourceCode, $targetCode, $html);
+            }
+
+            return $translated;
         }
 
         $payload = (string) json_encode($texts, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -114,6 +130,36 @@ class LlmTranslator
         }
 
         return $translated;
+    }
+
+    /**
+     * Split named texts into groups that each fit one request. A text larger
+     * than a group stands alone and is refused by translate() if it is over
+     * the limit.
+     *
+     * @param  array<string, string>  $texts
+     * @return array<int, array<string, string>>
+     */
+    private function groups(array $texts): array
+    {
+        $groups = [];
+        $group = [];
+        $size = 0;
+
+        foreach ($texts as $key => $text) {
+            $bytes = strlen($text) + strlen($key) + 8;
+
+            if ($group !== [] && $size + $bytes > self::GROUP_BYTES) {
+                $groups[] = $group;
+                $group = [];
+                $size = 0;
+            }
+
+            $group[$key] = $text;
+            $size += $bytes;
+        }
+
+        return $group === [] ? $groups : [...$groups, $group];
     }
 
     /** The language's English name, for the instruction. */

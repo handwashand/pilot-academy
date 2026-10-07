@@ -10,8 +10,6 @@ use App\Models\User;
 use App\Services\Descript\DescriptClient;
 use Database\Seeders\LanguageSeeder;
 use Database\Seeders\PilotQuickStartSeeder;
-use Filament\Actions\Exceptions\ActionNotResolvableException;
-use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\DB;
@@ -109,8 +107,7 @@ class IntegrationsTest extends TestCase
 
         Livewire::actingAs($this->admin(User::PERMISSION_DEEPL_TRANSLATE))
             ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
-            ->mountAction('translateContent')
-            ->callAction(TestAction::make('draftWithDeepL')->schemaComponent('draftActions'))
+            ->callAction('translateWithDeepL')
             ->assertHasNoActionErrors()
             ->assertSet('mountedActions.0.data.fr.title', '[deepl] '.Course::first()->title);
 
@@ -154,8 +151,7 @@ class IntegrationsTest extends TestCase
 
         Livewire::actingAs($this->admin(User::PERMISSION_DEEPL_TRANSLATE))
             ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
-            ->mountAction('translateContent')
-            ->callAction(TestAction::make('draftWithDeepL')->schemaComponent('draftActions'))
+            ->callAction('translateWithDeepL')
             ->assertHasNoActionErrors();
 
         Http::assertSent(fn (Request $request): bool => $request->hasHeader('Authorization', 'DeepL-Auth-Key env-key'));
@@ -221,8 +217,7 @@ class IntegrationsTest extends TestCase
 
         Livewire::actingAs($this->admin(User::PERMISSION_AI_TRANSLATE))
             ->test(EditCourse::class, ['record' => $course->getRouteKey()])
-            ->mountAction('translateContent')
-            ->callAction(TestAction::make('draftWithChatgpt')->schemaComponent('draftActions'))
+            ->callAction('translateWithChatgpt')
             ->assertHasNoActionErrors()
             ->assertSet('mountedActions.0.data.fr.title', '[llm] '.$course->title);
 
@@ -238,8 +233,7 @@ class IntegrationsTest extends TestCase
 
         Livewire::actingAs($this->admin(User::PERMISSION_AI_TRANSLATE))
             ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
-            ->mountAction('translateContent')
-            ->callAction(TestAction::make('draftWithDeepseek')->schemaComponent('draftActions'))
+            ->callAction('translateWithDeepseek')
             ->assertHasNoActionErrors();
 
         Http::assertSent(fn (Request $request): bool => $request->url() === 'https://api.deepseek.com/chat/completions'
@@ -251,12 +245,9 @@ class IntegrationsTest extends TestCase
     {
         // Enabled, but this admin was not given the right.
         $this->enable('chatgpt');
-        $this->expectException(ActionNotResolvableException::class);
-
         Livewire::actingAs($this->admin())
             ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
-            ->mountAction('translateContent')
-            ->callAction(TestAction::make('draftWithChatgpt')->schemaComponent('draftActions'));
+            ->assertActionDoesNotExist('translateWithChatgpt');
     }
 
     public function test_a_switched_off_provider_sends_nothing(): void

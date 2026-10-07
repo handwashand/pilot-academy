@@ -403,6 +403,41 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-07 — Translate menu, whole-course translation, course videos
+
+**Translate is now a menu** when an engine is available: *Translate by hand*, or
+*Translate with DeepL / ChatGPT / DeepSeek* — only what is switched on **and**
+allowed for that person (`TranslateContentAction::engine()`). An engine choice
+asks for confirmation (it is paid), then `replaceMountedAction('translateContent',
+['engine' => …])` opens the usual window with the empty boxes drafted. The choice
+arrives from the browser, so the engine is re-checked on the server when the
+window fills (`initial()`); a forged argument drafts nothing. With no engine it
+is the plain button as before. The in-window "Generate missing" buttons were
+removed in favour of this. `ENGINES`, `engine()`, `input()` and `reportDraft()`
+are public because the course action reuses them.
+
+**Translate whole course** (`TranslateCourseAction`) is a two-step wizard on the
+course: step 1 language + how (by hand or an engine), step 2 the review — the
+course and each lesson, drafts in the empty boxes, saved only by *Save
+translations*. Drafting is `DraftTranslations::handleMany`: all empty boxes of
+the course and its lessons go out together (one request for plain text, one for
+HTML for DeepL; `LlmTranslator` now splits into 30 KB groups). Only lessons in the
+course's own language and that the user may edit are listed; human-written text
+is never sent or replaced. State keys are `course.*` and `lesson_{id}.*`.
+
+**Translate lesson videos** / **Check progress** on a course (Descript): every
+uploaded video in the course's lessons × the ticked languages, behind the same
+right and acknowledgement. `request(..., advance: false)` only *records* the
+requests so a big course cannot run out one web request; Check progress (20 s
+budget) and `descript:sync` start them a few at a time. Videos/languages already
+done or under way cost nothing (the unique key still holds).
+
+**Verified (run):** `CourseTranslationTest` 8, `DeepLDraftTranslationTest` and
+`IntegrationsTest` (rewritten for the menu), translation-parity tests; Pint clean.
+The full suite was 509 passed before this step. **Not verified:** the menu,
+wizard and rich-editor drafts in a browser, and a course-wide run with a real
+engine (the fake answers; real latency for a 20-lesson course is unmeasured).
+
 ### 2026-10-07 — Descript proven live; tokens in Settings → Integrations
 
 **The transcript flow was run for real** (owner-approved, one ~8-second synthetic

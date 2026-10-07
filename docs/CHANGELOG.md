@@ -24,6 +24,17 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **Translate a whole course at once.** On a course, **Translate whole course**
+  opens one window for the course's own text and every lesson's: pick a language
+  and either write by hand or let DeepL, ChatGPT or DeepSeek (whichever is on for
+  you) draft the empty boxes, then review the course and each lesson and **Save
+  translations**. Boxes that already have text are never sent or replaced, and
+  only lessons written in the course's language that you may edit are included.
+  With the Descript right, **Translate lesson videos** queues every uploaded
+  lesson video in the course for the languages you tick, after the same
+  acknowledgement; videos or languages already translated or under way are
+  skipped and cost nothing. **Check progress** then moves them along a few at a
+  time.
 - **Subtitles on translated lesson videos.** When Descript has translated an
   uploaded lesson video, the player now offers that language's subtitles under
   the **CC** button, and switches them on by itself when the page is in that
@@ -35,10 +46,12 @@ Add a new entry here whenever something visible to admins or students changes.
   leave the box blank to keep it, or tick **Remove the saved token**. Once a
   provider is on, anyone an admin has given **Draft translations with DeepL** or
   **Draft translations with ChatGPT or DeepSeek** (under **People → Users →
-  Extra permissions**) sees a **Generate missing with …** button in the
-  **Translate** window of a course or lesson. After a confirmation it fills only
-  the empty boxes, for the editor to read and correct — nothing is saved until
-  **Save translations**, and text that is already there is never replaced.
+  Extra permissions**) finds **Translate** on a course or lesson turned into a
+  small menu: **Translate by hand**, or **Translate with DeepL / ChatGPT /
+  DeepSeek** — only what is switched on for them. After a confirmation the
+  Translate window opens with the empty boxes drafted, for the editor to read and
+  correct — nothing is saved until **Save translations**, and text that is
+  already there is never replaced.
   Typing translations by hand works exactly as before. A DeepL key already set
   in the server's `.env` keeps working until one is saved here. A Descript
   token saved here connects lesson video translation the same way (the lesson's

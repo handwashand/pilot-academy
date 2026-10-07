@@ -57,7 +57,7 @@ doing: building the training (**Content**), looking after the people taking it
 | **Docs → Guide** | This guide, with a contents list and a search box. |
 | **Docs → What's new** | Everything that has changed in the academy, newest first. Search it, filter it by category, or open it as a PDF. |
 | **Settings → Mail** | Are emails arriving? What the server is set to do, and a button to send yourself a test. Admins, and anyone given **Check mail delivery**. |
-| **Settings → Integrations** | Add the API token for Descript, DeepL, ChatGPT or DeepSeek and switch each on. Admins only. People you grant **Draft translations with DeepL** or **… with ChatGPT or DeepSeek** (under **People → Users → Extra permissions**) then see a **Generate missing with …** button inside **Translate**; it fills empty boxes for you to review, and nothing is saved until you press **Save translations**. |
+| **Settings → Integrations** | Add the API token for Descript, DeepL, ChatGPT or DeepSeek and switch each on. Admins only. People you grant **Draft translations with DeepL** or **… with ChatGPT or DeepSeek** (under **People → Users → Extra permissions**) then find **Translate** turned into a menu — **Translate by hand** or **Translate with …** for each provider that is on. After a confirmation the Translate window opens with the empty boxes drafted for you to review; nothing is saved until you press **Save translations**. |
 | **Settings → Translations** | The wording students see, in every language — correct any of it without waiting for a developer. Admins only. |
 
 Students have their own guide on the public site: **Help**, the **?** in the top bar. Point a stuck student there first — it covers what finishes a lesson, when the final quiz unlocks, and where certificates are.
@@ -624,6 +624,29 @@ the video will be sent to Descript and may use media minutes and AI credits.
 Nothing is sent until **Start translation** is clicked. YouTube links cannot be
 sent. Use **Check progress** until the result is saved; a completed language
 cannot be charged twice.
+
+On a **course**, **Translate lesson videos** does the same for every uploaded
+video in its lessons at once: tick the languages and the acknowledgement, and
+the translations are queued — nothing starts until **Check progress** (or the
+server's scheduled check) moves them along a few at a time. Videos or languages
+already translated or under way are skipped and cost nothing. A finished
+translation also gives the lesson's player subtitles in that language (the
+**CC** button).
+
+## Translating text with DeepL, ChatGPT or DeepSeek
+
+An admin adds each provider's API token under **Settings → Integrations** and
+switches it on. Anyone given the matching right (**Draft translations with
+DeepL**, or **… with ChatGPT or DeepSeek**, under **People → Users → Extra
+permissions**) then sees **Translate** on a course, lesson, case study, tutorial
+or webinar become a menu: **Translate by hand**, or **Translate with …** for each
+provider that is on. After a confirmation the Translate window opens with the
+empty boxes drafted; read and correct them, then **Save translations**. Nothing
+is saved before that, and text already written is never replaced.
+
+On a **course**, **Translate whole course** does the course and all its lessons
+in one window: choose the language and how (by hand or a provider), then review
+the course and each lesson before saving.
 
 ---
 
