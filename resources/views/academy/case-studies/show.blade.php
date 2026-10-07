@@ -20,11 +20,11 @@
 
             <div class="mt-3 flex flex-wrap items-center gap-2">
                 @if($caseStudy->industry)
-                    <span class="rounded bg-blue-50 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-brand">{{ $caseStudy->industry }}</span>
+                    <span class="rounded bg-blue-50 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-brand">{{ $caseStudy->translated('industry') }}</span>
                 @endif
                 <span class="rounded bg-slate-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-slate-600">{{ $caseStudy->difficultyLabel() }}</span>
                 @if($caseStudy->implementation_time)
-                    <span class="rounded bg-green-50 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-green-700">{{ $caseStudy->implementation_time }}</span>
+                    <span class="rounded bg-green-50 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-green-700">{{ $caseStudy->translated('implementation_time') }}</span>
                 @endif
             </div>
 

@@ -22,6 +22,18 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ## 2.1.0 — September 2026
 
+### Fixed
+
+- **A case study's industry and time estimate now translate.** They used to
+  always show in the language the study was written in, even when every other
+  field had been translated. **Translate** on a case study now includes them,
+  so once an editor adds the translation a partner reading in that language
+  sees it there too.
+- **Clearer wording for a case study's privacy status.** The sidebar used to
+  say "Anonymized" or "Customer approved" with no explanation; it now reads
+  "Customer details anonymized", "Published with the customer's approval", or
+  "Not reviewed with the customer yet".
+
 ### Added
 
 - **Already translated? Edit, don't redo.** When a course or lesson already has

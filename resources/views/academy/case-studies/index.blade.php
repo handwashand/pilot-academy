@@ -82,11 +82,11 @@
             <div class="p-5">
                 <div class="mb-2 flex flex-wrap items-center gap-2">
                     @if($study->industry)
-                        <span class="rounded bg-blue-50 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-brand">{{ $study->industry }}</span>
+                        <span class="rounded bg-blue-50 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-brand">{{ $study->translated('industry') }}</span>
                     @endif
                     <span class="rounded bg-slate-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-slate-600">{{ $study->difficultyLabel() }}</span>
                     @if($study->implementation_time)
-                        <span class="rounded bg-green-50 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-green-700">{{ $study->implementation_time }}</span>
+                        <span class="rounded bg-green-50 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-green-700">{{ $study->translated('implementation_time') }}</span>
                     @endif
                 </div>
 

@@ -21,6 +21,8 @@ class CaseStudy extends Model
     protected array $translatable = [
         'title',
         'short_problem',
+        'industry',
+        'implementation_time',
         'scenario_problem',
         'desired_outcome',
         'prerequisites',
@@ -149,8 +151,8 @@ class CaseStudy extends Model
      */
     public function translatableFieldLabel(string $field): string
     {
-        if ($field === 'short_problem') {
-            return __t('admin_case_studies.form.short_problem');
+        if (in_array($field, ['short_problem', 'industry', 'implementation_time'], true)) {
+            return __t("admin_case_studies.form.{$field}");
         }
 
         $section = array_search($field, self::SECTION_FIELDS, true);

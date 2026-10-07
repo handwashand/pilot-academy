@@ -273,7 +273,7 @@ class TranslateContentAction
 
         return match ($field) {
             'content' => RichEditor::make($name)->label($label),
-            'title' => TextInput::make($name)->label($label)->maxLength(255)->placeholder($original),
+            'title', 'industry', 'implementation_time' => TextInput::make($name)->label($label)->maxLength(255)->placeholder($original),
             default => Textarea::make($name)->label($label)->rows($field === 'transcript' ? 6 : 3)->placeholder($original),
         };
     }

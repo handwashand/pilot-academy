@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Filament\Resources\CaseStudies\CaseStudyResource;
+use App\Filament\Resources\CaseStudies\Pages\EditCaseStudy;
 use App\Filament\Resources\CaseStudies\Pages\ListCaseStudies;
 use App\Models\ActivityEvent;
 use App\Models\CaseStudy;
@@ -249,6 +250,44 @@ class CaseStudyTest extends TestCase
             ->assertSee('Configuration pas à pas')
             ->assertSee('Détails de l’étude', false)
             ->assertDontSee('Step-by-step configuration');
+    }
+
+    /**
+     * Industry and the time estimate are short authored text, like the title —
+     * they used to always show in the study's own language. Translate now
+     * covers them too, so a reader sees them translated once an editor has.
+     */
+    public function test_industry_and_implementation_time_can_be_translated(): void
+    {
+        $this->seed(LanguageSeeder::class);
+        $study = $this->completeStudy([
+            'industry' => 'Delivery',
+            'implementation_time' => '2-4 hours',
+            'status' => CaseStudy::STATUS_PUBLISHED,
+        ]);
+
+        Livewire::actingAs($this->admin())
+            ->test(EditCaseStudy::class, ['record' => $study->getRouteKey()])
+            ->callAction('translateContent', data: [
+                'fr' => ['industry' => 'Livraison', 'implementation_time' => '2 à 4 heures'],
+            ])
+            ->assertHasNoActionErrors();
+
+        $this->assertSame('Livraison', $study->fresh()->translated('industry', 'fr'));
+        $this->assertSame('2 à 4 heures', $study->fresh()->translated('implementation_time', 'fr'));
+
+        $this->withHeader('Accept-Language', 'fr')
+            ->get(route('academy.case-studies.show', $study))
+            ->assertOk()
+            ->assertSee('Livraison')
+            ->assertSee('2 à 4 heures')
+            ->assertDontSee('2-4 hours');
+
+        // No translation yet: the reader sees the original, as before.
+        $this->withHeader('Accept-Language', 'ru')
+            ->get(route('academy.case-studies.index', ['industry' => 'Delivery']))
+            ->assertOk()
+            ->assertSee('Delivery');
     }
 
     /** The editor's screens follow the editor's language, like every other resource. */
