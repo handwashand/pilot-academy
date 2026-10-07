@@ -98,6 +98,9 @@ return [
         'one' => 'language',
         'many' => 'languages',
     ],
+    'configs' => [
+        'nav' => 'Configs',
+    ],
     'mail' => [
         'nav' => 'Mail',
     ],

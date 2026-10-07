@@ -23,6 +23,7 @@ return [
         'check_mail' => 'Verificar o envio de e-mails',
         'use_descript_translation' => 'Usar a tradução de vídeo do Descript',
         'use_deepl_translation' => 'Gerar rascunhos de tradução com o DeepL',
+        'use_ai_translation' => 'Gerar rascunhos de tradução com ChatGPT ou DeepSeek',
         'lessons_done' => 'Aulas concluídas',
         'last_login' => 'Último acesso',
         'export' => 'Exportar progresso dos alunos',

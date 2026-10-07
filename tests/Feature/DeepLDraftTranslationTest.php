@@ -2,12 +2,13 @@
 
 namespace Tests\Feature;
 
-use App\Actions\DraftTranslationsWithDeepL;
+use App\Actions\DraftTranslations;
 use App\Filament\Resources\Courses\Pages\EditCourse;
 use App\Filament\Resources\Lessons\Pages\EditLesson;
 use App\Models\Course;
 use App\Models\Language;
 use App\Models\User;
+use App\Services\DeepL\DeepLClient;
 use Database\Seeders\LanguageSeeder;
 use Database\Seeders\PilotQuickStartSeeder;
 use Filament\Actions\Exceptions\ActionNotResolvableException;
@@ -92,10 +93,10 @@ class DeepLDraftTranslationTest extends TestCase
         $course = Course::first();
         $targets = Language::whereIn('code', ['fr', 'ru'])->orderBy('code')->get();
 
-        $result = app(DraftTranslationsWithDeepL::class)->handle($course, $targets, [
+        $result = app(DraftTranslations::class)->handle($course, $targets, [
             'fr' => ['title' => '', 'description' => null],
             'ru' => ['title' => 'Уже написано человеком', 'description' => ''],
-        ]);
+        ], app(DeepLClient::class));
 
         $this->assertNull($result['error']);
         $this->assertSame('[fr] '.$course->title, $result['drafts']['fr']['title']);
@@ -110,7 +111,7 @@ class DeepLDraftTranslationTest extends TestCase
         $lesson = Course::first()->lessons()->first();
         $lesson->update(['content' => '<p>Lesson <strong>text</strong>.</p>']);
 
-        app(DraftTranslationsWithDeepL::class)->handle($lesson, Language::where('code', 'fr')->get(), []);
+        app(DraftTranslations::class)->handle($lesson, Language::where('code', 'fr')->get(), [], app(DeepLClient::class));
 
         Http::assertSent(fn (Request $request): bool => str_contains($request->url(), 'v2/translate')
             && ($request->data()['tag_handling'] ?? null) === 'html'
@@ -125,10 +126,11 @@ class DeepLDraftTranslationTest extends TestCase
         $this->quotaOnSecondCall = true;
         $course = Course::first();
 
-        $result = app(DraftTranslationsWithDeepL::class)->handle(
+        $result = app(DraftTranslations::class)->handle(
             $course,
             Language::whereIn('code', ['fr', 'ru'])->orderBy('code')->get(),
             [],
+            app(DeepLClient::class),
         );
 
         $this->assertTrue($result['error']->isQuotaProblem());
@@ -141,7 +143,7 @@ class DeepLDraftTranslationTest extends TestCase
         Livewire::actingAs($this->editor())
             ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
             ->mountAction('translateContent')
-            ->assertActionVisible(TestAction::make('draftWithDeepL')->schemaComponent('deeplActions'));
+            ->assertActionVisible(TestAction::make('draftWithDeepL')->schemaComponent('draftActions'));
     }
 
     public function test_the_button_is_hidden_without_the_right_even_for_an_admin(): void
@@ -153,7 +155,7 @@ class DeepLDraftTranslationTest extends TestCase
         Livewire::actingAs($this->editor(false))
             ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
             ->mountAction('translateContent')
-            ->callAction(TestAction::make('draftWithDeepL')->schemaComponent('deeplActions'));
+            ->callAction(TestAction::make('draftWithDeepL')->schemaComponent('draftActions'));
     }
 
     public function test_the_button_is_hidden_when_deepl_is_switched_off(): void
@@ -165,7 +167,7 @@ class DeepLDraftTranslationTest extends TestCase
         Livewire::actingAs($this->editor())
             ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
             ->mountAction('translateContent')
-            ->callAction(TestAction::make('draftWithDeepL')->schemaComponent('deeplActions'));
+            ->callAction(TestAction::make('draftWithDeepL')->schemaComponent('draftActions'));
     }
 
     public function test_generating_fills_the_dialog_but_saves_nothing(): void
@@ -175,7 +177,7 @@ class DeepLDraftTranslationTest extends TestCase
         Livewire::actingAs($this->editor())
             ->test(EditLesson::class, ['record' => $lesson->getRouteKey()])
             ->mountAction('translateContent')
-            ->callAction(TestAction::make('draftWithDeepL')->schemaComponent('deeplActions'))
+            ->callAction(TestAction::make('draftWithDeepL')->schemaComponent('draftActions'))
             ->assertHasNoActionErrors()
             ->assertSet('mountedActions.0.data.fr.title', '[fr] '.$lesson->title);
 

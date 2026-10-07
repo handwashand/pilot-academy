@@ -55,6 +55,9 @@ class User extends Authenticatable implements FilamentUser, HasLocalePreference
     /** Draft course and lesson translations with DeepL, which bills by character. */
     public const PERMISSION_DEEPL_TRANSLATE = 'deepl.translate';
 
+    /** Draft translations with ChatGPT or DeepSeek, which bill per use. */
+    public const PERMISSION_AI_TRANSLATE = 'ai.translate';
+
     /** New accounts are partners until an admin says otherwise. */
     protected $attributes = [
         'role' => self::ROLE_LEARNER,

@@ -2,11 +2,14 @@
 
 namespace App\Filament\Actions;
 
-use App\Actions\DraftTranslationsWithDeepL;
+use App\Actions\DraftTranslations;
+use App\Models\AiProvider;
 use App\Models\Language;
 use App\Models\User;
 use App\Services\DeepL\DeepLClient;
 use App\Services\DeepL\DeepLException;
+use App\Services\Llm\LlmException;
+use App\Services\Llm\LlmTranslator;
 use App\Services\Translator;
 use Filament\Actions\Action;
 use Filament\Forms\Components\RichEditor;
@@ -52,9 +55,9 @@ class TranslateContentAction
             ->visible(fn (Model $record): bool => static::targets($record)->isNotEmpty())
             ->fillForm(fn (Model $record): array => static::current($record))
             ->schema(fn (Model $record): array => [
-                Actions::make([static::draftWithDeepL($record)])
-                    ->key('deeplActions')
-                    ->visible(fn (): bool => static::canDraftWithDeepL()),
+                Actions::make(array_map(fn (string $name): Action => static::draftAction($record, $name), array_keys(static::ENGINES)))
+                    ->key('draftActions')
+                    ->visible(fn (): bool => array_filter(array_keys(static::ENGINES), fn (string $name): bool => static::engine($name) !== null) !== []),
                 Tabs::make('languages')->tabs(
                     static::targets($record)
                         ->map(fn (Language $language): Tab => Tab::make($language->native_name)->schema(
@@ -76,25 +79,47 @@ class TranslateContentAction
             });
     }
 
-    private static function canDraftWithDeepL(): bool
+    /** The engines that can draft, by action name: their label and the right that spends their credit. */
+    private const ENGINES = [
+        'draftWithDeepL' => ['label' => 'DeepL', 'permission' => User::PERMISSION_DEEPL_TRANSLATE],
+        'draftWithChatgpt' => ['label' => 'ChatGPT', 'permission' => User::PERMISSION_AI_TRANSLATE, 'provider' => AiProvider::CHATGPT],
+        'draftWithDeepseek' => ['label' => 'DeepSeek', 'permission' => User::PERMISSION_AI_TRANSLATE, 'provider' => AiProvider::DEEPSEEK],
+    ];
+
+    /** The connected engine for this action — only for someone holding its right. */
+    private static function engine(string $name): DeepLClient|LlmTranslator|null
     {
-        return app(DeepLClient::class)->enabled()
-            && (bool) auth()->user()?->hasPermission(User::PERMISSION_DEEPL_TRANSLATE);
+        $config = static::ENGINES[$name];
+
+        if (! auth()->user()?->hasPermission($config['permission'])) {
+            return null;
+        }
+
+        if (! isset($config['provider'])) {
+            return app(DeepLClient::class)->enabled() ? app(DeepLClient::class) : null;
+        }
+
+        $provider = AiProvider::usable($config['provider']);
+
+        return $provider ? new LlmTranslator($provider) : null;
     }
 
-    /** Fills the empty boxes with DeepL drafts; never touches a box that has text. */
-    private static function draftWithDeepL(Model $record): Action
+    /** Fills the empty boxes with drafts; never touches a box that has text. */
+    private static function draftAction(Model $record, string $name): Action
     {
-        return Action::make('draftWithDeepL')
-            ->label(fn (): string => __t('admin_common.translate.deepl.button'))
+        $provider = ['provider' => static::ENGINES[$name]['label']];
+
+        return Action::make($name)
+            ->label(fn (): string => __t('admin_common.translate.draft.button', $provider))
             ->icon(Heroicon::OutlinedSparkles)
             ->color('gray')
-            ->authorize(fn (): bool => static::canDraftWithDeepL())
+            ->visible(fn (): bool => static::engine($name) !== null)
+            ->authorize(fn (): bool => static::engine($name) !== null)
             ->requiresConfirmation()
-            ->modalHeading(fn (): string => __t('admin_common.translate.deepl.confirm_heading'))
-            ->modalDescription(fn (): string => __t('admin_common.translate.deepl.confirm_description'))
-            ->modalSubmitActionLabel(fn (): string => __t('admin_common.translate.deepl.confirm_submit'))
-            ->action(function (Get $get, Set $set) use ($record): void {
+            ->modalHeading(fn (): string => __t('admin_common.translate.draft.confirm_heading', $provider))
+            ->modalDescription(fn (): string => __t('admin_common.translate.draft.confirm_description', $provider))
+            ->modalSubmitActionLabel(fn (): string => __t('admin_common.translate.draft.confirm_submit'))
+            ->action(function (Get $get, Set $set) use ($record, $name, $provider): void {
                 $targets = static::targets($record);
                 $current = [];
 
@@ -104,7 +129,7 @@ class TranslateContentAction
                     }
                 }
 
-                $result = app(DraftTranslationsWithDeepL::class)->handle($record, $targets, $current);
+                $result = app(DraftTranslations::class)->handle($record, $targets, $current, static::engine($name));
 
                 foreach ($result['drafts'] as $code => $fields) {
                     foreach ($fields as $field => $text) {
@@ -116,8 +141,8 @@ class TranslateContentAction
 
                 if ($result['error']) {
                     Notification::make()
-                        ->title(__t('admin_common.translate.deepl.failed'))
-                        ->body(static::failureMessage($result['error']).($count ? ' '.__t('admin_common.translate.deepl.kept', ['count' => $count]) : ''))
+                        ->title(__t('admin_common.translate.draft.failed', $provider))
+                        ->body(static::failureMessage($result['error'], $provider).($count ? ' '.__t('admin_common.translate.draft.kept', ['count' => $count]) : ''))
                         ->danger()
                         ->send();
 
@@ -125,12 +150,13 @@ class TranslateContentAction
                 }
 
                 $count
-                    ? Notification::make()->title(__t('admin_common.translate.deepl.drafted'))->body(__t('admin_common.translate.deepl.drafted_body', ['count' => $count]))->success()->send()
-                    : Notification::make()->title(__t('admin_common.translate.deepl.nothing'))->body(__t('admin_common.translate.deepl.nothing_body'))->warning()->send();
+                    ? Notification::make()->title(__t('admin_common.translate.draft.drafted'))->body(__t('admin_common.translate.draft.drafted_body', ['count' => $count]))->success()->send()
+                    : Notification::make()->title(__t('admin_common.translate.draft.nothing'))->body(__t('admin_common.translate.draft.nothing_body', $provider))->warning()->send();
             });
     }
 
-    private static function failureMessage(DeepLException $exception): string
+    /** @param  array{provider: string}  $provider */
+    private static function failureMessage(DeepLException|LlmException $exception, array $provider): string
     {
         $key = match (true) {
             $exception->isQuotaProblem() => 'quota',
@@ -141,7 +167,7 @@ class TranslateContentAction
             default => 'rejected',
         };
 
-        return __t("admin_common.translate.deepl.errors.{$key}");
+        return __t("admin_common.translate.draft.errors.{$key}", $provider);
     }
 
     /** Every active language except the one the record is written in. */

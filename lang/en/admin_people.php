@@ -27,6 +27,7 @@ return [
         'check_mail' => 'Check mail delivery',
         'use_descript_translation' => 'Use Descript video translation',
         'use_deepl_translation' => 'Draft translations with DeepL',
+        'use_ai_translation' => 'Draft translations with ChatGPT or DeepSeek',
         'lessons_done' => 'Lessons done',
         'last_login' => 'Last login',
         'export' => 'Export learner progress',

@@ -23,6 +23,7 @@ return [
         'check_mail' => 'Проверка отправки почты',
         'use_descript_translation' => 'Использовать перевод видео Descript',
         'use_deepl_translation' => 'Создавать черновики переводов через DeepL',
+        'use_ai_translation' => 'Создавать черновики переводов через ChatGPT или DeepSeek',
         'lessons_done' => 'Пройдено уроков',
         'last_login' => 'Последний вход',
         'export' => 'Экспорт прогресса обучающихся',

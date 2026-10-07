@@ -27,6 +27,7 @@ return [
         'check_mail' => 'فحص تسليم البريد',
         'use_descript_translation' => 'استخدام ترجمة فيديو Descript',
         'use_deepl_translation' => 'توليد مسودات الترجمة عبر DeepL',
+        'use_ai_translation' => 'توليد مسودات الترجمة عبر ChatGPT أو DeepSeek',
         'lessons_done' => 'الدروس المنجزة',
         'last_login' => 'آخر تسجيل دخول',
         'export' => 'تصدير تقدّم المتعلّمين',
