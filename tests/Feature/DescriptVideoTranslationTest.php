@@ -404,6 +404,53 @@ class DescriptVideoTranslationTest extends TestCase
      * finishes, an agent job adds its composition to the project, an export
      * returns that composition's words.
      */
+    public function test_a_dub_is_translated_voiced_published_and_its_file_kept(): void
+    {
+        $lesson = $this->lesson();
+
+        $this->translator()->request($lesson, self::VIDEO, ['fr'], kind: VideoTranslation::KIND_DUB);
+        $this->settle($lesson);
+
+        $row = VideoTranslation::where('kind', VideoTranslation::KIND_DUB)->sole();
+        $this->assertSame(VideoTranslation::STATUS_DONE, $row->status, (string) $row->error);
+        $this->assertStringEndsWith('-fr-dub.mp4', $row->dub_path);
+        $this->assertSame('dubbed-bytes', Storage::disk('public')->get($row->dub_path), 'The file is the app’s own copy.');
+        $this->assertSame(2, $this->callsTo('POST', 'jobs/agent'), 'Translate, then dub.');
+        $this->assertSame(17, $row->ai_credits_used, 'Both jobs are counted.');
+        $this->assertSame('Dubbed with Julien.', $row->agent_response);
+
+        // Published with its picture (no media_type), and fetched without the token.
+        Http::assertSent(fn (Request $request): bool => Str::endsWith($request->url(), 'jobs/publish') && ! isset($request->data()['media_type']));
+        Http::assertSent(fn (Request $request): bool => $request->url() === 'https://storage.test/dl/fr' && ! $request->hasHeader('Authorization'));
+    }
+
+    public function test_asking_for_a_finished_dub_again_spends_nothing(): void
+    {
+        $lesson = $this->lesson();
+        $this->translator()->request($lesson, self::VIDEO, ['fr'], kind: VideoTranslation::KIND_DUB);
+        $this->settle($lesson);
+        $this->calls = [];
+
+        $outcome = $this->translator()->request($lesson, self::VIDEO, ['fr'], kind: VideoTranslation::KIND_DUB);
+
+        $this->assertSame(['fr'], $outcome['done']);
+        $this->assertSame([], $this->calls);
+    }
+
+    public function test_a_dub_reuses_a_translation_that_already_exists(): void
+    {
+        $lesson = $this->lesson();
+        $this->translator()->request($lesson, self::VIDEO, ['fr']);
+        $this->settle($lesson);
+        $this->assertSame(1, $this->callsTo('POST', 'jobs/agent'));
+
+        $this->translator()->request($lesson, self::VIDEO, ['fr'], kind: VideoTranslation::KIND_DUB);
+        $this->settle($lesson);
+
+        $this->assertSame(2, $this->callsTo('POST', 'jobs/agent'), 'Only the dub is paid for; the translation is reused.');
+        $this->assertSame(VideoTranslation::STATUS_DONE, VideoTranslation::where('kind', VideoTranslation::KIND_DUB)->sole()->status);
+    }
+
     private function fakeDescript(): void
     {
         Http::fake(function (Request $request) {
@@ -411,9 +458,9 @@ class DescriptVideoTranslationTest extends TestCase
             $method = $request->method();
 
             if (Str::startsWith($url, 'https://storage.test/')) {
-                $this->calls[] = [$method, 'upload'];
+                $this->calls[] = [$method, $method === 'GET' ? 'download' : 'upload'];
 
-                return Http::response('', 200);
+                return Http::response($method === 'GET' ? 'dubbed-bytes' : '', 200);
             }
 
             $path = Str::after($url, 'descriptapi.test/v1/');
@@ -454,10 +501,23 @@ class DescriptVideoTranslationTest extends TestCase
                 }
 
                 preg_match('/Pilot Academy — ([a-z]+)/u', (string) $request->data()['prompt'], $m);
+
+                // The second instruction on a dub: give the translated composition a voice.
+                if (Str::startsWith((string) $request->data()['prompt'], 'Dub')) {
+                    return Http::response(['job_id' => 'job-dub-'.($m[1] ?? 'x'), 'project_id' => 'proj-1'], 201);
+                }
+
                 $jobId = 'job-agent-'.($m[1] ?? 'x');
                 $this->agentJobs[$jobId] = $m[1] ?? 'x';
 
                 return Http::response(['job_id' => $jobId, 'project_id' => 'proj-1', 'conversation_id' => 'c1'], 201);
+            }
+
+            if ($method === 'GET' && Str::startsWith($path, 'jobs/job-dub-')) {
+                return Http::response([
+                    'job_state' => 'stopped',
+                    'result' => ['status' => 'success', 'agent_response' => 'Dubbed with Julien.', 'ai_credits_used' => 9.66],
+                ]);
             }
 
             if ($method === 'GET' && Str::startsWith($path, 'jobs/job-agent-')) {
@@ -487,7 +547,7 @@ class DescriptVideoTranslationTest extends TestCase
 
                 return Http::response([
                     'job_state' => 'stopped',
-                    'result' => ['status' => 'success', 'share_url' => 'https://share.descript.test/view/slug-'.$language, 'media_type' => 'Audio'],
+                    'result' => ['status' => 'success', 'share_url' => 'https://share.descript.test/view/slug-'.$language, 'media_type' => 'Video', 'download_url' => 'https://storage.test/dl/'.$language],
                 ]);
             }
 

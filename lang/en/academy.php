@@ -141,6 +141,8 @@ return [
         'admin_preview' => '— students cannot see this. You are previewing it as an admin.',
         'no_video_support' => 'Your browser does not support the video tag.',
         'download_video' => 'Download video',
+        'original_audio' => 'Play original audio',
+        'translated_audio' => 'Play translated audio',
         'playback_speed' => 'Playback speed',
         'speed_normal' => 'Normal',
         'transcript' => 'Transcript',

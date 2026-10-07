@@ -54,7 +54,10 @@
 
                     @if($type === 'upload' && filled($video['video_path'] ?? null))
                         @php
-                            $videoUrl = \Illuminate\Support\Facades\Storage::disk('public')->url($video['video_path']);
+                            // Dubbed in the reader's language where Descript made one; ?audio=original goes back.
+                            $dub = $dubs[$videoIndex] ?? null;
+                            $playsDub = $dub && request('audio') !== 'original';
+                            $videoUrl = \Illuminate\Support\Facades\Storage::disk('public')->url($playsDub ? $dub->dub_path : $video['video_path']);
                             $remembersPosition = $videoIndex === $resumeIndex;
                         @endphp
                         <div class="mt-6 rounded-2xl overflow-hidden border border-slate-200 shadow-sm aspect-video bg-black">
@@ -76,8 +79,14 @@
                                     {{ $caption }}
                                 </button>
                             @endforeach
+                            @if($dub)
+                                <a href="{{ $playsDub ? url()->current().'?audio=original' : url()->current() }}"
+                                   class="inline-flex items-center h-11 px-3 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 active:bg-slate-100">
+                                    {{ __t($playsDub ? 'academy.lesson.original_audio' : 'academy.lesson.translated_audio') }}
+                                </a>
+                            @endif
                             @if($canDownloadVideos)
-                                <a href="{{ route('academy.lesson.video.download', [$course, $lesson, $videoIndex]) }}"
+                                <a href="{{ route('academy.lesson.video.download', [$course, $lesson, $videoIndex] + ($dub && ! $playsDub ? ['audio' => 'original'] : [])) }}"
                                    class="inline-flex items-center h-11 px-3 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 active:bg-slate-100">
                                     {{ __t('academy.lesson.download_video') }}
                                 </a>

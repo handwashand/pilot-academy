@@ -46,6 +46,7 @@ class TranslateVideoWithDescriptAction
                 && TranslateLessonVideo::targetLanguages($record) !== [])
             ->fillForm(fn (Lesson $record): array => [
                 'video' => array_key_first(TranslateLessonVideo::uploadedVideos($record)),
+                'kind' => VideoTranslation::KIND_DUB,
                 'languages' => [],
                 'confirmed' => false,
             ])
@@ -56,11 +57,13 @@ class TranslateVideoWithDescriptAction
                     ->required()
                     ->live(),
 
+                static::kindSelect(),
+
                 CheckboxList::make('languages')
                     ->label(fn (): string => __t('admin_descript.action.languages'))
                     ->helperText(fn (): string => __t('admin_descript.action.languages_help'))
-                    ->options(fn (Get $get): array => static::languageOptions($record, (string) $get('video')))
-                    ->disableOptionWhen(fn (string $value, Get $get): bool => static::isTaken($record, (string) $get('video'), $value))
+                    ->options(fn (Get $get): array => static::languageOptions($record, (string) $get('video'), (string) $get('kind')))
+                    ->disableOptionWhen(fn (string $value, Get $get): bool => static::isTaken($record, (string) $get('video'), $value, (string) $get('kind')))
                     ->required()
                     ->columns(2),
 
@@ -79,6 +82,7 @@ class TranslateVideoWithDescriptAction
                     (string) $data['video'],
                     (array) ($data['languages'] ?? []),
                     auth()->user(),
+                    kind: (string) ($data['kind'] ?? VideoTranslation::KIND_DUB),
                 );
 
                 if ($outcome['requested'] === []) {
@@ -124,8 +128,10 @@ class TranslateVideoWithDescriptAction
             ->visible(fn (Course $record): bool => app(TranslateLessonVideo::class)->enabled()
                 && TranslateLessonVideo::courseVideos($record, auth()->user()) !== []
                 && static::courseLanguages($record) !== [])
-            ->fillForm(['languages' => [], 'confirmed' => false])
+            ->fillForm(['languages' => [], 'kind' => VideoTranslation::KIND_DUB, 'confirmed' => false])
             ->schema(fn (Course $record): array => [
+                static::kindSelect(),
+
                 CheckboxList::make('languages')
                     ->label(fn (): string => __t('admin_descript.action.languages'))
                     ->options(static::courseLanguages($record))
@@ -147,7 +153,7 @@ class TranslateVideoWithDescriptAction
                 $queued = 0;
 
                 foreach (TranslateLessonVideo::courseVideos($record, $user) as $video) {
-                    $queued += count(app(TranslateLessonVideo::class)->request($video['lesson'], $video['path'], $languages, $user, advance: false)['requested']);
+                    $queued += count(app(TranslateLessonVideo::class)->request($video['lesson'], $video['path'], $languages, $user, advance: false, kind: (string) ($data['kind'] ?? VideoTranslation::KIND_DUB))['requested']);
                 }
 
                 if ($queued === 0) {
@@ -229,6 +235,21 @@ class TranslateVideoWithDescriptAction
         return VideoTranslation::query()->whereIn('lesson_id', $course->lessons()->pluck('lessons.id'));
     }
 
+    /** Voice (the video dubbed) or subtitles only. Voice is why Descript is here, so it is the default. */
+    private static function kindSelect(): Select
+    {
+        return Select::make('kind')
+            ->label(fn (): string => __t('admin_descript.action.kind'))
+            ->options(fn (): array => [
+                VideoTranslation::KIND_DUB => __t('admin_descript.action.kind_dub'),
+                VideoTranslation::KIND_TRANSCRIPT => __t('admin_descript.action.kind_transcript'),
+            ])
+            ->helperText(fn (): string => __t('admin_descript.action.kind_help'))
+            ->selectablePlaceholder(false)
+            ->required()
+            ->live();
+    }
+
     /** Shown only while something is still under way for this lesson. */
     public static function check(): Action
     {
@@ -257,9 +278,9 @@ class TranslateVideoWithDescriptAction
     }
 
     /** @return array<string, string> code => "Français — done" */
-    private static function languageOptions(Lesson $record, string $videoPath): array
+    private static function languageOptions(Lesson $record, string $videoPath, string $kind): array
     {
-        $rows = static::rowsFor($record, $videoPath);
+        $rows = static::rowsFor($record, $videoPath, $kind);
 
         return collect(TranslateLessonVideo::targetLanguages($record))
             ->mapWithKeys(function (string $name, string $code) use ($rows): array {
@@ -273,15 +294,15 @@ class TranslateVideoWithDescriptAction
     }
 
     /** Done or under way: not to be sent again. A failed one may be. */
-    private static function isTaken(Lesson $record, string $videoPath, string $code): bool
+    private static function isTaken(Lesson $record, string $videoPath, string $code, string $kind): bool
     {
-        $row = static::rowsFor($record, $videoPath)->get($code);
+        $row = static::rowsFor($record, $videoPath, $kind)->get($code);
 
         return $row !== null && ($row->isDone() || $row->isInFlight());
     }
 
     /** @return Collection<string, VideoTranslation> keyed by language */
-    private static function rowsFor(Lesson $record, string $videoPath): Collection
+    private static function rowsFor(Lesson $record, string $videoPath, string $kind): Collection
     {
         $import = DescriptImport::query()
             ->where('lesson_id', $record->id)
@@ -289,7 +310,7 @@ class TranslateVideoWithDescriptAction
             ->first();
 
         return $import
-            ? $import->translations()->where('kind', VideoTranslation::KIND_TRANSCRIPT)->get()->keyBy('language')
+            ? $import->translations()->where('kind', $kind === VideoTranslation::KIND_TRANSCRIPT ? $kind : VideoTranslation::KIND_DUB)->get()->keyBy('language')
             : collect();
     }
 }

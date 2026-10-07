@@ -129,6 +129,8 @@ return [
         'admin_preview' => '— os alunos não podem ver isto. Você está visualizando como administrador.',
         'no_video_support' => 'Seu navegador não é compatível com a reprodução de vídeo.',
         'download_video' => 'Baixar o vídeo',
+        'original_audio' => 'Ouvir o áudio original',
+        'translated_audio' => 'Ouvir o áudio traduzido',
         'playback_speed' => 'Velocidade de reprodução',
         'speed_normal' => 'Normal',
         'transcript' => 'Transcrição',

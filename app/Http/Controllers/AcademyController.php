@@ -324,6 +324,7 @@ class AcademyController extends Controller
                 : null,
             'captionTracks' => $this->captionTracks($course, $lesson),
             'canDownloadVideos' => (bool) $user?->canDownloadVideos(),
+            'dubs' => $this->dubs($lesson),
         ]);
     }
 
@@ -340,11 +341,12 @@ class AcademyController extends Controller
         $translator = app(Translator::class);
         $finished = VideoTranslation::query()
             ->where('lesson_id', $lesson->id)
-            ->where('kind', VideoTranslation::KIND_TRANSCRIPT)
             ->where('status', VideoTranslation::STATUS_DONE)
             ->whereNotNull('subtitle_path')
             ->with('descriptImport:id,video_path')
             ->get()
+            // A language may have both subtitles and a dub: one track is enough.
+            ->unique(fn (VideoTranslation $row): string => $row->descript_import_id.'-'.$row->language)
             ->groupBy(fn (VideoTranslation $row): string => (string) $row->descriptImport?->video_path);
 
         $tracks = [];
@@ -370,6 +372,36 @@ class AcademyController extends Controller
     }
 
     /**
+     * The dubbed file for each uploaded video, in the language this page is
+     * being read in — by position in the lesson's video list. A French reader
+     * hears French where Descript has dubbed it; everyone else, the original.
+     *
+     * @return array<int, VideoTranslation>
+     */
+    private function dubs(Lesson $lesson): array
+    {
+        $byPath = VideoTranslation::query()
+            ->where('lesson_id', $lesson->id)
+            ->where('kind', VideoTranslation::KIND_DUB)
+            ->where('status', VideoTranslation::STATUS_DONE)
+            ->where('language', app()->getLocale())
+            ->whereNotNull('dub_path')
+            ->with('descriptImport:id,video_path')
+            ->get()
+            ->keyBy(fn (VideoTranslation $row): string => (string) $row->descriptImport?->video_path);
+
+        $dubs = [];
+
+        foreach ($lesson->videoEntries() as $index => $entry) {
+            if ($dub = $byPath->get((string) ($entry['video_path'] ?? ''))) {
+                $dubs[$index] = $dub;
+            }
+        }
+
+        return $dubs;
+    }
+
+    /**
      * An uploaded lesson video as a file to keep. Signed-in only (the route),
      * the lesson must be one this person can see, and they must be an admin or
      * hold the download right. YouTube videos are not ours to hand out.
@@ -384,6 +416,13 @@ class AcademyController extends Controller
         $path = ($entry['type'] ?? null) === 'upload' ? ($entry['video_path'] ?? null) : null;
         $disk = Storage::disk('public');
         abort_unless(filled($path) && $disk->exists($path), 404);
+
+        // The version they are watching: the dub in their language, unless they chose the original.
+        $dub = $request->query('audio') === 'original' ? null : ($this->dubs($lesson)[$video] ?? null);
+
+        if ($dub && $disk->exists($dub->dub_path)) {
+            $path = $dub->dub_path;
+        }
 
         $extension = pathinfo($path, PATHINFO_EXTENSION) ?: 'mp4';
 

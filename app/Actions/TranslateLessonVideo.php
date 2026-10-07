@@ -35,8 +35,8 @@ use InvalidArgumentException;
  */
 class TranslateLessonVideo
 {
-    /** job_id while one request is publishing, so a second cannot. */
-    private const PUBLISH_STARTING = 'publishing';
+    /** job_id while one request is starting a dub or a publish, so a second cannot. */
+    private const JOB_STARTING = 'starting';
 
     public function __construct(private DescriptClient $client) {}
 
@@ -107,7 +107,7 @@ class TranslateLessonVideo
      *                         and descript:sync start them a few at a time rather than in one web request.
      * @return array{requested: array<int, string>, done: array<int, string>, running: array<int, string>}
      */
-    public function request(Lesson $lesson, string $videoPath, array $languages, ?User $by = null, bool $advance = true): array
+    public function request(Lesson $lesson, string $videoPath, array $languages, ?User $by = null, bool $advance = true, string $kind = VideoTranslation::KIND_TRANSCRIPT): array
     {
         if (! array_key_exists($videoPath, static::uploadedVideos($lesson))) {
             throw new InvalidArgumentException('That video is not an uploaded video of this lesson.');
@@ -134,7 +134,7 @@ class TranslateLessonVideo
 
         foreach ($languages as $code) {
             $row = VideoTranslation::firstOrCreate(
-                ['descript_import_id' => $import->id, 'language' => $code, 'kind' => VideoTranslation::KIND_TRANSCRIPT],
+                ['descript_import_id' => $import->id, 'language' => $code, 'kind' => $kind === VideoTranslation::KIND_DUB ? VideoTranslation::KIND_DUB : VideoTranslation::KIND_TRANSCRIPT],
                 ['lesson_id' => $lesson->id, 'status' => VideoTranslation::STATUS_PENDING, 'requested_by' => $by?->id],
             );
 
@@ -199,6 +199,7 @@ class TranslateLessonVideo
             match ($translation->status) {
                 VideoTranslation::STATUS_PENDING => $this->start($translation),
                 VideoTranslation::STATUS_TRANSLATING => $this->checkTranslation($translation),
+                VideoTranslation::STATUS_DUBBING => $this->dub($translation),
                 VideoTranslation::STATUS_EXPORTING => $this->export($translation),
                 default => null,
             };
@@ -252,10 +253,32 @@ class TranslateLessonVideo
         $busy = VideoTranslation::query()
             ->where('descript_import_id', $import->id)
             ->whereKeyNot($translation->id)
-            ->where('status', VideoTranslation::STATUS_TRANSLATING)
+            ->whereIn('status', [VideoTranslation::STATUS_TRANSLATING, VideoTranslation::STATUS_DUBBING])
             ->exists();
 
         if ($busy) {
+            return;
+        }
+
+        // This language may already be translated for this video (as subtitles,
+        // or as a voice): use that composition instead of paying to translate
+        // it again, and go straight to what this row still needs.
+        $existing = VideoTranslation::query()
+            ->where('descript_import_id', $import->id)
+            ->where('language', $translation->language)
+            ->whereKeyNot($translation->id)
+            ->where('status', VideoTranslation::STATUS_DONE)
+            ->whereNotNull('composition_id')
+            ->value('composition_id');
+
+        if ($existing !== null) {
+            $next = $translation->isDub() ? VideoTranslation::STATUS_DUBBING : VideoTranslation::STATUS_EXPORTING;
+
+            if ($this->claim($translation, VideoTranslation::STATUS_PENDING, $next)) {
+                $translation->update(['composition_id' => $existing, 'job_id' => null, 'error' => null]);
+                $translation->isDub() ? $this->dub($translation) : $this->export($translation);
+            }
+
             return;
         }
 
@@ -341,12 +364,91 @@ class TranslateLessonVideo
         }
 
         $translation->update([
-            'status' => VideoTranslation::STATUS_EXPORTING,
+            'status' => $translation->isDub() ? VideoTranslation::STATUS_DUBBING : VideoTranslation::STATUS_EXPORTING,
             'composition_id' => $compositionId,
-            // The agent job is finished with; from here job_id is the publish job.
+            // The translate job is finished with; from here job_id is the next
+            // job's: the dub's, then the publish's.
             'job_id' => null,
             'agent_response' => $result['agent_response'] ?? null,
-            'ai_credits_used' => (int) ($result['ai_credits_used'] ?? 0),
+            'ai_credits_used' => (int) ceil((float) ($result['ai_credits_used'] ?? 0)),
+        ]);
+
+        $translation->refresh();
+        $translation->isDub() ? $this->dub($translation) : $this->export($translation);
+    }
+
+    /**
+     * Take the next job slot on a row: job_id null → a placeholder, atomically,
+     * so of two requests arriving together only one goes on to call Descript.
+     */
+    private function claimJob(VideoTranslation $translation): bool
+    {
+        return VideoTranslation::query()
+            ->whereKey($translation->getKey())
+            ->where('status', $translation->status)
+            ->whereNull('job_id')
+            ->update(['job_id' => self::JOB_STARTING]) === 1;
+    }
+
+    /**
+     * A dub: ask the agent to give the translated composition a voice, then
+     * wait for it. One call starts it, later calls check it.
+     */
+    private function dub(VideoTranslation $translation): void
+    {
+        $import = $translation->descriptImport;
+
+        if ($translation->job_id === self::JOB_STARTING) {
+            return;
+        }
+
+        if ($translation->job_id === null) {
+            if (! $this->claimJob($translation)) {
+                return;
+            }
+
+            $prompt = strtr((string) config('services.descript.dub_prompt'), [
+                '{source}' => DescriptClient::ORIGINAL_COMPOSITION,
+                '{language}' => $this->englishName($translation->language),
+                '{name}' => $this->compositionName($translation->language),
+            ]);
+
+            try {
+                $job = $this->client->agent($import->project_id, $prompt);
+            } catch (DescriptException $e) {
+                $translation->update(['job_id' => null]);
+
+                throw $e;
+            }
+
+            $translation->update(['job_id' => $job['job_id'] ?? null]);
+
+            return;
+        }
+
+        $job = $this->client->job((string) $translation->job_id);
+
+        if (($job['job_state'] ?? null) === 'running') {
+            return;
+        }
+
+        $result = $job['result'] ?? [];
+
+        if (($job['job_state'] ?? null) !== 'stopped' || ($result['status'] ?? null) !== 'success') {
+            $translation->update([
+                'status' => VideoTranslation::STATUS_FAILED,
+                'error' => $result['error_message'] ?? __t('admin_descript.errors.dub_failed'),
+            ]);
+
+            return;
+        }
+
+        $translation->update([
+            'status' => VideoTranslation::STATUS_EXPORTING,
+            'job_id' => null,
+            // What the agent said matters here: it names the voice it chose.
+            'agent_response' => $result['agent_response'] ?? $translation->agent_response,
+            'ai_credits_used' => $translation->ai_credits_used + (int) ceil((float) ($result['ai_credits_used'] ?? 0)),
         ]);
 
         $this->export($translation->refresh());
@@ -365,23 +467,18 @@ class TranslateLessonVideo
     {
         $import = $translation->descriptImport;
 
-        if ($translation->job_id === self::PUBLISH_STARTING) {
+        if ($translation->job_id === self::JOB_STARTING) {
             return;
         }
 
         if ($translation->job_id === null) {
-            $claimed = VideoTranslation::query()
-                ->whereKey($translation->getKey())
-                ->where('status', VideoTranslation::STATUS_EXPORTING)
-                ->whereNull('job_id')
-                ->update(['job_id' => self::PUBLISH_STARTING]) === 1;
-
-            if (! $claimed) {
+            if (! $this->claimJob($translation)) {
                 return;
             }
 
             try {
-                $job = $this->client->publish($import->project_id, (string) $translation->composition_id);
+                // A dub is published with its picture: that file is the lesson video in this language.
+                $job = $this->client->publish($import->project_id, (string) $translation->composition_id, withPicture: $translation->isDub());
             } catch (DescriptException $e) {
                 $translation->update(['job_id' => null]);
 
@@ -416,8 +513,23 @@ class TranslateLessonVideo
 
         $vtt = trim((string) ($this->client->publishedProject($slug)['subtitles'] ?? ''));
         $text = VideoTranslation::textFromVtt($vtt);
+        $disk = Storage::disk('public');
+        $base = sprintf('video-translations/lesson-%d/%d-%s', $translation->lesson_id, $import->id, $translation->language);
+        $dubPath = null;
 
-        if ($text === '') {
+        if ($translation->isDub()) {
+            // The voice is the point of a dub: no file, no translation. The link
+            // expires, so the file is fetched now and kept as the app's own.
+            if (blank($result['download_url'] ?? null)) {
+                $translation->update(['status' => VideoTranslation::STATUS_FAILED, 'error' => __t('admin_descript.errors.dub_failed')]);
+
+                return;
+            }
+
+            $dubPath = $base.'-dub.'.(($result['media_type'] ?? null) === 'Audio' ? 'm4a' : 'mp4');
+            $disk->makeDirectory(dirname($dubPath));
+            $this->client->download((string) $result['download_url'], $disk->path($dubPath));
+        } elseif ($text === '') {
             $translation->update([
                 'status' => VideoTranslation::STATUS_FAILED,
                 'error' => __t('admin_descript.errors.no_subtitles'),
@@ -426,13 +538,18 @@ class TranslateLessonVideo
             return;
         }
 
-        $subtitlePath = sprintf('video-translations/lesson-%d/%d-%s.vtt', $translation->lesson_id, $import->id, $translation->language);
-        Storage::disk('public')->put($subtitlePath, $vtt."\n");
+        $subtitlePath = null;
+
+        if ($text !== '') {
+            $subtitlePath = $base.'.vtt';
+            $disk->put($subtitlePath, $vtt."\n");
+        }
 
         $translation->update([
             'status' => VideoTranslation::STATUS_DONE,
-            'transcript' => $text,
+            'transcript' => $text !== '' ? $text : null,
             'subtitle_path' => $subtitlePath,
+            'dub_path' => $dubPath,
             'error' => null,
             'completed_at' => now(),
         ]);

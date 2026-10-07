@@ -130,6 +130,8 @@ return [
         'admin_preview' => '— les apprenants ne peuvent pas voir ceci. Vous prévisualisez en tant qu’administrateur.',
         'no_video_support' => 'Votre navigateur ne prend pas en charge la lecture vidéo.',
         'download_video' => 'Télécharger la vidéo',
+        'original_audio' => 'Écouter l’audio d’origine',
+        'translated_audio' => 'Écouter l’audio traduit',
         'playback_speed' => 'Vitesse de lecture',
         'speed_normal' => 'Normale',
         'transcript' => 'Transcription',
