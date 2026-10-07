@@ -72,6 +72,7 @@ class UserForm
                         User::PERMISSION_TRANSLATIONS_MANAGE => __t('admin_people.users.manage_translations'),
                         User::PERMISSION_MAIL_CHECK => __t('admin_people.users.check_mail'),
                         User::PERMISSION_DESCRIPT_TRANSLATE => __t('admin_people.users.use_descript_translation'),
+                        User::PERMISSION_DEEPL_TRANSLATE => __t('admin_people.users.use_deepl_translation'),
                     ])
                     ->helperText(__t('admin_people.users.permissions_help'))
                     ->dehydrated(false)

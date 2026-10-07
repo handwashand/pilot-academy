@@ -26,6 +26,7 @@ return [
         'manage_translations' => 'Manage translations',
         'check_mail' => 'Check mail delivery',
         'use_descript_translation' => 'Use Descript video translation',
+        'use_deepl_translation' => 'Draft translations with DeepL',
         'lessons_done' => 'Lessons done',
         'last_login' => 'Last login',
         'export' => 'Export learner progress',

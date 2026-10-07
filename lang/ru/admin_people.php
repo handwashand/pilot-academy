@@ -22,6 +22,7 @@ return [
         'manage_translations' => 'Управление переводами',
         'check_mail' => 'Проверка отправки почты',
         'use_descript_translation' => 'Использовать перевод видео Descript',
+        'use_deepl_translation' => 'Создавать черновики переводов через DeepL',
         'lessons_done' => 'Пройдено уроков',
         'last_login' => 'Последний вход',
         'export' => 'Экспорт прогресса обучающихся',

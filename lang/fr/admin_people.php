@@ -22,6 +22,7 @@ return [
         'manage_translations' => 'Gérer les traductions',
         'check_mail' => 'Vérifier l’envoi des e-mails',
         'use_descript_translation' => 'Utiliser la traduction vidéo de Descript',
+        'use_deepl_translation' => 'Générer des brouillons de traduction avec DeepL',
         'lessons_done' => 'Leçons terminées',
         'last_login' => 'Dernière connexion',
         'export' => 'Exporter la progression des apprenants',

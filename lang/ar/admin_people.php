@@ -26,6 +26,7 @@ return [
         'manage_translations' => 'إدارة الترجمات',
         'check_mail' => 'فحص تسليم البريد',
         'use_descript_translation' => 'استخدام ترجمة فيديو Descript',
+        'use_deepl_translation' => 'توليد مسودات الترجمة عبر DeepL',
         'lessons_done' => 'الدروس المنجزة',
         'last_login' => 'آخر تسجيل دخول',
         'export' => 'تصدير تقدّم المتعلّمين',

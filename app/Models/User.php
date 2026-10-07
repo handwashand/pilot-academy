@@ -52,6 +52,9 @@ class User extends Authenticatable implements FilamentUser, HasLocalePreference
     /** Start and monitor credit-using Descript video translations. */
     public const PERMISSION_DESCRIPT_TRANSLATE = 'descript.translate';
 
+    /** Draft course and lesson translations with DeepL, which bills by character. */
+    public const PERMISSION_DEEPL_TRANSLATE = 'deepl.translate';
+
     /** New accounts are partners until an admin says otherwise. */
     protected $attributes = [
         'role' => self::ROLE_LEARNER,
