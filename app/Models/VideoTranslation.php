@@ -32,6 +32,28 @@ class VideoTranslation extends Model
     /** Still working: a page can show progress, and nothing new is started. */
     public const IN_FLIGHT = [self::STATUS_PENDING, self::STATUS_TRANSLATING, self::STATUS_EXPORTING];
 
+    /**
+     * Browsers play captions only as WebVTT; Descript exports SRT. The two
+     * differ in a header line and in the comma before the milliseconds.
+     */
+    public static function toVtt(string $srt): string
+    {
+        $srt = str_replace(["\r\n", "\r"], "\n", ltrim($srt, "\xEF\xBB\xBF"));
+
+        return "WEBVTT\n\n".preg_replace('/(\d{2}:\d{2}:\d{2}),(\d{3})/', '$1.$2', trim($srt))."\n";
+    }
+
+    /** Finished subtitle files for one uploaded video of a lesson. */
+    public function scopeCaptionsFor(Builder $query, Lesson $lesson, string $videoPath): Builder
+    {
+        return $query
+            ->where('lesson_id', $lesson->id)
+            ->where('kind', self::KIND_TRANSCRIPT)
+            ->where('status', self::STATUS_DONE)
+            ->whereNotNull('subtitle_path')
+            ->whereHas('descriptImport', fn (Builder $import) => $import->where('video_path', $videoPath));
+    }
+
     protected $fillable = [
         'descript_import_id',
         'lesson_id',

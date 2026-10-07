@@ -404,7 +404,7 @@ Nothing below can be done by an agent. Steps 0.1–0.5 unblock step 0.6, and ste
 | Step 4 — `descript:sync` | **Done** |
 | Step 5 — the lesson buttons | **Done**. Both actions require the per-account right; starting also requires a credit/data acknowledgement |
 | Step 6 — strings in six languages | **Done** |
-| Step 7 — captions on the player | Not started — open question 1 |
+| Step 7 — captions on the player | **Done** (2026-10-07). `GET …/lessons/{lesson}/captions/{video}/{language}` converts the stored `.srt` to WebVTT; the lesson player gets a `<track>` per finished language, the viewer's own language `default`. Visibility follows the lesson; only `done` rows with a file are served. Tests: `VideoCaptionsTest` (6) |
 | Step 8 — documentation | **Done for the built transcript workflow:** deployment, changelog, six admin guides and agent memory describe the global switch, per-account right and confirmation. Update them again after live verification or dubbing |
 | Step 9 — live verification | Not started — needs 0.5 and 0.6 |
 | Dubbing | Not started — waits for 0.6 |
@@ -576,7 +576,7 @@ designed then.
 
 ## Open questions
 
-1. Offer the stored `.srt` as player captions (step 7)? Recommended: yes.
+1. ~~Offer the stored `.srt` as player captions (step 7)?~~ Done — yes.
 2. Which Descript plan, and what monthly credit ceiling (0.1, 0.4)?
 3. Add the `callback_url` webhook later so progress arrives without anyone
    clicking? Needs a signed public route; production only.

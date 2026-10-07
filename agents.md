@@ -403,6 +403,30 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-07 — Descript: captions on the player (step 7); what remains
+
+Open question 1 is answered and built: a lesson's uploaded video now offers every
+**finished** Descript language as captions. Browsers only read WebVTT in a
+`<track>`, Descript exports SRT, so `GET /courses/{c}/lessons/{l}/captions/{video}/{language}`
+converts the stored file on the way out (`VideoTranslation::toVtt`). Route
+constraints (`whereNumber`, `[a-z]{2,10}`) keep the language out of any path; the
+file path comes only from the database row, never the URL. Served only when the
+lesson is visible to the viewer, the row is `done` and the file exists; the
+response is `private` so a draft lesson's captions are never shared-cached. The
+viewer's own language is `default`, so it switches on by itself. Guides: changelog,
+and the learner guide in English, Russian, Spanish, French and Portuguese (the
+Arabic learner guide has no matching "Transcript" line to hang it on — add it
+when that guide is next revised).
+
+**Verified:** `VideoCaptionsTest` (6) plus the Descript, lesson, video and
+shared-lesson suites — 111 passed; Pint clean; full suite 499 passed before this
+step. **Not verified:** captions in a real browser, and on real Descript output.
+
+**Descript is built end to end except what needs your credits:** step 9 (a live
+run) and dubbing. Both wait on the owner's 0.5 (OK to send lesson videos to
+Descript) and 0.6 (a short synthetic video *with speech*). Nothing here spends
+credits until that is given.
+
 ### 2026-10-07 — Settings → Integrations; drafts with DeepL, ChatGPT, DeepSeek
 
 DeepL steps 2 and 3 are done, and the owner widened the scope: a **Settings →

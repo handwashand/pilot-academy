@@ -42,6 +42,7 @@ Une leçon est terminée lorsque vous **réussissez son contrôle de connaissanc
 
 - Regardez la vidéo. Si vous êtes connecté, elle reprend où vous vous étiez arrêté.
 - Vous préférez lire ? Ouvrez **Transcription**.
+- Si la vidéo est traduite dans votre langue, le bouton **CC** du lecteur active les sous-titres.
 - Répondez correctement à toutes les questions. En cas d'erreur, relisez la leçon et réessayez.
 
 Certains contrôles ont une limite de temps ou un nombre limité d'essais. Ces règles sont affichées avant de commencer.

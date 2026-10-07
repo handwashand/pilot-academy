@@ -10,8 +10,11 @@ use App\Models\Lesson;
 use App\Models\QuizAttempt;
 use App\Models\Tutorial;
 use App\Models\VideoPosition;
+use App\Models\VideoTranslation;
+use App\Services\Translator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class AcademyController extends Controller
 {
@@ -318,6 +321,69 @@ class AcademyController extends Controller
             'certificate' => $user
                 ? $course->certificates()->where('user_id', $user->id)->whereNull('revoked_at')->latest('issued_at')->first()
                 : null,
+            'captionTracks' => $this->captionTracks($course, $lesson),
+        ]);
+    }
+
+    /**
+     * Caption tracks for the lesson's uploaded videos, by position in the
+     * lesson's video list: the languages Descript has finished translating,
+     * each with the address that serves it as WebVTT. The viewer's own
+     * language is the one the player turns on.
+     *
+     * @return array<int, array<int, array{code: string, label: string, url: string, default: bool}>>
+     */
+    private function captionTracks(Course $course, Lesson $lesson): array
+    {
+        $translator = app(Translator::class);
+        $finished = VideoTranslation::query()
+            ->where('lesson_id', $lesson->id)
+            ->where('kind', VideoTranslation::KIND_TRANSCRIPT)
+            ->where('status', VideoTranslation::STATUS_DONE)
+            ->whereNotNull('subtitle_path')
+            ->with('descriptImport:id,video_path')
+            ->get()
+            ->groupBy(fn (VideoTranslation $row): string => (string) $row->descriptImport?->video_path);
+
+        $tracks = [];
+
+        foreach ($lesson->videoEntries() as $index => $entry) {
+            foreach ($finished->get((string) ($entry['video_path'] ?? ''), []) as $row) {
+                $language = $translator->activeLanguage($row->language);
+
+                if (! $language) {
+                    continue;
+                }
+
+                $tracks[$index][] = [
+                    'code' => $language->code,
+                    'label' => $language->native_name,
+                    'url' => route('academy.lesson.captions', [$course, $lesson, $index, $language->code]),
+                    'default' => $language->code === app()->getLocale(),
+                ];
+            }
+        }
+
+        return $tracks;
+    }
+
+    /** One finished Descript subtitle file, as WebVTT for the player's captions. */
+    public function captions(Request $request, Course $course, Lesson $lesson, int $video, string $language)
+    {
+        abort_unless($course->isVisibleTo($request->user()) && $lesson->isVisibleTo($request->user()), 404);
+        abort_unless($course->hasLesson($lesson), 404);
+
+        $path = $lesson->videoEntries()[$video]['video_path'] ?? null;
+        abort_if(blank($path), 404);
+
+        $subtitle = VideoTranslation::captionsFor($lesson, $path)->where('language', $language)->first()?->subtitle_path;
+        $disk = Storage::disk('public');
+        abort_unless($subtitle && $disk->exists($subtitle), 404);
+
+        return response(VideoTranslation::toVtt($disk->get($subtitle)), 200, [
+            'Content-Type' => 'text/vtt; charset=UTF-8',
+            // Private: a draft lesson's captions are served to its editors only.
+            'Cache-Control' => 'private, max-age=3600',
         ]);
     }
 

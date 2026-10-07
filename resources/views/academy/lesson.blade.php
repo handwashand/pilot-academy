@@ -60,6 +60,9 @@
                         <div class="mt-6 rounded-2xl overflow-hidden border border-slate-200 shadow-sm aspect-video bg-black">
                             <video id="lesson-video-{{ $videoIndex }}" class="w-full h-full" controls playsinline preload="metadata">
                                 <source src="{{ $videoUrl }}">
+                                @foreach(($captionTracks[$videoIndex] ?? []) as $track)
+                                    <track kind="captions" src="{{ $track['url'] }}" srclang="{{ $track['code'] }}" label="{{ $track['label'] }}"{{ $track['default'] ? ' default' : '' }}>
+                                @endforeach
                                 {{ __t('academy.lesson.no_video_support') }}
                             </video>
                         </div>

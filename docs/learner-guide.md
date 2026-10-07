@@ -80,6 +80,7 @@ alone does not finish it.
   you are logged in it **starts again where you stopped**, even on another
   device.
 - **Prefer to read?** Open **Transcript** under the video, where there is one.
+- **Need subtitles?** When a video has been translated into your language, a **CC** button on the player turns captions on. They start on automatically if the lesson page is in that language.
 - **Take the knowledge check** at the end. Answer **every question correctly**
   to finish the lesson. Get something wrong and the answers to fix are marked,
   so you can correct them and submit again.

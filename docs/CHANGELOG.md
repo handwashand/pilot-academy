@@ -24,6 +24,11 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **Subtitles on translated lesson videos.** When Descript has translated an
+  uploaded lesson video, the player now offers that language's subtitles under
+  the **CC** button, and switches them on by itself when the page is in that
+  language. The subtitle files are the ones the academy saved when the
+  translation finished, so watching never calls Descript.
 - **Draft translations with DeepL, ChatGPT or DeepSeek.** A new **Settings →
   Integrations** page (admins only) takes the API token for each provider and a
   switch to turn it on. The token is stored encrypted and is never shown again;

@@ -42,6 +42,7 @@ Uma aula é concluída quando você **passa na verificação de conhecimento**. 
 
 - Assista ao vídeo. Se você estiver conectado, ele recomeça de onde você parou.
 - Prefere ler? Abra **Transcrição**.
+- Se o vídeo estiver traduzido para o seu idioma, o botão **CC** do player ativa as legendas.
 - Responda todas as perguntas corretamente. Se errar, revise a aula e tente de novo.
 
 Algumas verificações têm limite de tempo ou número de tentativas. Essas regras aparecem antes de começar.

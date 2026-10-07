@@ -42,6 +42,7 @@ Una lección se termina cuando **apruebas su prueba de conocimiento**. Leer o ve
 
 - Mira el video. Si iniciaste sesión, vuelve a empezar donde lo dejaste.
 - Si prefieres leer, abre **Transcripción**.
+- Si el video está traducido a tu idioma, el botón **CC** del reproductor activa los subtítulos.
 - Contesta todas las preguntas correctamente. Si fallas, revisa la lección e inténtalo de nuevo.
 
 Algunas pruebas tienen límite de tiempo o de intentos. Verás esas reglas antes de empezar.
