@@ -403,6 +403,37 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-07 — Descript proven live; tokens in Settings → Integrations
+
+**The transcript flow was run for real** (owner-approved, one ~8-second synthetic
+spoken clip into French) and it needed three fixes before it worked — none of
+which any fake could have shown. Full account in
+`docs/descript-integration.md` → *Proven on a live account*; the short version:
+(1) a project in a folder needs `team_access`; (2) the import must carry
+`add_compositions` or the media sits in no composition (duration 0, empty
+transcript); (3) **Descript's transcript export returns the original script, not
+the translation** — the translated words are the subtitles of a *published* page,
+so `export()` now publishes the composition once (private, audio) and stores the
+WebVTT from `GET /published_projects/{slug}`, deriving the plain transcript from
+its cues. `TranslateLessonVideo::export` is a small state machine of its own now
+(`job_id` null → claimed `publishing` → publish job id), so two clicks cannot
+publish twice. Captions serve a stored `.vtt` untouched (`toVtt` is idempotent).
+Cost per run: 8 media seconds and 7 AI credits; each leaves a project and a
+private published page in the Descript drive that the API cannot delete.
+
+**Descript's token can now be saved in Settings → Integrations**, as DeepL's can.
+A saved token is authoritative *including its switch* (`AiProvider::withToken` —
+not `saved`, which Eloquent already owns); with nothing saved, `.env` applies. The
+scratch scripts that drove the live run live in the session scratchpad, not the
+repo, and read the token from the environment only.
+
+**Verified (run):** live run end to end (four runs, last one clean); focused suite
+82 passed (Integrations, Descript, captions, DeepL, translation parity, guide
+menu); Pint clean. **Not run:** the full suite after these last changes; every
+language at once on real Descript; a real lesson video; a public-URL import.
+**Dubbing is not started** — the agent itself offered to dub, so it looks
+possible, but it is a separate phase with its own player work.
+
 ### 2026-10-07 — Descript: captions on the player (step 7); what remains
 
 Open question 1 is answered and built: a lesson's uploaded video now offers every

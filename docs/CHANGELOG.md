@@ -29,8 +29,8 @@ Add a new entry here whenever something visible to admins or students changes.
   the **CC** button, and switches them on by itself when the page is in that
   language. The subtitle files are the ones the academy saved when the
   translation finished, so watching never calls Descript.
-- **Draft translations with DeepL, ChatGPT or DeepSeek.** A new **Settings →
-  Integrations** page (admins only) takes the API token for each provider and a
+- **Add the Descript and translation tokens in the panel.** A new **Settings →
+  Integrations** page (admins only) takes the API token for Descript, DeepL, ChatGPT and DeepSeek, each with a
   switch to turn it on. The token is stored encrypted and is never shown again;
   leave the box blank to keep it, or tick **Remove the saved token**. Once a
   provider is on, anyone an admin has given **Draft translations with DeepL** or
@@ -40,7 +40,10 @@ Add a new entry here whenever something visible to admins or students changes.
   the empty boxes, for the editor to read and correct — nothing is saved until
   **Save translations**, and text that is already there is never replaced.
   Typing translations by hand works exactly as before. A DeepL key already set
-  in the server's `.env` keeps working until one is saved here.
+  in the server's `.env` keeps working until one is saved here. A Descript
+  token saved here connects lesson video translation the same way (the lesson's
+  **Translate video** button still needs the per-account right), and its switch
+  there turns the connection on or off.
 - **Descript video translation is an assignable right.** Enabling the Descript
   connection on the server no longer gives every editor its credit-using
   controls. An admin chooses each permitted account under **People → Users →

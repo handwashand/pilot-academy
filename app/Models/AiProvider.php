@@ -72,7 +72,7 @@ class AiProvider extends Model
      * null. Descript and DeepL use this: a saved token overrides the server's
      * .env, and its switch decides, so switching off here really is off.
      */
-    public static function saved(string $provider): ?self
+    public static function withToken(string $provider): ?self
     {
         $row = static::where('provider', $provider)->first();
 

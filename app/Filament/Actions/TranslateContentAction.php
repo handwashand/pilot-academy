@@ -97,7 +97,7 @@ class TranslateContentAction
 
         if ($config['provider'] === AiProvider::DEEPL) {
             // The key saved under Settings → Integrations (and its switch), else the server's .env.
-            $saved = AiProvider::saved(AiProvider::DEEPL);
+            $saved = AiProvider::withToken(AiProvider::DEEPL);
             $client = $saved ? new DeepLClient($saved->deeplSettings()) : app(DeepLClient::class);
 
             return $client->enabled() ? $client : null;

@@ -57,7 +57,7 @@ doing: building the training (**Content**), looking after the people taking it
 | **Docs → Guide** | This guide, with a contents list and a search box. |
 | **Docs → What's new** | Everything that has changed in the academy, newest first. Search it, filter it by category, or open it as a PDF. |
 | **Settings → Mail** | Are emails arriving? What the server is set to do, and a button to send yourself a test. Admins, and anyone given **Check mail delivery**. |
-| **Settings → Integrations** | Add the API token for DeepL, ChatGPT or DeepSeek and switch each on. Admins only. People you grant **Draft translations with DeepL** or **… with ChatGPT or DeepSeek** (under **People → Users → Extra permissions**) then see a **Generate missing with …** button inside **Translate**; it fills empty boxes for you to review, and nothing is saved until you press **Save translations**. |
+| **Settings → Integrations** | Add the API token for Descript, DeepL, ChatGPT or DeepSeek and switch each on. Admins only. People you grant **Draft translations with DeepL** or **… with ChatGPT or DeepSeek** (under **People → Users → Extra permissions**) then see a **Generate missing with …** button inside **Translate**; it fills empty boxes for you to review, and nothing is saved until you press **Save translations**. |
 | **Settings → Translations** | The wording students see, in every language — correct any of it without waiting for a developer. Admins only. |
 
 Students have their own guide on the public site: **Help**, the **?** in the top bar. Point a stuck student there first — it covers what finishes a lesson, when the final quiz unlocks, and where certificates are.

@@ -1,8 +1,9 @@
 # Descript integration plan
 
-> **Status: transcript translation built and tested (steps 1–6); switched off
-> (`DESCRIPT_ENABLED=false`) until it is proven on the live account.** Next: the
-> owner's step 0.5, then step 0.6, then step 9. Dubbing not started.
+> **Status: transcript translation built, tested and proven live on 2026-10-07**
+> (steps 1–7 and 9, one synthetic clip into French). Still switched off until
+> an admin adds the token and turns it on under **Settings → Integrations**.
+> Dubbing is not started — see [Later](#later--dubbing).
 >
 > Branch: `feature/descript-integration`, cut from `laravel` at `49e15f25`.
 > Read [Before starting](#before-starting--what-the-owner-must-do-first) and
@@ -147,7 +148,7 @@ general text-translation endpoint with a stable response contract.
 `compositions`: `[{ id, name, duration_seconds, created_at, updated_at }]`.
 `media`: `[{ id, name, duration_seconds, language }]`.
 
-### Export — `POST /export/transcript`
+### Export — `POST /export/transcript` (not used for translations — see [Proven](#proven-on-a-live-account))
 
 Request: `project_id`, `composition_id` (defaults to the first), **`format`**:
 `txt`, `markdown`, `html`, `rtf`, `docx` or `srt` — **no `vtt` through the
@@ -397,7 +398,7 @@ Nothing below can be done by an agent. Steps 0.1–0.5 unblock step 0.6, and ste
 | Branch `feature/descript-integration` off `laravel` | Done |
 | Migration + `DescriptImport` / `VideoTranslation` models | **Done**. The migration gained `video_translations.compositions_before` (json) for the composition diff — amended in place, as it had never run outside the suite |
 | Before starting 0.1–0.4 | **Done** by the owner; token verified with free calls |
-| Before starting 0.5 (data sign-off), 0.6 (prove the prompt) | Waiting — 0.6 spends credits and needs a synthetic test video with speech |
+| Before starting 0.5 (data sign-off), 0.6 (prove the prompt) | **Done 2026-10-07** — owner approved one small test; a ~8-second synthetic spoken clip (Windows text-to-speech, no company data) was run live. 7 AI credits and 8 media seconds per run |
 | Step 1 — configuration | **Done** |
 | Step 2 — `DescriptClient` | **Done** |
 | Step 3 — `TranslateLessonVideo` | **Done** |
@@ -406,7 +407,7 @@ Nothing below can be done by an agent. Steps 0.1–0.5 unblock step 0.6, and ste
 | Step 6 — strings in six languages | **Done** |
 | Step 7 — captions on the player | **Done** (2026-10-07). `GET …/lessons/{lesson}/captions/{video}/{language}` converts the stored `.srt` to WebVTT; the lesson player gets a `<track>` per finished language, the viewer's own language `default`. Visibility follows the lesson; only `done` rows with a file are served. Tests: `VideoCaptionsTest` (6) |
 | Step 8 — documentation | **Done for the built transcript workflow:** deployment, changelog, six admin guides and agent memory describe the global switch, per-account right and confirmation. Update them again after live verification or dubbing |
-| Step 9 — live verification | Not started — needs 0.5 and 0.6 |
+| Step 9 — live verification | **Done** for transcript translation into French (the first 3 live runs failed usefully — see [Proven on a live account](#proven-on-a-live-account)). Not yet run: every language at once, a real lesson video, a URL import on a public server |
 | Dubbing | Not started — waits for 0.6 |
 
 **Steps 1–6 verified by** `tests/Feature/DescriptVideoTranslationTest.php`, 18
@@ -590,8 +591,41 @@ owner's token from `.env`:
 - `GET /projects` → `200`: `{ "data": [ { "id", "name", "created_at", "updated_at" }, … ] }`
   — note the list is wrapped in **`data`**, which the spec summary did not show.
 
-**Still unproven** — step 0.6: whether the translate prompt creates a correctly
-named composition, its credits and time per job, and the answer on dubbing.
+**2026-10-07 — the whole transcript flow, live (four runs: one refused for free,
+three spending ~7 AI credits and
+8 media seconds each, plus one small probe publish).** A synthetic ~8-second English spoken clip, imported
+through the app's own code from a local server (direct upload), translated into
+French. The first three runs each failed in a new way and each was fixed:
+
+1. **`folder_name requires team_access`** — Descript refuses a project in a
+   folder unless it says what the drive's members may do. Rejected before any
+   work, so free. Now sends `team_access` (`DESCRIPT_TEAM_ACCESS`, default `view`).
+2. **Import "succeeded" but every composition had duration 0 and an empty
+   transcript.** Media was in the project but in no composition. The import must
+   carry `add_compositions: [{name, clips: [{media}]}]`; the app names it
+   `Original` and the prompt now refers to it.
+3. **The agent worked, but the transcript export returned English.** The
+   translated composition's *script* is still the original language; the French
+   lives in the captions. `POST /export/transcript` has no language option. What
+   does carry it: `POST /jobs/publish` (private, `media_type: Audio`) →
+   `share_url` → `GET /published_projects/{slug}` → **`subtitles`, a complete
+   WebVTT file in French.** The app now publishes once per translation, stores
+   that `.vtt`, and derives the plain transcript from its cues. Verified output:
+   `Bienvenue à la Pilot Academy. Ceci est un court test de traduction vidéo.`
+
+Also proven: the agent honours the requested composition name
+(`Pilot Academy — fr`) and does not change the original; the composition
+diff (`compositions_before`) finds it; `ai_credits_used` is reported (7);
+import ≈ 25 s, translate ≈ 45 s, publish ≈ 25 s. The agent's own reply offers
+**dubbing** ("Would you like me to dub the speech in French?"), so the dubbing
+phase looks possible — not tried. Each run leaves a project and a private
+published page in the Descript drive; there is no delete call in the API, so
+tidy them there by hand.
+
+**Still unproven:** every language in one go (shared import, one agent job per
+language — covered by tests with a fake only), a real lesson video, a public-URL
+import, and whether very long videos stay within the 30 s request timeout.
+
 
 ## Risks
 

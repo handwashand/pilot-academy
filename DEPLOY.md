@@ -106,13 +106,14 @@ Translates the speech in uploaded lesson videos. **Off by default**; leave it of
 until it has been proven on the live account — see
 `docs/descript-integration.md`, steps 0.5, 0.6 and 9.
 
-In `.env` (the token goes here only — never in the repository):
+The token can be added by an admin under **Settings → Integrations** (stored encrypted; once saved there, that page's switch decides). Or set it in `.env` (never in the repository):
 
 ```bash
 DESCRIPT_ENABLED=true
 DESCRIPT_API_TOKEN=<from Descript, Settings → API>
 DESCRIPT_API_BASE_URL=https://descriptapi.com/v1
 DESCRIPT_PROJECT_FOLDER="Pilot Academy/Transcriptions"
+DESCRIPT_TEAM_ACCESS=view      # what drive members may do with each project: view, comment or edit
 DESCRIPT_TIMEOUT_SECONDS=30
 ```
 
@@ -128,6 +129,8 @@ requires an acknowledgement in its confirmation dialog.
 `APP_URL` must be the real public address: Descript fetches each video from
 `APP_URL/storage/…` itself. On a server it cannot reach, the app uploads the file
 instead, which ties up a web request for the length of the upload.
+
+Each finished translation also leaves a private audio page for that composition in the Descript drive (its subtitles are how the translated words are read back); the API cannot delete them, so tidy them there if you wish.
 
 There is no queue worker, so translations move on when an editor presses
 **Check progress** on the lesson — or when this runs. Safe to run as often as

@@ -45,7 +45,7 @@ class DescriptClient
     {
         if ($this->row === false) {
             try {
-                $this->row = AiProvider::saved(AiProvider::DESCRIPT);
+                $this->row = AiProvider::withToken(AiProvider::DESCRIPT);
             } catch (QueryException) {
                 $this->row = null; // the table does not exist until the migration has run
             }
