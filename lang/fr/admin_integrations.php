@@ -4,7 +4,7 @@
 // translations portant la même clé remplace celle-ci.
 
 return [
-    'subheading' => 'Activez une intégration et ajoutez son jeton d’API. Qui peut utiliser chacune se règle compte par compte sous Personnes → Utilisateurs → Autorisations supplémentaires.',
+    'subheading' => 'Activez une intégration et ajoutez son jeton d’API. Les administrateurs peuvent utiliser les traducteurs de texte immédiatement ; toute autre personne, et Descript pour tout le monde, doit avoir le droit coché sous Personnes → Utilisateurs → Autorisations supplémentaires.',
     'description' => [
         'descript' => 'Traduit la parole des vidéos de leçon téléversées (bouton Traduire la vidéo d’une leçon). Chaque vidéo est envoyée une seule fois à Descript et chaque traduction est conservée ici. Utilise vos minutes de média et crédits IA Descript.',
         'deepl' => 'Génère des brouillons de traduction du texte des cours et des leçons dans la fenêtre Traduire. Le texte des champs vides n’est envoyé à DeepL que lorsque quelqu’un clique sur le bouton et confirme. Une clé se terminant par :fx est une clé DeepL API Free.',

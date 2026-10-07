@@ -4,7 +4,7 @@
 // translations com a mesma chave substitui uma linha.
 
 return [
-    'subheading' => 'Ative uma integração e adicione o token de API. Quem pode usar cada uma é definido por conta em Pessoas → Usuários → Permissões extras.',
+    'subheading' => 'Ative uma integração e adicione o token de API. Administradores podem usar os tradutores de texto imediatamente; qualquer outra pessoa, e o Descript para todos, precisa da permissão marcada em Pessoas → Usuários → Permissões extras.',
     'description' => [
         'descript' => 'Traduz a fala dos vídeos de aula enviados (botão Traduzir vídeo de uma aula). Cada vídeo é enviado uma única vez ao Descript e cada tradução fica guardada aqui. Usa seus minutos de mídia e créditos de IA do Descript.',
         'deepl' => 'Gera rascunhos de tradução do texto de cursos e aulas na janela Traduzir. O texto dos campos vazios só é enviado ao DeepL quando alguém clica no botão e confirma. Uma chave terminada em :fx é uma chave DeepL API Free.',

@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Crypt;
 
 /**
  * A text-translation provider an admin has set up under Settings → Integrations.
@@ -57,8 +60,31 @@ class AiProvider extends Model
     {
         return [
             'enabled' => 'boolean',
-            'api_key' => 'encrypted',
         ];
+    }
+
+    /**
+     * Stored encrypted with APP_KEY. A token saved under a different key cannot
+     * be read back — that reads as "no token", so the page asks for it again
+     * rather than failing. (The stock `encrypted` cast throws, which took the
+     * Integrations page down on a rebuilt local container.)
+     */
+    protected function apiKey(): Attribute
+    {
+        return Attribute::make(
+            get: function (?string $value): ?string {
+                if (blank($value)) {
+                    return null;
+                }
+
+                try {
+                    return Crypt::decryptString($value);
+                } catch (DecryptException) {
+                    return null;
+                }
+            },
+            set: fn (?string $value): ?string => blank($value) ? null : Crypt::encryptString($value),
+        );
     }
 
     /** The saved row, or an empty unsaved one. */

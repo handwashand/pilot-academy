@@ -13,6 +13,7 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -72,7 +73,8 @@ class Integrations extends Page
 
     public function getSubheading(): ?string
     {
-        return __t('admin_integrations.subheading');
+        // Said once for the page, rather than under every token box.
+        return __t('admin_integrations.subheading').' '.__t('admin_integrations.token_help');
     }
 
     public function mount(): void
@@ -97,7 +99,11 @@ class Integrations extends Page
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->components(array_map(fn (string $provider): Section => $this->providerSection($provider), array_keys(AiProvider::PROVIDERS)))
+            // Small cards, two or three across, so the page stays tidy as integrations are added.
+            ->components([
+                Grid::make(['default' => 1, 'md' => 2, 'xl' => 3])
+                    ->schema(array_map(fn (string $provider): Section => $this->providerSection($provider), array_keys(AiProvider::PROVIDERS))),
+            ])
             ->statePath('data');
     }
 
@@ -158,23 +164,23 @@ class Integrations extends Page
     private function providerSection(string $provider): Section
     {
         $label = AiProvider::PROVIDERS[$provider]['label'];
-        $saved = filled(AiProvider::where('provider', $provider)->value('api_key'));
+        $saved = AiProvider::withToken($provider) !== null;
 
         return Section::make($label)
-            ->description(fn (): string => __t("admin_integrations.description.{$provider}"))
+            ->compact()
             ->statePath($provider)
             ->schema([
                 Toggle::make('enabled')
                     ->label(fn (): string => __t('admin_integrations.enabled', ['provider' => $label]))
-                    ->helperText(fn (): string => __t('admin_integrations.enabled_help')),
+                    // What it does, on demand: the card itself stays short.
+                    ->hintIcon(Heroicon::OutlinedInformationCircle, tooltip: fn (): string => __t("admin_integrations.description.{$provider}")),
 
                 TextInput::make('api_key')
                     ->label(fn (): string => __t('admin_integrations.token'))
                     ->password()
                     ->autocomplete('new-password')
                     ->maxLength(300)
-                    ->placeholder(fn (): string => $saved ? __t('admin_integrations.token_saved') : __t('admin_integrations.token_empty'))
-                    ->helperText(fn (): string => __t('admin_integrations.token_help')),
+                    ->placeholder(fn (): string => $saved ? __t('admin_integrations.token_saved') : __t('admin_integrations.token_empty')),
 
                 Checkbox::make('clear_key')
                     ->label(fn (): string => __t('admin_integrations.clear_token'))
@@ -184,8 +190,7 @@ class Integrations extends Page
                     ->visible(AiProvider::PROVIDERS[$provider]['model'] !== '')
                     ->label(fn (): string => __t('admin_integrations.model'))
                     ->maxLength(100)
-                    ->placeholder(AiProvider::PROVIDERS[$provider]['model'])
-                    ->helperText(fn (): string => __t('admin_integrations.model_help', ['model' => AiProvider::PROVIDERS[$provider]['model']])),
+                    ->placeholder(AiProvider::PROVIDERS[$provider]['model']),
             ]);
     }
 }

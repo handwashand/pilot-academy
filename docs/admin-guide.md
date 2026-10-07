@@ -656,9 +656,9 @@ cannot be downloaded.
 ## Translating text with DeepL, ChatGPT or DeepSeek
 
 An admin adds each provider's API token under **Settings → Integrations** and
-switches it on. Anyone given the matching right (**Draft translations with
-DeepL**, or **… with ChatGPT or DeepSeek**, under **People → Users → Extra
-permissions**) then sees **Translate** on a course, lesson, case study, tutorial
+switches it on. Admins can use them straight away; anyone else needs the
+matching right (**Draft translations with DeepL**, or **… with ChatGPT or
+DeepSeek**, under **People → Users → Extra permissions**). They then see **Translate** on a course, lesson, case study, tutorial
 or webinar become a menu: **Translate by hand**, or **Translate with …** for each
 provider that is on. After a confirmation the Translate window opens with the
 empty boxes drafted; read and correct them, then **Save translations**. Nothing

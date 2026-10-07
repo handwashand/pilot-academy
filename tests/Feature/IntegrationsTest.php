@@ -6,6 +6,7 @@ use App\Filament\Pages\Integrations;
 use App\Filament\Resources\Courses\Pages\EditCourse;
 use App\Models\AiProvider;
 use App\Models\Course;
+use App\Models\Product;
 use App\Models\User;
 use App\Services\Descript\DescriptClient;
 use Database\Seeders\LanguageSeeder;
@@ -243,11 +244,57 @@ class IntegrationsTest extends TestCase
 
     public function test_the_buttons_need_an_enabled_provider_and_the_right(): void
     {
-        // Enabled, but this admin was not given the right.
+        // Enabled, but this creator was not given the right. (An admin needs none.)
         $this->enable('chatgpt');
-        Livewire::actingAs($this->admin())
+        $creator = User::create(['name' => 'Creator', 'email' => 'creator@pilot.local', 'password' => 'password', 'role' => User::ROLE_CREATOR]);
+        $product = Product::create(['name' => 'Pilot', 'slug' => 'pilot']);
+        Course::first()->update(['product_id' => $product->id]);
+        $creator->products()->attach($product);
+
+        Livewire::actingAs($creator)
             ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
             ->assertActionDoesNotExist('translateWithChatgpt');
+    }
+
+    public function test_an_admin_needs_no_extra_right_for_a_text_engine(): void
+    {
+        $this->enable('deepseek');
+
+        Livewire::actingAs($this->admin())
+            ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
+            ->assertActionVisible('translateWithDeepseek');
+    }
+
+    public function test_a_token_saved_under_another_app_key_reads_as_missing_instead_of_breaking_the_page(): void
+    {
+        $this->enable('deepseek');
+        // What a rebuilt server with a new APP_KEY finds in the column.
+        DB::table('ai_providers')->where('provider', 'deepseek')->update(['api_key' => 'not-decryptable']);
+
+        $this->assertNull(AiProvider::for('deepseek')->api_key);
+        $this->assertNull(AiProvider::usable('deepseek'));
+        $this->actingAs($this->admin())->get('/admin/integrations')->assertOk();
+    }
+
+    public function test_existing_translations_are_kept_unless_the_editor_chooses_to_replace_them(): void
+    {
+        $this->enable('chatgpt');
+        $course = Course::first();
+        $course->setTranslation('title', 'fr', 'Écrit par une personne');
+
+        // Default: kept, and offered for editing.
+        Livewire::actingAs($this->admin())
+            ->test(EditCourse::class, ['record' => $course->getRouteKey()])
+            ->callAction('translateWithChatgpt')
+            ->assertSet('mountedActions.0.data.fr.title', 'Écrit par une personne');
+
+        // Chosen: a new draft replaces it in the window — still unsaved.
+        Livewire::actingAs($this->admin())
+            ->test(EditCourse::class, ['record' => $course->getRouteKey()])
+            ->callAction('translateWithChatgpt', data: ['overwrite' => true])
+            ->assertSet('mountedActions.0.data.fr.title', '[llm] '.$course->title);
+
+        $this->assertSame('Écrit par une personne', $course->fresh()->translated('title', 'fr'), 'Nothing is replaced until Save translations.');
     }
 
     public function test_a_switched_off_provider_sends_nothing(): void

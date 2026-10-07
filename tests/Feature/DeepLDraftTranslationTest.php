@@ -7,6 +7,7 @@ use App\Filament\Resources\Courses\Pages\EditCourse;
 use App\Filament\Resources\Lessons\Pages\EditLesson;
 use App\Models\Course;
 use App\Models\Language;
+use App\Models\Product;
 use App\Models\User;
 use App\Services\DeepL\DeepLClient;
 use Database\Seeders\LanguageSeeder;
@@ -68,6 +69,17 @@ class DeepLDraftTranslationTest extends TestCase
                 'text' => '['.$body['target_lang'].'] '.$text,
             ])->all()]);
         });
+    }
+
+    /** A creator who owns the seeded course's product, and has no extra rights. */
+    private function creator(): User
+    {
+        $creator = User::create(['name' => 'Creator', 'email' => 'creator@pilot.local', 'password' => 'password', 'role' => User::ROLE_CREATOR]);
+        $product = Product::create(['name' => 'Pilot', 'slug' => 'pilot']);
+        Course::first()->update(['product_id' => $product->id]);
+        $creator->products()->attach($product);
+
+        return $creator;
     }
 
     private function editor(bool $withRight = true): User
@@ -143,9 +155,9 @@ class DeepLDraftTranslationTest extends TestCase
             ->assertActionVisible('translateWithDeepL');
     }
 
-    public function test_the_button_is_hidden_without_the_right_even_for_an_admin(): void
+    public function test_the_button_is_hidden_from_a_creator_without_the_right(): void
     {
-        Livewire::actingAs($this->editor(false))
+        Livewire::actingAs($this->creator())
             ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
             ->assertActionDoesNotExist('translateWithDeepL');
     }
@@ -176,7 +188,7 @@ class DeepLDraftTranslationTest extends TestCase
     public function test_a_forged_engine_choice_drafts_nothing_without_the_right(): void
     {
         // The choice travels from the browser; the engine is checked again on the server.
-        Livewire::actingAs($this->editor(false))
+        Livewire::actingAs($this->creator())
             ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
             ->mountAction('translateContent', ['engine' => 'translateWithDeepL'])
             ->assertSet('mountedActions.0.data.fr.title', null);

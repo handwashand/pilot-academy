@@ -24,6 +24,12 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **Already translated? Edit, don't redo.** When a course or lesson already has
+  text in a language, choosing **Translate with …** says so and keeps it for you
+  to edit; only the empty boxes are drafted. Tick **Replace the existing
+  translations with new drafts** if you really want fresh ones — and even then
+  nothing changes until **Save translations**. **Translate whole course** does
+  the same per language.
 - **Lesson videos dubbed into other languages.** With Descript on, **Translate
   video** on a lesson (and **Translate lesson videos** on a course) now asks
   what to make: **Voice** — the video dubbed in that language — or **Subtitles

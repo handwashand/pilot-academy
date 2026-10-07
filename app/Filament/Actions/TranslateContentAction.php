@@ -13,6 +13,7 @@ use App\Services\Llm\LlmTranslator;
 use App\Services\Translator;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -81,7 +82,7 @@ class TranslateContentAction
             ->modalWidth('5xl')
             ->modalSubmitActionLabel(fn (): string => __t('admin_common.translate.submit'))
             ->visible(fn (Model $record): bool => static::targets($record)->isNotEmpty())
-            ->fillForm(fn (Model $record, array $arguments): array => static::initial($record, $arguments['engine'] ?? null))
+            ->fillForm(fn (Model $record, array $arguments): array => static::initial($record, $arguments['engine'] ?? null, (bool) ($arguments['overwrite'] ?? false)))
             ->schema(fn (Model $record): array => [
                 Tabs::make('languages')->tabs(
                     static::targets($record)
@@ -116,9 +117,27 @@ class TranslateContentAction
             ->authorize(fn (): bool => static::engine($name) !== null)
             ->requiresConfirmation()
             ->modalHeading(fn (): string => __t('admin_common.translate.draft.confirm_heading', $provider))
-            ->modalDescription(fn (): string => __t('admin_common.translate.draft.confirm_description', $provider))
+            ->modalDescription(fn (Model $record): string => __t('admin_common.translate.draft.confirm_description', $provider)
+                .(static::translatedInto($record) === [] ? '' : ' '.__t('admin_common.translate.draft.existing', ['languages' => implode(', ', static::translatedInto($record))])))
             ->modalSubmitActionLabel(fn (): string => __t('admin_common.translate.draft.confirm_submit'))
-            ->action(fn ($livewire) => $livewire->replaceMountedAction('translateContent', ['engine' => $name]));
+            // Already translated? The default is to keep it and edit; replacing is a choice.
+            ->schema(fn (Model $record): array => [
+                Checkbox::make('overwrite')
+                    ->label(fn (): string => __t('admin_common.translate.draft.overwrite'))
+                    ->visible(static::translatedInto($record) !== []),
+            ])
+            ->action(fn (array $data, $livewire) => $livewire->replaceMountedAction('translateContent', [
+                'engine' => $name,
+                'overwrite' => (bool) ($data['overwrite'] ?? false),
+            ]));
+    }
+
+    /** @return array<int, string> The languages this record already has text in, by their own names. */
+    private static function translatedInto(Model $record): array
+    {
+        $codes = array_keys(array_filter(static::current($record), fn (array $fields): bool => array_filter($fields, 'filled') !== []));
+
+        return array_map(fn (string $code): string => static::nameOf($code), $codes);
     }
 
     /** The connected engine for this action — only for someone holding its right. */
@@ -126,7 +145,11 @@ class TranslateContentAction
     {
         $config = static::ENGINES[$name];
 
-        if (! auth()->user()?->hasPermission($config['permission'])) {
+        // An admin is the one who adds the key, so an admin may use it. Anyone
+        // else needs the right ticked on their account.
+        $user = auth()->user();
+
+        if (! $user || ! ($user->isAdmin() || $user->hasPermission($config['permission']))) {
             return null;
         }
 
@@ -150,7 +173,7 @@ class TranslateContentAction
      *
      * @return array<string, array<string, string>>
      */
-    private static function initial(Model $record, ?string $engineName): array
+    private static function initial(Model $record, ?string $engineName, bool $overwrite = false): array
     {
         $values = static::current($record);
 
@@ -158,7 +181,9 @@ class TranslateContentAction
             return $values;
         }
 
-        $result = app(DraftTranslations::class)->handle($record, static::targets($record), $values, $engine);
+        // Asked to replace: draft every box, not only the empty ones. Still only in the
+        // form — the saved text is untouched until Save translations.
+        $result = app(DraftTranslations::class)->handle($record, static::targets($record), $overwrite ? [] : $values, $engine);
 
         foreach ($result['drafts'] as $code => $fields) {
             foreach ($fields as $field => $text) {

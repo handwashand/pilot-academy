@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\Language;
 use App\Services\Translator;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
@@ -50,7 +51,12 @@ class TranslateCourseAction
                         Select::make('language')
                             ->label(fn (): string => __t('admin_common.translate.course.language'))
                             ->options(static::languages($record)->mapWithKeys(fn (Language $language): array => [$language->code => $language->native_name])->all())
-                            ->required(),
+                            ->required()
+                            ->live()
+                            // Already translated? Say so: the next step is for editing it.
+                            ->helperText(fn (Get $get): ?string => ($count = static::existingCount($record, $get('language'))) > 0
+                                ? __t('admin_common.translate.course.existing', ['count' => $count])
+                                : null),
 
                         Select::make('engine')
                             ->label(fn (): string => __t('admin_common.translate.course.engine'))
@@ -62,9 +68,14 @@ class TranslateCourseAction
                             ->helperText(fn (Get $get): ?string => static::isEngine($get('engine'))
                                 ? __t('admin_common.translate.course.engine_help', ['provider' => TranslateContentAction::ENGINES[$get('engine')]['label']])
                                 : null),
+
+                        // Keeping what is there is the default; replacing it is a choice.
+                        Checkbox::make('overwrite')
+                            ->label(fn (): string => __t('admin_common.translate.draft.overwrite'))
+                            ->visible(fn (Get $get): bool => static::isEngine($get('engine')) && static::existingCount($record, $get('language')) > 0),
                     ])
                     ->afterValidation(function (Get $get, Set $set) use ($record): void {
-                        static::fill($record, (string) $get('language'), $get('engine'), $set);
+                        static::fill($record, (string) $get('language'), $get('engine'), $set, (bool) $get('overwrite'));
                     }),
 
                 Step::make(__t('admin_common.translate.course.step_review'))
@@ -138,7 +149,26 @@ class TranslateCourseAction
      * then draft the empty ones when an engine was chosen. The choice comes from
      * the browser, so the engine is looked up again here.
      */
-    private static function fill(Course $course, string $code, mixed $choice, Set $set): void
+    /** How many boxes of the course and its lessons already hold text in this language. */
+    private static function existingCount(Course $course, mixed $code): int
+    {
+        if (! is_string($code) || $code === '') {
+            return 0;
+        }
+
+        $count = 0;
+
+        foreach (static::records($course) as $model) {
+            $count += $model->contentTranslations()
+                ->whereHas('language', fn ($query) => $query->where('code', $code))
+                ->whereNotNull('value')
+                ->count();
+        }
+
+        return $count;
+    }
+
+    private static function fill(Course $course, string $code, mixed $choice, Set $set, bool $overwrite = false): void
     {
         $language = static::languages($course)->firstWhere('code', $code);
 
@@ -160,7 +190,8 @@ class TranslateCourseAction
         }
 
         if (static::isEngine($choice) && ($engine = TranslateContentAction::engine($choice))) {
-            $result = app(DraftTranslations::class)->handleMany($records, $language, $values, $engine);
+            // Asked to replace: draft every box. Still only in the form until Save translations.
+            $result = app(DraftTranslations::class)->handleMany($records, $language, $overwrite ? [] : $values, $engine);
 
             foreach ($result['drafts'] as $name => $fields) {
                 foreach ($fields as $field => $text) {

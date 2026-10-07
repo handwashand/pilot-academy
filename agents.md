@@ -403,6 +403,36 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-07 — Integrations page tidied; three things found by the owner testing
+
+**Layout.** The Integrations page is a grid of compact cards (1 / 2 / 3 across),
+each provider's description behind an info icon, the token advice said once in
+the subheading — so more integrations can be added without the page sprawling.
+Checked in Chrome at 1440 and 1024: no sideways scroll.
+
+**A saved token under another `APP_KEY` no longer takes the page down.** Rebuilding
+the local container makes a new key (`docker/entrypoint.sh` generates one whenever
+`.env` has none), and the stock `encrypted` cast then threw `DecryptException` —
+a 500 on the Integrations page and wherever the provider was read. `AiProvider`
+now encrypts through its own accessor, and an unreadable token reads as "none
+saved". **Locally, every `up --force-recreate` loses saved tokens; paste them
+again.** Production keeps its key in `.env`, so only a deliberate key change does it.
+
+**Admins need no extra right for the text engines** (DeepL, ChatGPT, DeepSeek):
+the admin is the one adding the key, and the owner expected the button to appear.
+Creators still need `deepl.translate` / `ai.translate`. **Descript is unchanged —
+opt-in per account, admins included — per the 2026-10-02 decision.**
+
+**Already translated → edit, unless told to replace.** Choosing an engine now
+says which languages already have text and keeps them; a checkbox ("Replace the
+existing translations with new drafts") drafts every box instead. Either way it
+only fills the window: the saved text changes on Save translations. The whole-
+course wizard does the same for the chosen language.
+
+**Verified (run):** `IntegrationsTest` + `DeepLDraftTranslationTest` 28 passed,
+plus course/content/translation-parity suites; Pint clean; screenshot reviewed.
+**Not run:** the full suite after these last changes (it was 536 passed before).
+
 ### 2026-10-07 — Dubbing (the reason for Descript), and video download
 
 The owner clarified that **voice is why Descript was integrated**; subtitles are
