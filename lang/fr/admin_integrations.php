@@ -17,5 +17,5 @@ return [
     'model_help' => 'Laissez vide pour utiliser :model.',
     'needs_token' => 'Ajoutez un jeton d’API avant d’activer :provider',
     'save' => 'Enregistrer',
-    'saved' => 'Configurations enregistrées',
+    'saved' => 'Intégrations enregistrées',
 ];

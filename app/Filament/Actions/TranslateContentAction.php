@@ -81,7 +81,7 @@ class TranslateContentAction
 
     /** The engines that can draft, by action name: their label and the right that spends their credit. */
     private const ENGINES = [
-        'draftWithDeepL' => ['label' => 'DeepL', 'permission' => User::PERMISSION_DEEPL_TRANSLATE],
+        'draftWithDeepL' => ['label' => 'DeepL', 'permission' => User::PERMISSION_DEEPL_TRANSLATE, 'provider' => AiProvider::DEEPL],
         'draftWithChatgpt' => ['label' => 'ChatGPT', 'permission' => User::PERMISSION_AI_TRANSLATE, 'provider' => AiProvider::CHATGPT],
         'draftWithDeepseek' => ['label' => 'DeepSeek', 'permission' => User::PERMISSION_AI_TRANSLATE, 'provider' => AiProvider::DEEPSEEK],
     ];
@@ -95,11 +95,14 @@ class TranslateContentAction
             return null;
         }
 
-        if (! isset($config['provider'])) {
-            return app(DeepLClient::class)->enabled() ? app(DeepLClient::class) : null;
-        }
-
         $provider = AiProvider::usable($config['provider']);
+
+        if ($config['provider'] === AiProvider::DEEPL) {
+            // The key saved under Settings → Integrations, else the server's .env.
+            $client = $provider ? new DeepLClient($provider->deeplSettings()) : app(DeepLClient::class);
+
+            return $client->enabled() ? $client : null;
+        }
 
         return $provider ? new LlmTranslator($provider) : null;
     }

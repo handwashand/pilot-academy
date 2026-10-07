@@ -19,7 +19,7 @@ use Filament\Support\Icons\Heroicon;
 use UnitEnum;
 
 /**
- * Settings → Configs: the translation providers an admin can switch on.
+ * Settings → Integrations: the translation providers an admin can switch on.
  *
  * An enabled provider with a token adds a "Generate missing with ChatGPT" (or
  * DeepSeek) button to the Translate dialog for people given that right.
@@ -27,10 +27,12 @@ use UnitEnum;
  * The token is write-only. It is stored encrypted, the form never loads it
  * back, and a blank box keeps what is saved. Providers have fixed official
  * addresses (see AiProvider), so a token cannot be pointed at another host.
- * Mail, DeepL and Descript keep their secrets in the server's .env; this page
- * exists because the owner asked for admins to manage these two themselves.
+ * A DeepL key saved here is used instead of DEEPL_API_KEY in the server's
+ * .env (which still works when nothing is saved). Mail and Descript keep their
+ * secrets in .env only. A DeepL API Free key (ending in ":fx") is sent to the
+ * Free host, any other key to the Pro host.
  */
-class Configs extends Page
+class Integrations extends Page
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedKey;
 
@@ -41,12 +43,12 @@ class Configs extends Page
 
     public static function getNavigationLabel(): string
     {
-        return __t('admin_nav.configs.nav');
+        return __t('admin_nav.integrations.nav');
     }
 
     public function getTitle(): string
     {
-        return __t('admin_nav.configs.nav');
+        return __t('admin_nav.integrations.nav');
     }
 
     public static function getNavigationGroup(): string|UnitEnum|null
@@ -67,7 +69,7 @@ class Configs extends Page
 
     public function getSubheading(): ?string
     {
-        return __t('admin_configs.subheading');
+        return __t('admin_integrations.subheading');
     }
 
     public function mount(): void
@@ -111,7 +113,7 @@ class Configs extends Page
     {
         return [
             Action::make('save')
-                ->label(fn (): string => __t('admin_configs.save'))
+                ->label(fn (): string => __t('admin_integrations.save'))
                 ->submit('save'),
         ];
     }
@@ -135,7 +137,7 @@ class Configs extends Page
 
             if ($row->enabled && blank($row->api_key)) {
                 Notification::make()
-                    ->title(__t('admin_configs.needs_token', ['provider' => $row->label()]))
+                    ->title(__t('admin_integrations.needs_token', ['provider' => $row->label()]))
                     ->danger()
                     ->send();
 
@@ -147,7 +149,7 @@ class Configs extends Page
 
         $this->mount();
 
-        Notification::make()->title(__t('admin_configs.saved'))->success()->send();
+        Notification::make()->title(__t('admin_integrations.saved'))->success()->send();
     }
 
     private function providerSection(string $provider): Section
@@ -156,30 +158,31 @@ class Configs extends Page
         $saved = filled(AiProvider::where('provider', $provider)->value('api_key'));
 
         return Section::make($label)
-            ->description(fn (): string => __t('admin_configs.provider_description', ['provider' => $label]))
+            ->description(fn (): string => __t('admin_integrations.provider_description', ['provider' => $label]))
             ->statePath($provider)
             ->schema([
                 Toggle::make('enabled')
-                    ->label(fn (): string => __t('admin_configs.enabled', ['provider' => $label]))
-                    ->helperText(fn (): string => __t('admin_configs.enabled_help')),
+                    ->label(fn (): string => __t('admin_integrations.enabled', ['provider' => $label]))
+                    ->helperText(fn (): string => __t('admin_integrations.enabled_help')),
 
                 TextInput::make('api_key')
-                    ->label(fn (): string => __t('admin_configs.token'))
+                    ->label(fn (): string => __t('admin_integrations.token'))
                     ->password()
                     ->autocomplete('new-password')
                     ->maxLength(300)
-                    ->placeholder(fn (): string => $saved ? __t('admin_configs.token_saved') : __t('admin_configs.token_empty'))
-                    ->helperText(fn (): string => __t('admin_configs.token_help')),
+                    ->placeholder(fn (): string => $saved ? __t('admin_integrations.token_saved') : __t('admin_integrations.token_empty'))
+                    ->helperText(fn (): string => __t('admin_integrations.token_help')),
 
                 Checkbox::make('clear_key')
-                    ->label(fn (): string => __t('admin_configs.clear_token'))
+                    ->label(fn (): string => __t('admin_integrations.clear_token'))
                     ->visible($saved),
 
                 TextInput::make('model')
-                    ->label(fn (): string => __t('admin_configs.model'))
+                    ->visible($provider !== AiProvider::DEEPL)
+                    ->label(fn (): string => __t('admin_integrations.model'))
                     ->maxLength(100)
                     ->placeholder(AiProvider::PROVIDERS[$provider]['model'])
-                    ->helperText(fn (): string => __t('admin_configs.model_help', ['model' => AiProvider::PROVIDERS[$provider]['model']])),
+                    ->helperText(fn (): string => __t('admin_integrations.model_help', ['model' => AiProvider::PROVIDERS[$provider]['model']])),
             ]);
     }
 }

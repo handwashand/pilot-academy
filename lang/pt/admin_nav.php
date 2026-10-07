@@ -94,8 +94,8 @@ return [
         'one' => 'idioma',
         'many' => 'idiomas',
     ],
-    'configs' => [
-        'nav' => 'Configurações',
+    'integrations' => [
+        'nav' => 'Integrações',
     ],
     'mail' => [
         'nav' => 'E-mail',

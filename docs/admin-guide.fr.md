@@ -30,6 +30,7 @@ Les administrateurs voient l'activité des étudiants, leur progression et les c
 | **Résultats → Qualité du quiz final** | Voir si le quiz final est trop facile ou difficile. |
 | **Documentation → Guide** | Ce guide. |
 | **Documentation → Nouveautés** | Changements récents et notes de version. |
+| **Paramètres → Intégrations** | Jetons DeepL, ChatGPT et DeepSeek pour les brouillons de traduction. Administrateurs uniquement. |
 
 Les étudiants ont leur guide dans **Aide**, le bouton **?** de la barre supérieure.
 

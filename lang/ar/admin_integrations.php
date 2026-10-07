@@ -16,5 +16,5 @@ return [
     'model_help' => 'اتركه فارغًا لاستخدام :model.',
     'needs_token' => 'أضف رمز API قبل تفعيل :provider',
     'save' => 'حفظ',
-    'saved' => 'حُفظت التهيئة',
+    'saved' => 'حُفظت التكاملات',
 ];

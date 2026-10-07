@@ -30,6 +30,7 @@ Administradores veem atividade dos estudantes, progresso e certificados. **Estud
 | **Resultados → Qualidade do teste final** | Ver se o teste final está fácil ou difícil demais. |
 | **Documentação → Guia** | Este guia. |
 | **Documentação → Novidades** | Mudanças recentes e notas de versão. |
+| **Configurações → Integrações** | Tokens do DeepL, ChatGPT e DeepSeek para rascunhos de tradução. Somente administradores. |
 
 Os estudantes têm o próprio guia em **Ajuda**, o botão **?** na barra superior.
 

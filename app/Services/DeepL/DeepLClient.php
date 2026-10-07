@@ -43,10 +43,21 @@ class DeepLClient
         'ar' => 'ar',
     ];
 
+    /**
+     * @param  array<string, mixed>|null  $settings  Overrides for the server's .env values — the key an admin saved
+     *                                               under Settings → Integrations. Null reads .env only.
+     */
+    public function __construct(private ?array $settings = null) {}
+
+    private function setting(string $key): mixed
+    {
+        return $this->settings[$key] ?? config("services.deepl.{$key}");
+    }
+
     public function enabled(): bool
     {
-        return (bool) config('services.deepl.enabled')
-            && filled(config('services.deepl.key'))
+        return (bool) $this->setting('enabled')
+            && filled($this->setting('key'))
             && in_array($this->baseUrl(), self::OFFICIAL_HOSTS, true);
     }
 
@@ -234,12 +245,12 @@ class DeepLClient
     {
         return Http::baseUrl($this->baseUrl())
             ->withHeaders(array_filter([
-                'Authorization' => 'DeepL-Auth-Key '.config('services.deepl.key'),
-                'X-DeepL-Reporting-Tag' => config('services.deepl.reporting_tag'),
+                'Authorization' => 'DeepL-Auth-Key '.$this->setting('key'),
+                'X-DeepL-Reporting-Tag' => $this->setting('reporting_tag'),
             ]))
             ->acceptJson()
             ->asJson()
-            ->timeout((int) config('services.deepl.timeout') ?: 30)
+            ->timeout((int) $this->setting('timeout') ?: 30)
             ->retry(
                 self::MAX_RETRIES,
                 fn (int $attempt, Throwable $exception): int => $this->waitBeforeRetry($attempt, $exception),
@@ -288,7 +299,7 @@ class DeepLClient
 
     private function ensureConfigured(): void
     {
-        if (! (bool) config('services.deepl.enabled') || blank(config('services.deepl.key'))) {
+        if (! (bool) $this->setting('enabled') || blank($this->setting('key'))) {
             throw new DeepLException('DeepL translation is disabled or has no API key.', 0, 'disabled');
         }
 
@@ -299,12 +310,12 @@ class DeepLClient
 
     private function baseUrl(): string
     {
-        return rtrim((string) config('services.deepl.base_url'), '/');
+        return rtrim((string) $this->setting('base_url'), '/');
     }
 
     private function englishTarget(): string
     {
-        $target = config('services.deepl.english_target');
+        $target = $this->setting('english_target');
 
         return in_array($target, ['en-US', 'en-GB'], true) ? $target : 'en-US';
     }

@@ -17,5 +17,5 @@ return [
     'model_help' => 'Deixe em branco para usar :model.',
     'needs_token' => 'Adicione um token de API antes de ativar o :provider',
     'save' => 'Salvar',
-    'saved' => 'Configurações salvas',
+    'saved' => 'Integrações salvas',
 ];

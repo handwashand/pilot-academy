@@ -98,8 +98,8 @@ return [
         'one' => 'language',
         'many' => 'languages',
     ],
-    'configs' => [
-        'nav' => 'Configs',
+    'integrations' => [
+        'nav' => 'Integrations',
     ],
     'mail' => [
         'nav' => 'Mail',

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * A text-translation provider an admin has set up under Settings → Configs.
+ * A text-translation provider an admin has set up under Settings → Integrations.
  *
  * Only the two known providers exist, each with a fixed official address, so a
  * saved token can never be sent to a host an admin typed in.
@@ -16,8 +16,17 @@ class AiProvider extends Model
 
     public const DEEPSEEK = 'deepseek';
 
+    public const DEEPL = 'deepl';
+
     /** @var array<string, array{label: string, url: string, model: string}> */
     public const PROVIDERS = [
+        // DeepL is not a chat model: it has no model setting, and its address
+        // depends on the key (see deeplSettings()).
+        self::DEEPL => [
+            'label' => 'DeepL',
+            'url' => 'https://api.deepl.com',
+            'model' => '',
+        ],
         self::CHATGPT => [
             'label' => 'ChatGPT',
             'url' => 'https://api.openai.com/v1/chat/completions',
@@ -59,6 +68,24 @@ class AiProvider extends Model
         $row = static::where('provider', $provider)->first();
 
         return $row && $row->enabled && filled($row->api_key) ? $row : null;
+    }
+
+    /**
+     * Settings for DeepLClient. A DeepL API Free key ends in ":fx" and only
+     * works on the Free host; every other key works on the Pro host. Those are
+     * the only two addresses the client accepts.
+     *
+     * @return array<string, mixed>
+     */
+    public function deeplSettings(): array
+    {
+        return [
+            'enabled' => true,
+            'key' => $this->api_key,
+            'base_url' => str_ends_with((string) $this->api_key, ':fx')
+                ? 'https://api-free.deepl.com'
+                : 'https://api.deepl.com',
+        ];
     }
 
     public function label(): string

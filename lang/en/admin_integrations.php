@@ -1,6 +1,6 @@
 <?php
 
-// Settings → Configs. Shipped with the code; a row in the translations table
+// Settings → Integrations. Shipped with the code; a row in the translations table
 // with the same key overrides a line.
 
 return [
@@ -17,5 +17,5 @@ return [
     'model_help' => 'Leave blank to use :model.',
     'needs_token' => 'Add an API token before enabling :provider',
     'save' => 'Save',
-    'saved' => 'Configs saved',
+    'saved' => 'Integrations saved',
 ];

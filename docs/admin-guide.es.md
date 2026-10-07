@@ -30,6 +30,7 @@ Los administradores ven la actividad de estudiantes, el progreso y los certifica
 | **Resultados → Calidad del examen final** | Ver si los exámenes son demasiado fáciles o difíciles. |
 | **Documentación → Guía** | Esta guía. |
 | **Documentación → Novedades** | Cambios recientes y notas de versión. |
+| **Ajustes → Integraciones** | Tokens de DeepL, ChatGPT y DeepSeek para borradores de traducción. Solo administradores. |
 
 Los estudiantes tienen su propia guía en **Ayuda**, el botón **?** de la barra superior.
 

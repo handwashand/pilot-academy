@@ -99,8 +99,8 @@ return [
         'one' => 'لغة',
         'many' => 'لغات',
     ],
-    'configs' => [
-        'nav' => 'التهيئة',
+    'integrations' => [
+        'nav' => 'التكاملات',
     ],
     'mail' => [
         'nav' => 'البريد',

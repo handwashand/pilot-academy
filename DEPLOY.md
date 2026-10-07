@@ -146,6 +146,21 @@ To have it run on its own, a cron line every five minutes does it:
 **Rollback:** set `DESCRIPT_ENABLED=false` and run `optimize` again. The buttons
 disappear; every translation already saved stays, and lessons keep showing it.
 
+## Translation providers: DeepL, ChatGPT, DeepSeek (optional)
+
+Nothing to set on the server. An admin opens **Settings → Integrations**, pastes
+each provider's API token and switches it on; the token is stored encrypted in
+the database (`ai_providers`, created by `php8.4 artisan migrate --force`) and
+is sent only to that provider's own address. Create each key with a spending
+limit on the provider's site. **Back up the database and keep `APP_KEY`**: the
+tokens are encrypted with it, so a new key makes saved tokens unreadable (paste
+them again). A DeepL key in `.env` (`DEEPL_ENABLED`, `DEEPL_API_KEY`) still works
+when none is saved on the page. Anyone who may use a provider is chosen under
+**People → Users → Extra permissions**.
+
+**Rollback:** switch the provider off on the page. The buttons disappear;
+saved translations and manual editing are untouched.
+
 ## Moving an existing SQLite database to PostgreSQL
 
 One-time cut-over for a server still on the old SQLite file. Full runbook with

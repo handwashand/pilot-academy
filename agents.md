@@ -385,9 +385,10 @@ Newest first.
 
 | Date | Decision |
 | --- | --- |
+| 2026-10-07 | **ChatGPT, DeepSeek and DeepL tokens are managed by admins under Settings → Integrations** and stored encrypted in the database, instead of the server `.env` — the owner's explicit request, unlike mail and Descript. Tokens are write-only in the UI; only fixed official provider addresses are used; the rights `deepl.translate` / `ai.translate` decide who may spend them. |
 | 2026-10-02 | **Descript video translation is assigned per account.** The server environment connects the optional integration; `descript.translate` controls who may spend its credits, and every start requires an acknowledgement. Neither Admin nor Creator receives the right automatically. Underlord can edit project scripts, but its beta project/prompt/export API is not a stable general text-translation service for Academy fields. |
 | 2026-10-02 | **Descript supplements manual translation; it never replaces it.** A lesson keeps its existing manual **Translate** action for editor-written content. Descript has a separate, conditional video-translation action and must not hide, rename or trigger the manual workflow. |
-| 2026-10-02 | **DeepL is parked and may not be integrated.** Do not implement or configure it unless the owner explicitly reopens the decision. Descript's media transcript translation does not start a general Academy text-translation rollout. |
+| 2026-10-02 | **DeepL was parked — reopened the same day by the owner and now built (see 2026-10-07).** Original wording: Do not implement or configure it unless the owner explicitly reopens the decision. Descript's media transcript translation does not start a general Academy text-translation rollout. |
 | 2026-09-14 | **Content problems are not dashboard material.** The card moved to Content → Content health (menu badge), with flags on the Courses/Lessons lists and edit pages, checks before publishing, and bell alerts to the content's owner. |
 | 2026-09-14 | **The student header uses the PILOT ACADEMY lockup** at the panel's 1.75rem — owner's request, replacing the earlier mark-plus-text choice. |
 | 2026-09-10 | **Refreshers declined.** Pilot Academy certifies partners on a course; Support Training Hub (`support-engine`) tracks staff competency over time. The two serve different purposes, so its competency features — levels, refreshers, rubric marking, trainer cohorts — are not ported here by default. |
@@ -401,6 +402,42 @@ Newest first.
 ## Work log
 
 Newest first. Add to this every time.
+
+### 2026-10-07 — Settings → Integrations; drafts with DeepL, ChatGPT, DeepSeek
+
+DeepL steps 2 and 3 are done, and the owner widened the scope: a **Settings →
+Integrations** page (admins only) where an admin pastes the API token for DeepL,
+ChatGPT or DeepSeek and switches each on. An enabled provider adds a **Generate
+missing with …** button inside the existing **Translate** dialog, for accounts
+holding `deepl.translate` (DeepL) or `ai.translate` (ChatGPT/DeepSeek) — a
+checkbox under People → Users, like the Descript right.
+
+The button only fills the dialog's **empty** boxes (`App\Actions\DraftTranslations`
+returns text and stores nothing); an editor reads it and presses **Save
+translations**. A box with text is never sent or replaced; a failure keeps the
+drafts already made and says why in the reader's language. HTML (`content`) goes
+as HTML, plain fields as plain text.
+
+**Deliberate departure from "secrets live in `.env`":** these tokens are saved in
+`ai_providers`, encrypted with the `encrypted` cast (so with `APP_KEY` — a new key
+makes them unreadable), hidden from serialisation, never loaded back into the
+form (blank keeps, a checkbox removes). Each provider has one fixed official
+address, so a token cannot be pointed at a host an admin typed; a DeepL key ending
+`:fx` goes to the Free host, any other to Pro. DeepL still falls back to
+`DEEPL_*` in `.env` when nothing is saved. Mail and Descript are unchanged (.env).
+
+`LlmTranslator` serves ChatGPT and DeepSeek (same chat-completions protocol, JSON
+answer, temperature 0, the text declared as content not instructions) and caps one
+request at 60 KB. Default models `gpt-4o-mini` / `deepseek-chat`, changeable on the
+page. Not built: a "test connection" button, and splitting an oversized lesson
+across several LLM requests (it refuses with a message instead).
+
+**Verified (run):** `IntegrationsTest` 12 tests, `DeepLDraftTranslationTest` and
+`DeepLClientTest` green, translation-parity and guide-menu tests green, Pint clean;
+an earlier full run was 487 passed before the Integrations work. **Not verified:**
+the full suite after the Integrations work, any real DeepL/OpenAI/DeepSeek call
+(no keys used), and the dialog in a browser — in particular whether Filament's
+rich editor shows a server-set `content` draft, which the tests cannot see.
 
 ### 2026-10-02 — DeepL integration reopened; provider foundation complete
 

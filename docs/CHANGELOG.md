@@ -24,6 +24,18 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **Draft translations with DeepL, ChatGPT or DeepSeek.** A new **Settings →
+  Integrations** page (admins only) takes the API token for each provider and a
+  switch to turn it on. The token is stored encrypted and is never shown again;
+  leave the box blank to keep it, or tick **Remove the saved token**. Once a
+  provider is on, anyone an admin has given **Draft translations with DeepL** or
+  **Draft translations with ChatGPT or DeepSeek** (under **People → Users →
+  Extra permissions**) sees a **Generate missing with …** button in the
+  **Translate** window of a course or lesson. After a confirmation it fills only
+  the empty boxes, for the editor to read and correct — nothing is saved until
+  **Save translations**, and text that is already there is never replaced.
+  Typing translations by hand works exactly as before. A DeepL key already set
+  in the server's `.env` keeps working until one is saved here.
 - **Descript video translation is an assignable right.** Enabling the Descript
   connection on the server no longer gives every editor its credit-using
   controls. An admin chooses each permitted account under **People → Users →
