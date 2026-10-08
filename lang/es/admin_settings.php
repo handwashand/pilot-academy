@@ -53,9 +53,5 @@ return [
         'current_password_help' => 'Necesaria para cambiar tu correo o tu contraseña.',
         'save' => 'Guardar ajustes',
         'saved' => 'Ajustes guardados',
-        'mail_description' => 'Si la academia realmente envía correo, y una forma de probarlo.',
-        'translations_description' => 'Corrige el texto que ven los estudiantes, en todos los idiomas, sin desplegar nada.',
-        'languages_description' => 'Añade un idioma o cambia cuáles se ofrecen.',
-        'open' => 'Abrir :page',
     ],
 ];

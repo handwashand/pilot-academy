@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Languages;
 
+use App\Filament\Clusters\Settings;
 use App\Filament\Resources\Concerns\HasSentenceCaseLabels;
 use App\Filament\Resources\Languages\Pages\CreateLanguage;
 use App\Filament\Resources\Languages\Pages\EditLanguage;
@@ -22,7 +23,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
-use UnitEnum;
 
 class LanguageResource extends Resource
 {
@@ -30,28 +30,20 @@ class LanguageResource extends Resource
 
     protected static ?string $model = Language::class;
 
+    protected static ?string $cluster = Settings::class;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedLanguage;
 
     protected static ?int $navigationSort = 10;
 
-    public static function getNavigationGroup(): string|UnitEnum|null
-    {
-        return __t('admin_nav.groups.settings');
-    }
-
-    /**
-     * Reached through the Settings overlay now, not its own sidebar link —
-     * see App\Livewire\SettingsPanel. The resource and its routes stay, so a
-     * direct link (and this class's own tests) keep working.
-     */
     public static function shouldRegisterNavigation(): bool
     {
-        return false;
+        return (bool) auth()->user()?->hasPermission(User::PERMISSION_LANGUAGES_MANAGE);
     }
 
     public static function canAccess(): bool
     {
-        return (bool) auth()->user()?->hasPermission(User::PERMISSION_LANGUAGES_MANAGE);
+        return static::shouldRegisterNavigation();
     }
 
     public static function canViewAny(): bool

@@ -319,10 +319,9 @@ Add a new entry here whenever something visible to admins or students changes.
 ### Changed
 
 - **Settings is now one click, not four.** The sidebar's Settings group is a
-  single **Settings** row that opens a dialog instead of a page: **Profile**
-  and **Integrations** are right there to edit and save without leaving the
-  screen you were on, and **Mail**, **Translations** and **Languages** are
-  summarised with a button to their full page. Nothing about those three pages
+  single **Settings** row; **Profile**, **Integrations**, **Mail**,
+  **Translations** and **Languages** are tabs across the top of the page
+  instead of four separate sidebar links. Nothing about any of those screens
   changed — only how you get to them.
 - **The sidebar's own text is a touch smaller, and pages sit a little tighter
   against the edges.** A quieter, more compact feel; the spacing inside cards,

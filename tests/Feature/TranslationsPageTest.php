@@ -45,18 +45,18 @@ class TranslationsPageTest extends TestCase
     }
 
     /**
-     * Translations no longer has its own sidebar link — it is reached through
-     * the Settings overlay (App\Livewire\SettingsPanel; see SettingsPanelTest),
-     * whose "Open Translations" button goes to this exact page. The page and
-     * its route stay exactly as they were.
+     * Translations belongs to the Settings cluster now
+     * (App\Filament\Clusters\Settings) — see SettingsClusterTest — so it no
+     * longer has its own row in the main sidebar, only a tab inside Settings.
      */
-    public function test_every_admin_can_still_open_the_page_directly(): void
+    public function test_every_admin_finds_translations_in_the_sidebar(): void
     {
         $this->actingAs($this->user(User::ROLE_ADMIN))
-            ->get(TranslationResource::getUrl('index'))
-            ->assertOk();
+            ->get('/admin')
+            ->assertOk()
+            ->assertDontSee(TranslationResource::getUrl('index'), false);
 
-        $this->assertFalse(TranslationResource::shouldRegisterNavigation());
+        $this->get(TranslationResource::getUrl('index'))->assertOk();
     }
 
     public function test_creators_do_not_get_it(): void

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Translations;
 
+use App\Filament\Clusters\Settings;
 use App\Filament\Resources\Concerns\HasSentenceCaseLabels;
 use App\Filament\Resources\Translations\Pages\CreateTranslation;
 use App\Filament\Resources\Translations\Pages\EditTranslation;
@@ -24,7 +25,6 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use UnitEnum;
 
 /**
  * Settings → Translations: where admins correct the wording students see, in
@@ -41,31 +41,23 @@ class TranslationResource extends Resource
 
     protected static ?string $model = Translation::class;
 
+    protected static ?string $cluster = Settings::class;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedLanguage;
 
     protected static ?int $navigationSort = 11;
 
-    public static function getNavigationGroup(): string|UnitEnum|null
-    {
-        return __t('admin_nav.groups.settings');
-    }
-
-    /**
-     * Reached through the Settings overlay now, not its own sidebar link —
-     * see App\Livewire\SettingsPanel. The resource and its routes stay, so a
-     * direct link (and this class's own tests) keep working.
-     */
-    public static function shouldRegisterNavigation(): bool
-    {
-        return false;
-    }
-
     /** Every admin can correct wording; anyone else needs the permission. */
-    public static function canAccess(): bool
+    public static function shouldRegisterNavigation(): bool
     {
         $user = auth()->user();
 
         return (bool) ($user?->isAdmin() || $user?->hasPermission(User::PERMISSION_TRANSLATIONS_MANAGE));
+    }
+
+    public static function canAccess(): bool
+    {
+        return static::shouldRegisterNavigation();
     }
 
     public static function canViewAny(): bool

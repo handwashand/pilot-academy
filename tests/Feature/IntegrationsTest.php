@@ -87,12 +87,12 @@ class IntegrationsTest extends TestCase
             'role' => User::ROLE_CREATOR,
         ]);
 
-        $this->actingAs($creator)->get('/admin/integrations')->assertForbidden();
+        $this->actingAs($creator)->get(Integrations::getUrl())->assertForbidden();
     }
 
     public function test_an_admin_can_open_integrations(): void
     {
-        $this->actingAs($this->admin())->get('/admin/integrations')->assertOk();
+        $this->actingAs($this->admin())->get(Integrations::getUrl())->assertOk();
     }
 
     public function test_a_deepl_key_saved_here_is_used_on_the_host_its_key_belongs_to(): void
@@ -273,7 +273,7 @@ class IntegrationsTest extends TestCase
 
         $this->assertNull(AiProvider::for('deepseek')->api_key);
         $this->assertNull(AiProvider::usable('deepseek'));
-        $this->actingAs($this->admin())->get('/admin/integrations')->assertOk();
+        $this->actingAs($this->admin())->get(Integrations::getUrl())->assertOk();
     }
 
     public function test_existing_translations_are_kept_unless_the_editor_chooses_to_replace_them(): void

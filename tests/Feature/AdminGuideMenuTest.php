@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Filament\Facades\Filament;
-use Filament\Navigation\NavigationItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -34,30 +33,21 @@ class AdminGuideMenuTest extends TestCase
         $panel = Filament::getPanel('admin');
         Filament::setCurrentPanel($panel);
 
-        $fromClasses = collect([...$panel->getResources(), ...$panel->getPages()])
+        $sidebar = collect([...$panel->getResources(), ...$panel->getPages()])
             ->unique()
-            ->filter(fn (string $class): bool => $class::shouldRegisterNavigation())
+            // A clustered resource/page (Settings → Profile/Integrations/Mail/
+            // Translations/Languages) never registers in the main sidebar —
+            // Filament skips it in favour of the cluster's own tab strip, no
+            // matter what shouldRegisterNavigation() says. The cluster itself
+            // (App\Filament\Clusters\Settings) is a Page too and is in this
+            // same list, carrying no $cluster of its own.
+            ->filter(fn (string $class): bool => $class::shouldRegisterNavigation() && blank($class::getCluster()))
             ->map(function (string $class): string {
                 $group = $class::getNavigationGroup();
                 $label = $class::getNavigationLabel();
 
                 return $group ? "{$group} → {$label}" : $label;
-            });
-
-        // Items registered directly on the panel (->navigationItems()) rather
-        // than discovered from a Resource/Page class — the Settings overlay's
-        // own trigger (App\Livewire\SettingsPanel) is one of these.
-        $fromItems = collect($panel->getNavigationItems())
-            ->filter(fn (NavigationItem $item): bool => $item->isVisible())
-            ->map(function (NavigationItem $item): string {
-                $group = $item->getGroup();
-                $label = $item->getLabel();
-
-                return $group ? "{$group} → {$label}" : $label;
-            });
-
-        $sidebar = $fromClasses->merge($fromItems)
-            ->unique()
+            })
             ->sort()
             ->values()
             ->all();

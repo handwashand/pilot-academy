@@ -89,16 +89,18 @@ class MailCheckTest extends TestCase
     }
 
     /**
-     * Mail no longer has its own sidebar link — it is reached through the
-     * Settings overlay (App\Livewire\SettingsPanel), see SettingsPanelTest.
-     * The page and its route stay exactly as they were.
+     * Mail belongs to the Settings cluster now (App\Filament\Clusters\Settings)
+     * — see SettingsClusterTest — so it no longer has its own row in the main
+     * sidebar. shouldRegisterNavigation() still governs whether it is one of
+     * the cluster's tabs, the same rule as before.
      */
-    public function test_the_page_itself_is_unaffected_by_moving_out_of_the_sidebar(): void
+    public function test_an_admin_still_sees_it_in_the_sidebar(): void
     {
         $this->actingAs($this->user(User::ROLE_ADMIN))
-            ->get(MailCheck::getUrl())
-            ->assertOk();
+            ->get('/admin')
+            ->assertOk()
+            ->assertDontSee(MailCheck::getUrl(), false);
 
-        $this->assertFalse(MailCheck::shouldRegisterNavigation());
+        $this->assertTrue(MailCheck::shouldRegisterNavigation());
     }
 }
