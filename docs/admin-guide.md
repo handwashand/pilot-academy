@@ -28,6 +28,8 @@ the left takes you to every part of the academy.
 
 **Translate a course or a lesson** with **Translate** at the top of its edit page, so a course written in one language is useful in the others. There is a tab for every language except the one it is written in: the title and description of a course, or the title, summary, lesson text and video transcript of a lesson. Students see the translation in their language; wherever a box is empty they see the original. Student search finds a course by its translations too.
 
+**Translate a lesson's quiz, or a course's final quiz**, with **Translate quiz** — on the lesson's edit page for its own knowledge check, or on the course's **Final questions** tab for its final-quiz bank. Pick a language, review each question and its answer options (drafted for you if DeepL, ChatGPT or DeepSeek is switched on), and press **Save translations**. A question used in several courses' final quizzes translates once and reads correctly in every one of them.
+
 ---
 
 ## 2. The menu at a glance

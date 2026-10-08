@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Lessons\Pages;
 
 use App\Actions\FindContentProblems;
 use App\Filament\Actions\TranslateContentAction;
+use App\Filament\Actions\TranslateQuestionsAction;
 use App\Filament\Actions\TranslateVideoWithDescriptAction;
 use App\Filament\Resources\Lessons\LessonResource;
 use App\Models\Course;
@@ -26,6 +27,7 @@ class EditLesson extends EditRecord
     {
         return [
             TranslateContentAction::make(),
+            TranslateQuestionsAction::forLesson(),
             // Descript supplements the manual Translate action above; it must
             // never replace it. These two actions are hidden unless Descript
             // is configured and the lesson has an uploaded video.

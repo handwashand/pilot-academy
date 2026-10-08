@@ -67,6 +67,11 @@ return [
             'saved' => 'Traducciones del curso guardadas',
         ],
         'saved' => 'Traducciones guardadas',
+        'questions' => [
+            'button' => 'Traducir el cuestionario',
+            'heading' => 'Traducir el cuestionario',
+            'saved' => 'Traducciones del cuestionario guardadas',
+        ],
         'draft' => [
             'button' => 'Traducir con :provider',
             'confirm_heading' => '¿Generar borradores con :provider?',
@@ -95,6 +100,8 @@ return [
             'summary' => 'Resumen breve',
             'content' => 'Texto de la lección',
             'transcript' => 'Transcripción del vídeo',
+            'prompt' => 'Pregunta',
+            'text' => 'Opción de respuesta',
         ],
     ],
 ];

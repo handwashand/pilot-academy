@@ -343,7 +343,7 @@
                                     @php($multiple = $question->type === \App\Models\Question::TYPE_MULTIPLE)
                                     <fieldset class="border border-slate-200 rounded-xl p-5">
                                         <legend class="px-2 font-semibold text-navy">
-                                            {{ $qn + 1 }}. {{ $question->prompt }}
+                                            {{ $qn + 1 }}. {{ $question->translated('prompt') }}
                                             {{-- Correctness was carried by colour and a glyph alone. --}}
                                             @if($qResult === true)
                                                 <span class="text-ok" aria-hidden="true">✓</span><span class="vh">{{ __t('academy.lesson.correct') }}</span>
@@ -367,7 +367,7 @@
                                                                class="text-brand w-4 h-4 flex-none"
                                                                {{ $mode === 'open' && (int) old("answers.{$question->id}") === $option->id ? 'checked' : '' }} required>
                                                     @endif
-                                                    <span>{{ $option->text }}</span>
+                                                    <span>{{ $option->translated('text') }}</span>
                                                 </label>
                                             @endforeach
                                         </div>

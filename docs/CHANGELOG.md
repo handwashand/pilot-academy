@@ -36,6 +36,13 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **Quiz questions translate too.** **Translate quiz** on a lesson's edit page
+  covers its own knowledge check; on a course's **Final questions** tab it
+  covers the whole final-quiz bank, including questions used by more than one
+  course. Same drafting and review as the existing Translate button — DeepL,
+  ChatGPT or DeepSeek can draft the empty boxes, nothing is stored until
+  **Save translations**, and a question's answer options translate right
+  alongside it.
 - **A profile photo**, for admins, creators and learners alike. Upload one
   from your Profile page (Settings → Profile for staff, account menu →
   Profile for everyone); it replaces your initials everywhere they show.

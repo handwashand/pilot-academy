@@ -67,6 +67,11 @@ return [
             'saved' => 'Traduções do curso salvas',
         ],
         'saved' => 'Traduções salvas',
+        'questions' => [
+            'button' => 'Traduzir o teste',
+            'heading' => 'Traduzir o teste',
+            'saved' => 'Traduções do teste salvas',
+        ],
         'draft' => [
             'button' => 'Traduzir com o :provider',
             'confirm_heading' => 'Gerar rascunhos com o :provider?',
@@ -95,6 +100,8 @@ return [
             'summary' => 'Resumo curto',
             'content' => 'Texto da aula',
             'transcript' => 'Transcrição do vídeo',
+            'prompt' => 'Pergunta',
+            'text' => 'Opção de resposta',
         ],
     ],
 ];

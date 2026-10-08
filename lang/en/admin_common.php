@@ -70,6 +70,11 @@ return [
             'saved' => 'Course translations saved',
         ],
         'saved' => 'Translations saved',
+        'questions' => [
+            'button' => 'Translate quiz',
+            'heading' => 'Translate the quiz',
+            'saved' => 'Quiz translations saved',
+        ],
         'draft' => [
             'button' => 'Translate with :provider',
             'confirm_heading' => 'Generate drafts with :provider?',
@@ -98,6 +103,8 @@ return [
             'summary' => 'Short summary',
             'content' => 'Lesson text',
             'transcript' => 'Video transcript',
+            'prompt' => 'Question',
+            'text' => 'Answer option',
         ],
     ],
 ];

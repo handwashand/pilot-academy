@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasContentTranslations;
+use App\Services\Translator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +12,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Question extends Model
 {
+    use HasContentTranslations;
+
+    /** Translate on a lesson or on the final-quiz bank reads/writes this. */
+    protected array $translatable = ['prompt'];
+
     public const TYPE_SINGLE = 'single';
 
     public const TYPE_MULTIPLE = 'multiple';
@@ -32,6 +39,7 @@ class Question extends Model
         'prompt',
         'type',
         'sort_order',
+        'language',
     ];
 
     public function lesson(): BelongsTo
@@ -49,6 +57,19 @@ class Question extends Model
 
         static::saved($check);
         static::deleted($check);
+
+        // A lesson's own question is written in its lesson's language; a
+        // course-only question (created straight from the final-quiz bank,
+        // no lesson) has nothing to inherit, so it takes the site default.
+        // Explicitly setting language on create (FinalQuestionsRelationManager
+        // does, for a course-only question) always wins over both.
+        static::creating(function (Question $question): void {
+            if (filled($question->language)) {
+                return;
+            }
+
+            $question->language = $question->lesson?->language ?? app(Translator::class)->defaultCode();
+        });
     }
 
     /**

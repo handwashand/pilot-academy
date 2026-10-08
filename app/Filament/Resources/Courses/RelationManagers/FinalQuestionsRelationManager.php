@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Courses\RelationManagers;
 
+use App\Filament\Actions\TranslateQuestionsAction;
 use App\Models\Question;
 use Filament\Actions\Action;
 use Filament\Actions\AttachAction;
@@ -115,6 +116,8 @@ class FinalQuestionsRelationManager extends RelationManager
                     ->options(Question::typeLabels()),
             ])
             ->headerActions([
+                TranslateQuestionsAction::forCourse($this->getOwnerRecord()),
+
                 Action::make('addAllLessonQuestions')
                     ->label(__t('admin_courses.final_tab.add_all'))
                     ->icon('heroicon-o-plus-circle')

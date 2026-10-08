@@ -197,7 +197,7 @@ class FinalQuizController extends Controller
             return collect();
         }
 
-        return Question::with('options')
+        return Question::with(['contentTranslations', 'options.contentTranslations'])
             ->whereIn('id', $ids)
             ->get()
             ->sortBy(fn ($q) => array_search($q->id, $ids))

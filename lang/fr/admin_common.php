@@ -67,6 +67,11 @@ return [
             'saved' => 'Traductions du cours enregistrées',
         ],
         'saved' => 'Traductions enregistrées',
+        'questions' => [
+            'button' => 'Traduire le quiz',
+            'heading' => 'Traduire le quiz',
+            'saved' => 'Traductions du quiz enregistrées',
+        ],
         'draft' => [
             'button' => 'Traduire avec :provider',
             'confirm_heading' => 'Générer des brouillons avec :provider ?',
@@ -95,6 +100,8 @@ return [
             'summary' => 'Résumé court',
             'content' => 'Texte de la leçon',
             'transcript' => 'Transcription de la vidéo',
+            'prompt' => 'Question',
+            'text' => 'Option de réponse',
         ],
     ],
 ];

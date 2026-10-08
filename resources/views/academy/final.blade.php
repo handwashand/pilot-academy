@@ -57,7 +57,7 @@
                 @foreach($state['questions'] as $qn => $question)
                     @php($multiple = $question->type === \App\Models\Question::TYPE_MULTIPLE)
                     <fieldset class="bg-white border border-slate-200 rounded-2xl shadow-sm p-5">
-                        <legend class="px-2 font-semibold text-navy">{{ $qn + 1 }}. {{ $question->prompt }}</legend>
+                        <legend class="px-2 font-semibold text-navy">{{ $qn + 1 }}. {{ $question->translated('prompt') }}</legend>
                         @if($multiple)
                             <p class="px-2 text-xs text-slate-400 mb-1">{{ __t('academy.common.select_all') }}</p>
                         @endif
@@ -69,7 +69,7 @@
                                     @else
                                         <input type="radio" name="answers[{{ $question->id }}]" value="{{ $option->id }}" class="text-brand w-4 h-4 flex-none" required>
                                     @endif
-                                    <span>{{ $option->text }}</span>
+                                    <span>{{ $option->translated('text') }}</span>
                                 </label>
                             @endforeach
                         </div>

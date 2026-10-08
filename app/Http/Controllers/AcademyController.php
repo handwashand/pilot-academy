@@ -294,7 +294,7 @@ class AcademyController extends Controller
         abort_unless($course->isVisibleTo($request->user()) && $lesson->isVisibleTo($request->user()), 404);
         abort_unless($course->hasLesson($lesson), 404);
 
-        $lesson->load(['questions.options', 'contentTranslations']);
+        $lesson->load(['questions.contentTranslations', 'questions.options.contentTranslations', 'contentTranslations']);
         $course->loadMissing('contentTranslations');
         $lessons = $course->publishedLessons()->with('contentTranslations')->get();
         $currentIndex = $lessons->search(fn ($l) => $l->id === $lesson->id);

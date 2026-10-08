@@ -2,11 +2,17 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasContentTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Option extends Model
 {
+    use HasContentTranslations;
+
+    /** Translate on a question's options reads/writes this. */
+    protected array $translatable = ['text'];
+
     protected $fillable = [
         'question_id',
         'text',
@@ -21,6 +27,17 @@ class Option extends Model
     public function question(): BelongsTo
     {
         return $this->belongsTo(Question::class);
+    }
+
+    /**
+     * An option has no language column of its own — it is written in
+     * whatever language its question is (HasContentTranslations reads this
+     * via getAttribute('language'), which an accessor satisfies exactly like
+     * a real column would).
+     */
+    public function getLanguageAttribute(): ?string
+    {
+        return $this->question?->language;
     }
 
     /**
