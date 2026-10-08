@@ -251,6 +251,8 @@ return [
         'contact_to_change' => 'To change it, contact your academy administrator.',
         'details' => 'Your details',
         'details_saved' => 'Your details are saved.',
+        'photo' => 'Photo',
+        'photo_help' => 'JPG or PNG, up to 2 MB.',
         'name' => 'Name',
         'email' => 'Email',
         'certificate_name' => 'Name on certificates',

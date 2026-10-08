@@ -240,6 +240,8 @@ return [
         'contact_to_change' => 'Pour le modifier, contactez l’administrateur de votre académie.',
         'details' => 'Vos informations',
         'details_saved' => 'Vos informations sont enregistrées.',
+        'photo' => 'Photo',
+        'photo_help' => 'JPG ou PNG, jusqu’à 2 Mo.',
         'name' => 'Nom',
         'email' => 'E-mail',
         'certificate_name' => 'Nom sur les certificats',

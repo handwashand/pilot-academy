@@ -32,6 +32,13 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            // Internal links (sidebar, Settings' tab strip, resource tables, …)
+            // navigate through Livewire instead of a full browser reload — the
+            // sidebar and topbar stay put and only the content area swaps.
+            // This is what makes clicking a Settings tab feel instant instead
+            // of reloading the whole app. Panel-wide, not just Settings: there
+            // was no narrower switch to reach for.
+            ->spa()
             // "Profile" in the account menu: your own name, email and password.
             // Creators have no access to Users, so without this they had no
             // way to change their own password at all. Not the simple layout,

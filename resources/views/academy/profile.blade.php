@@ -9,6 +9,11 @@
     $label = 'block text-sm font-semibold text-navy mb-1';
     $button = 'inline-flex items-center justify-center min-h-11 rounded-lg bg-brand px-5 text-sm font-semibold text-white hover:bg-blue-700';
     $saved = session('profile_saved');
+    $initials = collect(preg_split('/\s+/', trim($user->name)))
+        ->filter()
+        ->take(2)
+        ->map(fn ($part) => mb_strtoupper(mb_substr($part, 0, 1)))
+        ->implode('');
 @endphp
 
 @section('content')
@@ -29,7 +34,7 @@
         </section>
 
         {{-- Your details --}}
-        <form method="POST" action="{{ route('academy.profile.update') }}"
+        <form method="POST" action="{{ route('academy.profile.update') }}" enctype="multipart/form-data"
               class="mt-6 bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6">
             @csrf
             @method('PUT')
@@ -39,6 +44,25 @@
             @if($saved === 'details')
                 <p role="status" class="mt-3 rounded-lg bg-green-50 border border-green-200 text-green-800 px-4 py-3 text-sm">{{ __t('academy.profile.details_saved') }}</p>
             @endif
+
+            <div class="mt-4 flex items-center gap-4">
+                <span class="flex h-16 w-16 flex-none items-center justify-center overflow-hidden rounded-full bg-navy text-xl font-bold text-white">
+                    @if($user->avatarUrl())
+                        <img src="{{ $user->avatarUrl() }}" alt="" class="h-full w-full object-cover">
+                    @else
+                        {{ $initials }}
+                    @endif
+                </span>
+                <div class="min-w-0 flex-1">
+                    <label for="avatar" class="{{ $label }}">{{ __t('academy.profile.photo') }}</label>
+                    <input type="file" id="avatar" name="avatar" accept="image/png,image/jpeg"
+                           class="block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-navy hover:file:bg-slate-200">
+                    <p class="mt-1 text-sm text-slate-500">{{ __t('academy.profile.photo_help') }}</p>
+                    @error('avatar')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
 
             <div class="mt-4">
                 <label for="name" class="{{ $label }}">{{ __t('academy.profile.name') }}</label>

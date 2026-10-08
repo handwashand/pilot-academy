@@ -16,7 +16,7 @@ their assigned products, split into published, draft and archived content, with
 links to each list. Creators never see learner or partner reporting. The menu on
 the left takes you to every part of the academy.
 
-**Change your own name, email or password** from the account menu (click your initials in the top right → **Profile**), or from **Settings** in the sidebar, whose **Profile** tab is the same form. You are asked for your current password before a new one is saved. This works for creators too, who cannot open **Users**.
+**Change your own name, email, photo or password** from the account menu (click your initials in the top right → **Profile**), or from **Settings** in the sidebar, whose **Profile** tab is the same form. A photo replaces your initials everywhere they show. You are asked for your current password before changing your email or password. This works for creators too, who cannot open **Users**.
 
 **See the academy as a student does:** account menu → **Student site**.
 

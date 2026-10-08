@@ -23,7 +23,7 @@ class AiProvider extends Model
 
     public const DESCRIPT = 'descript';
 
-    /** @var array<string, array{label: string, url: string, model: string}> */
+    /** @var array<string, array{label: string, url: string, model: string, model_options: array<string, string>}> */
     public const PROVIDERS = [
         // Descript translates the speech in lesson videos, not text; it has no
         // model setting either. Its token is used by DescriptClient.
@@ -31,6 +31,7 @@ class AiProvider extends Model
             'label' => 'Descript',
             'url' => 'https://descriptapi.com/v1',
             'model' => '',
+            'model_options' => [],
         ],
         // DeepL is not a chat model: it has no model setting, and its address
         // depends on the key (see deeplSettings()).
@@ -38,16 +39,27 @@ class AiProvider extends Model
             'label' => 'DeepL',
             'url' => 'https://api.deepl.com',
             'model' => '',
+            'model_options' => [],
         ],
         self::CHATGPT => [
             'label' => 'ChatGPT',
             'url' => 'https://api.openai.com/v1/chat/completions',
             'model' => 'gpt-4o-mini',
+            'model_options' => [
+                'gpt-4o-mini' => 'GPT-4o mini',
+                'gpt-4o' => 'GPT-4o',
+                'gpt-4-turbo' => 'GPT-4 Turbo',
+                'gpt-3.5-turbo' => 'GPT-3.5 Turbo',
+            ],
         ],
         self::DEEPSEEK => [
             'label' => 'DeepSeek',
             'url' => 'https://api.deepseek.com/chat/completions',
             'model' => 'deepseek-chat',
+            'model_options' => [
+                'deepseek-chat' => 'DeepSeek Chat',
+                'deepseek-reasoner' => 'DeepSeek Reasoner',
+            ],
         ],
     ];
 

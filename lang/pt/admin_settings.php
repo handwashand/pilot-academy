@@ -45,6 +45,7 @@ return [
 
     'overlay' => [
         'profile' => 'Perfil',
+        'photo' => 'Foto',
         'name' => 'Nome',
         'email' => 'E-mail',
         'password' => 'Nova senha',

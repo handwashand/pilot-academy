@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 /**
@@ -30,14 +31,27 @@ class ProfileController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'certificate_name' => ['nullable', 'string', 'max:255'],
+            'avatar' => ['nullable', 'image', 'max:2048'],
         ]);
+
+        $oldAvatar = $user->avatar_path;
 
         $user->forceFill([
             'name' => trim($data['name']),
             'email' => trim($data['email']),
             // Empty means "print my name", so store nothing rather than a blank.
             'certificate_name' => filled($data['certificate_name'] ?? null) ? trim($data['certificate_name']) : null,
-        ])->save();
+        ]);
+
+        if ($request->hasFile('avatar')) {
+            $user->avatar_path = $request->file('avatar')->store('avatars', 'public');
+        }
+
+        $user->save();
+
+        if ($request->hasFile('avatar') && filled($oldAvatar)) {
+            Storage::disk('public')->delete($oldAvatar);
+        }
 
         return redirect()->route('academy.profile')->with('profile_saved', 'details');
     }

@@ -7,6 +7,7 @@ use App\Models\AiProvider;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
@@ -183,11 +184,12 @@ class Integrations extends Page
                     ->label(fn (): string => __t('admin_integrations.clear_token'))
                     ->visible($saved),
 
-                TextInput::make('model')
+                Select::make('model')
                     ->visible(AiProvider::PROVIDERS[$provider]['model'] !== '')
                     ->label(fn (): string => __t('admin_integrations.model'))
-                    ->maxLength(100)
-                    ->placeholder(AiProvider::PROVIDERS[$provider]['model']),
+                    ->options(AiProvider::PROVIDERS[$provider]['model_options'])
+                    ->native(false)
+                    ->placeholder(fn (): string => __t('admin_integrations.model_help', ['model' => AiProvider::PROVIDERS[$provider]['model']])),
             ]);
     }
 }

@@ -50,6 +50,7 @@ return [
     // tabs in the Settings cluster.
     'overlay' => [
         'profile' => 'Profile',
+        'photo' => 'Photo',
         'name' => 'Name',
         'email' => 'Email address',
         'password' => 'New password',

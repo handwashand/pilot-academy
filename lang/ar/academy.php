@@ -255,6 +255,8 @@ return [
         'contact_to_change' => 'لتغييره، تواصل مع مسؤول الأكاديمية لديك.',
         'details' => 'بياناتك',
         'details_saved' => 'تم حفظ بياناتك.',
+        'photo' => 'الصورة',
+        'photo_help' => 'JPG أو PNG، حتى 2 ميغابايت.',
         'name' => 'الاسم',
         'email' => 'البريد الإلكتروني',
         'certificate_name' => 'الاسم على الشهادات',

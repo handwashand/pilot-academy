@@ -128,9 +128,11 @@ academy team reads it; other students never see it.
 ## Your profile
 
 Open the **account menu** — your initials in the top right — and choose
-**Profile**. There you can change your name and email, and set the name printed
-on your certificates.
+**Profile**. There you can add a photo, change your name and email, and set
+the name printed on your certificates.
 
+- **Photo** replaces your initials everywhere they show, such as the account
+  menu. JPG or PNG, up to 2 MB.
 - **Name on certificates** is used for the certificates you earn from now on.
   Leave it empty to use your name. A certificate you already have keeps the name
   it was printed with; to correct one, contact your academy administrator.

@@ -36,6 +36,10 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **A profile photo**, for admins, creators and learners alike. Upload one
+  from your Profile page (Settings → Profile for staff, account menu →
+  Profile for everyone); it replaces your initials everywhere they show.
+  JPG or PNG, up to 2 MB.
 - **Already translated? Edit, don't redo.** When a course or lesson already has
   text in a language, choosing **Translate with …** says so and keeps it for you
   to edit; only the empty boxes are drafted. Tick **Replace the existing
@@ -318,11 +322,15 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Changed
 
-- **Settings is now one click, not four.** The sidebar's Settings group is a
-  single **Settings** row; **Profile**, **Integrations**, **Mail**,
-  **Translations** and **Languages** are tabs across the top of the page
-  instead of four separate sidebar links. Nothing about any of those screens
-  changed — only how you get to them.
+- **Settings is now one click, not four, and clicking a tab no longer
+  reloads the page.** The sidebar's Settings group is a single **Settings**
+  row; **Profile**, **Integrations**, **Mail**, **Translations** and
+  **Languages** are tabs across the top instead of four separate sidebar
+  links, and switching between any of them (or anywhere else in the panel)
+  now swaps only the content — the sidebar and top bar stay put. Nothing
+  about any of those screens changed — only how you get to them.
+- **A provider's model is now a dropdown**, not a typed-in box — ChatGPT and
+  DeepSeek's **Integrations** cards read the same way as the two beside them.
 - **The sidebar's own text is a touch smaller, and pages sit a little tighter
   against the edges.** A quieter, more compact feel; the spacing inside cards,
   tables and forms is unchanged.

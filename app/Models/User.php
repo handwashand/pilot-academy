@@ -6,6 +6,7 @@ namespace App\Models;
 use App\Mail\PasswordResetLink;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -18,11 +19,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-#[Fillable(['name', 'certificate_name', 'email', 'password', 'company_id', 'role', 'login_token', 'locale'])]
+#[Fillable(['name', 'certificate_name', 'email', 'password', 'avatar_path', 'company_id', 'role', 'login_token', 'locale'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable implements FilamentUser, HasLocalePreference
+class User extends Authenticatable implements FilamentUser, HasAvatar, HasLocalePreference
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
@@ -106,6 +108,17 @@ class User extends Authenticatable implements FilamentUser, HasLocalePreference
     public function preferredLocale(): ?string
     {
         return $this->locale;
+    }
+
+    /** The uploaded photo, or null for the initials circle every screen falls back to. */
+    public function avatarUrl(): ?string
+    {
+        return $this->avatar_path ? Storage::disk('public')->url($this->avatar_path) : null;
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->avatarUrl();
     }
 
     public function hasPermission(string $permission): bool

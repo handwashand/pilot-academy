@@ -184,7 +184,13 @@
                     <details class="relative flex-none" data-account-menu>
                         <summary class="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-full [&::-webkit-details-marker]:hidden"
                                  aria-label="{{ __t('academy.nav.account') }}" title="{{ $account->name }}">
-                            <span aria-hidden="true" class="flex h-9 w-9 items-center justify-center rounded-full bg-navy text-sm font-bold text-white">{{ $initials }}</span>
+                            <span aria-hidden="true" class="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-navy text-sm font-bold text-white">
+                                @if($account->avatarUrl())
+                                    <img src="{{ $account->avatarUrl() }}" alt="" class="h-full w-full object-cover">
+                                @else
+                                    {{ $initials }}
+                                @endif
+                            </span>
                         </summary>
 
                         <div class="absolute end-0 top-full z-30 mt-2 w-64 max-w-[calc(100vw-2rem)] rounded-xl border border-slate-200 bg-white p-1 shadow-lg">

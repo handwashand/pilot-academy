@@ -239,6 +239,8 @@ return [
         'contact_to_change' => 'Para cambiarlo, contacta con el administrador de tu academia.',
         'details' => 'Tus datos',
         'details_saved' => 'Tus datos se guardaron.',
+        'photo' => 'Foto',
+        'photo_help' => 'JPG o PNG, hasta 2 MB.',
         'name' => 'Nombre',
         'email' => 'Correo electrónico',
         'certificate_name' => 'Nombre en los certificados',
