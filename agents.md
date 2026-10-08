@@ -403,6 +403,73 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-08 — The last untranslatable text: quiz questions and answer options
+
+Everything else content-wise already went through `HasContentTranslations`
+(course/lesson title, summary, content, transcript; Case Studies; Tutorials;
+Webinars). Quiz questions and their answer options did not — a French course
+with a French lesson still asked its knowledge check in English. Closed that
+gap the same way the rest of the content model works, not a new mechanism.
+
+**`questions.language`** (migration `2026_10_08_000002`): a lesson's own
+question takes its lesson's language; a course-only question (final-quiz bank,
+no `lesson_id`) has nothing to inherit and falls back to the site default, same
+rule courses/lessons were backfilled with when `HasContentTranslations` first
+shipped. Backfilling across `lessons.language` needed a correlated scalar
+subquery in the `UPDATE`, not a `->join()->update()` — a cross-table JOIN-UPDATE
+is a SQLSTATE/engine-specific feature, and that form failed on *both* SQLite
+(`no such column: lessons.language`) and real Postgres
+(`missing FROM-clause entry for table lessons`) before being rewritten as a
+subquery, which reads the same on both.
+
+`Question` gets `HasContentTranslations` + `$translatable = ['prompt']`, with a
+`creating` hook that inherits the lesson's language unless one is set
+explicitly (so a bulk-created or test-built question never ends up `null`).
+**`Option` stores no language column of its own** — it has nothing a creator
+would ever set differently from its question, so `getLanguageAttribute()`
+reads its question's instead, same shape as `CaseStudy::SECTION_FIELDS`
+borrowing structure rather than duplicating it.
+
+**`App\Filament\Actions\TranslateQuestionsAction`** is the button: **Translate
+quiz** on a lesson's edit page (its own knowledge check,
+`TranslateQuestionsAction::forLesson()`, Filament-injected `Lesson $record`) and
+on a course's **Final questions** tab (`::forCourse($course)` — a relation
+manager header action has no bound record, so the course is captured by
+closure instead, the same pattern `addAllLessonQuestions` already used there).
+Hidden when there are no questions, or no other active language to translate
+into. Same two-step wizard as `TranslateCourseAction`: step 1 picks a language
+and how (by hand, or a switched-on engine with its acknowledgement and
+existing-translations notice), step 2 reviews every question and its options
+in collapsible sections, saved only by **Save translations**. A question used
+in several courses' final quizzes (the `course_lesson`-style sharing pattern)
+translates once and reads correctly in every one of them, because the
+translation lives on the question, not on the course-question link.
+
+**Controllers now eager-load `questions.contentTranslations` and
+`options.contentTranslations`** (`AcademyController::lesson()`,
+`FinalQuizController::attemptQuestions()`), and both quiz templates
+(`lesson.blade.php`, `final.blade.php`) read `$question->translated('prompt')`
+/ `$option->translated('text')` instead of the raw columns — otherwise a
+reader's language would be decided everywhere else on the page and ignored
+exactly where the test happens.
+
+**Verified (run):** `QuestionTranslationTest`, 10 new tests — model language
+inheritance, manual save on both the lesson and the course-final contexts
+(the course one needed `TestAction::make(...)->table()`, since a relation
+manager's header action has no record key to look up by name alone), AI
+drafting sends only empty boxes and never a human-written one, a learner
+reading a translated quiz, and the untranslated fallback. Full suite 561
+passed against real Postgres in Docker; Pint clean over 20 changed files.
+**Reviewed, not independently run in a browser:** the button and its two-step
+modal were confirmed present and correctly labelled via a live Chrome
+screenshot (right place in the lesson header, correct 5-language list with the
+lesson's own English excluded, zero console errors); a second automation pass
+meant to drive the wizard's **Next** button through to Save hit Puppeteer
+script trouble (a detached-frame navigation error, then a stale click
+selector) rather than anything in the product — the same save/draft/review
+path is already proven end-to-end through Filament's own test harness, so this
+was not pursued further.
+
 ### 2026-10-08 — Settings became a Cluster with tabs; a profile photo; Integrations' Model is a dropdown
 
 **Settings, second attempt.** The owner first asked for one sidebar row that
