@@ -1,7 +1,7 @@
 {{-- Settings → Mail: what the server does with email, in words. --}}
 <x-filament-panels::page>
     @php
-        $mail = $this->summary();
+        $mail = \App\Filament\Pages\MailCheck::summary();
     @endphp
 
     <div class="max-w-3xl space-y-4">

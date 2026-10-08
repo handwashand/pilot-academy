@@ -44,14 +44,19 @@ class TranslationsPageTest extends TestCase
             ->firstOrFail();
     }
 
-    public function test_every_admin_finds_translations_in_the_sidebar(): void
+    /**
+     * Translations no longer has its own sidebar link — it is reached through
+     * the Settings overlay (App\Livewire\SettingsPanel; see SettingsPanelTest),
+     * whose "Open Translations" button goes to this exact page. The page and
+     * its route stay exactly as they were.
+     */
+    public function test_every_admin_can_still_open_the_page_directly(): void
     {
         $this->actingAs($this->user(User::ROLE_ADMIN))
-            ->get('/admin')
-            ->assertOk()
-            ->assertSee(TranslationResource::getUrl('index'), false);
+            ->get(TranslationResource::getUrl('index'))
+            ->assertOk();
 
-        $this->get(TranslationResource::getUrl('index'))->assertOk();
+        $this->assertFalse(TranslationResource::shouldRegisterNavigation());
     }
 
     public function test_creators_do_not_get_it(): void

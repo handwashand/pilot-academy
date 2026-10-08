@@ -50,17 +50,22 @@ class TranslationResource extends Resource
         return __t('admin_nav.groups.settings');
     }
 
-    /** Every admin can correct wording; anyone else needs the permission. */
+    /**
+     * Reached through the Settings overlay now, not its own sidebar link —
+     * see App\Livewire\SettingsPanel. The resource and its routes stay, so a
+     * direct link (and this class's own tests) keep working.
+     */
     public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
+    /** Every admin can correct wording; anyone else needs the permission. */
+    public static function canAccess(): bool
     {
         $user = auth()->user();
 
         return (bool) ($user?->isAdmin() || $user?->hasPermission(User::PERMISSION_TRANSLATIONS_MANAGE));
-    }
-
-    public static function canAccess(): bool
-    {
-        return static::shouldRegisterNavigation();
     }
 
     public static function canViewAny(): bool

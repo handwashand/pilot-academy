@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Filament\Facades\Filament;
+use Filament\Navigation\NavigationItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -33,7 +34,7 @@ class AdminGuideMenuTest extends TestCase
         $panel = Filament::getPanel('admin');
         Filament::setCurrentPanel($panel);
 
-        $sidebar = collect([...$panel->getResources(), ...$panel->getPages()])
+        $fromClasses = collect([...$panel->getResources(), ...$panel->getPages()])
             ->unique()
             ->filter(fn (string $class): bool => $class::shouldRegisterNavigation())
             ->map(function (string $class): string {
@@ -41,7 +42,22 @@ class AdminGuideMenuTest extends TestCase
                 $label = $class::getNavigationLabel();
 
                 return $group ? "{$group} → {$label}" : $label;
-            })
+            });
+
+        // Items registered directly on the panel (->navigationItems()) rather
+        // than discovered from a Resource/Page class — the Settings overlay's
+        // own trigger (App\Livewire\SettingsPanel) is one of these.
+        $fromItems = collect($panel->getNavigationItems())
+            ->filter(fn (NavigationItem $item): bool => $item->isVisible())
+            ->map(function (NavigationItem $item): string {
+                $group = $item->getGroup();
+                $label = $item->getLabel();
+
+                return $group ? "{$group} → {$label}" : $label;
+            });
+
+        $sidebar = $fromClasses->merge($fromItems)
+            ->unique()
             ->sort()
             ->values()
             ->all();

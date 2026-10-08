@@ -16,13 +16,13 @@ their assigned products, split into published, draft and archived content, with
 links to each list. Creators never see learner or partner reporting. The menu on
 the left takes you to every part of the academy.
 
-**Change your own name, email or password** from the account menu: click your initials in the top right → **Profile**. You are asked for your current password before a new one is saved. This works for creators too, who cannot open **Users**.
+**Change your own name, email or password** from the account menu (click your initials in the top right → **Profile**), or from **Settings** in the sidebar, which opens straight to the same form. You are asked for your current password before a new one is saved. This works for creators too, who cannot open **Users**.
 
 **See the academy as a student does:** account menu → **Student site**.
 
 **Change the language** with the language button at the far right of the top bar — it shows the current code, such as **EN**. Pick a language from its menu; the whole panel reloads in it — menus, forms, buttons, messages and the dashboard — and your choice is saved to your account, so the student site follows it too. Alerts in the notification bell are written in your language as well. Emails and certificates go to each student in the language they chose, whoever sends them — so a certificate you regenerate for a French student is still printed in French.
 
-**Correct a translation** under **Settings → Translations**. Each line of text is one row, with a column per language, so you can read a line across all five at once. Search for the words you saw on the student site or in the panel, in any language, then click the cell in the language you want to fix, type the new wording in **Correction** and save — everyone sees it straight away. Keep words that start with a colon, such as `:name`, as they are. To go back to the original text, empty **Correction** and save.
+**Correct a translation** under **Settings → Translations** (click **Settings** in the sidebar, then **Translations** in the dialog that opens). Each line of text is one row, with a column per language, so you can read a line across all five at once. Search for the words you saw on the student site or in the panel, in any language, then click the cell in the language you want to fix, type the new wording in **Correction** and save — everyone sees it straight away. Keep words that start with a colon, such as `:name`, as they are. To go back to the original text, empty **Correction** and save.
 
 **Write in your own language.** Every course and lesson has a **Written in** field — English unless you choose another. A new lesson takes the language of its first course.
 
@@ -56,9 +56,7 @@ doing: building the training (**Content**), looking after the people taking it
 | **Results → Student feedback** | What students said about every course, in one list. Admins only. |
 | **Docs → Guide** | This guide, with a contents list and a search box. |
 | **Docs → What's new** | Everything that has changed in the academy, newest first. Search it, filter it by category, or open it as a PDF. |
-| **Settings → Mail** | Are emails arriving? What the server is set to do, and a button to send yourself a test. Admins, and anyone given **Check mail delivery**. |
-| **Settings → Integrations** | Add the API token for Descript, DeepL, ChatGPT or DeepSeek and switch each on. Admins only. People you grant **Draft translations with DeepL** or **… with ChatGPT or DeepSeek** (under **People → Users → Extra permissions**) then find **Translate** turned into a menu — **Translate by hand** or **Translate with …** for each provider that is on. After a confirmation the Translate window opens with the empty boxes drafted for you to review; nothing is saved until you press **Save translations**. |
-| **Settings → Translations** | The wording students see, in every language — correct any of it without waiting for a developer. Admins only. |
+| **Settings → General** | Opens a dialog, not a page. **Profile** and **Integrations** are right there to edit and save; **Mail**, **Translations** and **Languages** are summarised with a button that takes you to the full page. Integrations: add the API token for Descript, DeepL, ChatGPT or DeepSeek and switch each on (admins only). People you grant **Draft translations with DeepL** or **… with ChatGPT or DeepSeek** (under **People → Users → Extra permissions**) then find **Translate** turned into a menu — **Translate by hand** or **Translate with …** for each provider that is on. After a confirmation the Translate window opens with the empty boxes drafted for you to review; nothing is saved until you press **Save translations**. Mail: are emails arriving? Admins, and anyone given **Check mail delivery**. Translations: the wording students see, in every language — correct any of it without waiting for a developer. Admins only. |
 
 Students have their own guide on the public site: **Help**, the **?** in the top bar. Point a stuck student there first — it covers what finishes a lesson, when the final quiz unlocks, and where certificates are.
 
@@ -551,7 +549,7 @@ Open your site address + `/certificates/` + the certificate number (or scan the 
 | A certificate was issued by mistake | **Certificates** → **Revoke**. Public check shows "Revoked". Changed your mind? **Restore**. |
 | The PDF is empty or won't download | **Certificates** → **Regenerate PDF**, then **Download** again. |
 | The name on a certificate is wrong | **Certificates** → the row → **Edit name**. The PDF is reprinted with the same number. Use **Resend email** if the student should get the corrected copy. |
-| Certificate emails never arrive | **Settings → Mail** says whether the academy is really sending email. **Send test email** to check. The settings themselves live in the server’s `.env`. |
+| Certificate emails never arrive | **Settings → Mail** (in the dialog) says whether the academy is really sending email, and links to the full page with **Send test email**. The settings themselves live in the server’s `.env`. |
 | You need a list for a report | **Certificates** → **Export CSV** (open in Excel or Google Sheets). |
 | You need everyone's progress, not just certificates | **Users** → **Export learner progress**. One row per student: lessons done, certificates, last activity. |
 | A student ran out of attempts | **Results → Quiz attempts** → turn on the **Out of attempts, not passed** filter → **Grant another attempt** on their row. Only that student gets one more try. To change it for everyone, raise **Max attempts** on the course or lesson. |
@@ -655,7 +653,7 @@ cannot be downloaded.
 
 ## Translating text with DeepL, ChatGPT or DeepSeek
 
-An admin adds each provider's API token under **Settings → Integrations** and
+An admin adds each provider's API token under **Settings → Integrations** (**Settings** in the sidebar opens a dialog; Integrations is right there) and
 switches it on. Admins can use them straight away; anyone else needs the
 matching right (**Draft translations with DeepL**, or **… with ChatGPT or
 DeepSeek**, under **People → Users → Extra permissions**). They then see **Translate** on a course, lesson, case study, tutorial

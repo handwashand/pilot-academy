@@ -104,6 +104,12 @@ return [
     'mail' => [
         'nav' => 'Mail',
     ],
+    'settings' => [
+        // The Settings group's one sidebar row — opens the Settings overlay
+        // rather than a page. "General" so it reads differently from the
+        // "Settings" group heading sitting right above it.
+        'nav' => 'General',
+    ],
 
     'tabs' => [
         'lessons' => 'Lessons',

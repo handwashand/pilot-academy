@@ -11,6 +11,7 @@ use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -96,6 +97,29 @@ class AdminPanelProvider extends PanelProvider
                 ->map(fn (string $group): NavigationGroup => NavigationGroup::make()
                     ->label(fn (): string => __t("admin_nav.groups.{$group}")))
                 ->all())
+            // The Settings group's one way in: a dialog (App\Livewire\SettingsPanel),
+            // not a page. A plain '#' href — NavigationManager::get() drops any
+            // item with no url() and no child items before it ever reaches the
+            // sidebar, so a genuinely blank href is not an option here. The
+            // click is caught on the <li> instead (extraAttributes land there;
+            // see vendor sidebar/item.blade.php) and opens the overlay instead
+            // of following the href. Integrations, Mail, Translations and
+            // Languages keep their own routes for direct links and their own
+            // tests; only their sidebar entries moved here
+            // (shouldRegisterNavigation() on each returns false now).
+            ->navigationItems([
+                NavigationItem::make('settings')
+                    ->label(fn (): string => __t('admin_nav.settings.nav'))
+                    ->icon(Heroicon::OutlinedCog6Tooth)
+                    ->url('#')
+                    // Filament groups navigation items by this string matching a
+                    // registered group's own label, not by a stable key — so this
+                    // has to be the same translated string the group above
+                    // resolves to, not the raw 'settings' key.
+                    ->group(fn (): string => __t('admin_nav.groups.settings'))
+                    ->sort(10)
+                    ->extraAttributes(['x-on:click.prevent' => '$dispatch(\'open-settings-modal\')']),
+            ])
             // The dashboard shows the academy, not the panel. Filament's
             // account and version cards are deliberately left off: signing out
             // belongs in the profile menu, top right, where people look for it.
@@ -123,6 +147,13 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
                 fn (): string => view('filament.login-forgot-password')->render(),
+            )
+            // The Settings overlay's own Livewire component, mounted once per
+            // page so the sidebar's click handler always has something
+            // listening. It renders nothing itself until opened.
+            ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn (): string => view('filament.settings-panel-mount')->render(),
             )
             ->sidebarWidth('18rem')
             ->sidebarCollapsibleOnDesktop()

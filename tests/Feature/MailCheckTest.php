@@ -80,12 +80,6 @@ class MailCheckTest extends TestCase
             // The question the page opens with.
             ->assertSee('Not getting emails?');
 
-        // And it is in their sidebar, not just reachable by its address.
-        $this->actingAs($creator)
-            ->get('/admin')
-            ->assertOk()
-            ->assertSee(MailCheck::getUrl(), false);
-
         // Taking it away closes the page again.
         $creator->permissions()->where('permission', User::PERMISSION_MAIL_CHECK)->delete();
 
@@ -94,11 +88,17 @@ class MailCheckTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_an_admin_still_sees_it_in_the_sidebar(): void
+    /**
+     * Mail no longer has its own sidebar link — it is reached through the
+     * Settings overlay (App\Livewire\SettingsPanel), see SettingsPanelTest.
+     * The page and its route stay exactly as they were.
+     */
+    public function test_the_page_itself_is_unaffected_by_moving_out_of_the_sidebar(): void
     {
         $this->actingAs($this->user(User::ROLE_ADMIN))
-            ->get('/admin')
-            ->assertOk()
-            ->assertSee(MailCheck::getUrl(), false);
+            ->get(MailCheck::getUrl())
+            ->assertOk();
+
+        $this->assertFalse(MailCheck::shouldRegisterNavigation());
     }
 }

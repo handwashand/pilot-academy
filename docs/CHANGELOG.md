@@ -318,6 +318,15 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Changed
 
+- **Settings is now one click, not four.** The sidebar's Settings group is a
+  single **Settings** row that opens a dialog instead of a page: **Profile**
+  and **Integrations** are right there to edit and save without leaving the
+  screen you were on, and **Mail**, **Translations** and **Languages** are
+  summarised with a button to their full page. Nothing about those three pages
+  changed — only how you get to them.
+- **The sidebar's own text is a touch smaller, and pages sit a little tighter
+  against the edges.** A quieter, more compact feel; the spacing inside cards,
+  tables and forms is unchanged.
 - **The admin sidebar is slightly narrower on desktop.** Navigation rows are
   shorter horizontally, leaving more room for the page. Row height, group
   spacing and the mobile menu are unchanged.

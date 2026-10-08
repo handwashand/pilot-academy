@@ -61,9 +61,14 @@ class MailCheck extends Page
         return (bool) ($user?->isAdmin() || $user?->hasPermission(User::PERMISSION_MAIL_CHECK));
     }
 
+    /**
+     * Reached through the Settings overlay now, not its own sidebar link —
+     * see App\Livewire\SettingsPanel. The page and its route stay, so a
+     * direct link (and this class's own tests) keep working.
+     */
     public static function shouldRegisterNavigation(): bool
     {
-        return static::canAccess();
+        return false;
     }
 
     /** The question the page exists to answer, above the readings. */
@@ -73,11 +78,13 @@ class MailCheck extends Page
     }
 
     /**
-     * What the server is set to do with email.
+     * What the server is set to do with email. Static so the Settings
+     * overlay's Mail tab (App\Livewire\SettingsPanel) can read it too,
+     * without mounting this page.
      *
      * @return array<string, mixed>
      */
-    public function summary(): array
+    public static function summary(): array
     {
         $mailer = (string) config('mail.default');
         $transport = (string) config("mail.mailers.{$mailer}.transport", $mailer);
@@ -123,7 +130,7 @@ class MailCheck extends Page
                         return;
                     }
 
-                    if (! $this->summary()['delivers']) {
+                    if (! static::summary()['delivers']) {
                         Notification::make()
                             ->title(__t('admin_pages.mail.not_delivered'))
                             ->body(__t('admin_pages.mail.not_delivered_body'))

@@ -39,14 +39,19 @@ class LanguageResource extends Resource
         return __t('admin_nav.groups.settings');
     }
 
+    /**
+     * Reached through the Settings overlay now, not its own sidebar link —
+     * see App\Livewire\SettingsPanel. The resource and its routes stay, so a
+     * direct link (and this class's own tests) keep working.
+     */
     public static function shouldRegisterNavigation(): bool
     {
-        return (bool) auth()->user()?->hasPermission(User::PERMISSION_LANGUAGES_MANAGE);
+        return false;
     }
 
     public static function canAccess(): bool
     {
-        return static::shouldRegisterNavigation();
+        return (bool) auth()->user()?->hasPermission(User::PERMISSION_LANGUAGES_MANAGE);
     }
 
     public static function canViewAny(): bool

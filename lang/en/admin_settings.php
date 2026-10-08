@@ -45,4 +45,23 @@ return [
             'missing' => 'Missing',
         ],
     ],
+
+    // The Settings overlay (App\Livewire\SettingsPanel): Profile and
+    // Integrations save together from here; Mail, Translations and
+    // Languages are summarised with a button to their own page.
+    'overlay' => [
+        'profile' => 'Profile',
+        'name' => 'Name',
+        'email' => 'Email address',
+        'password' => 'New password',
+        'password_confirmation' => 'Confirm password',
+        'current_password' => 'Current password',
+        'current_password_help' => 'Needed to change your email or password.',
+        'save' => 'Save settings',
+        'saved' => 'Settings saved',
+        'mail_description' => 'Whether the academy is really sending email, and a way to test it.',
+        'translations_description' => 'Correct the wording students see, in every language, without a deploy.',
+        'languages_description' => 'Add a language, or change which ones are offered.',
+        'open' => 'Open :page',
+    ],
 ];

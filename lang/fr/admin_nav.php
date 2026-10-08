@@ -100,6 +100,9 @@ return [
     'mail' => [
         'nav' => 'E-mail',
     ],
+    'settings' => [
+        'nav' => 'Général',
+    ],
 
     'tabs' => [
         'lessons' => 'Leçons',

@@ -42,4 +42,20 @@ return [
             'missing' => 'Manquant',
         ],
     ],
+
+    'overlay' => [
+        'profile' => 'Profil',
+        'name' => 'Nom',
+        'email' => 'Adresse e-mail',
+        'password' => 'Nouveau mot de passe',
+        'password_confirmation' => 'Confirmer le mot de passe',
+        'current_password' => 'Mot de passe actuel',
+        'current_password_help' => 'Nécessaire pour changer votre e-mail ou votre mot de passe.',
+        'save' => 'Enregistrer les réglages',
+        'saved' => 'Réglages enregistrés',
+        'mail_description' => 'Si l’académie envoie vraiment des e-mails, et un moyen de le vérifier.',
+        'translations_description' => 'Corrigez le texte que voient les apprenants, dans toutes les langues, sans déploiement.',
+        'languages_description' => 'Ajoutez une langue, ou changez celles proposées.',
+        'open' => 'Ouvrir :page',
+    ],
 ];

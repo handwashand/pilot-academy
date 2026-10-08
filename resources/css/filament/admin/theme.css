@@ -85,3 +85,26 @@
     border-top: 1px solid rgb(128 128 128 / 0.25);
     margin: 0.75rem 0;
 }
+
+/*
+ * A quieter, slightly tighter chrome (owner's request, 2026-10-08): the
+ * sidebar's own text one notch smaller, and a little less breathing room
+ * around page content. Small, deliberate nudges — the padding inside cards,
+ * tables and forms is Filament's own and is left alone.
+ */
+.fi-sidebar-item-label,
+.fi-sidebar-group-label {
+    @apply text-xs;
+}
+
+.fi-sidebar-item-btn {
+    @apply py-1.5;
+}
+
+.fi-page-header-main-ctn {
+    @apply gap-y-6 py-6;
+}
+
+.fi-main {
+    @apply px-4 md:px-5 lg:px-6;
+}

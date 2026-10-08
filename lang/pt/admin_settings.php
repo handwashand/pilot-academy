@@ -42,4 +42,20 @@ return [
             'missing' => 'Faltando',
         ],
     ],
+
+    'overlay' => [
+        'profile' => 'Perfil',
+        'name' => 'Nome',
+        'email' => 'E-mail',
+        'password' => 'Nova senha',
+        'password_confirmation' => 'Confirmar senha',
+        'current_password' => 'Senha atual',
+        'current_password_help' => 'Necessária para alterar seu e-mail ou sua senha.',
+        'save' => 'Salvar configurações',
+        'saved' => 'Configurações salvas',
+        'mail_description' => 'Se a academia está realmente enviando e-mail, e uma forma de testar isso.',
+        'translations_description' => 'Corrija o texto que os alunos veem, em todos os idiomas, sem precisar de um novo deploy.',
+        'languages_description' => 'Adicione um idioma, ou mude quais são oferecidos.',
+        'open' => 'Abrir :page',
+    ],
 ];

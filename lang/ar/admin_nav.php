@@ -105,6 +105,9 @@ return [
     'mail' => [
         'nav' => 'البريد',
     ],
+    'settings' => [
+        'nav' => 'عام',
+    ],
 
     'tabs' => [
         'lessons' => 'الدروس',

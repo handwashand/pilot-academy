@@ -66,9 +66,14 @@ class Integrations extends Page
         return (bool) auth()->user()?->isAdmin();
     }
 
+    /**
+     * Reached through the Settings overlay now, not its own sidebar link —
+     * see App\Livewire\SettingsPanel. The page and its route stay, so a
+     * direct link (and this class's own tests) keep working.
+     */
     public static function shouldRegisterNavigation(): bool
     {
-        return static::canAccess();
+        return false;
     }
 
     public function getSubheading(): ?string
@@ -102,9 +107,19 @@ class Integrations extends Page
             // Small cards, two or three across, so the page stays tidy as integrations are added.
             ->components([
                 Grid::make(['default' => 1, 'md' => 2, 'xl' => 3])
-                    ->schema(array_map(fn (string $provider): Section => $this->providerSection($provider), array_keys(AiProvider::PROVIDERS))),
+                    ->schema(array_map(fn (string $provider): Section => static::providerSection($provider), array_keys(AiProvider::PROVIDERS))),
             ])
             ->statePath('data');
+    }
+
+    /**
+     * The same cards, for the Settings overlay's Integrations tab — App\Livewire\SettingsPanel.
+     *
+     * @return array<int, Section>
+     */
+    public static function providerSections(): array
+    {
+        return array_map(fn (string $provider): Section => static::providerSection($provider), array_keys(AiProvider::PROVIDERS));
     }
 
     public function content(Schema $schema): Schema
@@ -129,8 +144,26 @@ class Integrations extends Page
 
     public function save(): void
     {
-        $data = $this->form->getState();
+        if (! static::persist($this->form->getState())) {
+            return;
+        }
 
+        $this->mount();
+
+        Notification::make()->title(__t('admin_integrations.saved'))->success()->send();
+    }
+
+    /**
+     * Saves every provider row from the form state. Shared with the Settings
+     * overlay's combined save (App\Livewire\SettingsPanel), which calls this
+     * instead of duplicating the per-provider rules. Fires its own failure
+     * notification and returns false so a caller stops there; the caller
+     * decides what a success notification should say.
+     *
+     * @param  array<string, array<string, mixed>>  $data
+     */
+    public static function persist(array $data): bool
+    {
         foreach (array_keys(AiProvider::PROVIDERS) as $provider) {
             $input = $data[$provider] ?? [];
             $row = AiProvider::for($provider);
@@ -150,18 +183,16 @@ class Integrations extends Page
                     ->danger()
                     ->send();
 
-                return;
+                return false;
             }
 
             $row->save();
         }
 
-        $this->mount();
-
-        Notification::make()->title(__t('admin_integrations.saved'))->success()->send();
+        return true;
     }
 
-    private function providerSection(string $provider): Section
+    private static function providerSection(string $provider): Section
     {
         $label = AiProvider::PROVIDERS[$provider]['label'];
         $saved = AiProvider::withToken($provider) !== null;
