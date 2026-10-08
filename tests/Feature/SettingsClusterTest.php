@@ -10,7 +10,9 @@ use App\Filament\Resources\Languages\LanguageResource;
 use App\Filament\Resources\Translations\TranslationResource;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -96,6 +98,22 @@ class SettingsClusterTest extends TestCase
             ->assertHasNoFormErrors();
 
         $this->assertSame('New Name', $admin->fresh()->name);
+    }
+
+    public function test_the_profile_tab_can_upload_a_photo(): void
+    {
+        Storage::fake('public');
+        $admin = $this->user(User::ROLE_ADMIN);
+
+        Livewire::actingAs($admin)
+            ->test(SettingsProfile::class)
+            ->fillForm(['name' => $admin->name, 'email' => $admin->email, 'avatar_path' => UploadedFile::fake()->image('photo.jpg')])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $admin->refresh();
+        $this->assertNotNull($admin->avatar_path);
+        Storage::disk('public')->assertExists($admin->avatar_path);
     }
 
     public function test_a_wrong_current_password_blocks_a_new_one(): void

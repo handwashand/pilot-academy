@@ -7,7 +7,9 @@ use App\Models\Company;
 use App\Models\Course;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 /**
@@ -130,6 +132,49 @@ class StudentProfileTest extends TestCase
         ]);
 
         $this->assertSame('Partner Student', $certificate->fresh()->name);
+    }
+
+    public function test_a_student_can_upload_a_photo_and_replace_it(): void
+    {
+        Storage::fake('public');
+        $learner = $this->learner();
+
+        $this->actingAs($learner)->put(route('academy.profile.update'), [
+            'name' => 'Partner Student',
+            'email' => 'student@partner.com',
+            'avatar' => UploadedFile::fake()->image('first.jpg'),
+        ])->assertSessionHasNoErrors();
+
+        $firstPath = $learner->fresh()->avatar_path;
+        $this->assertNotNull($firstPath);
+        Storage::disk('public')->assertExists($firstPath);
+
+        $this->actingAs($learner->fresh())->put(route('academy.profile.update'), [
+            'name' => 'Partner Student',
+            'email' => 'student@partner.com',
+            'avatar' => UploadedFile::fake()->image('second.jpg'),
+        ])->assertSessionHasNoErrors();
+
+        $learner->refresh();
+        $this->assertNotSame($firstPath, $learner->avatar_path);
+        Storage::disk('public')->assertExists($learner->avatar_path);
+        Storage::disk('public')->assertMissing($firstPath);
+    }
+
+    public function test_a_non_image_photo_is_refused(): void
+    {
+        Storage::fake('public');
+        $learner = $this->learner();
+
+        $this->actingAs($learner)
+            ->put(route('academy.profile.update'), [
+                'name' => 'Partner Student',
+                'email' => 'student@partner.com',
+                'avatar' => UploadedFile::fake()->create('not-a-photo.pdf', 100),
+            ])
+            ->assertSessionHasErrors('avatar');
+
+        $this->assertNull($learner->fresh()->avatar_path);
     }
 
     // --- Passwords ---------------------------------------------------------

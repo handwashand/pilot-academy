@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\AccountProfile;
 use App\Filament\Pages\AdminGuide;
 use App\Filament\Pages\Dashboard;
 use App\Http\Middleware\SetLocale;
@@ -39,11 +40,14 @@ class AdminPanelProvider extends PanelProvider
             // of reloading the whole app. Panel-wide, not just Settings: there
             // was no narrower switch to reach for.
             ->spa()
-            // "Profile" in the account menu: your own name, email and password.
-            // Creators have no access to Users, so without this they had no
-            // way to change their own password at all. Not the simple layout,
-            // so the page keeps the sidebar like every other panel screen.
-            ->profile(isSimple: false)
+            // "Profile" in the account menu: your own photo, name, email and
+            // password. Creators have no access to Users, so without this
+            // they had no way to change their own password at all. Not the
+            // simple layout, so the page keeps the sidebar like every other
+            // panel screen. AccountProfile is Filament's own EditProfile plus
+            // a photo field — see its docblock for why it is not merged with
+            // Settings → Profile.
+            ->profile(AccountProfile::class, isSimple: false)
             // The guide in the account menu as well as under Docs: someone who
             // is stuck reaches for the menu with their own name on it.
             ->userMenuItems([

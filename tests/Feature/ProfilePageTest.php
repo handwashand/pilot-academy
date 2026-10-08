@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Pages\AccountProfile;
 use App\Models\User;
-use Filament\Auth\Pages\EditProfile;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -55,7 +57,7 @@ class ProfilePageTest extends TestCase
         $creator = $this->user('creator@pilot.local', 'creator');
 
         Livewire::actingAs($creator)
-            ->test(EditProfile::class)
+            ->test(AccountProfile::class)
             ->fillForm([
                 'password' => 'a-new-long-password',
                 'passwordConfirmation' => 'a-new-long-password',
@@ -72,7 +74,7 @@ class ProfilePageTest extends TestCase
         $creator = $this->user('creator@pilot.local', 'creator');
 
         Livewire::actingAs($creator)
-            ->test(EditProfile::class)
+            ->test(AccountProfile::class)
             ->fillForm([
                 'password' => 'a-new-long-password',
                 'passwordConfirmation' => 'a-new-long-password',
@@ -89,7 +91,7 @@ class ProfilePageTest extends TestCase
         $admin = $this->user('admin@pilot.local', 'admin');
 
         Livewire::actingAs($admin)
-            ->test(EditProfile::class)
+            ->test(AccountProfile::class)
             ->fillForm(['name' => 'Renamed Admin', 'password' => '', 'passwordConfirmation' => ''])
             ->call('save')
             ->assertHasNoFormErrors();
@@ -97,6 +99,22 @@ class ProfilePageTest extends TestCase
         $admin->refresh();
         $this->assertSame('Renamed Admin', $admin->name);
         $this->assertTrue(Hash::check('password', $admin->password));
+    }
+
+    public function test_uploading_a_photo_saves_it(): void
+    {
+        Storage::fake('public');
+        $admin = $this->user('admin@pilot.local', 'admin');
+
+        Livewire::actingAs($admin)
+            ->test(AccountProfile::class)
+            ->fillForm(['avatar_path' => UploadedFile::fake()->image('new.jpg')])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $admin->refresh();
+        $this->assertNotNull($admin->avatar_path);
+        Storage::disk('public')->assertExists($admin->avatar_path);
     }
 
     private function user(string $email, string $role): User

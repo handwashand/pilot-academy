@@ -403,6 +403,137 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-08 — Settings became a Cluster with tabs; a profile photo; Integrations' Model is a dropdown
+
+**Settings, second attempt.** The owner first asked for one sidebar row that
+opens a dialog with Profile, Translations, Integrations, Mail and Languages.
+That was built (App\Livewire\SettingsPanel, an Action-modal with a vertical
+Tabs schema) and worked, but the owner then asked to go back to a page with
+tabs instead of a modal. Rather than patch the modal, it was replaced with
+Filament's own **Cluster** mechanism (`App\Filament\Clusters\Settings`),
+which is built for exactly this: one sidebar entry, and every member page
+gets a real tab strip across the top
+(`SubNavigationPosition::Top`) with full page navigation — no modal
+machinery, no Action-schema workarounds for Translations' 1,000-row table or
+Mail's confirmation action, because each tab is simply the page it already
+was. `Integrations`, `MailCheck`, `LanguageResource` and `TranslationResource`
+each just gained `protected static ?string $cluster = Settings::class;`
+and dropped their own `getNavigationGroup()`; **`shouldRegisterNavigation()`
+was reverted to its original form on all four** — Filament's
+`registerNavigationItems()` already skips a clustered page in the main
+sidebar unconditionally (`Pages/Page.php` and the Resource `HasNavigation`
+trait both check `getCluster()` first), so the old "return false" I had
+added for the modal attempt was redundant and, worse, would have hidden the
+tabs too (the cluster's tab strip reuses the same method to decide what to
+list). The SettingsPanel Livewire component, its two Blade views, and the
+sidebar's hand-built NavigationItem trigger were deleted outright.
+
+A new `App\Filament\Pages\SettingsProfile` (cluster sort 5, so opening
+**Settings** lands here first — Cluster::mount() redirects to the first tab
+on its own) is the Profile tab: photo, name, email, password, same shape as
+Integrations.php (`form()`/`content()`/`save()`), not reused from anywhere
+else because there was nothing to reuse from.
+
+**docs/admin-guide.md's "menu at a glance" table** collapses the old
+**Settings → Mail / Integrations / Translations** rows into one
+**Settings → General** row (`AdminGuideMenuTest` was extended to skip any
+resource/page with a `getCluster()`, matching what Filament itself excludes
+from the main sidebar — a clustered page's `shouldRegisterNavigation()` can
+be `true` and it still will not appear there). `docs/CHANGELOG.md` describes
+it as tabs across the top, not a dialog — the wording was written once for
+the modal version and had to be corrected, which is itself the reason to
+read a feature's own screen before writing about it, not the plan.
+
+**A profile photo**, for every account type. `users.avatar_path` (nullable
+string). `User implements Filament\Models\Contracts\HasAvatar`; its
+`getFilamentAvatarUrl()` and the new `avatarUrl()` helper are the same
+method — Filament's own topbar/user-menu avatar, the Settings → Profile
+circle, and the student header's account-menu circle all read the one
+helper, so there is nowhere a photo can be saved and not show up. Three
+places needed the upload field, not two, once the account menu's own
+**Profile** link (Filament's stock `->profile()` page) was considered: it
+edits the *same* `avatar_path`, so leaving it without a photo field would
+have meant two "Profile" screens that disagreed. Rather than duplicate
+EditProfile's field set, `App\Filament\Pages\AccountProfile extends
+Filament\Auth\Pages\EditProfile`, overriding only `form()` (prepend a
+`FileUpload::make('avatar_path')->avatar()`) and `handleRecordUpdate()`
+(delete the previous file once the new one is confirmed saved) — everything
+else (rate limiting, multi-factor section, validation) stays the vendor
+page's own code, read once. `AdminPanelProvider` now does
+`->profile(AccountProfile::class, isSimple: false)`.
+`tests/Feature/ProfilePageTest.php` was pointed at `AccountProfile::class`
+instead of the vendor class it had tested directly, since that vendor class
+is no longer what the route actually serves.
+
+On the student site, `ProfileController::update()` takes an `avatar` file
+(`nullable|image|max:2048`), stores it on the `public` disk under
+`avatars/`, and deletes the previous file — the only place in this codebase
+that cleans up a replaced upload; no other `FileUpload` field does this, so
+there is no shared helper to reuse yet. `resources/views/academy/profile.blade.php`
+needed its first `enctype="multipart/form-data"`, a `file:` Tailwind variant
+never used before (confirmed compiled into `public/build/assets/app-*.css`
+afterwards — `grep -c "file\\:mr-3\|file-selector-button"`, not the
+unescaped form, which matches nothing even when the class did compile).
+
+**Testing a Filament `FileUpload` field that already holds a value, with a
+second raw `UploadedFile::fake()`, throws inside Filament's own validation**
+(`BaseFileUpload::getValidationRules()` expects an array and is handed a bare
+`TemporaryUploadedFile`) — reproducible even after explicitly clearing the
+field first. Uploading from an *empty* field works cleanly. The replace-and-
+delete-old-file behavior is real and was proven live in the browser
+(uploaded, saved, re-fetched the database row, found a new path, found the
+old file gone from the fake disk) and is covered by a test on the plain
+Laravel controller side (`StudentProfileTest`, no Filament `FileUpload`
+involved), but the two Filament-side tests
+(`SettingsClusterTest`, `ProfilePageTest`) only assert the first-upload case
+— replacing a Filament-side avatar in a test is a known rough edge to come
+back to, not a product bug.
+
+**Settings navigation no longer reloads the page.** `->spa()` on the panel
+(`AdminPanelProvider`) — Filament's SPA mode, Livewire `wire:navigate`
+throughout. This is panel-wide; Filament has no per-cluster or per-section
+SPA switch, so every internal link in the admin panel benefits, not only the
+Settings tabs that prompted it. Checked for custom Blade views relying on a
+real page load (a plain `<script>` with `DOMContentLoaded`-style logic would
+not re-run on a soft navigation) — none of the render-hook partials
+(`resources/views/filament/*.blade.php`) contain a `<script>` tag at all, so
+there was nothing to convert. Verified live: planted `window.__marker` after
+login, clicked between Settings tabs and other sidebar items, and the
+browser's `load` event never fired again (`page.on('load', …)` count stayed
+at 0) until the next real `page.goto()`.
+
+**Integrations: a provider's Model is a `Select`, not a `TextInput`.**
+ChatGPT's and DeepSeek's cards had an extra field (Model) that Descript's and
+DeepL's do not, which is a real, by-design difference (only the two chat-style
+providers take a model name) — the fix was not to force every card to the
+same shape, but to make the one field that does differ read the same way a
+dropdown reads, rather than inviting a typo'd model name. `AiProvider::PROVIDERS`
+grew a `model_options` array per provider (official current model names);
+blank still means "use the provider's own default", exactly as the text
+field did, so nothing about `AiProvider::persist()`'s save logic changed.
+
+**Verified (run):** full suite in Docker, 551 passed (up from 547 — four new
+tests: one photo-upload test each on `SettingsClusterTest`, `ProfilePageTest`,
+and two on `StudentProfileTest` covering upload-and-replace and a rejected
+non-image file). Pint clean across `app` and `tests` (239 files). Driven live
+in Chrome: logged in, clicked **Settings** → real URL navigation
+(`/admin/settings/settings-profile`) with no full page reload, every tab
+(Profile/Translations/Mail/Integrations, Languages absent — this account has
+no `languages.manage`) confirmed by sampling the body text; uploaded a photo
+on the Settings → Profile tab, saved, confirmed in the database the stored
+path exists on the `public` disk and resolves to a working URL, and confirmed
+on a fresh page load that both the Profile tab's own circle and the topbar
+account-menu avatar show the photo (the one failed selector in an earlier
+screenshot was a test-script bug — `.fi-user-avatar img` instead of
+`img.fi-user-avatar`, since `<x-filament::avatar>` compiles straight to an
+`<img>`, not a wrapper around one). Integrations' Model fields confirmed as
+real dropdowns, both showing "Leave blank to use …" placeholder text.
+**Not verified:** the translated guide copies
+(`docs/learner-guide.{ru,es,fr,pt,ar}.md`) were found to already be missing
+whole sections, including any "Your profile" section — pre-existing
+staleness unrelated to this work, left as found rather than silently
+patched or silently ignored.
+
 ### 2026-10-07 — Integrations page tidied; three things found by the owner testing
 
 **Layout.** The Integrations page is a grid of compact cards (1 / 2 / 3 across),
