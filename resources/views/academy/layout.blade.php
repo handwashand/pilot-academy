@@ -195,7 +195,6 @@
                 @endforeach
             </form>
         @endif
-        Pilot Academy · {{ __t('footer.internal_training') }} ·
         <a href="{{ route('academy.help') }}" class="hover:text-brand">{{ __t('nav.help') }}</a> ·
         <a href="{{ route('academy.privacy') }}" class="hover:text-brand">{{ __t('nav.privacy') }}</a>
     </footer>

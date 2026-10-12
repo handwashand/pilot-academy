@@ -21,11 +21,13 @@
 
             {{-- Contents. Full-width rows so each one is a comfortable tap target
                  on a phone; the sticky header is 64px, hence scroll-mt-20 on the
-                 sections it jumps to. --}}
+                 sections it jumps to. Numbered the same way the home page numbers
+                 its course list — a visual order to follow, not just a list. --}}
             <nav aria-label="{{ __t('help.contents_aria') }}" class="bg-white rounded-2xl border border-slate-200 shadow-sm mt-6 mb-8 divide-y divide-slate-100">
                 @foreach($chapters as $chapter)
                     <a href="#{{ $chapter['id'] }}"
                        class="flex items-center gap-3 px-5 min-h-11 py-2.5 text-slate-700 hover:bg-slate-50 active:bg-slate-100 font-medium">
+                        <span aria-hidden="true" class="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-500">{{ $loop->iteration }}</span>
                         <span class="min-w-0 flex-1">{{ $chapter['heading'] }}</span>
                         <span aria-hidden="true" class="text-slate-400 flex-none">&darr;</span>
                     </a>
@@ -34,8 +36,11 @@
 
             @foreach($chapters as $chapter)
                 <section id="{{ $chapter['id'] }}" class="scroll-mt-20 bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6 mb-5">
-                    <h2 class="text-xl font-extrabold text-navy">{{ $chapter['heading'] }}</h2>
-                    <div class="prose-lesson">{!! $chapter['html'] !!}</div>
+                    <div class="flex items-center gap-3">
+                        <span aria-hidden="true" class="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-gradient-to-br from-brand to-navy text-sm font-extrabold text-white">{{ $loop->iteration }}</span>
+                        <h2 class="text-xl font-extrabold text-navy">{{ $chapter['heading'] }}</h2>
+                    </div>
+                    <div class="prose-lesson mt-3">{!! $chapter['html'] !!}</div>
                 </section>
             @endforeach
 

@@ -418,6 +418,63 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-12 — Four small learner-facing fixes: password visibility, a clearer sign-in error, a numbered Help page, a quieter footer
+
+**Show/hide on every password box.** One reusable
+`academy/partials/password-input.blade.php` (an input plus an eye/eye-slash
+toggle button, same Heroicons outline family as the rest of the site) used
+everywhere a password is typed on the auth pages: Login, Register's two
+boxes, and Reset password's two boxes. One delegated click listener in
+`academy.auth-layout` (`btn.previousElementSibling` finds the input — no id
+bookkeeping needed even with two instances on the same page) toggles
+`type="password"`/`type="text"`, swaps the icon, and updates `aria-label`.
+New `field.show_password` / `field.hide_password` keys, all six languages.
+Checked specifically in Arabic: the icon sits on the correct (start) side in
+RTL because the field uses `ps-4 pe-11` and the button `end-0` — logical
+properties, not `pl-`/`pr-`/`right-`, matching the RTL conversion rule from
+the 2026-10-01 Arabic entry.
+
+**"Wrong email or password."** replaces "These credentials do not match our
+records." in `academy.signup.failed` — still one message for both a bad
+email and a bad password, which is the point: it must not tell an attacker
+which one was wrong. Russian already said this (`Неверная эл. почта или
+пароль.`) before English did; the other four languages were brought in line
+with that existing, better phrasing rather than inventing new wording.
+
+**The Help page is numbered**, not nine identical-weight headings in a row:
+a small grey circle with the number in the contents list, the same number
+in the brand gradient (the exact `bg-gradient-to-br from-brand to-navy`
+treatment the home page's course list already uses for its numbering, not
+a new pattern) beside each section's own heading. Numbered by `$loop
+->iteration`, not by matching against the section's `id` — the id is a
+`Str::slug()` of the heading text, which is different in every language, so
+anything keyed on it would have silently broken for Russian or Arabic. Pure
+presentation; no wording in `docs/learner-guide.md` or its translations
+changed.
+
+**The footer's "Training on the go" tagline is gone**, on every page it
+appeared — both `academy.layout`'s full footer and the new minimal
+`academy.auth-layout` (which never had it to begin with). Just Help ·
+Privacy now. The now-unused `footer.internal_training` key was left in
+place rather than deleted: an admin may already have corrected it in the
+translations table, and an unused key costs nothing sitting there.
+
+**Verified (run):** full suite, 561 passed, 8130 assertions; Pint clean on
+every changed `lang/` file. **The CSS bundle needed a manual
+`npm run build`** before any of this was visible — the Dockerfile has no
+build step (committed `public/build/` only, rebuilt by CI on push), so a
+rebuild without that step would have shown none of the new classes
+(`ps-4`/`pe-11`/the gradient badges) and looked like nothing had changed.
+Driven live in Chrome: typing a password and clicking the eye toggles the
+field to plain text and back, confirmed via the input's own `type`
+attribute, not just a visual read; a deliberately wrong login shows "Wrong
+email or password." in the red box (and confirmed the box's border is
+actually red now, catching the `border-eed-200` typo fixed in the earlier
+auth-layout entry); Arabic login screenshot confirms the eye sits on the
+correct side under RTL; the Help page's numbering holds with no horizontal
+overflow at 1280px, 375px, or in Arabic; the home page footer confirmed
+reading exactly "Help · Privacy" with the tagline gone.
+
 ### 2026-10-12 — A branded 404 page, and a privacy policy that stays one policy
 
 **A 404 page.** No `resources/views/errors/*` existed, so a bad link on the

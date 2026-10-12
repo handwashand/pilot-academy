@@ -340,6 +340,16 @@ Add a new entry here whenever something visible to admins or students changes.
   site header or footer nav competing with the form — just the logo above
   it, a language switcher, and Help/Privacy below. The forms themselves
   are unchanged.
+- **Every password box has a show/hide eye icon**, on sign in, registering,
+  and setting a new password.
+- **"Wrong email or password"** replaces the old "These credentials do not
+  match our records." A failed sign-in still never says which one was
+  wrong — that stays deliberately vague.
+- **The Help page is easier to scan.** Each topic is numbered, in the
+  contents list and above its own heading, instead of nine identical
+  headings in a row.
+- **The footer no longer repeats "Training on the go."** Just Help and
+  Privacy, on every page.
 - **Settings is now one click, not four, and clicking a tab no longer
   reloads the page.** The sidebar's Settings group is a single **Settings**
   row; **Profile**, **Integrations**, **Mail**, **Translations** and
