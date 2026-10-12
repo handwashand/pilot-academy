@@ -403,6 +403,57 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-12 — Descript's language list: select all, or deselect all
+
+The owner's ask: when translating lesson videos with Descript, there should be
+a way to tick one language, two, or all of them, rather than clicking every
+box by hand — a course can easily have five active languages to send a video
+to at once. The text-translation flow (DeepL/ChatGPT/DeepSeek on course and
+lesson content, and quiz questions) was explicitly confirmed fine as-is and
+untouched.
+
+Both language pickers — `TranslateVideoWithDescriptAction::make()` (a lesson's
+**Translate video**) and `::course()` (a course's **Translate lesson
+videos**) — already use a `CheckboxList`, which already let you tick any
+combination by hand. What was missing was the "all of them" affordance, so the
+fix is one method each: `->bulkToggleable()`. This is Filament's own built-in
+`CheckboxList` feature, not new code — it adds a **Select all** / **Deselect
+all** link above the checkboxes, already shipped translated by Filament itself
+into exactly our six active languages (en, ru, es, fr, pt, ar), so no lang file
+changes were needed here.
+
+**It respects the lesson-level picker's `disableOptionWhen`.** A language
+already translated or under way is disabled so it cannot be sent twice (see
+the 2026-10-01 Descript entry); reading Filament's own Alpine component
+(`vendor/filament/forms/resources/js/components/checkbox-list.js`) confirmed
+`toggleAllCheckboxes()` skips any `checkbox.disabled` element, so **Select
+all** on a lesson with a language already done or in flight ticks only the
+languages still available to send — it does not try to re-tick a disabled one.
+
+**Verified (run):** two new regression tests
+(`test_the_language_list_can_be_toggled_all_at_once` in both
+`DescriptVideoTranslationTest` and `CourseTranslationTest`), each mounting the
+action and asserting the modal renders Filament's own "Select all" string —
+so if `->bulkToggleable()` is ever dropped, the suite catches it. Both
+Descript suites plus `IntegrationsTest` and `VideoCaptionsTest` (35 tests, 176
+assertions) passed in Docker against real Postgres; Pint clean on the three
+changed files. The full suite was kicked off afterwards to confirm nothing
+else moved. **Not run live in a browser:** Descript is disabled and no lesson
+has an uploaded video in this local environment, and standing it up (a fake
+token, a seeded upload) was not worth it for what is Filament's own,
+already-proven `bulkToggleable()` component — the Alpine source read above,
+plus the rendered-modal assertion in the new tests, cover the same ground a
+screenshot would.
+
+`docs/CHANGELOG.md` and `docs/admin-guide.md` describe the new link.
+**The translated admin-guide copies (ru/es/fr/pt/ar) were not touched**: their
+Descript sections are already missing whole paragraphs from more recent
+features (the course-level bulk action, the Voice/Subtitles choice — flagged
+as pre-existing staleness in the 2026-10-08 entry above), so patching in one
+more sentence there would have been inconsistent with sections already well
+behind the English master. That backlog is unrelated to this change and is
+left as found, not silently extended.
+
 ### 2026-10-08 — The last untranslatable text: quiz questions and answer options
 
 Everything else content-wise already went through `HasContentTranslations`

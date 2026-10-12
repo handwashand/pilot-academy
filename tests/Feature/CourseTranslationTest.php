@@ -96,6 +96,18 @@ class CourseTranslationTest extends TestCase
         Http::assertNothingSent();
     }
 
+    /** A course can have many active languages — ticking each one by hand does not scale. */
+    public function test_the_language_list_can_be_toggled_all_at_once(): void
+    {
+        $this->descriptOn();
+        $course = $this->courseWithVideos();
+
+        Livewire::actingAs($this->admin(User::PERMISSION_DESCRIPT_TRANSLATE))
+            ->test(EditCourse::class, ['record' => $course->getRouteKey()])
+            ->mountAction('translateCourseVideosWithDescript')
+            ->assertMountedActionModalSee(__('filament-forms::components.checkbox_list.actions.select_all.label'));
+    }
+
     public function test_asking_again_queues_nothing_new(): void
     {
         $this->descriptOn();

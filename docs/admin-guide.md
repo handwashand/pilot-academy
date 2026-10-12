@@ -621,17 +621,20 @@ included automatically with either the Admin or Creator role.
 On a lesson with an uploaded video, the permitted editor can click **Translate
 video**, choose the upload and languages, then tick the acknowledgement that
 the video will be sent to Descript and may use media minutes and AI credits.
+A **Select all** link above the language list ticks every language still
+available in one click (**Deselect all** once they are); a language already
+translated or under way stays unticked either way, since it is not sent again.
 Nothing is sent until **Start translation** is clicked. YouTube links cannot be
 sent. Use **Check progress** until the result is saved; a completed language
 cannot be charged twice.
 
 On a **course**, **Translate lesson videos** does the same for every uploaded
-video in its lessons at once: tick the languages and the acknowledgement, and
-the translations are queued — nothing starts until **Check progress** (or the
-server's scheduled check) moves them along a few at a time. Videos or languages
-already translated or under way are skipped and cost nothing. A finished
-translation also gives the lesson's player subtitles in that language (the
-**CC** button).
+video in its lessons at once, with the same **Select all** / **Deselect all**
+link: tick the languages and the acknowledgement, and the translations are
+queued — nothing starts until **Check progress** (or the server's scheduled
+check) moves them along a few at a time. Videos or languages already
+translated or under way are skipped and cost nothing. A finished translation
+also gives the lesson's player subtitles in that language (the **CC** button).
 
 **Voice or subtitles.** **Translate video** asks what to make. **Voice** dubs
 the video: Descript translates it, speaks it in that language (the speaker's

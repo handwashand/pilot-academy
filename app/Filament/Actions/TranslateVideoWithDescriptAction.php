@@ -64,6 +64,7 @@ class TranslateVideoWithDescriptAction
                     ->helperText(fn (): string => __t('admin_descript.action.languages_help'))
                     ->options(fn (Get $get): array => static::languageOptions($record, (string) $get('video'), (string) $get('kind')))
                     ->disableOptionWhen(fn (string $value, Get $get): bool => static::isTaken($record, (string) $get('video'), $value, (string) $get('kind')))
+                    ->bulkToggleable()
                     ->required()
                     ->columns(2),
 
@@ -135,6 +136,7 @@ class TranslateVideoWithDescriptAction
                 CheckboxList::make('languages')
                     ->label(fn (): string => __t('admin_descript.action.languages'))
                     ->options(static::courseLanguages($record))
+                    ->bulkToggleable()
                     ->required()
                     ->columns(2),
 
