@@ -6,4 +6,6 @@
 return [
     'email' => 'Эл. почта',
     'password' => 'Пароль',
+    'show_password' => 'Показать пароль',
+    'hide_password' => 'Скрыть пароль',
 ];

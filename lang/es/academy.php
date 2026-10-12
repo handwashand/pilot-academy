@@ -274,7 +274,7 @@ return [
         'join_intro' => 'Escribe tu nombre para empezar: tu progreso se guardará.',
         'your_name' => 'Tu nombre',
         'start' => 'Empezar',
-        'failed' => 'Estas credenciales no coinciden con nuestros registros.',
+        'failed' => 'Correo electrónico o contraseña incorrectos.',
         'staff_email' => 'Este correo pertenece a una cuenta del personal: usa Iniciar sesión.',
     ],
 

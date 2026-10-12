@@ -33,8 +33,7 @@
             </div>
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">{{ __t('field.password') }}</label>
-                <input type="password" name="password" required
-                       class="w-full rounded-lg border border-slate-300 px-4 py-2.5 outline-none focus:border-brand">
+                @include('academy.partials.password-input', ['name' => 'password'])
             </div>
             <div class="flex flex-wrap items-center justify-between gap-2">
                 <label class="flex items-center gap-2 text-sm text-slate-600">

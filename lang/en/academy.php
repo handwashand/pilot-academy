@@ -286,7 +286,7 @@ return [
         'join_intro' => 'Enter your name to begin — your progress will be saved.',
         'your_name' => 'Your name',
         'start' => 'Start',
-        'failed' => 'These credentials do not match our records.',
+        'failed' => 'Wrong email or password.',
         'staff_email' => 'This email belongs to a staff account — please use Log in.',
     ],
 

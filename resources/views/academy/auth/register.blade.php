@@ -35,14 +35,12 @@
             </div>
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">{{ __t('academy.signup.password') }}</label>
-                <input type="password" name="password" required
-                       class="w-full rounded-lg border border-slate-300 px-4 py-2.5 outline-none focus:border-brand">
+                @include('academy.partials.password-input', ['name' => 'password'])
                 <p class="text-xs text-slate-400 mt-1">{{ __t('academy.signup.min_8') }}</p>
             </div>
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">{{ __t('academy.signup.confirm_password') }}</label>
-                <input type="password" name="password_confirmation" required
-                       class="w-full rounded-lg border border-slate-300 px-4 py-2.5 outline-none focus:border-brand">
+                @include('academy.partials.password-input', ['name' => 'password_confirmation'])
             </div>
             <button class="w-full rounded-lg bg-brand text-white font-semibold px-5 py-2.5 hover:bg-blue-700">
                 {{ __t('academy.signup.create_account') }}

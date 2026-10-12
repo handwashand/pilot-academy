@@ -6,4 +6,6 @@
 return [
     'email' => 'E-mail',
     'password' => 'Senha',
+    'show_password' => 'Mostrar senha',
+    'hide_password' => 'Ocultar senha',
 ];

@@ -435,54 +435,102 @@ named routes, so they resolve even if the 404 happened on a route that never
 matched at all. New `academy.meta.not_found_title` and `academy.not_found.*`
 keys, in all six languages.
 
-**A privacy policy, written for what this app actually does.** Asked to add
-one "if there is none" — there was none. Before drafting legal text, I
-checked with the owner rather than inventing data-practice claims, who first
-chose to link out to Pilot Telematics' own company-wide policy
-(`https://pilot-telematics.com/blog/users/privacy-policy/`, confirmed live —
-found by search, fetched and read to make sure it was the right page and not
-the unrelated US bookkeeping firm at pilot.com that shares a name), then
-reversed that and asked for a real page specific to the Academy instead.
+**A privacy policy — three revisions in one sitting, each on the owner's
+explicit direction, not guessed at.** Asked to add one "if there is none" —
+there was none. Before drafting legal text, I checked with the owner rather
+than inventing data-practice claims. The owner first chose to link out to
+Pilot Telematics' own company-wide policy; then asked for a real page
+written specifically for the Academy instead, which I drafted from the
+actual schema and code (what `users`/`sessions`/`activity_events` store,
+which third parties ever see anything); then, on seeing it, said it looked
+thin and asked to drop its "Services we use to run the academy" section and
+reproduce the real Pilot Telematics policy's own text here instead of
+either of the first two approaches.
 
-Built the same way the Help page already is, not a new pattern:
-`docs/privacy-policy.md` (+ five translated copies), parsed by the existing
-`AdminGuide::parse()` and cached on file mtime exactly like
+**What shipped is that third version.** `docs/privacy-policy.md` (+ five
+translated copies) now holds Pilot Telematics' actual company privacy
+policy — scope, the real list of personal data collected, purposes, legal
+bases, retention, rights, sharing, automated decisions, complaints, security,
+and the real contact email and physical address — reproduced from
+`https://pilot-telematics.com/blog/users/privacy-policy/`. WebFetch's
+summarizing model would not return verbatim text, so the raw HTML was
+fetched directly and its content div extracted with a small throwaway PHP
+script (written as a file, not a shell `-r`, per the Traps section below —
+Git Bash still mangles Windows paths in an inline one-liner) to get the real
+wording rather than a paraphrase. One framing line was added up front
+("Pilot Academy is one of these Services") since the source policy already
+describes itself as covering every Pilot product and service, Academy
+included — nothing else in the text was altered. **If the source policy
+ever changes, this file (and its five translated copies) must be updated to
+match** — said plainly in both the file's own header comment and in
+[Writing the guides](#writing-the-guides), since letting a reproduced legal
+document silently drift from its original is exactly the kind of mistake
+that costs something later.
+
+Still built the way the Help page already is: parsed by the existing
+`AdminGuide::parse()`, cached on file mtime exactly like
 `AcademyController::help()`, rendered by `academy/privacy.blade.php` with the
-same contents-nav-plus-sections layout as `academy/help.blade.php`. The
-policy's own claims were checked against the schema and code before writing
-them, not assumed: what `users` actually stores (name, email, company_id,
-certificate_name, avatar_path), what `sessions` stores (IP, user agent), what
-`activity_events` logs, and which third parties ever see anything — Descript
-only when an editor starts a video translation, DeepL/ChatGPT/DeepSeek only
-when an admin has switched one on and a translation is drafted, the mail
-provider for certificates/reminders/password resets, Google Fonts for the
-typeface. It says plainly that there is no self-service deletion yet, since
-there isn't one — the request goes to an administrator. One deliberate
-choice to avoid a silent dead link: the intro's reference to "Other Pilot
-products" is plain text, not a `#anchor` link, because `Str::slug()` on a
-translated Cyrillic/Arabic heading is not something to guess at without
-running it — the contents nav above the sections already reaches every
-section without needing a hand-authored anchor.
-
-Linked from the footer next to Help on every page. New `lang/{code}/privacy.php`
-files (the same shape as the existing `help.php`, not nested in
-`academy.php`), plus `nav.privacy`, and `privacy` added to
-`Translator::SHIPPED_GROUPS` so it shows on Settings → Translations and is
-held to the same key-parity tests as every other shipped group — missing
-that step would have passed review but silently failed to surface for admin
-correction.
+same contents-nav-plus-sections layout as `academy/help.blade.php` — just
+widened to `max-w-4xl` (from the `max-w-3xl` the Help page uses), since a
+nine-section legal document read as cramped at that width once there was
+real content to fill it. Linked from the footer next to Help on every page.
+New `lang/{code}/privacy.php` files (the same shape as `help.php`), plus
+`nav.privacy`, and `privacy` added to `Translator::SHIPPED_GROUPS` so it
+shows on Settings → Translations and is held to the same key-parity tests as
+every other shipped group.
 
 **Verified (run):** full suite — 561 passed, 8121 assertions — re-run after
-the policy's final rewrite, not just its earlier link-out version; Pint
-clean. Driven live in Chrome, all ten sections rendering with real content:
-the 404 page returns a real `404` status (not 200) with the branded page and
-no horizontal overflow at 1280px or 375px; the Privacy page's contents nav,
-all ten sections, and the one external link (to Pilot Telematics' own
-policy, inside "Other Pilot products" only — not the page's main content)
-checked in English; Russian confirmed by `Accept-Language: ru` with
-`<html lang="ru">`; Arabic confirmed `dir="rtl"` with the whole page —
-header, bullets, footer language list — correctly mirrored; mobile (375px)
-confirmed no overflow top to bottom.
+this final rewrite, not just the earlier drafts; Pint clean. Driven live in
+Chrome: the 404 page returns a real `404` status (not 200) with the branded
+page and no horizontal overflow at 1280px or 375px; the Privacy page's
+contents nav and all nine sections render the real policy text, the GDPR
+reference, the real contact email and address all present, no leftover
+mention of the dropped "Services we use" section, column confirmed ~1000px
+(up from ~770px), no overflow at 1280px.
+
+### 2026-10-12 — A minimal front door: one auth layout for all five sign-in pages
+
+Asked to refine the sign-in page specifically ("minimalistic, logo outside
+the form"), but Login, Register, Join, Forgot password and Reset password
+all `@extend('academy.layout')` and `@include` the same
+`academy/partials/auth-brand.blade.php` — identical structure, identical
+problem. Doing only Login would have left the other four with the full site
+header (Courses/Case Studies/Tutorials/Webinars nav, a second "Log in"/
+"Register" pair, the language dropdown) stacked above the same logo the
+brand partial already put there, which is what made the page feel cluttered
+in the first place. Fixed all five, not just the one named, and said so
+before doing it rather than after.
+
+`resources/views/academy/partials/head.blade.php` is the `<head>` block
+extracted once out of `academy/layout.blade.php`, so a second layout could
+reuse it without a second copy to keep in sync. `academy/auth-layout.blade.php`
+is the new minimal layout the five auth pages now extend: the logo alone
+above the card (no competing header), the page's own card, then a trimmed
+footer — the language-switcher button row (unchanged, still fully
+functional without the dropdown `<details>` menu that lived in the header)
+and a plain Help · Privacy line, dropping the "Pilot Academy · internal
+training" tagline since the big logo above already says who this is. The
+now-unused `auth-brand.blade.php` partial was deleted rather than left as
+dead code.
+
+**Found and fixed while in these exact five files:** all five had the
+identical copy-pasted typo `border-eed-200` instead of `border-red-200` on
+their error-message box — invisible in practice (an invalid Tailwind class
+just does nothing, so the box still had its `bg-red-50`/`text-red-700`
+colouring from the surrounding classes), but worth fixing since the error
+box's own border was silently never red. Classified as **related**, not
+unrelated-and-left-alone: identical bug, same files, same visit.
+
+**Verified (run):** full suite, 561 passed, 8121 assertions, after the
+`<head>` extraction and the new layout; Pint has no opinion on `.blade.php`
+files (0 files matched, as expected) so the PHP-only lang/controller files
+were checked instead and came back clean. Driven live in Chrome: all four
+of Login/Register/Join/Forgot-password confirmed `200`, no site `<header>`
+element present, no horizontal overflow at 1280px or 375px; Login's mobile
+screenshot confirmed the logo-then-card-then-language-row stack holds up at
+375px; the full site's own pages (home, `/privacy`, the 404 route) spot-
+checked afterward to confirm the `<head>` refactor didn't break the pages
+that still use the full `academy.layout`.
 
 ### 2026-10-12 — Companies are now Partners; sidebar group headings are bold
 

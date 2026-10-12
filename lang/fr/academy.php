@@ -275,7 +275,7 @@ return [
         'join_intro' => 'Saisissez votre nom pour commencer — votre progression sera enregistrée.',
         'your_name' => 'Votre nom',
         'start' => 'Commencer',
-        'failed' => 'Ces identifiants ne correspondent à aucun compte.',
+        'failed' => 'E-mail ou mot de passe incorrect.',
         'staff_email' => 'Cet e-mail appartient à un compte de l’équipe — utilisez Connexion.',
     ],
 

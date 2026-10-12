@@ -36,10 +36,10 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
-- **A privacy policy**, in the footer of every page. It explains what Pilot
-  Academy collects, why, who can see it, and which outside services (your
-  mail provider, and Descript or DeepL/ChatGPT/DeepSeek when an admin turns
-  them on) ever receive any of it.
+- **A privacy policy**, in the footer of every page — Pilot Telematics' own
+  company privacy policy, since Pilot Academy is one of its Services and
+  that policy already covers it: what personal data is collected, why,
+  your rights, how it may be shared, and how to reach the company about it.
 - **A friendlier page when a link is broken or out of date.** Instead of a
   bare error, a page that looks like the rest of the academy, with a way back
   to Home or the course catalogue.
@@ -336,6 +336,10 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Changed
 
+- **Sign in, Register, Join and the password pages are minimal now.** No
+  site header or footer nav competing with the form — just the logo above
+  it, a language switcher, and Help/Privacy below. The forms themselves
+  are unchanged.
 - **Settings is now one click, not four, and clicking a tab no longer
   reloads the page.** The sidebar's Settings group is a single **Settings**
   row; **Profile**, **Integrations**, **Mail**, **Translations** and

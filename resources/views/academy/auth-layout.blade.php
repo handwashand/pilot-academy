@@ -30,5 +30,23 @@
         <a href="{{ route('academy.help') }}" class="hover:text-brand">{{ __t('nav.help') }}</a> ·
         <a href="{{ route('academy.privacy') }}" class="hover:text-brand">{{ __t('nav.privacy') }}</a>
     </footer>
+
+    {{-- Toggles a password field's visibility. Delegated so it works for
+         every academy.partials.password-input on the page (register and
+         reset-password each include it twice) without per-field wiring. --}}
+    <script>
+        document.addEventListener('click', function (event) {
+            var btn = event.target.closest('[data-password-toggle]');
+            if (! btn) return;
+
+            var input = btn.previousElementSibling;
+            var showing = input.type === 'text';
+            input.type = showing ? 'password' : 'text';
+
+            btn.querySelector('[data-icon-show]').classList.toggle('hidden', ! showing);
+            btn.querySelector('[data-icon-hide]').classList.toggle('hidden', showing);
+            btn.setAttribute('aria-label', showing ? btn.dataset.showLabel : btn.dataset.hideLabel);
+        });
+    </script>
 </body>
 </html>

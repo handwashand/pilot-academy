@@ -29,15 +29,13 @@
 
             <div>
                 <label for="password" class="block text-sm font-medium text-slate-700 mb-1">{{ __t('auth.reset.new_password') }}</label>
-                <input id="password" type="password" name="password" required autofocus autocomplete="new-password"
-                       class="w-full rounded-lg border border-slate-300 px-4 py-2.5 outline-none focus:border-brand">
+                @include('academy.partials.password-input', ['name' => 'password', 'autofocus' => true, 'autocomplete' => 'new-password'])
                 <p class="mt-1 text-xs text-slate-500">{{ __t('auth.reset.rule') }}</p>
             </div>
 
             <div>
                 <label for="password_confirmation" class="block text-sm font-medium text-slate-700 mb-1">{{ __t('auth.reset.confirm') }}</label>
-                <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password"
-                       class="w-full rounded-lg border border-slate-300 px-4 py-2.5 outline-none focus:border-brand">
+                @include('academy.partials.password-input', ['name' => 'password_confirmation', 'autocomplete' => 'new-password'])
             </div>
 
             <button class="w-full rounded-lg bg-brand text-white font-semibold px-5 py-2.5 hover:bg-blue-700">
