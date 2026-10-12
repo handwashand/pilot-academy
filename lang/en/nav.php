@@ -7,6 +7,7 @@ return [
     'skip' => 'Skip to content',
     'sections' => 'Sections',
     'help' => 'Help',
+    'privacy' => 'Privacy',
     'certificates' => 'Certificates',
     'logout' => 'Log out',
     'case_studies' => 'Case Studies',

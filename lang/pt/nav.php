@@ -7,6 +7,7 @@ return [
     'skip' => 'Ir para o conteúdo',
     'sections' => 'Seções',
     'help' => 'Ajuda',
+    'privacy' => 'Privacidade',
     'certificates' => 'Certificados',
     'logout' => 'Sair',
     'case_studies' => 'Estudos de caso',

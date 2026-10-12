@@ -7,6 +7,7 @@ return [
     'skip' => 'تخطَّ إلى المحتوى',
     'sections' => 'الأقسام',
     'help' => 'المساعدة',
+    'privacy' => 'الخصوصية',
     'certificates' => 'الشهادات',
     'logout' => 'تسجيل الخروج',
     'case_studies' => 'دراسات الحالة',

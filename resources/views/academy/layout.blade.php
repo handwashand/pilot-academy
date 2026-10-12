@@ -314,7 +314,8 @@
             </form>
         @endif
         Pilot Academy · {{ __t('footer.internal_training') }} ·
-        <a href="{{ route('academy.help') }}" class="hover:text-brand">{{ __t('nav.help') }}</a>
+        <a href="{{ route('academy.help') }}" class="hover:text-brand">{{ __t('nav.help') }}</a> ·
+        <a href="{{ route('academy.privacy') }}" class="hover:text-brand">{{ __t('nav.privacy') }}</a>
     </footer>
 
     {{-- Closes the account and language menus on a tap outside them or on

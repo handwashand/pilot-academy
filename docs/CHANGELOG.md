@@ -36,6 +36,12 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **A Privacy link in the footer.** It points to Pilot Telematics' own privacy
+  policy, which covers the academy too — not a second policy to keep in sync
+  with the company's.
+- **A friendlier page when a link is broken or out of date.** Instead of a
+  bare error, a page that looks like the rest of the academy, with a way back
+  to Home or the course catalogue.
 - **Quiz questions translate too.** **Translate quiz** on a lesson's edit page
   covers its own knowledge check; on a course's **Final questions** tab it
   covers the whole final-quiz bank, including questions used by more than one

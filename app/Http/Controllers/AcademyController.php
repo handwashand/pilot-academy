@@ -773,6 +773,18 @@ class AcademyController extends Controller
         return view('academy.help', ['sections' => $sections]);
     }
 
+    /**
+     * The academy runs on Pilot Telematics' own infrastructure and is covered
+     * by the company's own privacy policy — not a second, separately
+     * maintained one that could drift from it. This page is a short bridge
+     * to that policy, open to everyone, since anonymous visitors use the
+     * academy too.
+     */
+    public function privacy()
+    {
+        return view('academy.privacy');
+    }
+
     public function setName(Request $request)
     {
         $data = $request->validate(['name' => 'required|string|max:60']);

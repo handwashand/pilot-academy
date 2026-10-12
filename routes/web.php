@@ -23,6 +23,7 @@ Route::get('/webinars/{webinar:slug}/join', [WebinarController::class, 'join'])-
 Route::get('/webinars/{webinar:slug}/recording', [WebinarController::class, 'recording'])->name('academy.webinar.recording');
 Route::get('/search', [AcademyController::class, 'search'])->name('academy.search');
 Route::get('/help', [AcademyController::class, 'help'])->name('academy.help');
+Route::get('/privacy', [AcademyController::class, 'privacy'])->name('academy.privacy');
 Route::get('/case-studies', [CaseStudyController::class, 'index'])->name('academy.case-studies.index');
 Route::get('/case-studies/{caseStudy:slug}', [CaseStudyController::class, 'show'])->name('academy.case-studies.show');
 Route::get('/sitemap.xml', [AcademyController::class, 'sitemap'])->name('sitemap');
