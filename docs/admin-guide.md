@@ -340,7 +340,7 @@ What a Creator **cannot** do:
 
 - See or edit any other product's courses or lessons — the rows are not in
   their list, and a direct link does not work either.
-- Open **Users**, **Companies**, **Products** or **Certificates**.
+- Open **Users**, **Partners**, **Products** or **Certificates**.
 - See the dashboard's student numbers or certificate report.
 - Delete anything in bulk, reorder the course list, or delete shared media.
 
@@ -351,10 +351,10 @@ What a Creator **cannot** do:
 > Need to take the rights away? Set their **Role** back to **Learner**, or
 > untick the product. Their courses and lessons stay exactly as they are.
 
-### Add a partner company and a student
+### Add a partner and a student
 
-1. Go to **Companies** → **New company** → enter the name → **Create**.
-2. Then **Users** → **New user** → enter name and email, pick the **Company**, and leave **Is admin** off → **Create**.
+1. Go to **Partners** → **New partner** → enter the name → **Create**.
+2. Then **Users** → **New user** → enter name and email, pick the **Partner**, and leave **Is admin** off → **Create**.
 
 Students can also sign up themselves on the site.
 
@@ -367,10 +367,10 @@ Students can also sign up themselves on the site.
 **Users** opens on tabs across the top: **All users**, **Admins**, **Creators**
 and **Learners**, each with a count. Click one to see only those accounts. There
 are also **Role** and **Product / module** filters if you want to combine them
-with a company.
+with a partner.
 
 > **Learners** is the tab that matters for reporting: every number on the
-> dashboard, and the **Certified** column under Companies, counts learners only.
+> dashboard, and the **Certified** column under Partners, counts learners only.
 > Admin and creator accounts are never included — not their lesson completions,
 > and not the certificates they pick up while previewing a final quiz.
 
@@ -384,7 +384,7 @@ Open **Results → Student feedback** to read every course's feedback in one lis
 (admins only), or open one course (**Courses** → **Edit**) and go to its
 **Student feedback** tab. Once a student finishes a course they are asked
 whether it was useful, and can add a sentence. You see the verdict, who said it,
-their partner company and their comment. Use the **Verdict** filter to read just
+their partner and their comment. Use the **Verdict** filter to read just
 the complaints, and **Course** or **Partner** to narrow it down.
 
 > This is the one report that tells you a course is *bad* rather than *hard*.
@@ -408,7 +408,7 @@ The home screen has these panels:
 | Panel | What it tells you |
 |---|---|
 | The numbers along the top | Students, active students and lesson completions in the selected period, published courses and available lessons, and certificates issued with the average score. A login or learner activity counts; reminder emails and staff activity do not. |
-| **Partner engagement** | Learners, active learners, lesson completions, certificates and last activity for each partner in the selected period. **Open partner** goes straight to that company. A partner with no activity remains visible with zeroes. |
+| **Partner engagement** | Learners, active learners, lesson completions, certificates and last activity for each partner in the selected period. **Open partner** goes straight to that partner. A partner with no activity remains visible with zeroes. |
 | Creator content cards | Creators see totals for Courses, Case Studies, Tutorials and Webinars in their assigned products, split into published, draft and archived. Click a card to open that list. Admins do not see these cards. |
 | **Students who have gone quiet** | Started the named course, completed nothing in that course for two weeks, and has no certificate for that course. Work or a certificate in another course does not hide the row. **Send reminder** emails a link back to their next lesson, or **Open** to see the person. |
 | **Lessons students struggle with** | Lessons ranked by how often students fail the quiz. |
@@ -531,11 +531,11 @@ not change what is printed.
 
 ### Who got a certificate
 
-Open **Certificates**. Each row shows the student, their company, the course, the score, the date, the number, and whether it is **Valid** or **Revoked**. Use the filters at the top to narrow by course, partner, or status.
+Open **Certificates**. Each row shows the student, their partner, the course, the score, the date, the number, and whether it is **Valid** or **Revoked**. Use the filters at the top to narrow by course, partner, or status.
 
-### Coverage by partner company
+### Coverage by partner
 
-Open **Companies**. The **Certified** column shows how many members have a valid certificate out of the total — for example **4 / 10**.
+Open **Partners**. The **Certified** column shows how many members have a valid certificate out of the total — for example **4 / 10**.
 
 ### Is one certificate real?
 

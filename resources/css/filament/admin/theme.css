@@ -140,8 +140,12 @@
     font-size: 0.875rem;       /* was 16px */
 }
 
+/* Filament gives the group labels (Content, People, …) the same font-medium
+   weight as the item labels beneath them — only colour tells them apart, a
+   weak hierarchy signal. Bold sets them apart by weight too. */
 .fi-sidebar-group-label {
     font-size: 0.8125rem;
+    font-weight: 700;
 }
 
 /* Icons shrink with the words, or they start to look like bullets. */
