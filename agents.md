@@ -418,6 +418,72 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-12 — A branded 404 page, and a privacy policy that stays one policy
+
+**A 404 page.** No `resources/views/errors/*` existed, so a bad link on the
+student site fell through to Laravel's bare default — nothing that looked
+like the academy, no way back in. `resources/views/errors/404.blade.php`
+extends `academy.layout` the same way any real page does, so it is picked up
+automatically by Laravel's exception handler with no route or controller
+change: the header, footer, language switcher and account menu all work on
+it exactly as they do everywhere else. Deliberately not a hero-style page —
+matches the existing "empty state" card pattern from `academy/search.blade.php`
+(`bg-white rounded-2xl border border-slate-200 shadow-sm`) scaled up for a
+full-page moment, with a Heroicons face-frown icon in the same outline
+family as the header's nav icons. Two buttons: Home and Courses, both real
+named routes, so they resolve even if the 404 happened on a route that never
+matched at all. New `academy.meta.not_found_title` and `academy.not_found.*`
+keys, in all six languages.
+
+**A privacy policy, written for what this app actually does.** Asked to add
+one "if there is none" — there was none. Before drafting legal text, I
+checked with the owner rather than inventing data-practice claims, who first
+chose to link out to Pilot Telematics' own company-wide policy
+(`https://pilot-telematics.com/blog/users/privacy-policy/`, confirmed live —
+found by search, fetched and read to make sure it was the right page and not
+the unrelated US bookkeeping firm at pilot.com that shares a name), then
+reversed that and asked for a real page specific to the Academy instead.
+
+Built the same way the Help page already is, not a new pattern:
+`docs/privacy-policy.md` (+ five translated copies), parsed by the existing
+`AdminGuide::parse()` and cached on file mtime exactly like
+`AcademyController::help()`, rendered by `academy/privacy.blade.php` with the
+same contents-nav-plus-sections layout as `academy/help.blade.php`. The
+policy's own claims were checked against the schema and code before writing
+them, not assumed: what `users` actually stores (name, email, company_id,
+certificate_name, avatar_path), what `sessions` stores (IP, user agent), what
+`activity_events` logs, and which third parties ever see anything — Descript
+only when an editor starts a video translation, DeepL/ChatGPT/DeepSeek only
+when an admin has switched one on and a translation is drafted, the mail
+provider for certificates/reminders/password resets, Google Fonts for the
+typeface. It says plainly that there is no self-service deletion yet, since
+there isn't one — the request goes to an administrator. One deliberate
+choice to avoid a silent dead link: the intro's reference to "Other Pilot
+products" is plain text, not a `#anchor` link, because `Str::slug()` on a
+translated Cyrillic/Arabic heading is not something to guess at without
+running it — the contents nav above the sections already reaches every
+section without needing a hand-authored anchor.
+
+Linked from the footer next to Help on every page. New `lang/{code}/privacy.php`
+files (the same shape as the existing `help.php`, not nested in
+`academy.php`), plus `nav.privacy`, and `privacy` added to
+`Translator::SHIPPED_GROUPS` so it shows on Settings → Translations and is
+held to the same key-parity tests as every other shipped group — missing
+that step would have passed review but silently failed to surface for admin
+correction.
+
+**Verified (run):** full suite — 561 passed, 8121 assertions — re-run after
+the policy's final rewrite, not just its earlier link-out version; Pint
+clean. Driven live in Chrome, all ten sections rendering with real content:
+the 404 page returns a real `404` status (not 200) with the branded page and
+no horizontal overflow at 1280px or 375px; the Privacy page's contents nav,
+all ten sections, and the one external link (to Pilot Telematics' own
+policy, inside "Other Pilot products" only — not the page's main content)
+checked in English; Russian confirmed by `Accept-Language: ru` with
+`<html lang="ru">`; Arabic confirmed `dir="rtl"` with the whole page —
+header, bullets, footer language list — correctly mirrored; mobile (375px)
+confirmed no overflow top to bottom.
+
 ### 2026-10-12 — Companies are now Partners; sidebar group headings are bold
 
 The owner's ask: rename **Companies** to **Partners** throughout the admin
@@ -2629,9 +2695,16 @@ Notes that will save you time:
 
 ## Writing the guides
 
-Three Markdown files ship inside the product — `docs/CHANGELOG.md`,
-`docs/admin-guide.md`, `docs/learner-guide.md` — and people read them expecting
-them to be true.
+Four Markdown files ship inside the product — `docs/CHANGELOG.md`,
+`docs/admin-guide.md`, `docs/learner-guide.md`, `docs/privacy-policy.md` —
+and people read them expecting them to be true.
+
+**The privacy policy is the one with the highest cost for being wrong.**
+Every claim in it must be something the code actually does, checked against
+the schema and the integrations, not assumed or copied from a generic
+template — see the 2026-10-12 work log entry for how it was written. Adding
+a feature that collects something new, or sends data to a new third party,
+means updating this file in the same change, not later.
 
 **What counts as a change they need:** a new screen, menu item or group; a
 renamed button, field, label or status; a changed rule about who may do what; a

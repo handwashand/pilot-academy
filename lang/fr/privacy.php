@@ -5,9 +5,9 @@
 
 return [
     'title' => 'Politique de confidentialité — Pilot Academy',
-    'meta' => 'Comment Pilot Telematics traite vos données personnelles sur Pilot Academy.',
+    'meta' => 'Ce que Pilot Academy collecte et en fait, et comment nous contacter à ce sujet.',
     'heading' => 'Politique de confidentialité',
-    'body' => 'Pilot Academy est géré par Pilot Telematics, et vos données ici relèvent de la politique de confidentialité de l’entreprise elle-même, et non d’une politique distincte propre à ce site.',
-    'link' => 'Lire la politique de confidentialité de Pilot Telematics',
+    'unavailable' => 'La politique de confidentialité n’est pas disponible pour le moment.',
+    'contents_aria' => 'Sommaire de la politique de confidentialité',
     'back_to_home' => 'Aller à l’accueil',
 ];

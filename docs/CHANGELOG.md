@@ -36,9 +36,10 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
-- **A Privacy link in the footer.** It points to Pilot Telematics' own privacy
-  policy, which covers the academy too — not a second policy to keep in sync
-  with the company's.
+- **A privacy policy**, in the footer of every page. It explains what Pilot
+  Academy collects, why, who can see it, and which outside services (your
+  mail provider, and Descript or DeepL/ChatGPT/DeepSeek when an admin turns
+  them on) ever receive any of it.
 - **A friendlier page when a link is broken or out of date.** Instead of a
   bare error, a page that looks like the rest of the academy, with a way back
   to Home or the course catalogue.

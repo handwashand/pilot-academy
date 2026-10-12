@@ -5,9 +5,9 @@
 
 return [
     'title' => 'Privacy policy — Pilot Academy',
-    'meta' => 'How Pilot Telematics handles your personal data on Pilot Academy.',
+    'meta' => 'What Pilot Academy collects and does with your data, and how to ask us about it.',
     'heading' => 'Privacy policy',
-    'body' => 'Pilot Academy is run by Pilot Telematics, and your data here is covered by the company\'s own privacy policy — not a separate one just for this site.',
-    'link' => 'Read the Pilot Telematics privacy policy',
+    'unavailable' => 'The privacy policy is not available right now.',
+    'contents_aria' => 'Privacy policy contents',
     'back_to_home' => 'Back to Home',
 ];

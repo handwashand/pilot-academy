@@ -774,15 +774,26 @@ class AcademyController extends Controller
     }
 
     /**
-     * The academy runs on Pilot Telematics' own infrastructure and is covered
-     * by the company's own privacy policy — not a second, separately
-     * maintained one that could drift from it. This page is a short bridge
-     * to that policy, open to everyone, since anonymous visitors use the
-     * academy too.
+     * docs/privacy-policy.md, parsed the same way the learner guide is — the
+     * file is the single source of truth, so correcting a claim here means
+     * editing that file, not this method. Open to everyone, since anonymous
+     * visitors use the academy too.
      */
     public function privacy()
     {
-        return view('academy.privacy');
+        $locale = app()->getLocale();
+        $localized = base_path("docs/privacy-policy.{$locale}.md");
+        $path = is_file($localized) ? $localized : base_path('docs/privacy-policy.md');
+
+        $sections = is_file($path)
+            ? Cache::remember(
+                'privacy-policy.'.$locale.'.'.basename($path).'.'.filemtime($path),
+                now()->addDay(),
+                fn (): array => AdminGuide::parse((string) file_get_contents($path)),
+            )
+            : [];
+
+        return view('academy.privacy', ['sections' => $sections]);
     }
 
     public function setName(Request $request)

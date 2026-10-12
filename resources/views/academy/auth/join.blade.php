@@ -1,4 +1,4 @@
-@extends('academy.layout')
+@extends('academy.auth-layout')
 
 @section('title', __t('academy.meta.join_title'))
 
@@ -7,14 +7,12 @@
 @endphp
 
 @section('content')
-    @include('academy.partials.auth-brand')
-
-    <div class="max-w-md mx-auto bg-white rounded-2xl border border-slate-200 shadow-sm p-7 mt-6">
+    <div class="max-w-md mx-auto bg-white rounded-2xl border border-slate-200 shadow-sm p-7">
         <h1 class="text-2xl font-extrabold text-navy mb-1">{{ __t('academy.signup.join_heading') }}</h1>
         <p class="text-slate-500 text-sm mb-6">{{ __t('academy.signup.join_intro') }}</p>
 
         @if($errors->any())
-            <div class="mb-4 rounded-lg bg-red-50 border border-eed-200 text-red-700 text-sm px-4 py-3">
+            <div class="mb-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3">
                 {{ $errors->first() }}
             </div>
         @endif
