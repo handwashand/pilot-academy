@@ -21,6 +21,7 @@ return [
         'register_description' => 'Crea una cuenta en Pilot Academy para hacer los cursos, conservar tu progreso en todos tus dispositivos y obtener tus certificados.',
         'join_title' => 'Unirse — Pilot Academy',
         'join_description' => 'Empieza a aprender en Pilot Academy: escribe tu nombre y comienza las lecciones de monitoreo vehicular Pilot. Tu progreso se guarda a medida que avanzas.',
+        'not_found_title' => 'Página no encontrada — Pilot Academy',
     ],
 
     'nav' => [
@@ -374,5 +375,13 @@ return [
             'adaptation' => 'Cómo los socios pueden adaptar la solución',
             'related' => 'Lecciones de la Academia y documentación relacionadas',
         ],
+    ],
+
+    'not_found' => [
+        'eyebrow' => '404',
+        'heading' => 'No encontramos esa página',
+        'body' => 'Puede que el enlace esté desactualizado o que la página se haya movido. Prueba una de estas opciones.',
+        'home' => 'Ir al inicio',
+        'courses' => 'Ver cursos',
     ],
 ];

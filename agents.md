@@ -418,6 +418,67 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-12 — Companies are now Partners; sidebar group headings are bold
+
+The owner's ask: rename **Companies** to **Partners** throughout the admin
+panel, and add a short description saying these are the integrators of the
+Pilot system. Deliberately a label-only rename — the `Company` model,
+`companies` table, `company_id` foreign keys, relationship and method names,
+and every class/file name under `app/Filament/Resources/Companies/` are
+untouched. Only what an admin reads changed.
+
+**Most of the app already said "Partner"** — the dashboard's partner filter,
+the Certificates table's partner column and filter, the Quiz attempts and
+Student feedback partner filters, and the `CompletionsByCompany` widget's
+heading ("Partner engagement") all already used `admin_common.partner`. The
+rename closed the two places that still said "Company": the resource itself
+(`admin_nav.companies.{nav,one,many}`, and `admin_people.companies.name` —
+the form field, "Company name" → "Partner name") and the Users form's
+partner-select field (`admin_common.company`, used by the field label, the
+Users table column and its filter). All translated into all six languages,
+matching each language's own already-established word for "partner" (found
+by checking `admin_common.partner`'s existing translation rather than
+guessing): Russian партнёр, Spanish socio, French partenaire, Portuguese
+parceiro, Arabic الشريك.
+
+**The list page's description** is `ListCompanies::getSubheading()`, the
+same pattern `ListTranslations` and `MailCheck` already use, reading a new
+`admin_nav.companies.subheading` key — added in all six languages, since
+Filament resource keys are a shipped translation group and an English-only
+key would have broken the translation-parity tests.
+
+**`docs/admin-guide.md`** needed line-by-line judgment, not a find-replace:
+the menu table row, "Companies"/"New company"/"Company" as literal button or
+field names, and the heading `### Add a partner company and a student`
+(checked first for anchor references — none — then simplified to `### Add a
+partner and a student`, since "company" was now redundant with the renamed
+resource) all became "Partner". Two mentions were deliberately left alone:
+"this is training **your company** assigns, not a shop" (the admin's own
+employer, not a Partner record) and the glossary's "A **company** that your
+students belong to" (correct generic English, not a UI-label reference). The
+translated guide copies (ru/es/fr/pt/ar) were not touched — consistent with
+the already-flagged pre-existing staleness noted in the 2026-10-08 Settings
+Cluster entry; a partial one-line patch into guides already behind the
+English master would not have been an improvement.
+
+**Sidebar group headings got their own small fix, asked for separately in
+the same conversation.** Content, People, Results, Docs and Settings were
+`font-medium` — the exact same weight as the item labels beneath them
+(confirmed in Filament's own `sidebar.css`); only a lighter, muted colour
+told them apart, a weak hierarchy signal. `.fi-sidebar-group-label` in
+`resources/css/filament/admin/theme.css` now also sets `font-weight: 700`.
+
+**Verified (run):** full suite, 561 passed, 8056 assertions, including
+`AdminGuideMenuTest` (the guide's `**People → Partners**` row now matches
+the real sidebar label exactly) and the translation-parity suites (the new
+`subheading` key exists with matching structure in all six languages). Pint
+clean across every changed file. Driven live in Chrome: the Partners list
+page shows the bold "Partners" sidebar entry, the breadcrumb, the page
+title, the **New partner** button, and the subheading text exactly as
+written; the body text contains no leftover "Companies"; every sidebar group
+heading renders visibly bolder than its items. **Not done:** the translated
+admin-guide copies, as noted above — a pre-existing, unrelated backlog.
+
 ### 2026-10-12 — Descript's language picker: "Select all" tried, then deliberately reverted
 
 The owner first asked for a way to tick one Descript language, two, or all of

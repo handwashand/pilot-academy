@@ -21,6 +21,7 @@ return [
         'register_description' => 'Crie uma conta na Pilot Academy para fazer os cursos, manter seu progresso em todos os dispositivos e obter seus certificados.',
         'join_title' => 'Participar — Pilot Academy',
         'join_description' => 'Comece a aprender na Pilot Academy: informe seu nome e inicie as aulas de monitoramento veicular Pilot. Seu progresso é salvo conforme você avança.',
+        'not_found_title' => 'Página não encontrada — Pilot Academy',
     ],
 
     'nav' => [
@@ -374,5 +375,13 @@ return [
             'adaptation' => 'Como os parceiros podem adaptar a solução',
             'related' => 'Aulas da Academia e documentação relacionadas',
         ],
+    ],
+
+    'not_found' => [
+        'eyebrow' => '404',
+        'heading' => 'Não encontramos essa página',
+        'body' => 'O link pode estar desatualizado, ou a página pode ter mudado de lugar. Tente uma destas opções.',
+        'home' => 'Ir para o início',
+        'courses' => 'Ver cursos',
     ],
 ];

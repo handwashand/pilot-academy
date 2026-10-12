@@ -33,6 +33,7 @@ return [
         'register_description' => 'Create a Pilot Academy account to take the courses, keep your progress across devices, and earn your certificates.',
         'join_title' => 'Join — Pilot Academy',
         'join_description' => 'Start learning on Pilot Academy — enter your name and begin the Pilot vehicle monitoring lessons. Your progress is saved as you go.',
+        'not_found_title' => 'Page not found — Pilot Academy',
     ],
 
     'nav' => [
@@ -388,5 +389,13 @@ return [
             'adaptation' => 'Ways partners can adapt the solution',
             'related' => 'Related Academy lessons and documentation',
         ],
+    ],
+
+    'not_found' => [
+        'eyebrow' => '404',
+        'heading' => 'We can\'t find that page',
+        'body' => 'The link may be out of date, or the page may have moved. Try one of these instead.',
+        'home' => 'Go to Home',
+        'courses' => 'Browse courses',
     ],
 ];

@@ -22,6 +22,7 @@ return [
         'register_description' => 'Créez un compte Pilot Academy pour suivre les cours, retrouver votre progression sur tous vos appareils et obtenir vos certificats.',
         'join_title' => 'Rejoindre — Pilot Academy',
         'join_description' => 'Commencez à apprendre sur Pilot Academy : saisissez votre nom et lancez les leçons sur le suivi des véhicules Pilot. Votre progression est enregistrée au fur et à mesure.',
+        'not_found_title' => 'Page introuvable — Pilot Academy',
     ],
 
     'nav' => [
@@ -375,5 +376,13 @@ return [
             'adaptation' => 'Comment les partenaires peuvent adapter la solution',
             'related' => 'Leçons de l’Académie et documentation associées',
         ],
+    ],
+
+    'not_found' => [
+        'eyebrow' => '404',
+        'heading' => 'Impossible de trouver cette page',
+        'body' => 'Le lien est peut-être obsolète, ou la page a été déplacée. Essayez plutôt l’une de ces options.',
+        'home' => 'Aller à l’accueil',
+        'courses' => 'Voir les cours',
     ],
 ];
