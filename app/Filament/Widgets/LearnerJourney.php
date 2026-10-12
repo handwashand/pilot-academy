@@ -110,7 +110,10 @@ class LearnerJourney extends ChartWidget
             'datasets' => [[
                 'label' => __t('admin_widgets.journey.learners'),
                 'data' => $data,
-                'backgroundColor' => ['#2563eb', '#0891b2', '#16a34a', '#ca8a04', '#7c3aed'],
+                // One colour, darkest first: the bars already fall from left to
+                // right, and five hues made five unrelated things out of one
+                // journey. Blue and amber are the dashboard's only two colours.
+                'backgroundColor' => ['#1e3a8a', '#1d4ed8', '#2563eb', '#60a5fa', '#93c5fd'],
                 'borderRadius' => 3,
             ]],
             'labels' => [

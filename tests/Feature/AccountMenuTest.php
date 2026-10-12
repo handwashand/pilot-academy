@@ -29,7 +29,7 @@ class AccountMenuTest extends TestCase
 
     public function test_a_signed_in_student_gets_an_account_menu(): void
     {
-        $this->actingAs($this->user(User::ROLE_LEARNER))
+        $response = $this->actingAs($this->user(User::ROLE_LEARNER))
             ->get(route('academy.home'))
             ->assertStatus(200)
             ->assertSee('data-account-menu', false)
@@ -44,6 +44,12 @@ class AccountMenuTest extends TestCase
             ->assertSee('action="'.route('logout').'"', false)
             // Students have no panel to go to.
             ->assertDontSee('href="'.url('/admin').'"', false);
+
+        $this->assertSame(
+            1,
+            substr_count($response->getContent(), 'href="'.route('certificates.index').'"'),
+            'Certificates should appear once, inside the account menu, not as a separate header link.',
+        );
     }
 
     public function test_only_admins_get_a_link_to_the_admin_panel(): void

@@ -52,20 +52,24 @@ class StalledLearners extends TableWidget
                     ->weight('bold')
                     ->description(fn (User $record): ?string => $record->email),
 
+                // Grey has to be said out loud: a badge with no colour falls
+                // back to primary, which is Amber in this panel, and amber here
+                // means "look at this". The partner and the course are context.
                 TextColumn::make('company.name')
                     ->label(__t('admin_common.partner'))
                     ->badge()
+                    ->color('gray')
                     ->placeholder('—'),
 
                 TextColumn::make('stalled_course_title')
                     ->label(__t('admin_common.course'))
                     ->badge()
-                    ->color('warning'),
+                    ->color('gray'),
 
                 TextColumn::make('completed_lessons_count')
                     ->label(__t('admin_widgets.stalled.lessons_done'))
                     ->badge()
-                    ->color('success'),
+                    ->color('info'),
 
                 TextColumn::make('last_completed_at')
                     ->label(__t('admin_widgets.stalled.last_activity'))

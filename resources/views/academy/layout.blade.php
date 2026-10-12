@@ -55,6 +55,28 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        /* The academy reads better a little smaller on a desktop — about what
+           the browser's nine-tenths zoom gives, but only for this site, and
+           without anyone having to set it. Tailwind sizes are in rem, so one
+           number scales the type and the spacing together, and the max-width
+           column narrows with them.
+
+           Phones are deliberately left at the browser's own 16px. Shrinking the
+           root there would shrink every tap target with it: h-11 is 2.75rem,
+           which is 44px at 16px and under 40 once scaled — below the ~44px rule
+           the student site is held to. 768px is the md: breakpoint, so the
+           change starts where the layout stops being a single phone column.
+
+           Written as 0.9em rather than a percentage: on the root element em
+           resolves against the browser's own default, so a reader who has set a
+           larger font still gets one. It also keeps a figure-with-a-percent-sign
+           out of the page source — FinalQuizCertificateTest asserts the public
+           verification page contains no such figure, so that a certificate
+           score cannot leak onto it, and a stylesheet carrying one tripped it. */
+        @media (min-width: 768px) {
+            html { font-size: 0.9em; }
+        }
+
         body { font-family: 'Inter', system-ui, sans-serif; }
         .prose-lesson h2 { font-size: 1.35rem; font-weight: 700; margin: 1.2rem 0 .5rem; color: #0a2540; }
         .prose-lesson h3 { font-size: 1.1rem; font-weight: 700; margin: 1rem 0 .4rem; color: #0a2540; }
@@ -148,8 +170,8 @@
                 @endforeach
             </nav>
 
-            {{-- Everything about you: certificates and your account, or the way
-                 in, and the language button at the very end. --}}
+            {{-- Everything about you: the account menu, or the way in, and the
+                 language button at the very end. --}}
             <div class="flex flex-none md:flex-1 min-w-0 items-center justify-end gap-0.5 sm:gap-3">
                 @auth
                     @php
@@ -160,21 +182,6 @@
                             ->map(fn ($part) => mb_strtoupper(mb_substr($part, 0, 1)))
                             ->implode('');
                     @endphp
-                    {{-- Certificates has to stay reachable on a phone: the word
-                         alone overflows the header below sm:, so the 🎓 used for
-                         certificates elsewhere in the academy carries it there and
-                         the label joins it from sm: up. One link, not two, so
-                         there is nothing to keep in sync.
-
-                         `sm:hidden` is NOT in the committed CSS bundle — hiding
-                         the icon on desktop would silently do nothing. Every class
-                         here was checked against public/build/assets/app-*.css. --}}
-                    <a href="{{ route('certificates.index') }}"
-                       class="flex flex-none items-center gap-2 h-11 px-2 rounded-lg text-sm text-slate-600 hover:text-brand hover:bg-slate-50 active:bg-slate-100 font-medium"
-                       aria-label="{{ __t('nav.certificates') }}">
-                        <span aria-hidden="true">🎓</span>
-                        <span class="hidden sm:block">{{ __t('nav.certificates') }}</span>
-                    </a>
                     {{-- The account menu: who you are signed in as, your profile, the
                          panel for staff, and the way out. It replaced the name, a
                          decorative initial and a Log out button, which also gives the

@@ -344,6 +344,21 @@ Add a new entry here whenever something visible to admins or students changes.
 - **The admin sidebar is slightly narrower on desktop.** Navigation rows are
   shorter horizontally, leaving more room for the page. Row height, group
   spacing and the mobile menu are unchanged.
+- **Certificates now live in the account menu.** The separate certificate link
+  beside your avatar repeated the same destination and crowded the student top
+  bar. Open your account menu and choose **Certificates** instead; the page and
+  all downloads work as before.
+- **The admin menu is more compact.** The sidebar had grown to nineteen items
+  across six groups and ran off the bottom of a normal screen, so you had to
+  scroll the menu to reach **Docs** and **Settings**. The rows are shorter and
+  sit closer together, the gaps between groups are smaller, and the labels and
+  icons are a little smaller — around a quarter less height, so the whole menu
+  is on screen at once with nothing to scroll.
+- **The dashboard is down to two colours.** Blue carries the ordinary numbers,
+  and amber marks only what wants your attention: lessons students keep failing,
+  learners who have gone quiet and have not been reminded, and the reminder
+  buttons themselves. The line under each headline figure is one quiet grey, so
+  the top row reads straight across.
 - **The Dashboard now distinguishes recent activity from historical progress.**
   **Active students** means learners who signed in or worked in the academy
   during the last 30 days; reminder emails and staff activity do not inflate the

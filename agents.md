@@ -981,6 +981,20 @@ asked, and the real shape of a finished job — the owner's step 0.6, then step 
 `CHANGELOG.md` and the admin guides wait for step 9, so they describe what was
 proven.
 
+### 2026-10-01 - Certificates moved out of the student top bar
+
+The signed-in student header no longer repeats **Certificates** beside the
+account avatar. Certificates remain available inside the account menu, and the
+certificate page, downloads, course links, quiz links and dashboard links are
+unchanged. `AccountMenuTest` now proves the header response contains exactly one
+certificate-page link, inside that menu.
+
+The English learner guide and all five localized copies now direct learners to
+the account menu rather than the top bar, and What's new records the visible
+change. Verified in Docker: the focused account-menu, course-header, Help-page
+and changelog tests passed (43 tests, 160 assertions), and Pint passed for the
+changed PHP test.
+
 ### 2026-10-01 — Branches tidied, and the table that described them corrected
 
 Before merging `feature/support-engine-ports` into `laravel`, a `stable` branch
@@ -1320,6 +1334,92 @@ five languages, and `HelpPageTest` caught Help leaving the header.
 
 **Verified:** the whole suite in Docker. Pint clean. `npm run build` for the
 new classes.
+
+### 2026-10-01 — A compact admin sidebar
+
+Nineteen items across six groups came to 1,166px of menu in an 896px nav, so
+the sidebar scrolled while the page beside it did not, and **Docs** was below
+the fold on a laptop. The panel theme now brings the groups list to **831px,
+which fits without scrolling at all**: rows 40px → 30px, items 4px → 1px apart,
+groups 28px → 10px, nav padding 32px → 16px, label type 16px → 14px, group
+headings 13px, and the icons 20px → 18px so they do not end up looking like
+bullets beside the smaller words. The panel is desktop-first and exempt from
+the student site's ~44px tap rule, so a 30px row is a mouse target, not a thumb
+one.
+
+**The class names are not the obvious ones, and the first attempt did nothing
+visible.** Read them off the rendered DOM rather than guessing:
+
+| What you want to space | The element that does it |
+| --- | --- |
+| between groups | `ul.fi-sidebar-nav-groups` |
+| between items in a group | `ul.fi-sidebar-group-items` |
+| a group's label from its items | `li.fi-sidebar-group` |
+| the row itself | `a.fi-sidebar-item-btn` — **`-btn`, not `-button`** |
+
+**The preview container serves the image's `public/build`, not the host's.**
+A rebuilt bundle changes nothing there until it is mounted or copied in
+(`docker cp public/build <container>:/var/www/html/public/`), which is why the
+first measurement after `npm run build` was identical to the one before it.
+
+### 2026-10-01 — The student site renders at 90% on a desktop
+
+The owner reads the academy more comfortably at 85–90% browser zoom and asked
+for that to be the normal. Measuring first showed nothing was actually
+oversized: root and body were the browser's own 16px, `h1` 30px, header 65px.
+What makes it feel large is the column being capped at `max-w-6xl` (1112px) on
+a wide screen, plus Inter's tall x-height.
+
+So: `@media (min-width: 768px) { html { font-size: 90%; } }`, in the layout's
+existing inline `<style>`. Tailwind sizes are rem, so one number takes the type,
+the spacing and the max-width column down together — 14.4px root, `h1` 27px,
+column 1037px.
+
+**Scoped above 768px on purpose.** Shrinking the root everywhere would shrink
+every tap target with it: `h-11` is 2.75rem, 44px at 16px but 39px at 90%,
+under the ~44px rule the student site is held to. Measured after the change:
+44px at 375px and 767px, 40px from 1024px up, where the rule is about a mouse
+rather than a thumb. Nothing below 768px moved at all.
+
+Inline CSS rather than a utility class, so it needs no CI rebuild — and
+`max-w-7xl`, the other way to use a wide screen better, is **not in the
+committed bundle**, so it would have done nothing until CI caught up.
+
+The `/admin` panel is untouched: it has its own layout and stylesheet.
+
+### 2026-10-01 — The dashboard down to two colours
+
+It had seven: blue, cyan, green, yellow and purple in the charts, amber and red
+in the badges, and a different ink under every headline figure. The owner asked
+for the row to read as one, then for the whole dashboard to settle on two.
+
+**Blue is ordinary, amber is attention.** `info` and `warning` for badges —
+`primary` is Amber in this panel, so `warning` is the one amber token and there
+is no third. Blue hexes for charts, with a five-step ramp
+(`#1e3a8a → #93c5fd`) where a chart shows five things, because five hues made
+five unrelated things out of one funnel. Amber only on: lessons students keep
+failing, learners not yet reminded, and the remind actions.
+
+**A stat's colour reaches only the line under the figure and its icon** — the
+blade uses it for the description and for a chart the stat does not have — so
+those `->color()` calls were doing nothing but breaking the row. They are gone,
+and the descriptions fall back to Filament's default grey. `band()` went with
+them: traffic-lighting engagement was its only caller.
+
+**An uncoloured badge is not neutral — it is `primary`, which is Amber here.**
+Removing a colour to make the course name in *Students who have gone quiet*
+read as context turned it amber instead, the opposite of the intent. Grey has
+to be said out loud: `->color('gray')`.
+
+Where colour carried meaning, the words already did too, which is why none was
+lost: the engagement line prints its percentage, the certificates line the
+average score, a creator's card its draft count, and the fail-rate badge its
+own number. The fail-rate banding dropped from three colours to amber-or-plain
+at the same 30% threshold.
+
+**Verified:** Pint clean, the dashboard, creator-role, remind and changelog
+tests pass, and the rendered page reports only `fi-color-info` and
+`fi-color-warning` — no `fi-color-primary` left over.
 
 ### 2026-10-01 — Arabic (ar) as a sixth language
 Added Arabic as the sixth supported language in `LanguageSeeder.php` with `direction => 'rtl'` and Western Arabic numerals (123) as default for better compatibility.
