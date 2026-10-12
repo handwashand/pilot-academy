@@ -9,7 +9,7 @@
 @endphp
 
 @section('content')
-    <div class="max-w-3xl mx-auto">
+    <div class="max-w-4xl mx-auto">
         <h1 class="text-2xl sm:text-3xl font-extrabold text-navy">{{ __t('privacy.heading') }}</h1>
 
         @if($chapters->isEmpty())
