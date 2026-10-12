@@ -16,7 +16,7 @@ return [
     'partner' => 'Socio',
     'name' => 'Nombre',
     'email' => 'Correo electrónico',
-    'company' => 'Empresa',
+    'company' => 'Socio',
     'products' => 'Productos',
     'description' => 'Descripción',
     'score' => 'Puntuación',

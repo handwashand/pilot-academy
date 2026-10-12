@@ -16,4 +16,9 @@ class ListCompanies extends ListRecords
             CreateAction::make(),
         ];
     }
+
+    public function getSubheading(): ?string
+    {
+        return __t('admin_nav.companies.subheading');
+    }
 }

@@ -51,7 +51,7 @@ doing: building the training (**Content**), looking after the people taking it
 | **Content → Media Items** | A shared image library you can reuse as lesson covers. |
 | **Content → Content health** | Everything broken for students right now, each with a link to fix it. A red number beside it means something needs fixing. |
 | **People → Users** | Everyone with an account, and their role. See each student's progress and certificates. |
-| **People → Companies** | Partner companies. Group students and see how many are certified. |
+| **People → Partners** | The organisations that integrate and resell the Pilot system. Group students and see how many are certified. |
 | **Results → Certificates** | Every certificate that was issued. Download, resend, correct the name, or revoke them. |
 | **Results → Final quiz health** | Whether the final quiz is too easy, too hard, or about right. Admins only. |
 | **Results → Quiz attempts** | Every student's quiz attempts. Give one student another attempt when they have run out. Admins only. |

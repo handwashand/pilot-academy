@@ -19,7 +19,7 @@ return [
     'partner' => 'Partner',
     'name' => 'Name',
     'email' => 'Email',
-    'company' => 'Company',
+    'company' => 'Partner',
     'products' => 'Products',
     'description' => 'Description',
     'score' => 'Score',

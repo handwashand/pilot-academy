@@ -10,7 +10,7 @@ return [
     'users' => [
         'password' => 'Password',
         'password_help' => 'Leave blank to keep the current password when editing.',
-        'company_help' => 'Partner company this user belongs to (leave empty for admins).',
+        'company_help' => 'The partner this user belongs to (leave empty for admins).',
         'role' => 'Role',
         'role_help' => 'Admins run the platform. Creators manage the training for their own products only. Learners take courses.',
         'products' => 'Products / modules',
@@ -57,7 +57,7 @@ return [
     ],
 
     'companies' => [
-        'name' => 'Company name',
+        'name' => 'Partner name',
         'region' => 'Region',
         'region_help' => 'e.g. EMEA, LATAM, CIS',
         'industry' => 'Industry',

@@ -48,9 +48,10 @@ return [
         'many' => 'usuários',
     ],
     'companies' => [
-        'nav' => 'Empresas',
-        'one' => 'empresa',
-        'many' => 'empresas',
+        'nav' => 'Parceiros',
+        'one' => 'parceiro',
+        'many' => 'parceiros',
+        'subheading' => 'As organizações que integram e revendem o sistema Pilot. Cada aluno pertence a uma delas.',
     ],
     'certificates' => [
         'nav' => 'Certificados',

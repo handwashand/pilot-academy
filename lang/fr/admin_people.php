@@ -6,7 +6,7 @@ return [
     'users' => [
         'password' => 'Mot de passe',
         'password_help' => 'Laissez vide pour conserver le mot de passe actuel lors de la modification.',
-        'company_help' => 'Entreprise partenaire de cet utilisateur (laissez vide pour les administrateurs).',
+        'company_help' => 'Le partenaire auquel appartient cet utilisateur (laissez vide pour les administrateurs).',
         'role' => 'Rôle',
         'role_help' => 'Les administrateurs gèrent la plateforme. Les créateurs gèrent uniquement la formation de leurs propres produits. Les apprenants suivent les cours.',
         'products' => 'Produits / modules',
@@ -53,7 +53,7 @@ return [
     ],
 
     'companies' => [
-        'name' => 'Nom de l’entreprise',
+        'name' => 'Nom du partenaire',
         'region' => 'Région',
         'region_help' => 'par ex. EMEA, LATAM, CIS',
         'industry' => 'Secteur',

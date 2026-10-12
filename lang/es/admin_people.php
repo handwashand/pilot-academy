@@ -6,7 +6,7 @@ return [
     'users' => [
         'password' => 'Contraseña',
         'password_help' => 'Déjalo vacío para mantener la contraseña actual al editar.',
-        'company_help' => 'Empresa socia a la que pertenece este usuario (déjalo vacío para administradores).',
+        'company_help' => 'El socio al que pertenece este usuario (déjalo vacío para administradores).',
         'role' => 'Rol',
         'role_help' => 'Los administradores gestionan la plataforma. Los creadores gestionan solo la formación de sus propios productos. Los estudiantes hacen los cursos.',
         'products' => 'Productos / módulos',
@@ -53,7 +53,7 @@ return [
     ],
 
     'companies' => [
-        'name' => 'Nombre de la empresa',
+        'name' => 'Nombre del socio',
         'region' => 'Región',
         'region_help' => 'p. ej. EMEA, LATAM, CIS',
         'industry' => 'Sector',

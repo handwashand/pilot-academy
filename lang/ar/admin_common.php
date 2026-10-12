@@ -19,7 +19,7 @@ return [
     'partner' => 'الشريك',
     'name' => 'الاسم',
     'email' => 'البريد الإلكتروني',
-    'company' => 'الشركة',
+    'company' => 'الشريك',
     'products' => 'المنتجات',
     'description' => 'الوصف',
     'score' => 'النتيجة',

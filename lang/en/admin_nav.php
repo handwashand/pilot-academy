@@ -52,9 +52,10 @@ return [
         'many' => 'users',
     ],
     'companies' => [
-        'nav' => 'Companies',
-        'one' => 'company',
-        'many' => 'companies',
+        'nav' => 'Partners',
+        'one' => 'partner',
+        'many' => 'partners',
+        'subheading' => 'The organisations that integrate and resell the Pilot system. Your students each belong to one.',
     ],
     'certificates' => [
         'nav' => 'Certificates',
