@@ -385,17 +385,6 @@ class DescriptVideoTranslationTest extends TestCase
         $this->assertSame(1, $this->callsTo('POST', 'jobs/import/project_media'));
     }
 
-    /** With several languages to tick, "Select all" / "Deselect all" beats ticking each one by hand. */
-    public function test_the_language_list_can_be_toggled_all_at_once(): void
-    {
-        $lesson = $this->lesson();
-
-        Livewire::actingAs($this->descriptEditor())
-            ->test(EditLesson::class, ['record' => $lesson->getRouteKey()])
-            ->mountAction('translateVideoWithDescript')
-            ->assertMountedActionModalSee(__('filament-forms::components.checkbox_list.actions.select_all.label'));
-    }
-
     public function test_check_progress_finishes_the_work(): void
     {
         $lesson = $this->lesson();

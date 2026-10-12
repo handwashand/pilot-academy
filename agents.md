@@ -206,6 +206,21 @@ The Filament `/admin` panel is desktop-first and exempt.
 - If the requested approach conflicts with the architecture, security, data
   integrity or existing product behaviour, say so and recommend the smallest
   safer alternative.
+- **Don't be a yes-man.** A request can sound like an obviously-good, small
+  nicety and still cut against a deliberate design decision that isn't
+  visible from the code alone — only from asking why the gap is there.
+  Before building, check whether the gap is intentional (this file's
+  Decisions and Work log, nearby comments, the tests pinning behaviour), and
+  when still unsure, ask the user directly rather than building first and
+  finding out after. Case in point, 2026-10-12: asked to let an admin
+  "select all" languages at once on the Descript video-translation screen —
+  built it, verified it, and only then learned from the user that the
+  one-at-a-time friction was deliberate, to stop credits being burned
+  translating into languages nobody needs yet. A question first would have
+  caught that before the build-and-revert round trip.
+- Analyse out loud before reaching for Edit/Write on anything non-trivial:
+  say what you found and what you're about to do, so the user can correct
+  course while it is still cheap to, not after the diff exists.
 
 ### Definition of done
 
@@ -403,56 +418,40 @@ Newest first.
 
 Newest first. Add to this every time.
 
-### 2026-10-12 — Descript's language list: select all, or deselect all
+### 2026-10-12 — Descript's language picker: "Select all" tried, then deliberately reverted
 
-The owner's ask: when translating lesson videos with Descript, there should be
-a way to tick one language, two, or all of them, rather than clicking every
-box by hand — a course can easily have five active languages to send a video
-to at once. The text-translation flow (DeepL/ChatGPT/DeepSeek on course and
-lesson content, and quiz questions) was explicitly confirmed fine as-is and
-untouched.
+The owner first asked for a way to tick one Descript language, two, or all of
+them on **Translate video** / **Translate lesson videos**, rather than
+clicking every box by hand. That was built with Filament's own built-in
+`CheckboxList::bulkToggleable()` — a **Select all** / **Deselect all** link
+above the checkboxes, already shipped translated into our six languages — and
+verified (two passing regression tests, the full suite green, Pint clean).
 
-Both language pickers — `TranslateVideoWithDescriptAction::make()` (a lesson's
-**Translate video**) and `::course()` (a course's **Translate lesson
-videos**) — already use a `CheckboxList`, which already let you tick any
-combination by hand. What was missing was the "all of them" affordance, so the
-fix is one method each: `->bulkToggleable()`. This is Filament's own built-in
-`CheckboxList` feature, not new code — it adds a **Select all** / **Deselect
-all** link above the checkboxes, already shipped translated by Filament itself
-into exactly our six active languages (en, ru, es, fr, pt, ar), so no lang file
-changes were needed here.
+**Then the owner clarified the actual design intent, and asked for it to be
+removed again.** The per-language checkbox list is deliberately *not* a
+bulk-select surface: the whole point of this flow is to translate a lesson
+video into a language **as it is actually needed**, one at a time, precisely
+so nobody burns Descript credits dubbing a video into all five active
+languages at once when most of them may never be watched. A **Select all**
+link — even opt-in, even with the cost-acknowledgement checkbox still in
+place — nudges toward exactly the bulk behaviour the feature exists to avoid.
+**`->bulkToggleable()` was removed from both pickers**
+(`app/Filament/Actions/TranslateVideoWithDescriptAction.php`), the two
+regression tests that pinned it were deleted, and the `docs/CHANGELOG.md` /
+`docs/admin-guide.md` lines describing it were reverted. Net effect: no
+change from before this entry.
 
-**It respects the lesson-level picker's `disableOptionWhen`.** A language
-already translated or under way is disabled so it cannot be sent twice (see
-the 2026-10-01 Descript entry); reading Filament's own Alpine component
-(`vendor/filament/forms/resources/js/components/checkbox-list.js`) confirmed
-`toggleAllCheckboxes()` skips any `checkbox.disabled` element, so **Select
-all** on a lesson with a language already done or in flight ticks only the
-languages still available to send — it does not try to re-tick a disabled one.
-
-**Verified (run):** two new regression tests
-(`test_the_language_list_can_be_toggled_all_at_once` in both
-`DescriptVideoTranslationTest` and `CourseTranslationTest`), each mounting the
-action and asserting the modal renders Filament's own "Select all" string —
-so if `->bulkToggleable()` is ever dropped, the suite catches it. Both
-Descript suites plus `IntegrationsTest` and `VideoCaptionsTest` (35 tests, 176
-assertions) passed in Docker against real Postgres; Pint clean on the three
-changed files. The full suite was kicked off afterwards to confirm nothing
-else moved. **Not run live in a browser:** Descript is disabled and no lesson
-has an uploaded video in this local environment, and standing it up (a fake
-token, a seeded upload) was not worth it for what is Filament's own,
-already-proven `bulkToggleable()` component — the Alpine source read above,
-plus the rendered-modal assertion in the new tests, cover the same ground a
-screenshot would.
-
-`docs/CHANGELOG.md` and `docs/admin-guide.md` describe the new link.
-**The translated admin-guide copies (ru/es/fr/pt/ar) were not touched**: their
-Descript sections are already missing whole paragraphs from more recent
-features (the course-level bulk action, the Voice/Subtitles choice — flagged
-as pre-existing staleness in the 2026-10-08 entry above), so patching in one
-more sentence there would have been inconsistent with sections already well
-behind the English master. That backlog is unrelated to this change and is
-left as found, not silently extended.
+**Worth remembering for next time this area is touched:** do not re-add a
+bulk "select all languages" convenience to either Descript language picker,
+even if asked for only a UI nicety — check with the owner first, since the
+one-at-a-time friction is the safeguard, not an oversight. The existing
+`disableOptionWhen` (a language already translated or in flight cannot be
+re-ticked) and the required cost-acknowledgement checkbox remain the only
+guards, and that is intentional. The course-level **Translate lesson videos**
+action already lets you tick several languages for every video in a course in
+one request — that bulk-across-videos behaviour predates this entry and
+was not part of this round's question, but it is the same risk in a
+different shape and is worth keeping in mind if this area comes up again.
 
 ### 2026-10-08 — The last untranslatable text: quiz questions and answer options
 

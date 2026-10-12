@@ -62,11 +62,6 @@ Add a new entry here whenever something visible to admins or students changes.
   when the video has one it can copy, otherwise a stock voice. A voice uses more
   AI credits than subtitles, and each dubbed language is a full extra video file
   on the server.
-- **Select all the languages at once.** The language list on **Translate
-  video** and **Translate lesson videos** now has a **Select all** /
-  **Deselect all** link above it, so sending a video to every active language
-  does not mean ticking each box by hand. A language already translated or
-  under way still cannot be ticked, select-all included.
 - **Download a lesson video.** Admins get a **Download video** button under each
   uploaded lesson video. A learner gets it only when an admin ticks **Download
   lesson videos** for their account under **People → Users → Extra
