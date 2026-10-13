@@ -418,6 +418,28 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-13 — Help page: full width, with the contents pinned beside it
+
+The owner tested the numbered Help page and said it was still hard to
+navigate and too narrow. Both came from the same thing: a `max-w-3xl` column
+with the contents list only at the top, so jumping to another topic meant
+scrolling back up.
+
+`academy/help.blade.php` now uses the lesson page's own layout
+(`grid lg:grid-cols-[1fr_280px]`, `aside` with `lg:sticky lg:top-20
+self-start`) rather than a new pattern. The contents `aside` is first in the
+markup, so a phone shows it above the topics, and `lg:order-2` moves it to
+the side from `lg:` up. No wording changed and no lang key was added:
+`help.contents_aria` is reused as the box's visible heading. No scroll-spy —
+nothing else on the student site uses one.
+
+**Verified (run):** full suite 561 passed, 8130 assertions. In Chrome at
+1440px the contents box stays in view after scrolling 1200px; no sideways
+scroll at 1440px, 375px or in Arabic, where the box moves to the left.
+`npm run build` was needed first, as before. **Noticed, not changed:** the
+Arabic Help guide has six topics where English has nine — the translated
+guide is behind, as earlier entries already record.
+
 ### 2026-10-12 — Four small learner-facing fixes: password visibility, a clearer sign-in error, a numbered Help page, a quieter footer
 
 **Show/hide on every password box.** One reusable

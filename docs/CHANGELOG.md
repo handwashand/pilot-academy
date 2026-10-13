@@ -345,9 +345,10 @@ Add a new entry here whenever something visible to admins or students changes.
 - **"Wrong email or password"** replaces the old "These credentials do not
   match our records." A failed sign-in still never says which one was
   wrong — that stays deliberately vague.
-- **The Help page is easier to scan.** Each topic is numbered, in the
-  contents list and above its own heading, instead of nine identical
-  headings in a row.
+- **The Help page is easier to get around.** It uses the full width of the
+  page, and the list of topics stays beside what you are reading as you
+  scroll, so you can jump to another topic without going back to the top. On
+  a phone the list sits above the topics. Each topic is numbered.
 - **The footer no longer repeats "Training on the go."** Just Help and
   Privacy, on every page.
 - **Settings is now one click, not four, and clicking a tab no longer
