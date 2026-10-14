@@ -60,7 +60,7 @@ doing: building the training (**Content**), looking after the people taking it
 | **Docs → What's new** | Everything that has changed in the academy, newest first. Search it, filter it by category, or open it as a PDF. |
 | **Settings → General** | The academy's own setup: **Profile**, **Integrations**, **Mail**, **Translations**, **Languages** and **Recycle bin** (restore deleted content — needs its own permission), as tabs across the top of the page rather than separate menu items. Profile: your own name, email and password. Integrations: add the API token for Descript, DeepL, ChatGPT or DeepSeek and switch each on (admins only). People you grant **Draft translations with DeepL** or **… with ChatGPT or DeepSeek** (under **People → Users → Extra permissions**) then find **Translate** turned into a menu — **Translate by hand** or **Translate with …** for each provider that is on. After a confirmation the Translate window opens with the empty boxes drafted for you to review; nothing is saved until you press **Save translations**. Mail: are emails arriving? Admins, and anyone given **Check mail delivery**. Translations: the wording students see, in every language — correct any of it without waiting for a developer. Admins only. Languages: add a language or change which ones are offered — needs its own permission. |
 
-Students have their own guide on the public site: **Help**, the **?** in the top bar. Point a stuck student there first — it covers what finishes a lesson, when the final quiz unlocks, and where certificates are.
+Students have their own guide on the public site: **Help**, in the account menu and at the foot of every page. Point a stuck student there first — it covers what finishes a lesson, when the final quiz unlocks, and where certificates are.
 
 ---
 
@@ -381,7 +381,7 @@ What a Creator **cannot** do:
 ### Add a partner and a student
 
 1. Go to **Partners** → **New partner** → enter the name → **Create**.
-2. Then **Users** → **New user** → enter name and email, pick the **Partner**, and leave **Is admin** off → **Create**.
+2. Then **Users** → **New user** → enter name and email, pick the **Partner**, and leave **Role** on **Learner** → **Create**.
 
 Students can also sign up themselves on the site.
 

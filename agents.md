@@ -420,6 +420,40 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-14 — The five translated admin guides are full translations now
+
+Until today `docs/admin-guide.{ru,es,fr,pt,ar}.md` were short summaries,
+1,500 words against the English 7,900, and their menu tables still said
+"Companies" and listed **Integrations** in the sidebar. **Only the English
+guide's menu table is tested** (`AdminGuideMenuTest` reads `admin-guide.md`
+alone), which is how the others drifted unnoticed. The owner asked for full
+translations; all five now follow the English guide section for section — 12
+sections, 24 subsections, the same 11 tables.
+
+**How the button names were kept exact:** every **bold** term in the English
+guide was matched to its key in `lang/en/*.php`, and that key's value in each
+language was used — so the guides say what the screens say. Filament's own
+buttons (**New …**, **Create**, **Edit**, **Save changes**, the dashboard's
+name) come from Filament's language files, and they differ in a way that is
+easy to get wrong: Russian and French "New …" is just **Создать** / **Créer**,
+Spanish, Portuguese and Arabic add the record name; and the app's `pt` uses
+Filament's European `pt` folder (**Guardar alterações**, **Painel de
+Controlo**), not `pt_BR`, while our own strings are Brazilian.
+
+Two stale lines in the English guide were fixed on the way: **Help** is no
+longer "the ? in the top bar" (it moved to the account menu and footer on
+2026-09-29), and a new student no longer has an **Is admin** switch (the user
+form has **Role**). `AdminGuidePageTest` looked for the old Portuguese opening
+line, so it now looks for the new one.
+
+**Not done:** a native-speaker read. This is machine translation of a guide
+admins follow step by step; the button names are exact, the prose is not
+reviewed. **When the English guide changes, the five copies must change with
+it** — nothing will fail if they do not.
+
+**Verified (run):** each guide parses into the same 13 sections on the Guide
+page; full suite 593 passed.
+
 ### 2026-10-14 — Lesson text from a Markdown file; slugs that follow the title
 
 Asked first which format and where: the owner chose Markdown only, questions

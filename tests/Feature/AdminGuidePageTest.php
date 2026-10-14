@@ -97,7 +97,7 @@ class AdminGuidePageTest extends TestCase
             ->withHeader('Accept-Language', 'pt-BR,pt;q=0.9,en;q=0.8')
             ->get('/admin/admin-guide')
             ->assertStatus(200)
-            ->assertSee('Guia para criar cursos')
+            ->assertSee('Como criar um curso')
             ->assertSee('Início rápido');
     }
 
