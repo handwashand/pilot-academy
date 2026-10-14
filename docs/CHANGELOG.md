@@ -36,6 +36,19 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **Deleted content can be restored.** Deleting a course, lesson, final-quiz
+  question, case study, tutorial, webinar, product or media item now hides it
+  instead of removing it. **Settings → General → Recycle bin** lists what was
+  deleted, by kind, with a **Restore** button. It is for admins who are given
+  **Open the recycle bin and restore deleted content** under **People → Users →
+  Extra permissions**. Users and partners are the exception: deleting one is
+  still final.
+- **Deleting a course no longer deletes its lessons.** They stay under
+  **Content → Lessons** as **Not in any course**, and the course's
+  certificates, quiz attempts and feedback are kept too.
+- **A lesson can be written before it has a course.** **New lesson** under
+  **Content → Lessons** no longer insists on a course; choose one now or
+  later. Students see the lesson once it is in a published course.
 - **A course's final quiz can be uploaded from an Excel file.** On the
   course's **Final questions** tab, **Upload from Excel** offers an example
   file to download and fill in — one row per question, with its answers and
@@ -349,6 +362,11 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Changed
 
+- **The course and lesson forms are laid out in two columns.** The writing —
+  title, description, videos, lesson text, questions — is on the left, and a
+  **Settings** box on the right holds status, language, web address, order,
+  duration and the rest. The same fields as before, in a shorter page with
+  no small field stretched across the whole screen.
 - **Sign in, Register, Join and the password pages are minimal now.** No
   site header or footer nav competing with the form — just the logo above
   it, a language switcher, and Help/Privacy below. The forms themselves

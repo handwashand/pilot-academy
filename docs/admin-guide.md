@@ -58,7 +58,7 @@ doing: building the training (**Content**), looking after the people taking it
 | **Results → Student feedback** | What students said about every course, in one list. Admins only. |
 | **Docs → Guide** | This guide, with a contents list and a search box. |
 | **Docs → What's new** | Everything that has changed in the academy, newest first. Search it, filter it by category, or open it as a PDF. |
-| **Settings → General** | The academy's own setup: **Profile**, **Integrations**, **Mail**, **Translations** and **Languages**, as tabs across the top of the page rather than separate menu items. Profile: your own name, email and password. Integrations: add the API token for Descript, DeepL, ChatGPT or DeepSeek and switch each on (admins only). People you grant **Draft translations with DeepL** or **… with ChatGPT or DeepSeek** (under **People → Users → Extra permissions**) then find **Translate** turned into a menu — **Translate by hand** or **Translate with …** for each provider that is on. After a confirmation the Translate window opens with the empty boxes drafted for you to review; nothing is saved until you press **Save translations**. Mail: are emails arriving? Admins, and anyone given **Check mail delivery**. Translations: the wording students see, in every language — correct any of it without waiting for a developer. Admins only. Languages: add a language or change which ones are offered — needs its own permission. |
+| **Settings → General** | The academy's own setup: **Profile**, **Integrations**, **Mail**, **Translations**, **Languages** and **Recycle bin** (restore deleted content — needs its own permission), as tabs across the top of the page rather than separate menu items. Profile: your own name, email and password. Integrations: add the API token for Descript, DeepL, ChatGPT or DeepSeek and switch each on (admins only). People you grant **Draft translations with DeepL** or **… with ChatGPT or DeepSeek** (under **People → Users → Extra permissions**) then find **Translate** turned into a menu — **Translate by hand** or **Translate with …** for each provider that is on. After a confirmation the Translate window opens with the empty boxes drafted for you to review; nothing is saved until you press **Save translations**. Mail: are emails arriving? Admins, and anyone given **Check mail delivery**. Translations: the wording students see, in every language — correct any of it without waiting for a developer. Admins only. Languages: add a language or change which ones are offered — needs its own permission. |
 
 Students have their own guide on the public site: **Help**, the **?** in the top bar. Point a stuck student there first — it covers what finishes a lesson, when the final quiz unlocks, and where certificates are.
 
@@ -139,9 +139,14 @@ lists every lesson in that course.
   is in no course: students stop seeing it, and it stays under
   **Content → Lessons** with its questions and student progress. Find these with
   the **Not in any course** filter there, and put one back with **Add existing
-  lesson** on any course — that course then owns it. Until then it still
-  belongs to the course it was removed from, so deleting that course deletes
-  the lesson too.
+  lesson** on any course — that course then owns it.
+
+> **A lesson does not need a course.** Under **Content → Lessons**, **New
+> lesson** lets you leave **Courses** empty and choose one later; students do
+> not see the lesson until it is in a published course. A creator sees the
+> course-less lessons they wrote themselves. **Deleting a course does not
+> delete its lessons** either: they become **Not in any course**, and only an
+> admin can pick those up.
 
 > **A lesson can be in more than one course.** Adding an existing lesson shares
 > it: it stays in the courses it is already in. It is the same lesson
@@ -665,6 +670,37 @@ Without that right the button is absent and the player's own download entry is
 hidden. Uploaded files are still served to the browser to be played, so this
 keeps honest people from downloading; it is not copy protection. YouTube videos
 cannot be downloaded.
+
+## Deleting and the recycle bin
+
+Deleting a course, lesson, final-quiz question, case study, tutorial, webinar,
+product or media item **hides** it; it is not removed. It disappears from the
+panel and from the student site at once, and can be brought back.
+
+- **A deleted course** keeps its students' certificates, attempts and feedback.
+  Its lessons are not deleted: one that is also in another course stays there,
+  and the rest become **Not in any course** under **Content → Lessons**.
+- **A deleted lesson** takes its questions out of every final quiz.
+- **A deleted product or image** is cleared from the courses and lessons that
+  used it, exactly as before.
+- **Users and partners are different: deleting one is final.** Nothing of them
+  is kept, so a person who asks for their data to be erased has it erased.
+
+**To restore something**, open **Settings → General → Recycle bin**, choose the
+kind of content in the row of tabs, and press **Restore** on its line. A
+restored course brings its lessons back; a restored lesson brings its questions
+back. A restored product or image comes back on its own — put it on the courses
+or lessons again by hand.
+
+The Recycle bin is for admins who were given the right. An admin opens the
+person's account under **People → Users**, ticks **Open the recycle bin and
+restore deleted content** under **Extra permissions**, and saves. Being an
+admin is not enough by itself.
+
+Nothing can be deleted for good from the panel. A deleted course, case study,
+tutorial, webinar or product also keeps its web address (slug) reserved, so a
+new one cannot reuse it until the old one is restored or removed from the
+database.
 
 ## Translating text with DeepL, ChatGPT or DeepSeek
 

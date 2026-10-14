@@ -149,6 +149,7 @@ class LessonForm
 
                     Section::make(__t('admin_lessons.form.quiz_section'))
                         ->description(__t('admin_lessons.form.quiz_help'))
+                        ->columns(2)
                         ->schema([
                             TextInput::make('quiz_time_limit_minutes')
                                 ->label(__t('admin_lessons.form.time_limit'))
@@ -170,6 +171,7 @@ class LessonForm
                                 ->collapsed()
                                 ->defaultItems(0)
                                 ->addActionLabel(__t('admin_lessons.form.add_question'))
+                                ->columnSpanFull()
                                 ->schema([
                                     Textarea::make('prompt')
                                         ->label(__t('admin_common.question'))

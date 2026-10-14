@@ -400,7 +400,8 @@ Newest first.
 
 | Date | Decision |
 | --- | --- |
-| 2026-10-14 | **A lesson may be in no course.** Removing a lesson from its only course keeps it (owner's choice over deleting it), unassigned, under Lessons. `lessons.course_id` stays NOT NULL and stays the owner; only the `course_lesson` link goes. A final quiz file upload **adds** to the bank, never replaces it. |
+| 2026-10-14 | **Deleted content is hidden, not removed** (`deleted_at`): courses, lessons, questions, case studies, tutorials, webinars, products, media items. **Users and partners are still deleted for real**, so a privacy erasure request is honoured. Restoring is the per-account right `recycle_bin.manage`, admins only and not automatic; **there is no permanent delete in the panel**. |
+| 2026-10-14 | **A lesson does not need a course**, at creation or after. `lessons.course_id` is nullable. A course-less lesson belongs to the creator who wrote it (`created_by`); one left by a deleted course is an admin's. Deleting a course never deletes its lessons. A final quiz file upload **adds** to the bank, never replaces it. The lesson-creation *flow* stays as it is; only the form's layout changed (owner asked for a side column). |
 | 2026-10-07 | **ChatGPT, DeepSeek and DeepL tokens are managed by admins under Settings → Integrations** and stored encrypted in the database, instead of the server `.env` — the owner's explicit request, unlike mail and Descript. Tokens are write-only in the UI; only fixed official provider addresses are used; the rights `deepl.translate` / `ai.translate` decide who may spend them. |
 | 2026-10-02 | **Descript video translation is assigned per account.** The server environment connects the optional integration; `descript.translate` controls who may spend its credits, and every start requires an acknowledgement. Neither Admin nor Creator receives the right automatically. Underlord can edit project scripts, but its beta project/prompt/export API is not a stable general text-translation service for Academy fields. |
 | 2026-10-02 | **Descript supplements manual translation; it never replaces it.** A lesson keeps its existing manual **Translate** action for editor-written content. Descript has a separate, conditional video-translation action and must not hide, rename or trigger the manual workflow. |
@@ -418,6 +419,65 @@ Newest first.
 ## Work log
 
 Newest first. Add to this every time.
+
+### 2026-10-14 — Recycle bin, lessons without a course, two-column forms (**schema change**)
+
+Follows the entry below, the same day, and **supersedes its "Known edge"**: a
+course no longer takes its leftover lessons with it. One migration,
+`2026_10_14_000001`, so **this deploy must run `php8.4 artisan migrate --force`.**
+It ran on the local PostgreSQL and on SQLite.
+
+**Hide instead of delete.** `SoftDeletes` on Course, Lesson, Question,
+CaseStudy, Tutorial, Webinar, Product and MediaItem. Filament's own Delete
+buttons call `delete()`, so every one of them now hides. Things that had to be
+done by hand because the row no longer leaves:
+
+- **Raw queries see deleted rows; models do not.** `completedLessonRows()`,
+  `CompletionsByCompany` and `StalledLearners` join `courses` / `lessons`
+  through `DB::table`, so each got a `whereNull('…deleted_at')`. Any new raw
+  join onto one of the eight tables needs the same.
+- **The database used to clear references on delete** (`nullOnDelete`), and a
+  kept row never triggers that. `Product::booted()` and `MediaItem::booted()`
+  now clear them. Without it a course whose product was deleted could not be
+  saved at all — "The selected product is invalid" — which a test caught.
+- **A hidden lesson's questions** would have stayed in every final quiz that
+  uses them. `Lesson` stamps them with its own `deleted_at` and restores the
+  ones stamped at or after it — a question deleted earlier, alone, stays deleted.
+- `Certificate`, `QuizAttempt` and `CourseFeedback` read their course (and
+  lesson) `withTrashed()`: a certificate is a public claim and still verifies
+  after its course is deleted. Before this, deleting a course deleted them.
+- A deleted course keeps its `course_lesson` rows, which is why restoring it
+  brings its lessons back, and why `CourseLesson` and `Course::deleting` now
+  ask "in another **live** course?" rather than "another link?".
+- Unique slugs (courses, case studies, tutorials, webinars, products) stay
+  taken by a deleted row. The guide says so.
+
+**Recycle bin** — `App\Filament\Pages\RecycleBin`, a tab in the Settings
+cluster. One table, one kind of content per tab; the tabs are links that set
+`?type=`, so the table is built for the right model at mount. Restore only.
+`User::canUseRecycleBin()` is admin **and** the right.
+
+**Lessons without a course.** `lessons.course_id` nullable (foreign key now
+`nullOnDelete`), plus `created_by`. `User::canManageLesson()` and
+`Lesson::scopeManageableBy()` replace every `canManageCourse($lesson->course)`
+and the two copies of the creator `whereHas('course', …)`. The lesson form's
+**Courses** box is required only when the lesson is already in a course.
+
+**Two-column forms.** Course and lesson forms are a main column and a
+**Settings** side column (`Group` + `Section`, `columns(['lg' => 3])`). The
+cause of "too wide" is `->maxContentWidth('full')` on the panel, which the
+Translations matrix needs, so the forms were arranged rather than the panel
+narrowed. Fields were moved as whole blocks by a script kept in the
+scratchpad; no field's own code changed, and every form test passed untouched.
+**Not done:** the case study, tutorial and webinar forms have the same wide
+layout and were left for the owner to ask for.
+
+**A trap paid for again:** adding the trait with `sed` put `use SoftDeletes`
+inside eight classes and silently skipped the eight `use Illuminate\…` import
+lines, exactly as *Write PHP with the Write/Edit tools* warns.
+
+**Verified (run):** see the conversation's final report for the counts.
+**Not done:** translated admin guides; a native-speaker read of the new wording.
 
 ### 2026-10-14 — Remove any lesson from a course; upload a final quiz from Excel
 

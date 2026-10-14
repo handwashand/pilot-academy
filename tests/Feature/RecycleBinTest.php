@@ -10,6 +10,7 @@ use App\Models\Certificate;
 use App\Models\Company;
 use App\Models\Course;
 use App\Models\Lesson;
+use App\Models\MediaItem;
 use App\Models\Product;
 use App\Models\Question;
 use App\Models\User;
@@ -203,6 +204,37 @@ class RecycleBinTest extends TestCase
         // An address nobody wrote for us falls back to courses.
         Livewire::actingAs($holder)->test(RecycleBin::class, ['type' => 'users'])
             ->assertCanSeeTableRecords([$course]);
+    }
+
+    public function test_a_course_can_still_be_saved_after_its_product_is_deleted(): void
+    {
+        $product = Product::create(['name' => 'GARM', 'slug' => 'garm']);
+        $course = $this->course('Course A', $product);
+        $this->lessonIn($course, 'Intro');
+        $product->delete();
+
+        $this->assertNull($course->fresh()->product_id, 'Left with no product, as deleting one always did.');
+
+        Livewire::actingAs($this->admin())
+            ->test(EditCourse::class, ['record' => $course->getRouteKey()])
+            ->fillForm(['title' => 'Course A, renamed'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertSame('Course A, renamed', $course->fresh()->title);
+    }
+
+    public function test_a_deleted_image_stops_being_a_lessons_cover(): void
+    {
+        $course = $this->course('Course A');
+        $lesson = $this->lessonIn($course, 'Intro');
+        $image = MediaItem::create(['name' => 'Cover', 'path' => 'media-library/cover.png']);
+        $lesson->update(['media_item_id' => $image->id]);
+
+        $image->delete();
+
+        $this->assertNull($lesson->fresh()->media_item_id);
+        $this->assertNotNull(MediaItem::withTrashed()->find($image->id));
     }
 
     public function test_users_and_partners_are_still_deleted_for_good(): void
