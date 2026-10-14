@@ -281,7 +281,10 @@ class SharedLessonTest extends TestCase
         $a->delete();
 
         $this->assertSame($b->id, $shared->fresh()?->course_id);
-        $this->assertNull(Lesson::find($onlyA->id));
+        // The course is hidden, not removed, and its own lesson is kept: in
+        // no course now, where it used to be deleted along with it.
+        $this->assertNotNull(Lesson::find($onlyA->id));
+        $this->assertSame(0, $onlyA->courses()->count());
     }
 
     public function test_the_lesson_form_puts_a_new_lesson_in_several_courses(): void

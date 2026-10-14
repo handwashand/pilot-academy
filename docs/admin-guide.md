@@ -683,4 +683,4 @@ the course and each lesson before saving.
 
 ---
 
-*This guide is also shown inside the admin panel under **Docs → Guide**. When admin features for courses, the final quiz, or certificates change, update this file (`docs/admin-guide.md`) in the same change.*
+*This guide is also shown inside the admin panel under **Docs → Guide**. When admin features change, we update this file section.*
