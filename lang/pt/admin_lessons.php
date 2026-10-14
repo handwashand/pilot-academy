@@ -53,6 +53,7 @@ return [
         'cover' => 'Capa',
         'quiz_questions' => 'Perguntas',
         'video' => 'Vídeo',
+        'no_course' => 'Em nenhum curso',
         'publish_heading' => 'Publicar aula',
         'publish_ready' => '":title" fica visível imediatamente para os alunos em um curso publicado.',
         'publish_blocked' => 'Os alunos encontrariam isto imediatamente, então a aula ainda não pode ser publicada: :problems.',

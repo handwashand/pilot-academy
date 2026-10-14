@@ -53,6 +53,7 @@ return [
         'cover' => 'Couverture',
         'quiz_questions' => 'Questions',
         'video' => 'Vidéo',
+        'no_course' => 'Dans aucun cours',
         'publish_heading' => 'Publier la leçon',
         'publish_ready' => '« :title » devient visible immédiatement pour les apprenants d’un cours publié.',
         'publish_blocked' => 'Les apprenants rencontreraient ceci immédiatement, la leçon ne peut donc pas encore être publiée : :problems.',

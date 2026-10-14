@@ -36,6 +36,19 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **A course's final quiz can be uploaded from an Excel file.** On the
+  course's **Final questions** tab, **Upload from Excel** offers an example
+  file to download and fill in — one row per question, with its answers and
+  the letter of the right one — and adds every question in it to the bank at
+  once. If a row has a mistake nothing is added, and each mistake is listed
+  with its row number. Writing questions by hand works as before.
+- **Any lesson can be removed from a course.** **Remove from course** on a
+  course's **Lessons** tab used to be missing for a lesson that was only in
+  that course, so one added by mistake could not be taken out. It is now on
+  every lesson. A lesson removed from its only course is kept under
+  **Content → Lessons**, in no course and hidden from students, with its
+  questions and student progress; the new **Not in any course** filter finds
+  it, and **Add existing lesson** puts it back in a course.
 - **A privacy policy**, in the footer of every page — Pilot Telematics' own
   company privacy policy, since Pilot Academy is one of its Services and
   that policy already covers it: what personal data is collected, why,

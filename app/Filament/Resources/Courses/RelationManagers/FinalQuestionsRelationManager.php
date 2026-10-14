@@ -2,19 +2,23 @@
 
 namespace App\Filament\Resources\Courses\RelationManagers;
 
+use App\Actions\ImportFinalQuizQuestions;
 use App\Filament\Actions\TranslateQuestionsAction;
 use App\Models\Question;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\AttachAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DetachAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
@@ -144,6 +148,59 @@ class FinalQuestionsRelationManager extends RelationManager
                 CreateAction::make()
                     ->label(__t('admin_courses.final_tab.create'))
                     ->modalHeading(__t('admin_courses.final_tab.create_heading')),
+
+                // The whole final quiz from one file, for a bank too long to
+                // type in question by question — and the file to start from.
+                ActionGroup::make([
+                    Action::make('importFinalQuestions')
+                        ->label(__t('admin_courses.final_import.upload'))
+                        ->icon('heroicon-o-arrow-up-tray')
+                        ->modalHeading(__t('admin_courses.final_import.heading'))
+                        ->modalDescription(__t('admin_courses.final_import.description'))
+                        ->modalSubmitActionLabel(__t('admin_courses.final_import.submit'))
+                        ->schema([
+                            FileUpload::make('file')
+                                ->label(__t('admin_courses.final_import.file'))
+                                ->helperText(__t('admin_courses.final_import.file_help', ['max' => ImportFinalQuizQuestions::MAX_QUESTIONS]))
+                                ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
+                                ->maxSize(1024)
+                                // Read once and thrown away: the questions are
+                                // what is kept, not the file.
+                                ->storeFiles(false)
+                                ->required(),
+                        ])
+                        ->action(function (array $data, Action $action): void {
+                            $result = app(ImportFinalQuizQuestions::class)->handle($this->getOwnerRecord(), $data['file']->getRealPath());
+
+                            if ($result['errors'] !== []) {
+                                Notification::make()
+                                    ->title(__t('admin_courses.final_import.failed'))
+                                    ->body(implode("\n", array_slice($result['errors'], 0, 15)))
+                                    ->danger()
+                                    ->persistent()
+                                    ->send();
+
+                                $action->halt();
+                            }
+
+                            Notification::make()
+                                ->title(__t('admin_courses.final_import.done', ['count' => $result['added']]))
+                                ->body($result['skipped'] > 0 ? __t('admin_courses.final_import.skipped', ['count' => $result['skipped']]) : null)
+                                ->success()
+                                ->send();
+                        }),
+
+                    Action::make('downloadFinalQuestionsExample')
+                        ->label(__t('admin_courses.final_import.example'))
+                        ->icon('heroicon-o-arrow-down-tray')
+                        ->action(fn () => response()
+                            ->download(app(ImportFinalQuizQuestions::class)->template(), 'final-quiz-example.xlsx')
+                            ->deleteFileAfterSend()),
+                ])
+                    ->label(__t('admin_courses.final_import.group'))
+                    ->icon('heroicon-o-table-cells')
+                    ->color('gray')
+                    ->button(),
             ])
             ->recordActions([
                 EditAction::make(),

@@ -7,6 +7,7 @@ use App\Filament\Resources\Courses\Pages\EditCourse;
 use App\Filament\Resources\Courses\RelationManagers\LessonsRelationManager;
 use App\Filament\Resources\Lessons\Pages\CreateLesson;
 use App\Filament\Resources\Lessons\Pages\EditLesson;
+use App\Filament\Resources\Lessons\Pages\ListLessons;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\User;
@@ -174,12 +175,87 @@ class SharedLessonTest extends TestCase
         $this->assertNotNull(Lesson::find($lesson->id));
     }
 
-    public function test_a_lessons_last_course_cannot_be_removed(): void
+    public function test_a_lesson_removed_from_its_only_course_is_kept_in_no_course(): void
+    {
+        $a = $this->course('Course A');
+        $lesson = $this->lessonIn($a, 'Alone');
+        $learner = $this->learner();
+        $learner->completedLessons()->attach($lesson->id, ['completed_at' => now()]);
+
+        $this->manager($a)
+            ->callAction(TestAction::make('detach')->table($lesson))
+            ->assertHasNoActionErrors();
+
+        $this->assertFalse($a->hasLesson($lesson));
+        $this->assertSame(0, $lesson->courses()->count());
+        $this->assertNotNull(Lesson::find($lesson->id), 'The lesson is kept.');
+        $this->assertSame(1, $lesson->questions()->count(), 'With its knowledge check.');
+        $this->assertTrue($learner->completedLessons()->whereKey($lesson->id)->exists(), 'And what students did in it.');
+
+        // Nowhere for a student to reach it.
+        $this->get(route('academy.lesson', [$a, $lesson]))->assertNotFound();
+        $this->get(route('academy.course', $a))->assertDontSee('Alone');
+    }
+
+    public function test_editing_a_lesson_that_is_in_no_course_does_not_put_it_back(): void
+    {
+        $a = $this->course('Course A');
+        $lesson = $this->lessonIn($a, 'Alone');
+        $a->lessons()->detach($lesson);
+
+        Livewire::actingAs($this->admin())
+            ->test(EditLesson::class, ['record' => $lesson->getRouteKey()])
+            ->fillForm(['title' => 'Alone, reworded'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertSame('Alone, reworded', $lesson->fresh()->title);
+        $this->assertSame(0, $lesson->courses()->count());
+    }
+
+    public function test_a_lesson_in_a_course_cannot_be_saved_out_of_every_course_from_its_form(): void
     {
         $a = $this->course('Course A');
         $lesson = $this->lessonIn($a, 'Alone');
 
-        $this->manager($a)->assertActionHidden(TestAction::make('detach')->table($lesson));
+        Livewire::actingAs($this->admin())
+            ->test(EditLesson::class, ['record' => $lesson->getRouteKey()])
+            ->fillForm(['course_ids' => []])
+            ->call('save')
+            ->assertHasFormErrors(['course_ids']);
+
+        $this->assertTrue($a->hasLesson($lesson));
+    }
+
+    public function test_a_lesson_in_no_course_is_offered_again_and_belongs_to_the_course_it_joins(): void
+    {
+        $a = $this->course('Course A');
+        $b = $this->course('Course B');
+        $lesson = $this->lessonIn($a, 'Alone');
+        $a->lessons()->detach($lesson);
+
+        $this->manager($b)
+            ->callAction(TestAction::make('attach')->table(), ['recordId' => [$lesson->id]])
+            ->assertHasNoActionErrors();
+
+        $this->assertTrue($b->hasLesson($lesson));
+        $this->assertFalse($a->hasLesson($lesson));
+        $this->assertSame($b->id, $lesson->fresh()->course_id, 'Its old course no longer shows it, so no longer owns it.');
+    }
+
+    public function test_the_lessons_list_can_show_only_lessons_in_no_course(): void
+    {
+        $a = $this->course('Course A');
+        $kept = $this->lessonIn($a, 'Kept');
+        $loose = $this->lessonIn($a, 'Loose', 2);
+        $a->lessons()->detach($loose);
+
+        Livewire::actingAs($this->admin())
+            ->test(ListLessons::class)
+            ->assertCanSeeTableRecords([$kept, $loose])
+            ->filterTable('no_course')
+            ->assertCanSeeTableRecords([$loose])
+            ->assertCanNotSeeTableRecords([$kept]);
     }
 
     public function test_leaving_its_home_course_hands_the_lesson_to_the_next_one(): void

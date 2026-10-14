@@ -400,6 +400,7 @@ Newest first.
 
 | Date | Decision |
 | --- | --- |
+| 2026-10-14 | **A lesson may be in no course.** Removing a lesson from its only course keeps it (owner's choice over deleting it), unassigned, under Lessons. `lessons.course_id` stays NOT NULL and stays the owner; only the `course_lesson` link goes. A final quiz file upload **adds** to the bank, never replaces it. |
 | 2026-10-07 | **ChatGPT, DeepSeek and DeepL tokens are managed by admins under Settings → Integrations** and stored encrypted in the database, instead of the server `.env` — the owner's explicit request, unlike mail and Descript. Tokens are write-only in the UI; only fixed official provider addresses are used; the rights `deepl.translate` / `ai.translate` decide who may spend them. |
 | 2026-10-02 | **Descript video translation is assigned per account.** The server environment connects the optional integration; `descript.translate` controls who may spend its credits, and every start requires an acknowledgement. Neither Admin nor Creator receives the right automatically. Underlord can edit project scripts, but its beta project/prompt/export API is not a stable general text-translation service for Academy fields. |
 | 2026-10-02 | **Descript supplements manual translation; it never replaces it.** A lesson keeps its existing manual **Translate** action for editor-written content. Descript has a separate, conditional video-translation action and must not hide, rename or trigger the manual workflow. |
@@ -417,6 +418,52 @@ Newest first.
 ## Work log
 
 Newest first. Add to this every time.
+
+### 2026-10-14 — Remove any lesson from a course; upload a final quiz from Excel
+
+Two of three requests built; the third (an easier lesson-creation flow) was
+answered with a suggestion and is waiting on the owner — see the end.
+
+**Remove from course is on every lesson.** It was hidden on a lesson's only
+course, and a test pinned that, because a lesson could not exist in no course.
+Asked first what removing the last one should do; the owner chose keeping the
+lesson unassigned over deleting it. No migration was needed: students only ever
+reach a lesson through `course_lesson`, and `lessons.course_id` is just the
+owner. So the link goes and the home stays. Three things had to change to make
+that hold:
+
+- `Lesson::saved()` re-attached the home course on **every** save, which would
+  have put an unassigned lesson straight back the first time it was edited. It
+  now attaches only when the lesson is new or its home changes.
+- The lesson form's **Courses** box is required unless the lesson is already in
+  no course — so an unassigned lesson can be edited, and a lesson in a course
+  still cannot be saved out of all of them by an empty box.
+- `CourseLesson::created` hands ownership to the course an unassigned lesson
+  joins; otherwise the old course's product would go on owning a lesson it no
+  longer shows.
+
+Lessons list: the Courses column reads **Not in any course**, with a filter of
+the same name. The Add existing lesson picker labels them that way too
+(`withCount('courses')` added *after* the narrowed `select`, which must stay —
+see the `select distinct lessons.*` trap).
+
+**Known edge, documented in the guide, not fixed:** an unassigned lesson still
+has its old home in `course_id`, and that foreign key cascades. Deleting that
+course deletes the lesson. Fixing it means a nullable `course_id` and a rule for
+who owns a lesson with no home — the bigger change the owner was offered.
+
+**Final quiz upload.** `App\Actions\ImportFinalQuizQuestions`, behind **Upload
+from Excel** on the course's Final questions tab (a group: **Upload questions**,
+**Download example file**). One row a question: question, answers A–F, letters
+of the right ones; more than one letter makes it multiple-select. All or
+nothing, errors named by row; a question whose text is already in the bank is
+skipped, so re-uploading does not double it. Questions are course-only and take
+the course's language. Uses `openspout`, already installed as a Filament
+dependency (no new package; it is **not** in our own `composer.json`, so it
+would go if Filament ever dropped it). Filament's own importer was not used: it
+is CSV-only and needs a queue worker, which this app does not run.
+
+**Not done:** the translated admin guides, behind the English one as before.
 
 ### 2026-10-13 — Help page: full width, with the contents pinned beside it
 

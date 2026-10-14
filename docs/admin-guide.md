@@ -135,8 +135,13 @@ lists every lesson in that course.
   from, and you can type to narrow it. Lessons already in this course are not
   listed, because they are here.
 - **To take a lesson out of this course**, click **Remove from course** on its
-  row. It stays in its other courses. A lesson's only course cannot be removed —
-  delete the lesson under **Lessons** instead.
+  row. It stays in its other courses. Removed from its only course, the lesson
+  is in no course: students stop seeing it, and it stays under
+  **Content → Lessons** with its questions and student progress. Find these with
+  the **Not in any course** filter there, and put one back with **Add existing
+  lesson** on any course — that course then owns it. Until then it still
+  belongs to the course it was removed from, so deleting that course deletes
+  the lesson too.
 
 > **A lesson can be in more than one course.** Adding an existing lesson shares
 > it: it stays in the courses it is already in. It is the same lesson
@@ -292,6 +297,14 @@ and that its related lessons and documentation open correctly.
 ### Edit the final quiz questions
 
 Open the course → **Final questions** tab. Here you can **Attach lesson question** (add one existing question), **Add all lesson questions** (add them all at once), or **New final question** (write a control question that lives only in the final).
+
+**To load many questions at once**, click **Upload from Excel**:
+
+1. Choose **Download example file**. It is an Excel file with a heading row and two example questions.
+2. Replace the two examples with your own. One row is one question: the question, up to six answers (columns **Answer A** to **Answer F**), then the letter of the right answer in the last column. For more than one right answer, write the letters with commas — `A, C`.
+3. Choose **Upload questions** and pick the file.
+
+The questions are added to the bank as course-only questions, written in the course's language; the ones already there stay, and a question already in the bank is left out. If any row has a mistake — no question, fewer than two answers, no right answer — nothing is added and each mistake is listed with its row number, so you can fix the file and upload it again. One file holds up to 300 questions.
 
 > **Careful:** a question that came from a lesson is the *same* question — editing it here also changes it inside that lesson. To only take it out of the final quiz, use **Remove from bank** (this does not delete it).
 

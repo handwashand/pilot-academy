@@ -56,6 +56,7 @@ return [
         'cover' => 'Cover',
         'quiz_questions' => 'Quiz Qs',
         'video' => 'Video',
+        'no_course' => 'Not in any course',
         'publish_heading' => 'Publish lesson',
         'publish_ready' => '":title" becomes visible to students in a published course straight away.',
         'publish_blocked' => 'Students would hit this straight away, so it cannot go live yet: :problems.',

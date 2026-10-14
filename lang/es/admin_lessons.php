@@ -53,6 +53,7 @@ return [
         'cover' => 'Portada',
         'quiz_questions' => 'Preguntas',
         'video' => 'Vídeo',
+        'no_course' => 'En ningún curso',
         'publish_heading' => 'Publicar lección',
         'publish_ready' => '«:title» será visible de inmediato para los estudiantes en un curso publicado.',
         'publish_blocked' => 'Los estudiantes se toparían con esto de inmediato, así que aún no puede publicarse: :problems.',

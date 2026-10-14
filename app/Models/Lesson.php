@@ -303,8 +303,12 @@ class Lesson extends Model
         });
 
         static::saved(function (Lesson $lesson): void {
-            // A lesson is always in its home course.
-            if ($lesson->course_id && ! $lesson->courses()->whereKey($lesson->course_id)->exists()) {
+            // A lesson starts in its home course, and follows its home when
+            // that changes. Not on every save: a lesson taken out of its last
+            // course is in none on purpose, and editing it must not put it back.
+            if ($lesson->course_id
+                && ($lesson->wasRecentlyCreated || $lesson->wasChanged('course_id'))
+                && ! $lesson->courses()->whereKey($lesson->course_id)->exists()) {
                 $lesson->courses()->attach($lesson->course_id, ['sort_order' => (int) $lesson->sort_order]);
             }
 

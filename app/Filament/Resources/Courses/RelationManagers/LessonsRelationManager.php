@@ -102,9 +102,13 @@ class LessonsRelationManager extends RelationManager
                     // every other course are there to choose from, so show them.
                     ->preloadRecordSelect()
                     ->recordSelectSearchColumns(['title'])
-                    ->recordTitle(fn (Lesson $record): string => $record->course
-                        ? __t('admin_courses.lessons_tab.from_course', ['lesson' => $record->title, 'course' => $record->course->title])
-                        : $record->title)
+                    ->recordTitle(fn (Lesson $record): string => match (true) {
+                        // Taken out of every course: its home is only who may
+                        // edit it, so naming it would say the lesson is there.
+                        ($record->courses_count ?? $record->courses()->count()) === 0 => __t('admin_courses.lessons_tab.in_no_course', ['lesson' => $record->title]),
+                        $record->course !== null => __t('admin_courses.lessons_tab.from_course', ['lesson' => $record->title, 'course' => $record->course->title]),
+                        default => $record->title,
+                    })
                     ->recordSelectOptionsQuery(function (Builder $query): Builder {
                         $user = auth()->user();
 
@@ -128,6 +132,7 @@ class LessonsRelationManager extends RelationManager
                             // json". SQLite does not care, so the suite cannot
                             // see this one.
                             ->select(['lessons.id', 'lessons.title', 'lessons.course_id'])
+                            ->withCount('courses')
                             ->with('course')
                             // The relation is ordered by the pivot's sort_order,
                             // which this list does not select — and under
@@ -163,10 +168,13 @@ class LessonsRelationManager extends RelationManager
                 DetachAction::make()
                     ->label(__t('admin_courses.lessons_tab.detach'))
                     ->modalHeading(__t('admin_courses.lessons_tab.detach_heading'))
-                    ->modalDescription(__t('admin_courses.lessons_tab.detach_description'))
-                    // Its last course: removing it would leave the lesson in
-                    // no course at all. Delete it from Lessons instead.
-                    ->visible(fn (Lesson $record): bool => $record->courses()->count() > 1),
+                    // Any lesson can be taken out, so one added by mistake is
+                    // not stuck here. Out of its last course it is in none: it
+                    // stays under Lessons, unseen by students, and can be added
+                    // to a course again. Say which of the two is about to happen.
+                    ->modalDescription(fn (Lesson $record): string => $record->courses()->count() > 1
+                        ? __t('admin_courses.lessons_tab.detach_description')
+                        : __t('admin_courses.lessons_tab.detach_last_description')),
             ])
             ->emptyStateHeading(__t('admin_courses.lessons_tab.empty'))
             ->emptyStateDescription(__t('admin_courses.lessons_tab.empty_description'));

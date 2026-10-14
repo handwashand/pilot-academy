@@ -24,7 +24,22 @@ class CourseLesson extends Pivot
             }
         });
 
-        static::created(fn (CourseLesson $link) => NotifyContentOwners::afterRequest($link->course_id));
+        static::created(function (CourseLesson $link): void {
+            // A lesson that was in no course belongs to the one it joins: its
+            // old home no longer shows it, so it should not go on owning it.
+            $elsewhere = static::query()
+                ->where('lesson_id', $link->lesson_id)
+                ->where('course_id', '!=', $link->course_id)
+                ->exists();
+            $lesson = $elsewhere ? null : Lesson::query()->find($link->lesson_id);
+
+            if ($lesson && (int) $lesson->course_id !== (int) $link->course_id) {
+                $lesson->course_id = $link->course_id;
+                $lesson->saveQuietly();
+            }
+
+            NotifyContentOwners::afterRequest($link->course_id);
+        });
 
         static::deleted(function (CourseLesson $link): void {
             // Taken out of its home course: the next course it is in owns it now.

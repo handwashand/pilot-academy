@@ -56,6 +56,7 @@ return [
         'cover' => 'الغلاف',
         'quiz_questions' => 'أسئلة الاختبار',
         'video' => 'فيديو',
+        'no_course' => 'ليس في أي دورة',
         'publish_heading' => 'نشر الدرس',
         'publish_ready' => 'يصبح «:title» ظاهرًا للطلاب في دورة منشورة فورًا.',
         'publish_blocked' => 'سيصطدم الطلاب بهذا فورًا، ولذلك لا يمكن نشره بعد: :problems.',

@@ -36,7 +36,8 @@ class LessonsTable
 
                 TextColumn::make('courses.title')
                     ->label(__t('admin_common.courses'))
-                    ->badge(),
+                    ->badge()
+                    ->placeholder(__t('admin_lessons.table.no_course')),
 
                 TextColumn::make('sort_order')
                     ->label('#')
@@ -93,6 +94,11 @@ class LessonsTable
                         'id',
                         FindContentProblems::forCurrentUser()->pluck('lesson_id')->filter()->unique()->values()->all(),
                     )),
+
+                // Removed from every course: students cannot reach these.
+                Filter::make('no_course')
+                    ->label(__t('admin_lessons.table.no_course'))
+                    ->query(fn (Builder $query): Builder => $query->whereDoesntHave('courses')),
 
                 SelectFilter::make('status')
                     ->label(__t('admin_common.status'))
