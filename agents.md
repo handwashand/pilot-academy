@@ -420,6 +420,40 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-14 — Lesson text from a Markdown file; slugs that follow the title
+
+Asked first which format and where: the owner chose Markdown only, questions
+kept separate, and the button on the **Lesson text** box of the lesson form —
+then asked for it to be an icon, not words.
+
+It is a `hintAction` on the `content` RichEditor (`->iconButton()`, the label
+kept as tooltip and for screen readers). `App\Actions\ReadLessonMarkdown` turns
+the file into HTML with `html_input => strip` and `allow_unsafe_links => false`,
+the same options the guides use; a leading `# Title` is taken out of the text
+and names the lesson only when the title is blank (and the slug only when that
+is blank too). It **fills the form and stores nothing** — the lesson's own Save
+does that, so the editor's sanitising on save still applies.
+
+Two things worth knowing. `$set('content', $html)` with an HTML string **does**
+show in the rich editor: Filament's state cast converts it, and this was proven
+in Chrome with a real file (headings and a table appeared), which settles the
+open question left in the 2026-10-07 entries. And a `.md` file often reaches the
+browser with no type, so the upload field needs `mimeTypeMap(['md' => …])` or
+the file picker refuses it before the server ever sees it.
+
+**Slugs.** The owner asked for slugs to come from the title. They already did
+on create; the gap was the **New lesson** window on a course, which filled the
+slug once and left it stale when the title was retyped. It now follows the
+title until the editor types their own. **Deliberately not changed:** an
+existing lesson's or course's slug does not follow a renamed title — that would
+break every link already shared.
+
+**Verified (run):** full suite 593 passed, 8561 assertions; Pint clean over
+`app tests lang`; in Chrome against PostgreSQL a real `.md` file filled title,
+slug and the editor. **Not run in a browser:** the icon-only button after the
+last rebuild was seen, but saving the uploaded lesson was tests only. **Not done:** translated
+admin guides.
+
 ### 2026-10-14 — Recycle bin, lessons without a course, two-column forms (**schema change**)
 
 Follows the entry below, the same day, and **supersedes its "Known edge"**: a

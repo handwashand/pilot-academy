@@ -116,6 +116,22 @@ class CourseLessonsRelationTest extends TestCase
         $this->assertSame('fr', $lesson->language, 'It is written in the course\'s language.');
     }
 
+    public function test_the_address_follows_the_title_until_the_editor_writes_their_own(): void
+    {
+        $window = $this->manager($this->newCourse('Fleet basics'))
+            ->mountAction(TestAction::make('create')->table())
+            ->set('mountedActions.0.data.title', 'Draw a zone')
+            ->assertSet('mountedActions.0.data.slug', 'draw-a-zone')
+            // Retyped: the address must not keep the first attempt.
+            ->set('mountedActions.0.data.title', 'Draw a GeoZone')
+            ->assertSet('mountedActions.0.data.slug', 'draw-a-geozone');
+
+        $window
+            ->set('mountedActions.0.data.slug', 'my-own-address')
+            ->set('mountedActions.0.data.title', 'Something else')
+            ->assertSet('mountedActions.0.data.slug', 'my-own-address');
+    }
+
     public function test_a_new_lesson_cannot_reuse_a_slug_already_in_the_course(): void
     {
         $course = $this->newCourse('Fleet basics');

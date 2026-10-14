@@ -440,10 +440,11 @@ class LessonForm
                 ->required()
                 ->maxLength(255)
                 ->live(onBlur: true)
-                // Only while the editor has not written one themselves, so a
-                // deliberate slug survives a change of mind about the title.
-                ->afterStateUpdated(function ($state, callable $set, Get $get): void {
-                    if (blank($get('slug'))) {
+                // The address follows the title as it is retyped — until the
+                // editor writes one themselves, which then survives a change
+                // of mind about the title.
+                ->afterStateUpdated(function ($state, $old, callable $set, Get $get): void {
+                    if (blank($get('slug')) || $get('slug') === Str::slug((string) $old)) {
                         $set('slug', Str::slug((string) $state));
                     }
                 }),

@@ -49,6 +49,12 @@ Add a new entry here whenever something visible to admins or students changes.
 - **A lesson can be written before it has a course.** **New lesson** under
   **Content → Lessons** no longer insists on a course; choose one now or
   later. Students see the lesson once it is in a published course.
+- **A lesson's text can be uploaded from a Markdown file.** On the lesson
+  form, the upload icon at the top of the **Lesson text** box takes a `.md` or
+  `.txt` file and fills the box with it — headings, bold, lists, links and
+  tables kept. A first line like `# Title` names the lesson when it has no
+  title yet. Nothing is saved until you save the lesson; videos, pictures and
+  the knowledge check are added on the lesson as before.
 - **A course's final quiz can be uploaded from an Excel file.** On the
   course's **Final questions** tab, **Upload from Excel** offers an example
   file to download and fill in — one row per question, with its answers and
@@ -362,6 +368,9 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Changed
 
+- **A new lesson's web address keeps up with its title.** In the **New
+  lesson** window on a course, retyping the title now updates the address
+  too, until you type an address of your own.
 - **The course and lesson forms are laid out in two columns.** The writing —
   title, description, videos, lesson text, questions — is on the left, and a
   **Settings** box on the right holds status, language, web address, order,
