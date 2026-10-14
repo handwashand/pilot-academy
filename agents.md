@@ -476,7 +476,12 @@ layout and were left for the owner to ask for.
 inside eight classes and silently skipped the eight `use Illuminate\…` import
 lines, exactly as *Write PHP with the Write/Edit tools* warns.
 
-**Verified (run):** see the conversation's final report for the counts.
+**Verified (run):** full suite 586 passed, 8473 assertions (14 new in
+`RecycleBinTest`); Pint clean over `app tests lang` and the migration. In Chrome
+against PostgreSQL at 1440px and 1920px: course edit, lesson edit, lesson
+create and the recycle bin all load with no 5xx and no sideways scroll, and the
+bin lists a deleted course with Restore. **Not run in a browser:** pressing
+Delete and Restore, and saving a lesson with no course — tests only.
 **Not done:** translated admin guides; a native-speaker read of the new wording.
 
 ### 2026-10-14 — Remove any lesson from a course; upload a final quiz from Excel

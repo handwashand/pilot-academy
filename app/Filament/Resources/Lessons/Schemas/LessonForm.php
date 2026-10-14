@@ -2,11 +2,13 @@
 
 namespace App\Filament\Resources\Lessons\Schemas;
 
+use App\Actions\ReadLessonMarkdown;
 use App\Filament\Resources\Courses\Schemas\CourseForm;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Services\Translator;
 use Closure;
+use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
@@ -14,10 +16,12 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
@@ -109,6 +113,65 @@ class LessonForm
 
                             RichEditor::make('content')
                                 ->label(__t('admin_lessons.form.content'))
+                                // A lesson written elsewhere comes in as a
+                                // Markdown file instead of being pasted and
+                                // formatted again. It only fills the box:
+                                // nothing is stored until the lesson is saved.
+                                ->hintAction(
+                                    Action::make('importMarkdown')
+                                        // An icon beside the box's own buttons;
+                                        // the label is its tooltip and what a
+                                        // screen reader says.
+                                        ->label(__t('admin_lessons.form.import_markdown'))
+                                        ->tooltip(__t('admin_lessons.form.import_markdown'))
+                                        ->icon('heroicon-o-arrow-up-tray')
+                                        ->iconButton()
+                                        ->modalHeading(__t('admin_lessons.form.import_heading'))
+                                        ->modalDescription(__t('admin_lessons.form.import_description'))
+                                        ->modalSubmitActionLabel(__t('admin_lessons.form.import_submit'))
+                                        ->schema([
+                                            FileUpload::make('file')
+                                                ->label(__t('admin_lessons.form.import_file'))
+                                                ->helperText(__t('admin_lessons.form.import_file_help'))
+                                                ->acceptedFileTypes(['text/markdown', 'text/x-markdown', 'text/plain'])
+                                                // Browsers often send a .md
+                                                // file with no type at all.
+                                                ->mimeTypeMap(['md' => 'text/markdown', 'markdown' => 'text/markdown'])
+                                                ->maxSize(ReadLessonMarkdown::MAX_KILOBYTES)
+                                                ->storeFiles(false)
+                                                ->required(),
+                                        ])
+                                        ->action(function (array $data, Get $get, Set $set, Action $action): void {
+                                            $lesson = app(ReadLessonMarkdown::class)->handle((string) file_get_contents($data['file']->getRealPath()));
+
+                                            if ($lesson === null || $lesson['html'] === '') {
+                                                Notification::make()
+                                                    ->title(__t('admin_lessons.form.import_unreadable'))
+                                                    ->danger()
+                                                    ->send();
+
+                                                $action->halt();
+                                            }
+
+                                            $set('content', $lesson['html']);
+
+                                            // The file's heading names the lesson
+                                            // only when nobody has named it yet.
+                                            if (filled($lesson['title']) && blank($get('title'))) {
+                                                $set('title', $lesson['title']);
+
+                                                if (blank($get('slug'))) {
+                                                    $set('slug', Str::slug($lesson['title']));
+                                                }
+                                            }
+
+                                            Notification::make()
+                                                ->title(__t('admin_lessons.form.import_done'))
+                                                ->body(__t('admin_lessons.form.import_done_body'))
+                                                ->success()
+                                                ->send();
+                                        }),
+                                )
                                 ->columnSpanFull(),
 
                             Textarea::make('transcript')
