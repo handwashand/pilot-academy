@@ -29,9 +29,14 @@ class Certificate extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * A certificate is a claim already made in public. Deleting the course
+     * hides the course, not the fact that someone passed it, so the
+     * certificate still names it.
+     */
     public function course(): BelongsTo
     {
-        return $this->belongsTo(Course::class);
+        return $this->belongsTo(Course::class)->withTrashed();
     }
 
     public function quizAttempt(): BelongsTo

@@ -4,7 +4,7 @@
 
 return [
     'form' => [
-        'courses_help' => 'Une leçon peut faire partie de plusieurs cours. C’est la même leçon dans chacun : une modification apparaît partout, et un apprenant qui la termine dans un cours l’a terminée dans tous. Le premier cours possède la leçon.',
+        'courses_help' => 'Une leçon peut faire partie de plusieurs cours. C’est la même leçon dans chacun : une modification apparaît partout, et un apprenant qui la termine dans un cours l’a terminée dans tous. Le premier cours possède la leçon. Laissez ce champ vide pour écrire la leçon maintenant et choisir un cours plus tard : les apprenants ne la voient pas tant qu’elle n’est dans aucun cours.',
         'course_not_yours' => 'Vous ne pouvez ajouter des leçons qu’aux cours d’un produit qui vous est attribué.',
         'order' => 'Ordre',
         'order_help' => 'Sa place dans son premier cours. Faites glisser les leçons dans l’onglet Leçons d’un cours pour ordonner chaque cours.',

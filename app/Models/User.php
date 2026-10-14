@@ -63,6 +63,9 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasLocale
     /** Download uploaded lesson videos. Admins always may; a learner only when given this. */
     public const PERMISSION_VIDEO_DOWNLOAD = 'videos.download';
 
+    /** Open Settings → Recycle bin and restore deleted content. Admins only, and only when given this. */
+    public const PERMISSION_RECYCLE_BIN = 'recycle_bin.manage';
+
     /** New accounts are partners until an admin says otherwise. */
     protected $attributes = [
         'role' => self::ROLE_LEARNER,
@@ -182,6 +185,35 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasLocale
 
         return $course->product_id !== null
             && $this->products()->whereKey($course->product_id)->exists();
+    }
+
+    /**
+     * A lesson follows its home course. With no course of its own it belongs
+     * to the creator who wrote it; one left behind by a deleted course keeps
+     * that course as its home, so only an admin can pick it up.
+     */
+    public function canManageLesson(?Lesson $lesson): bool
+    {
+        if (! $lesson) {
+            return false;
+        }
+
+        if ($this->canManageCourse($lesson->course)) {
+            return true;
+        }
+
+        return $this->isCreator()
+            && $lesson->course_id === null
+            && (int) $lesson->created_by === (int) $this->id;
+    }
+
+    /**
+     * Seeing and restoring deleted content. Given per account and to admins
+     * only — being an admin is not enough, the same as the Descript right.
+     */
+    public function canUseRecycleBin(): bool
+    {
+        return $this->isAdmin() && $this->hasPermission(self::PERMISSION_RECYCLE_BIN);
     }
 
     public function canManageCaseStudy(?CaseStudy $caseStudy): bool

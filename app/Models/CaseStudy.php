@@ -7,12 +7,13 @@ use App\Models\Concerns\HasPublishStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 
 class CaseStudy extends Model
 {
-    use HasContentTranslations, HasPublishStatus;
+    use HasContentTranslations, HasPublishStatus, SoftDeletes;
 
     /**
      * Everything a partner reads. A study is written in one language and

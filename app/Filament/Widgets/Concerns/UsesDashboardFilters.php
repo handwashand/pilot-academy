@@ -37,6 +37,10 @@ trait UsesDashboardFilters
     {
         $rows = DB::table('lesson_user')
             ->join('users', 'users.id', '=', 'lesson_user.user_id')
+            // Deleted lessons and courses are only hidden, so these raw tables
+            // still hold them; the models would leave them out.
+            ->join('lessons', 'lessons.id', '=', 'lesson_user.lesson_id')
+            ->whereNull('lessons.deleted_at')
             ->whereNotNull('lesson_user.completed_at')
             ->whereBetween('lesson_user.completed_at', [$this->dashboardStart(), $this->dashboardEnd()])
             ->when($this->dashboardCompanyId(), fn (QueryBuilder $query, int $companyId): QueryBuilder => $query
@@ -49,6 +53,7 @@ trait UsesDashboardFilters
                 ->from('course_lesson')
                 ->join('courses', 'courses.id', '=', 'course_lesson.course_id')
                 ->whereColumn('course_lesson.lesson_id', 'lesson_user.lesson_id')
+                ->whereNull('courses.deleted_at')
                 ->when($this->dashboardProductId(), fn ($query, int $productId) => $query->where('courses.product_id', $productId))
                 ->when($this->dashboardCourseId(), fn ($query, int $courseId) => $query->where('courses.id', $courseId)));
         }

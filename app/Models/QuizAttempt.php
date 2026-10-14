@@ -55,14 +55,15 @@ class QuizAttempt extends Model
         return $this->belongsTo(User::class);
     }
 
+    /** What was attempted keeps its name in the record after it is deleted. */
     public function lesson(): BelongsTo
     {
-        return $this->belongsTo(Lesson::class);
+        return $this->belongsTo(Lesson::class)->withTrashed();
     }
 
     public function course(): BelongsTo
     {
-        return $this->belongsTo(Course::class);
+        return $this->belongsTo(Course::class)->withTrashed();
     }
 
     /** Percentage score (0-100), or null if not yet graded. */

@@ -35,10 +35,11 @@ class LessonForm
                         Select::make('course_ids')
                             ->label(__t('admin_common.courses'))
                             ->multiple()
-                            // A lesson taken out of its last course is in none,
-                            // and can be edited that way; any other lesson
-                            // cannot be saved out of every course by an empty box.
-                            ->required(fn (?Lesson $record): bool => ! $record || $record->courses()->exists())
+                            // Optional: a lesson can be written first and given
+                            // a course later. One already in a course cannot be
+                            // saved out of every course by an empty box, though —
+                            // that is Remove from course, on the course itself.
+                            ->required(fn (?Lesson $record): bool => (bool) $record?->courses()->exists())
                             ->searchable()
                             ->preload()
                             ->options(function (?Lesson $record): array {

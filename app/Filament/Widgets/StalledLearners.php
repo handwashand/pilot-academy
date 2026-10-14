@@ -169,6 +169,8 @@ class StalledLearners extends TableWidget
         return DB::table('courses as stalled_courses')
             ->join('course_lesson as stalled_cl', 'stalled_cl.course_id', '=', 'stalled_courses.id')
             ->join('lesson_user as stalled_lu', 'stalled_lu.lesson_id', '=', 'stalled_cl.lesson_id')
+            // A raw table, so a deleted course has to be left out by hand.
+            ->whereNull('stalled_courses.deleted_at')
             ->whereColumn('stalled_lu.user_id', 'users.id')
             ->where('stalled_lu.completed_at', '<', now()->subDays(self::QUIET_DAYS))
             ->when($this->dashboardProductId(), fn (Builder $query, int $productId): Builder => $query

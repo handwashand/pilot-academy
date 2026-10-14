@@ -117,7 +117,7 @@ class TranslateCourseAction
         $records = ['course' => $course];
 
         foreach ($course->lessons()->with('course')->get() as $lesson) {
-            if ($lesson->contentLanguageCode() === $course->contentLanguageCode() && auth()->user()?->canManageCourse($lesson->course)) {
+            if ($lesson->contentLanguageCode() === $course->contentLanguageCode() && auth()->user()?->canManageLesson($lesson)) {
                 $records["lesson_{$lesson->id}"] = $lesson;
             }
         }

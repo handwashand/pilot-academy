@@ -12,10 +12,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Course extends Model
 {
-    use HasContentTranslations, HasDuration, HasPublishStatus;
+    use HasContentTranslations, HasDuration, HasPublishStatus, SoftDeletes;
 
     protected array $translatable = ['title', 'description'];
 
@@ -261,13 +262,17 @@ class Course extends Model
     {
         static::saved(fn (Course $course) => NotifyContentOwners::afterRequest($course->id));
 
-        // Deleting a course deletes the lessons it is home to. One that is also
-        // in another course moves its home there instead of disappearing.
+        // A deleted course keeps none of its lessons from students or editors.
+        // One that is also in another live course moves its home there. The
+        // rest are in no course now: they show under Lessons as "Not in any
+        // course" and can be added to another. Their links to this course are
+        // kept, so restoring the course brings its lessons back with it.
         static::deleting(function (Course $course): void {
             foreach (Lesson::query()->where('course_id', $course->id)->get() as $lesson) {
                 $other = CourseLesson::query()
                     ->where('lesson_id', $lesson->id)
                     ->where('course_id', '!=', $course->id)
+                    ->whereIn('course_id', static::query()->select('id'))
                     ->orderBy('created_at')
                     ->value('course_id');
 

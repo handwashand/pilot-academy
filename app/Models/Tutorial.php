@@ -6,6 +6,7 @@ use App\Models\Concerns\HasContentTranslations;
 use App\Models\Concerns\HasPublishStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\Storage;
  */
 class Tutorial extends Model
 {
-    use HasContentTranslations, HasPublishStatus;
+    use HasContentTranslations, HasPublishStatus, SoftDeletes;
 
     public const TYPE_YOUTUBE = 'youtube';
 

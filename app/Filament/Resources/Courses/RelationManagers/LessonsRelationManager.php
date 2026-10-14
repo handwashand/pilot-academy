@@ -113,11 +113,10 @@ class LessonsRelationManager extends RelationManager
                         $user = auth()->user();
 
                         // Same scoping as the Lessons list: a creator can only
-                        // bring in lessons from courses in their own products.
+                        // bring in lessons from courses in their own products,
+                        // or ones they wrote that have no course yet.
                         if ($user?->isCreator()) {
-                            $productIds = $user->products()->pluck('products.id');
-
-                            $query->whereHas('course', fn (Builder $course) => $course->whereIn('product_id', $productIds));
+                            $query->manageableBy($user);
                         }
 
                         return $query

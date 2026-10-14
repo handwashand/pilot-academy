@@ -27,9 +27,11 @@ class CourseLesson extends Pivot
         static::created(function (CourseLesson $link): void {
             // A lesson that was in no course belongs to the one it joins: its
             // old home no longer shows it, so it should not go on owning it.
+            // A link to a deleted course does not count: nobody sees it there.
             $elsewhere = static::query()
                 ->where('lesson_id', $link->lesson_id)
                 ->where('course_id', '!=', $link->course_id)
+                ->whereIn('course_id', Course::query()->select('id'))
                 ->exists();
             $lesson = $elsewhere ? null : Lesson::query()->find($link->lesson_id);
 
@@ -44,7 +46,11 @@ class CourseLesson extends Pivot
         static::deleted(function (CourseLesson $link): void {
             // Taken out of its home course: the next course it is in owns it now.
             $lesson = Lesson::query()->find($link->lesson_id);
-            $next = static::query()->where('lesson_id', $link->lesson_id)->orderBy('created_at')->value('course_id');
+            $next = static::query()
+                ->where('lesson_id', $link->lesson_id)
+                ->whereIn('course_id', Course::query()->select('id'))
+                ->orderBy('created_at')
+                ->value('course_id');
 
             if ($lesson && $next && (int) $lesson->course_id === (int) $link->course_id) {
                 $lesson->course_id = $next;

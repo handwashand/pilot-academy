@@ -11,11 +11,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 
 class Lesson extends Model
 {
-    use HasContentTranslations, HasDuration, HasPublishStatus;
+    use HasContentTranslations, HasDuration, HasPublishStatus, SoftDeletes;
 
     protected array $translatable = ['title', 'summary', 'content', 'transcript'];
 
@@ -55,7 +56,8 @@ class Lesson extends Model
 
     /**
      * The home course: the one that owns the lesson and decides who may edit
-     * it. The lesson can be in other courses too — see courses().
+     * it. The lesson can be in other courses too — see courses(). Null for a
+     * lesson written without a course, and for one whose home was deleted.
      */
     public function course(): BelongsTo
     {
@@ -90,12 +92,12 @@ class Lesson extends Model
     }
 
     /**
-     * Students only ever get published lessons; whoever manages the parent
-     * course can preview a draft one.
+     * Students only ever get published lessons; whoever manages the lesson can
+     * preview a draft one.
      */
     public function isVisibleTo(?User $user): bool
     {
-        return $this->isPublished() || (bool) $user?->canManageCourse($this->course);
+        return $this->isPublished() || (bool) $user?->canManageLesson($this);
     }
 
     public function mediaItem(): BelongsTo
@@ -322,5 +324,46 @@ class Lesson extends Model
 
         // Before, not after: the course links go with the lesson.
         static::deleting(fn (Lesson $lesson) => static::notifyOwnersOf($lesson->id));
+
+        // Whose a lesson with no course is — see User::canManageLesson().
+        static::creating(function (Lesson $lesson): void {
+            $lesson->created_by ??= auth()->id();
+        });
+
+        // A deleted lesson is hidden, not removed, so its questions would stay
+        // in every final quiz that uses them. They are hidden with it, stamped
+        // with the same moment, and come back with it — but a question someone
+        // deleted earlier, on its own, stays deleted.
+        static::deleted(function (Lesson $lesson): void {
+            if (! $lesson->isForceDeleting()) {
+                $lesson->questions()->update(['deleted_at' => $lesson->deleted_at]);
+            }
+        });
+
+        static::restoring(function (Lesson $lesson): void {
+            $lesson->questions()->onlyTrashed()
+                ->where('deleted_at', '>=', $lesson->deleted_at)
+                ->restore();
+        });
+    }
+
+    /**
+     * The lessons this person may edit: every one for an admin; for a creator,
+     * those whose home course is in their products, and the course-less ones
+     * they wrote themselves.
+     */
+    public function scopeManageableBy(Builder $query, User $user): Builder
+    {
+        if ($user->isAdmin()) {
+            return $query;
+        }
+
+        $productIds = $user->products()->pluck('products.id');
+
+        return $query->where(fn (Builder $lessons): Builder => $lessons
+            ->whereHas('course', fn (Builder $course): Builder => $course->whereIn('product_id', $productIds))
+            ->orWhere(fn (Builder $own): Builder => $own
+                ->whereNull('lessons.course_id')
+                ->where('lessons.created_by', $user->id)));
     }
 }

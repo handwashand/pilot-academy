@@ -53,10 +53,9 @@ class LessonResource extends Resource
         $query = parent::getEloquentQuery();
         $user = auth()->user();
 
+        // A creator's own products' lessons, and the course-less ones they wrote.
         if ($user && $user->isCreator()) {
-            $productIds = $user->products()->pluck('products.id');
-
-            $query->whereHas('course', fn (Builder $course) => $course->whereIn('product_id', $productIds));
+            $query->manageableBy($user);
         }
 
         return $query;

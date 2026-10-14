@@ -86,6 +86,18 @@ return [
         'env_note' => 'Ces valeurs viennent du fichier .env du serveur et ne peuvent pas être modifiées ici, ce qui garde les mots de passe de messagerie hors du panneau d’administration.',
     ],
 
+    'recycle_bin' => [
+        'nav' => 'Corbeille',
+        'subheading' => 'Le contenu supprimé est masqué, pas effacé. Restaurez ici ce que vous voulez et il revient tel qu’il était. Les utilisateurs et les partenaires ne sont pas conservés : leur suppression est définitive.',
+        'deleted' => 'Supprimé',
+        'restore' => 'Restaurer',
+        'restore_heading' => 'Restaurer',
+        'restore_description' => 'L’élément revient là où il était, avec tout ce qu’il contenait. Un cours restauré retrouve ses leçons ; une leçon restaurée retrouve ses questions.',
+        'restored' => 'Restauré',
+        'empty' => 'Rien de supprimé ici',
+        'empty_description' => 'Quand un élément de ce type est supprimé, il apparaît ici.',
+    ],
+
     'whats_new' => [
         'empty' => 'Rien à afficher pour l’instant.',
         'empty_body' => 'Cette page lit :file, et ce fichier est absent ou ne contient aucun titre de version. Ajoutez un titre comme :heading suivi de :section et d’une puce par changement, et il apparaîtra ici.',

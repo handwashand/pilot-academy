@@ -86,6 +86,18 @@ return [
         'env_note' => 'Estes valores vêm do arquivo .env do servidor e não podem ser alterados aqui, o que mantém as senhas de e-mail fora do painel de administração.',
     ],
 
+    'recycle_bin' => [
+        'nav' => 'Lixeira',
+        'subheading' => 'O conteúdo excluído fica oculto, não é apagado. Restaure aqui o que precisar e ele volta como estava. Usuários e parceiros não são guardados: excluí-los é definitivo.',
+        'deleted' => 'Excluído',
+        'restore' => 'Restaurar',
+        'restore_heading' => 'Restaurar',
+        'restore_description' => 'O item volta para onde estava, com tudo o que tinha. Um curso restaurado traz suas aulas de volta; uma aula restaurada traz suas perguntas de volta.',
+        'restored' => 'Restaurado',
+        'empty' => 'Nada excluído aqui',
+        'empty_description' => 'Quando algo deste tipo é excluído, aparece aqui.',
+    ],
+
     'whats_new' => [
         'empty' => 'Nada para mostrar ainda.',
         'empty_body' => 'Esta página lê :file, e esse arquivo não existe ou não tem títulos de versão. Adicione um título como :heading seguido de :section e um item por mudança, e ele aparecerá aqui.',

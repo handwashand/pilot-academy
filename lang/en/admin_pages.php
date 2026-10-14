@@ -90,6 +90,18 @@ return [
         'env_note' => 'These come from the server\'s .env file and cannot be changed here, which keeps mail passwords out of the admin panel.',
     ],
 
+    'recycle_bin' => [
+        'nav' => 'Recycle bin',
+        'subheading' => 'Deleted content is hidden, not removed. Restore anything here and it comes back as it was. Users and partners are not kept: deleting one is final.',
+        'deleted' => 'Deleted',
+        'restore' => 'Restore',
+        'restore_heading' => 'Restore this',
+        'restore_description' => 'It goes back where it was, with everything it had. A restored course brings its lessons back; a restored lesson brings its questions back.',
+        'restored' => 'Restored',
+        'empty' => 'Nothing deleted here',
+        'empty_description' => 'When something of this kind is deleted, it is listed here.',
+    ],
+
     'whats_new' => [
         'empty' => 'Nothing to show yet.',
         'empty_body' => 'This page reads :file and that file is missing or has no release headings in it. Add a heading like :heading followed by :section and a bullet per change, and it will appear here.',

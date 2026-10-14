@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * A product or module in the Pilot ecosystem (GARM, PTM, …). Courses belong to
@@ -12,6 +13,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Product extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'name',
         'slug',

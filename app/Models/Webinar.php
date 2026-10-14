@@ -7,6 +7,7 @@ use App\Models\Concerns\HasPublishStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * A live session partners can join, and its recording afterwards. Upcoming and
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Webinar extends Model
 {
-    use HasContentTranslations, HasPublishStatus;
+    use HasContentTranslations, HasPublishStatus, SoftDeletes;
 
     /** @var array<int, string> */
     protected array $translatable = ['title', 'summary', 'description'];

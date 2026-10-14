@@ -104,6 +104,8 @@ class CompletionsByCompany extends TableWidget
         return DB::table('certificates')
             ->join('users', 'users.id', '=', 'certificates.user_id')
             ->join('courses', 'courses.id', '=', 'certificates.course_id')
+            // A raw join sees deleted courses; the models would not.
+            ->whereNull('courses.deleted_at')
             ->whereColumn('users.company_id', 'companies.id')
             ->where('users.role', User::ROLE_LEARNER)
             ->whereNull('certificates.revoked_at')

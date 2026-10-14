@@ -4,7 +4,7 @@
 
 return [
     'form' => [
-        'courses_help' => 'Una lección puede estar en más de un curso. Es la misma lección en cada uno: un cambio se ve en todos, y quien la termina en un curso la tiene terminada en todos. El primer curso es el propietario de la lección.',
+        'courses_help' => 'Una lección puede estar en más de un curso. Es la misma lección en cada uno: un cambio se ve en todos, y quien la termina en un curso la tiene terminada en todos. El primer curso es el propietario de la lección. Déjelo vacío para escribir la lección ahora y elegir un curso más tarde: los estudiantes no la ven hasta que esté en uno.',
         'course_not_yours' => 'Solo puedes añadir lecciones a cursos de un producto asignado a ti.',
         'order' => 'Orden',
         'order_help' => 'Su posición en su primer curso. Arrastra las lecciones en la pestaña Lecciones de cada curso para ordenarlo.',

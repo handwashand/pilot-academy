@@ -72,7 +72,7 @@ class TranslateLessonVideo
         $videos = [];
 
         foreach ($course->lessons()->with('course')->get() as $lesson) {
-            if (! $by?->canManageCourse($lesson->course)) {
+            if (! $by?->canManageLesson($lesson)) {
                 continue;
             }
 

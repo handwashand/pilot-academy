@@ -421,8 +421,10 @@ Newest first. Add to this every time.
 
 ### 2026-10-14 — Remove any lesson from a course; upload a final quiz from Excel
 
-Two of three requests built; the third (an easier lesson-creation flow) was
-answered with a suggestion and is waiting on the owner — see the end.
+Two of three requests built. The third was an easier lesson-creation flow,
+modelled on case studies. Both are already full-page forms; asked what to
+change, the owner decided the lesson flow is good as it is. **Leave the lesson
+form and the New lesson shell alone** unless the owner reopens it.
 
 **Remove from course is on every lesson.** It was hidden on a lesson's only
 course, and a test pinned that, because a lesson could not exist in no course.

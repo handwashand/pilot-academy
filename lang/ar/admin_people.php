@@ -29,6 +29,7 @@ return [
         'use_deepl_translation' => 'توليد مسودات الترجمة عبر DeepL',
         'use_ai_translation' => 'توليد مسودات الترجمة عبر ChatGPT أو DeepSeek',
         'download_videos' => 'تنزيل فيديوهات الدروس',
+        'use_recycle_bin' => 'فتح سلة المحذوفات واستعادة المحتوى المحذوف (للمسؤولين فقط)',
         'lessons_done' => 'الدروس المنجزة',
         'last_login' => 'آخر تسجيل دخول',
         'export' => 'تصدير تقدّم المتعلّمين',

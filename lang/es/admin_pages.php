@@ -86,6 +86,18 @@ return [
         'env_note' => 'Estos valores vienen del archivo .env del servidor y no se pueden cambiar aquí, lo que mantiene las contraseñas de correo fuera del panel de administración.',
     ],
 
+    'recycle_bin' => [
+        'nav' => 'Papelera',
+        'subheading' => 'El contenido eliminado se oculta, no se borra. Restaure aquí lo que necesite y volverá tal como estaba. Los usuarios y los socios no se conservan: eliminarlos es definitivo.',
+        'deleted' => 'Eliminado',
+        'restore' => 'Restaurar',
+        'restore_heading' => 'Restaurar',
+        'restore_description' => 'Vuelve a donde estaba, con todo lo que tenía. Un curso restaurado recupera sus lecciones; una lección restaurada recupera sus preguntas.',
+        'restored' => 'Restaurado',
+        'empty' => 'No hay nada eliminado aquí',
+        'empty_description' => 'Cuando se elimina algo de este tipo, aparece aquí.',
+    ],
+
     'whats_new' => [
         'empty' => 'Aún no hay nada que mostrar.',
         'empty_body' => 'Esta página lee :file y ese archivo falta o no tiene títulos de versión. Añade un título como :heading seguido de :section y una viñeta por cambio, y aparecerá aquí.',

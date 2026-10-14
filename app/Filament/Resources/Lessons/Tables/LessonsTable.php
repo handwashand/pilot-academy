@@ -132,7 +132,7 @@ class LessonsTable
                             : __t('admin_lessons.table.publish_blocked', ['problems' => FindContentProblems::plainList($problems)]);
                     })
                     ->visible(fn (Lesson $record): bool => $record->status === Lesson::STATUS_DRAFT)
-                    ->authorize(fn (Lesson $record): bool => auth()->user()->canManageCourse($record->course))
+                    ->authorize(fn (Lesson $record): bool => auth()->user()->canManageLesson($record))
                     ->action(function (Lesson $record): void {
                         $problems = static::problemsIfPublished($record);
 
@@ -168,7 +168,7 @@ class LessonsTable
                             : $description;
                     })
                     ->visible(fn (Lesson $record): bool => $record->isPublished())
-                    ->authorize(fn (Lesson $record): bool => auth()->user()->canManageCourse($record->course))
+                    ->authorize(fn (Lesson $record): bool => auth()->user()->canManageLesson($record))
                     ->action(function (Lesson $record): void {
                         $record->unpublish();
 
