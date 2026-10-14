@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Filament\Resources\CaseStudies\CaseStudyResource;
+use App\Filament\Resources\CaseStudies\Pages\CreateCaseStudy;
 use App\Filament\Resources\CaseStudies\Pages\EditCaseStudy;
 use App\Filament\Resources\CaseStudies\Pages\ListCaseStudies;
 use App\Models\ActivityEvent;
@@ -417,6 +418,75 @@ class CaseStudyTest extends TestCase
             ->assertOk()
             ->assertSee('Troubleshooting and common mistakes')
             ->assertSee('/storage/case-study-images/error.png', false);
+    }
+
+    /**
+     * A new study starts with only the four required steps; the five optional
+     * ones are not in the form at all until "Add step" brings one in.
+     */
+    public function test_a_new_study_starts_with_only_the_required_steps_shown(): void
+    {
+        Livewire::actingAs($this->admin())
+            ->test(CreateCaseStudy::class)
+            ->assertFormFieldExists('scenario_problem')
+            ->assertFormFieldExists('configuration_steps')
+            ->assertFormFieldDoesNotExist('prerequisites')
+            ->assertFormFieldDoesNotExist('pilot_features')
+            ->assertFormFieldDoesNotExist('expected_results')
+            ->assertFormFieldDoesNotExist('troubleshooting')
+            ->assertFormFieldDoesNotExist('adaptation');
+    }
+
+    /** Editing a study that already has an optional step filled shows it, pre-filled, without needing Add step. */
+    public function test_editing_a_study_shows_its_already_filled_optional_steps(): void
+    {
+        $study = $this->completeStudy();
+
+        Livewire::actingAs($this->admin())
+            ->test(EditCaseStudy::class, ['record' => $study->getRouteKey()])
+            ->assertFormFieldExists('prerequisites')
+            ->assertFormSet(['prerequisites' => '<p>Prerequisites.</p>']);
+    }
+
+    /**
+     * "Add step" reveals an optional step's box; "Remove this step" hides it
+     * again without clearing whatever was written in it.
+     */
+    public function test_add_step_shows_an_optional_step_and_remove_step_only_hides_it(): void
+    {
+        $study = $this->completeStudy();
+
+        $page = Livewire::actingAs($this->admin())
+            ->test(EditCaseStudy::class, ['record' => $study->getRouteKey()])
+            ->assertFormFieldExists('prerequisites')
+            ->set('data.active_optional_steps', ['features', 'results', 'troubleshooting', 'adaptation'])
+            ->assertFormFieldDoesNotExist('prerequisites');
+
+        // "Add step" only offers what is not already shown, and ticking one
+        // brings its box back into the form.
+        $page->set('data.add_step', 'prerequisites')
+            ->assertFormFieldExists('prerequisites')
+            ->assertFormSet(['prerequisites' => '<p>Prerequisites.</p>'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        // Removing it from the form and saving never touched the column.
+        $this->assertSame('<p>Prerequisites.</p>', $study->fresh()->prerequisites);
+    }
+
+    /** Hiding an optional step and saving does not clear its saved content. */
+    public function test_hiding_an_optional_step_and_saving_keeps_its_content(): void
+    {
+        $study = $this->completeStudy();
+
+        Livewire::actingAs($this->admin())
+            ->test(EditCaseStudy::class, ['record' => $study->getRouteKey()])
+            ->set('data.active_optional_steps', [])
+            ->assertFormFieldDoesNotExist('prerequisites')
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertSame('<p>Prerequisites.</p>', $study->fresh()->prerequisites, 'Hidden, not deleted.');
     }
 
     public function test_creators_only_see_and_manage_their_products_case_studies(): void

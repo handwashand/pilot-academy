@@ -6,7 +6,9 @@ use App\Filament\Resources\Courses\Schemas\CourseForm;
 use App\Models\CaseStudy;
 use App\Models\Lesson;
 use Closure;
+use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -16,8 +18,11 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class CaseStudyForm
@@ -157,18 +162,78 @@ class CaseStudyForm
 
                 // The editor writes under the same headings a partner reads —
                 // see CaseStudy::sections() and academy.case_studies.sections.
+                //
+                // Nine fields in a row used to run together with nothing between
+                // them. Each step is now its own bordered, numbered sub-section —
+                // spacing and a heading do the separating, not new fields. The
+                // four the study cannot publish without (scenario, outcome,
+                // configuration, verification) are always here; the other five
+                // start hidden unless the record already has something written
+                // in them, and are brought in with "Add step" at the end — see
+                // numberedStep() for why that is safe to hide and unhide.
                 Section::make(__t('admin_case_studies.sections.study'))
-                    ->schema([
-                        ...static::step('scenario_problem', 'scenario', true),
-                        ...static::step('desired_outcome', 'outcome', true),
-                        ...static::step('prerequisites', 'prerequisites'),
-                        ...static::step('pilot_features', 'features'),
-                        ...static::step('configuration_steps', 'configuration', true),
-                        ...static::step('testing_verification', 'verification', true),
-                        ...static::step('expected_results', 'results'),
-                        ...static::step('troubleshooting', 'troubleshooting'),
-                        ...static::step('adaptation', 'adaptation'),
-                    ]),
+                    ->schema(function (): array {
+                        $required = [
+                            ['scenario_problem', 'scenario', 1],
+                            ['desired_outcome', 'outcome', 2],
+                            ['configuration_steps', 'configuration', 5],
+                            ['testing_verification', 'verification', 6],
+                        ];
+
+                        $optional = [
+                            ['prerequisites', 'prerequisites', 3],
+                            ['pilot_features', 'features', 4],
+                            ['expected_results', 'results', 7],
+                            ['troubleshooting', 'troubleshooting', 8],
+                            ['adaptation', 'adaptation', 9],
+                        ];
+
+                        // Step-by-step configuration and expected results are
+                        // the two steps partners actually screenshot in
+                        // practice (the "before/after" of a setup); the other
+                        // seven keep the paperclip-in-text option only, so the
+                        // form is not nine upload boxes deep.
+                        $withGallery = ['configuration_steps', 'expected_results'];
+
+                        return [
+                            Hidden::make('active_optional_steps')
+                                ->dehydrated(false)
+                                ->default(fn (?CaseStudy $record): array => collect($optional)
+                                    ->reject(fn (array $step) => blank($record?->{$step[0]}))
+                                    ->map(fn (array $step): string => $step[1])
+                                    ->values()
+                                    ->all()),
+
+                            ...collect($required)
+                                ->map(fn (array $step): Section => static::numberedStep(...$step, withGallery: in_array($step[0], $withGallery, true)))
+                                ->all(),
+
+                            ...collect($optional)
+                                ->map(fn (array $step): Section => static::numberedStep(...$step, withGallery: in_array($step[0], $withGallery, true), optional: true))
+                                ->all(),
+
+                            Select::make('add_step')
+                                ->label(__t('admin_case_studies.form.add_step'))
+                                ->placeholder(__t('admin_case_studies.form.add_step_placeholder'))
+                                ->native(false)
+                                ->dehydrated(false)
+                                ->live()
+                                ->options(fn (Get $get): array => collect($optional)
+                                    ->reject(fn (array $step) => in_array($step[1], (array) $get('active_optional_steps'), true))
+                                    ->mapWithKeys(fn (array $step): array => [$step[1] => __t("academy.case_studies.sections.{$step[1]}")])
+                                    ->all())
+                                ->visible(fn (Get $get): bool => count((array) $get('active_optional_steps')) < count($optional))
+                                ->afterStateUpdated(function (?string $state, Get $get, Set $set): void {
+                                    if (blank($state)) {
+                                        return;
+                                    }
+
+                                    $set('active_optional_steps', [...(array) $get('active_optional_steps'), $state]);
+                                    $set('add_step', null);
+                                })
+                                ->columnSpanFull(),
+                        ];
+                    }),
 
                 Section::make(__t('admin_case_studies.sections.related'))
                     ->columns(2)
@@ -208,20 +273,70 @@ class CaseStudyForm
     }
 
     /**
+     * One step, boxed and numbered on its own so nine fields in a row no
+     * longer read as one block of text.
+     *
+     * Required steps are always here. An optional one is only in the schema
+     * while its key is in the hidden `active_optional_steps` list — see the
+     * Hidden field above — so removing it is really just hiding it: a Filament
+     * component that is not visible is not dehydrated, so saving never
+     * overwrites or clears whatever that step already holds. It comes back
+     * exactly as it was through "Add step".
+     *
+     * @param  string  $name  The model column this step writes to.
+     * @param  string  $section  Its key under academy.case_studies.sections.
+     */
+    protected static function numberedStep(string $name, string $section, int $number, bool $withGallery, bool $optional = false): Section
+    {
+        $section_ = Section::make(__t('admin_case_studies.form.step_label', [
+            'number' => $number,
+            'name' => __t("academy.case_studies.sections.{$section}"),
+        ]))
+            ->schema($withGallery ? static::step($name, $section) : [static::rich($name)])
+            ->columnSpanFull()
+            // The required steps carry their own asterisk from ->required() on
+            // the field; a box around each is separation enough without a
+            // second "required" label repeating it.
+            ->compact();
+
+        if (! $optional) {
+            return $section_;
+        }
+
+        return $section_
+            ->visible(fn (Get $get): bool => in_array($section, (array) $get('active_optional_steps'), true))
+            ->headerActions([
+                Action::make("remove_{$section}")
+                    ->label(__t('admin_case_studies.form.remove_step'))
+                    ->icon('heroicon-o-x-mark')
+                    ->color('gray')
+                    ->link()
+                    ->action(function (Get $get, Set $set) use ($section): void {
+                        $set('active_optional_steps', array_values(Arr::where(
+                            (array) $get('active_optional_steps'),
+                            fn (string $key): bool => $key !== $section,
+                        )));
+                    }),
+            ]);
+    }
+
+    /**
      * One step: the words, then its pictures.
      *
      * Two ways in, because they suit different pictures. Something that belongs
      * mid-sentence goes in the text through the paperclip; a screenshot that
      * stands on its own goes in the box below, which also takes a paste from
-     * the clipboard or a file dropped on it.
+     * the clipboard or a file dropped on it. Kept to the two steps partners
+     * actually screenshot (see numberedStep()) — every step still has the
+     * paperclip in its own text toolbar regardless.
      *
      * @param  string  $section  A key under academy.case_studies.sections.
      * @return array<int, Component>
      */
-    protected static function step(string $name, string $section, bool $required = false): array
+    protected static function step(string $name, string $section): array
     {
         return [
-            static::rich($name, $section, $required),
+            static::rich($name),
             FileUpload::make("section_images.{$section}")
                 ->label(__t('admin_case_studies.form.step_images', ['step' => __t("academy.case_studies.sections.{$section}")]))
                 ->helperText(__t('admin_case_studies.form.step_images_help'))
@@ -247,20 +362,20 @@ class CaseStudyForm
      * default disk is private, so an attachment saved there would upload
      * happily and then show a broken image on the study page.
      *
-     * @param  string  $section  A key under academy.case_studies.sections.
+     * No label of its own: the Section wrapping it (see numberedStep()) is
+     * already headed with the step's name and number.
      */
-    protected static function rich(string $name, string $section, bool $required = false): RichEditor
+    protected static function rich(string $name): RichEditor
     {
-        $field = RichEditor::make($name)
-            ->label(__t("academy.case_studies.sections.{$section}"))
+        return RichEditor::make($name)
+            ->hiddenLabel()
             ->fileAttachmentsDisk('public')
             ->fileAttachmentsDirectory('case-study-images')
             ->fileAttachmentsVisibility('public')
             ->fileAttachmentsMaxSize(8192)
             ->helperText(__t('admin_case_studies.form.images_help'))
+            ->required(in_array($name, ['scenario_problem', 'desired_outcome', 'configuration_steps', 'testing_verification'], true))
             ->columnSpanFull();
-
-        return $required ? $field->required() : $field;
     }
 
     protected static function mediaSelect(string $name, string $label): Select
