@@ -33,7 +33,7 @@ return [
         'video_file_help' => 'MP4 up to 200 MB.',
         'status_help' => 'Students see a lesson only once its course is published too. Set it to draft to keep this one lesson back.',
         'content' => 'Lesson text',
-        'import_markdown' => 'Upload a Markdown file',
+        'import_markdown' => 'Import a Markdown file',
         'import_heading' => 'Fill the lesson text from a file',
         'import_description' => 'The file\'s text replaces what is in the Lesson text box, with its headings, lists, links and tables kept. A first line like "# Title" names the lesson if it has no title yet. Nothing is saved until you save the lesson.',
         'import_file' => 'Markdown file (.md or .txt)',

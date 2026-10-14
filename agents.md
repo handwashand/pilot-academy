@@ -426,8 +426,13 @@ Asked first which format and where: the owner chose Markdown only, questions
 kept separate, and the button on the **Lesson text** box of the lesson form —
 then asked for it to be an icon, not words.
 
-It is a `hintAction` on the `content` RichEditor (`->iconButton()`, the label
-kept as tooltip and for screen readers). `App\Actions\ReadLessonMarkdown` turns
+It began as a `hintAction` above the box; the owner found that too flashy and
+asked for it to be one of the editor's own buttons, at the end of the row,
+named **Import** with the arrow pointing down. So it is a `RichEditorTool`
+(`->tools([...])`) whose `->action()` mounts an action given to the editor with
+`->registerActions([...])`, and `->toolbarButtons()` is a closure that appends
+it to `getDefaultToolbarButtons()` — so Filament's own row stays whatever
+Filament makes it. `App\Actions\ReadLessonMarkdown` turns
 the file into HTML with `html_input => strip` and `allow_unsafe_links => false`,
 the same options the guides use; a leading `# Title` is taken out of the text
 and names the lesson only when the title is blank (and the slug only when that

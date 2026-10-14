@@ -30,7 +30,7 @@ return [
         'video_file_help' => 'MP4 de hasta 200 MB.',
         'status_help' => 'Los estudiantes solo ven una lección cuando su curso también está publicado. Ponla en borrador para reservar solo esta lección.',
         'content' => 'Texto de la lección',
-        'import_markdown' => 'Subir un archivo Markdown',
+        'import_markdown' => 'Importar un archivo Markdown',
         'import_heading' => 'Rellenar el texto de la lección desde un archivo',
         'import_description' => 'El texto del archivo sustituye lo que hay en el cuadro «Texto de la lección» y conserva sus títulos, listas, enlaces y tablas. Una primera línea como «# Título» da nombre a la lección si todavía no tiene título. No se guarda nada hasta que guarde la lección.',
         'import_file' => 'Archivo Markdown (.md o .txt)',

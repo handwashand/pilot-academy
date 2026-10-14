@@ -141,8 +141,9 @@ lists every lesson in that course.
   the **Not in any course** filter there, and put one back with **Add existing
   lesson** on any course — that course then owns it.
 
-> **Wrote the lesson somewhere else?** On the lesson's own form, the upload
-> icon at the top right of the **Lesson text** box takes a Markdown file (`.md`
+> **Wrote the lesson somewhere else?** On the lesson's own form, the last
+> button in the **Lesson text** box's row of buttons, **Import a Markdown
+> file**, takes a Markdown file (`.md`
 > or `.txt`, up to 512 KB) and fills the box with it, keeping headings, bold,
 > lists, links and tables. A first line like `# Title` becomes the lesson's
 > title if it has none yet. It replaces what is in the box and saves nothing

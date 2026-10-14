@@ -12,6 +12,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -117,15 +118,23 @@ class LessonForm
                                 // Markdown file instead of being pasted and
                                 // formatted again. It only fills the box:
                                 // nothing is stored until the lesson is saved.
-                                ->hintAction(
-                                    Action::make('importMarkdown')
-                                        // An icon beside the box's own buttons;
-                                        // the label is its tooltip and what a
-                                        // screen reader says.
+                                //
+                                // One more button at the end of the editor's
+                                // own row, looking and behaving like the rest
+                                // of them — not a coloured button above it.
+                                ->tools([
+                                    RichEditorTool::make('importMarkdown')
                                         ->label(__t('admin_lessons.form.import_markdown'))
-                                        ->tooltip(__t('admin_lessons.form.import_markdown'))
-                                        ->icon('heroicon-o-arrow-up-tray')
-                                        ->iconButton()
+                                        ->icon('heroicon-o-arrow-down-tray')
+                                        ->action(),
+                                ])
+                                ->toolbarButtons(fn (RichEditor $component): array => [
+                                    ...$component->getDefaultToolbarButtons(),
+                                    ['importMarkdown'],
+                                ])
+                                ->registerActions([
+                                    Action::make('importMarkdown')
+                                        ->label(__t('admin_lessons.form.import_markdown'))
                                         ->modalHeading(__t('admin_lessons.form.import_heading'))
                                         ->modalDescription(__t('admin_lessons.form.import_description'))
                                         ->modalSubmitActionLabel(__t('admin_lessons.form.import_submit'))
@@ -171,7 +180,7 @@ class LessonForm
                                                 ->success()
                                                 ->send();
                                         }),
-                                )
+                                ])
                                 ->columnSpanFull(),
 
                             Textarea::make('transcript')

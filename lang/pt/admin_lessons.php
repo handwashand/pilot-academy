@@ -30,7 +30,7 @@ return [
         'video_file_help' => 'MP4 de até 200 MB.',
         'status_help' => 'Os alunos só veem uma aula quando o curso dela também está publicado. Deixe-a como rascunho para segurar apenas esta aula.',
         'content' => 'Texto da aula',
-        'import_markdown' => 'Enviar um arquivo Markdown',
+        'import_markdown' => 'Importar um arquivo Markdown',
         'import_heading' => 'Preencher o texto da aula a partir de um arquivo',
         'import_description' => 'O texto do arquivo substitui o que está na caixa "Texto da aula", mantendo títulos, listas, links e tabelas. Uma primeira linha como "# Título" dá nome à aula se ela ainda não tiver título. Nada é salvo até você salvar a aula.',
         'import_file' => 'Arquivo Markdown (.md ou .txt)',
