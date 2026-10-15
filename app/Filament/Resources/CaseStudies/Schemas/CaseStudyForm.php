@@ -130,17 +130,20 @@ class CaseStudyForm
                                 },
                             ]),
 
-                        // No "Written in" field to fill: a study simply opens
-                        // in the academy's default language, the same way a
-                        // blank value has always read for one. If the record
-                        // already has a language of its own — every study
-                        // written before this changed does — that value is
-                        // left alone; this only decides what a brand new one
-                        // gets, and HasContentTranslations::contentLanguageCode()
-                        // already falls back to the default for a blank column,
-                        // so nothing downstream had to change for this to work.
+                        // No "Written in" field to fill: the study takes the
+                        // language the editor is writing in right now — the
+                        // panel's own current locale, which is their own
+                        // account language whenever they have one set
+                        // (SetLocale). A Russian-speaking creator with the
+                        // panel in Russian gets a Russian study, not English
+                        // by default; only an editor with no language
+                        // preference of their own, on the site's own default
+                        // language, gets that default. If the record already
+                        // has a language of its own — every study written
+                        // before this changed does — that value is left
+                        // alone; this only decides what a brand new one gets.
                         Hidden::make('language')
-                            ->default(fn (): string => app(Translator::class)->defaultCode()),
+                            ->default(fn (): string => app()->getLocale()),
 
                         static::studySections(),
 
