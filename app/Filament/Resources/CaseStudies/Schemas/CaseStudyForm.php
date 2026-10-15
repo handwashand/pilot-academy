@@ -171,7 +171,13 @@ class CaseStudyForm
                 // start hidden unless the record already has something written
                 // in them, and are brought in with "Add step" at the end — see
                 // numberedStep() for why that is safe to hide and unhide.
+                // Full width on its own: with nine steps inside, it is the
+                // longest section on the page by far. Left in the page's
+                // default two columns it stacked in one column while the
+                // other sat mostly empty beside it — wasted space, and the
+                // page read as lopsided rather than one steady form.
                 Section::make(__t('admin_case_studies.sections.study'))
+                    ->columnSpanFull()
                     ->schema(function (): array {
                         $required = [
                             ['scenario_problem', 'scenario', 1],

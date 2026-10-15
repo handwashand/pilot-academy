@@ -381,7 +381,9 @@ Add a new entry here whenever something visible to admins or students changes.
   through **Add step**. Only two steps — step-by-step configuration and
   expected results — still have a separate picture-upload box underneath,
   since those are the ones partners actually screenshot; every step still
-  takes a picture through the paperclip in its own text toolbar.
+  takes a picture through the paperclip in its own text toolbar. The whole
+  **Study sections** block now spans the full width of the page, instead of
+  sitting in one narrow column with empty space beside it.
 - **A new lesson's web address keeps up with its title.** In the **New
   lesson** window on a course, retyping the title now updates the address
   too, until you type an address of your own.

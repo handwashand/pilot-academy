@@ -490,6 +490,19 @@ PHPUnit test instead. The public-facing case study pages (`index.blade.php`,
 no overflow — and were not changed; the owner's complaint was specifically
 about the admin editing screen.
 
+**Follow-up, same day:** the page's top level has no explicit `->columns()`
+— neither here nor in `CaseStudyResource::form()` — so it falls back to
+Filament's own default grid for a resource form, and every top-level
+`Section` defaults to spanning one column of it. With nine steps inside,
+**Study sections** was by far the longest section on the page, but it was
+still confined to one column while the other sat mostly empty beside it —
+the owner called this out as "disruptively scattered". One line,
+`->columnSpanFull()` on that Section, fixes it: nothing about the steps
+inside changed, only how much of the page the whole block takes. Confirmed
+in Chrome the rendered box is the full 1056px content width against the
+492px the other sections keep, with no overflow and `CaseStudyTest` still
+18/18.
+
 ### 2026-10-14 — The five translated admin guides are full translations now
 
 Until today `docs/admin-guide.{ru,es,fr,pt,ar}.md` were short summaries,
