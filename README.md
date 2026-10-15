@@ -6,44 +6,48 @@ The Academy trains and certifies partner staff, then certified partners train th
 
 ## Overview
 
-Pilot Academy is built as a Laravel 13 application with a public student site and a Filament-powered admin panel.
+Pilot Academy is a Laravel 13 application with a public student site and a Filament 5 admin panel at `/admin`.
 
-Public student features:
+Student site:
 
-- course catalog and lesson browsing
-- video lessons, written content, and knowledge-check quizzes
-- timed/attempt-limited lesson quizzes when configured
-- final course assessment and certificate issuance
-- certificate download and public verification by certificate number
+- courses, lessons, and written or video content, in English, Russian, Spanish, French, Portuguese and Arabic
+- knowledge-check quizzes after each lesson, and a final course assessment
+- certificates with PDF download and public verification by certificate number
+- case studies, tutorials and webinars for partners, with search and filters
+- profile, password reset, and a Help page
 
-Admin features:
+Admin panel:
 
-- manage courses, lessons, questions, and final quiz banks
-- configure pass thresholds, attempt limits, and certificate templates
-- issue, revoke, resend, and regenerate certificates
-- manage partner companies and student accounts
+- courses, lessons, quiz questions and final quiz banks, with translation of content and quizzes into any active language
+- case studies, tutorials, webinars and media
+- partners, users and roles (admin, creator, learner), with creators limited to their own products
+- certificates, quiz attempts, student feedback, and a dashboard of learner progress
+- a recycle bin for deleted content, and an in-panel guide and change log
 
 ## Built with
 
-- Laravel 13
-- Filament admin panel
-- PostgreSQL (a `db` service is included in `docker-compose.yml`)
-- Tailwind CSS and Vite — two entries: `resources/css/app.css` for the student
-  site and `resources/css/filament/admin/theme.css`, the panel's own theme.
-  Filament's stock stylesheet has no Tailwind utility layer, so custom panel
-  pages need that theme or their classes compile to nothing.
-- DOMPDF for generating certificate PDFs
-- simple-qrcode for QR codes on certificates
+- Laravel 13 and Filament 5
+- PostgreSQL in production; the test suite runs on SQLite in memory
+- Tailwind CSS and Vite, with two entries: `resources/css/app.css` for the student
+  site and `resources/css/filament/admin/theme.css` for the admin panel. The
+  compiled CSS is committed in `public/build/`, so the server does not run Node.
+- DOMPDF for certificate PDFs, and simple-qrcode for certificate QR codes
 
 ## Getting started
 
 ### Requirements
 
-- PHP 8.4
-- Composer
+Composer
 - Node.js and npm
-- PostgreSQL 17
-- Docker is optional but supported via `docker-compose.yml`
+- PostgreSQL 17- 
+PHP 8.4 with the extensions listed in [DEPLOY.md](DEPLOY.md)
+- Composer 2
+- Node.js and npm, only if you change CSS or JavaScript
+- PostgreSQL 17 for local development
+
+Docker is an option for development and for running the tests. It is not part of
+the production setup.
+But Docker is optional but supported via `docker-compose.yml`
 
 ### Install locally
 
@@ -63,12 +67,14 @@ php artisan serve
 npm run dev
 ```
 
-Open the public site at `http://127.0.0.1:8000`.
+Open the public site at `http://127.0.0.1:8000` and the admin panel at
+`http://127.0.0.1:8000/admin`.
 
-### Run with Docker
+## Development with Docker
 
-A `Dockerfile` and `docker-compose.yml` are included, so PHP 8.4 and the
-extensions are not needed on the host.
+`Dockerfile` and `docker-compose.yml` provide a development environment and a
+place to run the tests, so PHP 8.4 and the extensions do not have to be installed
+on the host. Production does not use Docker.
 
 ```bash
 docker compose up --build
@@ -77,77 +83,92 @@ docker compose up --build
 Open the public site at `http://localhost:8000` and the admin panel at
 `http://localhost:8000/admin`. On first boot the container writes its `.env`,
 generates the app key, migrates, and seeds the demo course plus an admin login
-(`admin@pilot.local` / `password`).
+(`admin@pilot.local` / `password`). Change that password before using the
+environment for anything shared.
 
-No npm step is needed: the Vite bundle committed in `public/build/` is served
-as-is. The PostgreSQL data and uploaded media live in named volumes, so they
-survive `docker compose down` — add `-v` to start from a clean slate.
+The bundle committed in `public/build/` is served as-is, so no npm step is
+needed in the container. PostgreSQL data and uploaded media live in named
+volumes and survive `docker compose down`; add `-v` to start from a clean slate.
 
-## App structure
-
-- `app/Http/Controllers/AcademyController.php` — public student flows, course and lesson pages, lesson quiz flow, completion tracking
-- `app/Http/Controllers/FinalQuizController.php` — final course assessment and certificate issuance
-- `app/Http/Controllers/CertificateController.php` — certificate listing, download, and public verification
-- `app/Http/Controllers/Auth/StudentAuthController.php` — student login, registration, join flow, passwordless magic-link access
-- `app/Models/Course.php` — course configuration, published lesson access, final quiz unlock rules
-- `app/Models/Lesson.php` — lesson content, video/image URL helpers, quiz limit helpers
-- `app/Models/Certificate.php` — certificate validity, PDF path, verification URL
-- `app/Models/User.php` — student/admin accounts, login token access links, completed lessons, certificates, activity logging
-
-## Student user flow
-
-1. Register or join from the public site
-2. Browse published courses
-3. Open a lesson, watch video content, and complete the knowledge check quiz
-4. Finish every lesson in a course to unlock the final assessment
-5. Start the final quiz, pass, and receive a certificate
-6. Download the certificate PDF from the student account
-
-Stuck at any step? **Help** (`/help`, the **?** in the header) explains the flow in plain language.
-
-## Admin flow
-
-1. Log in to the Filament admin panel at `/admin`
-2. Create courses and publish them when ready
-3. Add lessons, media, and quiz questions for each course
-4. Enable the final quiz and configure pass percent, attempt limits, and certificate template
-5. Add partner companies and student users as needed
-6. Review issued certificates, revoke or regenerate them, and verify certificate numbers
+Docker copies the source into the image at build time, so rebuild after editing
+PHP or Blade files (`docker compose up -d --build`) before testing them.
 
 ## Testing
 
-Run the Laravel test suite locally:
+Run the suite on a host with PHP 8.4:
 
 ```bash
 composer test
 ```
 
-Or run the tests inside Docker:
+Or inside Docker:
 
 ```bash
 docker compose run --rm app php artisan test
 ```
 
+Do not run the suite with the configuration cached. The test base class refuses
+any database other than `:memory:` or one named `*test*`, and `composer test`
+clears the cache first for that reason.
+
+## Deployment
+
+Production runs on a PHP-FPM server that pulls the `laravel` branch with
+`git pull`, then runs `php8.4 artisan migrate --force` and
+`php8.4 artisan optimize`. No Node build runs on the server. Read
+[DEPLOY.md](DEPLOY.md) before deploying, especially the note about the committed
+`public/build/` bundle.
+
+## App structure
+
+- `app/Http/Controllers/AcademyController.php` — student pages, course and lesson flows, lesson quizzes, completion tracking
+- `app/Http/Controllers/FinalQuizController.php` — final course assessment and certificate issuance
+- `app/Http/Controllers/CertificateController.php` — certificate listing, download, and public verification
+- `app/Http/Controllers/Auth/StudentAuthController.php` — sign in, registration, the join flow, and magic-link access
+- `app/Models/Course.php` — course configuration, published lesson access, final quiz unlock rules
+- `app/Models/Lesson.php` — lesson content, video helpers, quiz limit helpers
+- `app/Models/Certificate.php` — certificate validity, PDF path, verification URL
+- `app/Models/User.php` — accounts and roles, login tokens, completed lessons, certificates, activity logging
+- `app/Services/Translator.php` — interface translation and the translations table
+- `docs/` — the admin guide, learner guide, privacy policy and change log, all read from disk at request time
+
+## Student user flow
+
+1. Register or join from the public site
+2. Browse published courses
+3. Open a lesson, watch the video or read the content, and complete the knowledge check
+4. Finish every lesson in a course to unlock the final assessment
+5. Pass the final quiz to receive a certificate
+6. Download the certificate PDF from the account menu
+
+Stuck at any step? **Help** (`/help`, in the account menu and the footer) explains
+the flow in plain language.
+
+## Admin flow
+
+1. Sign in to the admin panel at `/admin`
+2. Create courses, lessons and quiz questions, and publish them when ready
+3. Add media, translations, and the final quiz bank
+4. Set pass percentage, attempt limits and the certificate template for each course
+5. Add partners and student accounts as needed
+6. Review issued certificates, revoke or regenerate them, and verify certificate numbers
+
 ## Docs
 
-- Admin guide: `docs/admin-guide.md` — rendered in the panel under **Docs → Guide**,
-  with a contents list and search
-- Change log: `docs/CHANGELOG.md` — rendered in the panel under **Docs → What's new**,
-  downloadable as a PDF (`/admin/changelog/pdf`, or `/admin/changelog/pdf/{release}`)
-- Student guide: `docs/learner-guide.md` — rendered on the public site at `/help`
+- Admin guide: `docs/admin-guide.md`, shown in the panel under **Docs → Guide**
+- Change log: `docs/CHANGELOG.md`, shown under **Docs → What's new** and downloadable as a PDF
+- Student guide: `docs/learner-guide.md`, shown on the public site at `/help`
+- Privacy policy: `docs/privacy-policy.md`
 
-All three are read from disk at request time, so nobody sees a stale copy. Each
-`## ` heading in a guide becomes a section and a contents entry.
-**What's new** parses the change log rather than just rendering it: `## <Month>
-<Year>` starts a release card, and `### Added` / `Changed` / `Fixed` /
-`Known limitations` categorises the bullets under it for the search and filter
-bar. Any other `### ` heading still renders and keeps its own text.
+Each `## ` heading in a guide becomes a section and a contents entry. In the change
+log, `## <Month> <Year>` starts a release, and `### Added`, `Changed`, `Fixed` and
+`Known limitations` group the bullets under it for search and filtering.
 
 ## Notes
 
-- Final quiz access is unlocked once a student completes all published lessons in a course.
-- Admin users can preview the final quiz without completing the course.
-- Certificates are permanent until revoked; public verification is available at `/certificates/{number}`.
+- Final quiz access unlocks once a student completes every published lesson in a course.
+- Admins can preview the final quiz without completing the course.
+- Certificates stay valid until revoked; public verification is at `/certificates/{number}`.
 
 ## License
 
