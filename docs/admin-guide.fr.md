@@ -276,35 +276,47 @@ Quand un apprenant réussit, le certificat est créé **automatiquement** : un P
 Utilisez **Contenu → Études de cas** pour un guide de déploiement pratique que les
 partenaires peuvent reproduire. Une étude de cas est un document de référence et non
 un cours : elle ne suit pas l’achèvement et ne délivre pas de certificat.
+Le formulaire est un seul grand encadré pour les informations de base, les étapes et le contenu associé, puis, plus bas, **Confidentialité et vérification** et **Médias**.
 
 1. Cliquez sur **Créer** et choisissez le **Produit** le cas échéant. Les créateurs
    doivent choisir l’un de leurs produits et ne peuvent gérer que les études de
    ces produits.
-2. Ajoutez le titre, l’énoncé court du problème, le secteur, les fonctions Pilot
-   concernées, la difficulté et le temps de mise en œuvre estimé. **Écrit en** est la
-   langue de l’étude elle-même — écrivez dans la vôtre, puis utilisez **Traduire** sur
-   la page de modification pour ajouter les autres langues. Un partenaire lit la
-   traduction là où elle existe et l’original partout ailleurs.
-3. Complétez les sections de l’étude. Avant la publication, l’académie exige le
-   scénario et le problème du client, le résultat souhaité, la configuration pas à
-   pas, les tests et la vérification, ainsi qu’une **Source ou note de vérification**.
-4. Dans **Confidentialité et vérification**, laissez **Anonymisé** activé sauf si le
+2. Ajoutez le titre, l’énoncé court du problème, le secteur et les fonctions Pilot
+   concernées, côte à côte ; puis la difficulté, le temps de mise en œuvre estimé, l’ordre
+   et le statut, sur une seule ligne. Il n’y a pas de langue à choisir : une nouvelle étude
+   prend automatiquement la langue de votre compte ou du panneau. Une fois rédigée,
+   utilisez **Traduire** sur la page de modification pour ajouter les autres langues. Un
+   partenaire lit la traduction là où elle existe, et l’original partout ailleurs.
+3. Complétez les sections de l’étude, chacune dans son propre encadré numéroté (« Étape 1 · … »,
+   « Étape 2 · … », etc.). Quatre sont toujours visibles, car l’étude ne peut pas être
+   publiée sans elles : le scénario, le résultat souhaité, la configuration pas à pas, ainsi
+   que les tests et la vérification. À côté, la **Source ou note de vérification** sous
+   **Confidentialité et vérification**, plus bas.
+4. Les cinq autres sections — prérequis, fonctions Pilot utilisées, résultats attendus,
+   dépannage et façons d’adapter la solution — sont masquées au départ, pour qu’une étude
+   rapide ne montre pas neuf encadrés vides. Ajoutez-en une avec **Ajouter une étape** en bas
+   de la liste, qui ne propose que celles qui ne sont pas encore affichées. Chaque étape
+   ajoutée a son propre lien **Retirer cette étape** dans son coin, qui ouvre une seule
+   confirmation à deux choix : **Masquer** (par défaut) cache seulement l’encadré et conserve
+   tout ce qui est écrit, et **Ajouter une étape** le ramène exactement tel quel ; **Supprimer**
+   efface définitivement le texte et les images de l’étape, et c’est irréversible.
+5. Dans **Confidentialité et vérification**, laissez **Anonymisé** activé sauf si le
    client a explicitement accepté d’être identifié. N’activez **Approuvé par le
    client** que lorsque cet accord est consigné. Utilisez **Note sur les affirmations
    chiffrées** pour consigner ce qui étaye toute économie, réduction, disponibilité
    ou autre résultat mesuré. Ces deux notes sont destinées aux éditeurs : les
    partenaires ne les voient jamais, écrivez-les donc pour vos collègues.
-5. Ajoutez des images à n’importe quelle étape, de deux façons : le trombone de la
+6. Ajoutez des images à n’importe quelle étape, de deux façons : le trombone de la
    barre d’outils de l’étape insère une image dans le texte, et la case sous l’étape
    accepte une capture collée, un fichier déposé ou un choix de fichier classique,
    affichés sous cette étape. Facultatif : ajoutez une image de couverture ou un
    schéma anonymisés, des leçons liées de l’académie et des liens de documentation.
    N’importez pas de noms de clients, d’adresses exactes, d’identifiants, de données
    réelles de véhicules ni de captures permettant d’identifier quelqu’un.
-6. Enregistrez l’étude en **Brouillon**, puis utilisez **Aperçu** pour examiner sa page
+7. Enregistrez l’étude en **Brouillon**, puis utilisez **Aperçu** pour examiner sa page
    publique. L’aperçu est accessible aux éditeurs autorisés, mais les partenaires
    ordinaires ne peuvent pas ouvrir le brouillon.
-7. Revenez à la liste des études de cas et cliquez sur **Publier**. Une étude à
+8. Revenez à la liste des études de cas et cliquez sur **Publier**. Une étude à
    laquelle il manque une section obligatoire ou la note de source reste en
    brouillon, et le panneau explique ce qui doit être complété. **Dépublier** remet
    une étude en ligne en brouillon sans la supprimer.

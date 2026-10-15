@@ -273,35 +273,47 @@ Cuando un estudiante aprueba, el certificado se crea **automáticamente**: un PD
 Usa **Contenido → Casos prácticos** para una guía práctica de implantación que los
 socios puedan reproducir. Un caso práctico es material de consulta, no un curso:
 no registra la finalización ni emite certificados.
+El formulario es un único recuadro ancho con los datos básicos, los pasos y el contenido relacionado, y debajo **Privacidad y verificación** y **Multimedia**.
 
 1. Haz clic en **Crear caso práctico** y elige el **Producto** cuando corresponda. Los
    creadores deben elegir uno de sus productos asignados y solo pueden gestionar
    casos de esos productos.
-2. Añade el título, la descripción breve del problema, el sector, las funciones de Pilot
-   utilizadas, la dificultad y el tiempo estimado de implantación. **Escrito en** es el
-   idioma del propio caso: escribe en el tuyo y luego usa **Traducir** en la página de
-   edición para añadir los demás idiomas. Un socio lee la traducción donde existe
-   y el original en todo lo demás.
-3. Completa las secciones del caso. Antes de publicar, la academia exige el
-   escenario y el problema del cliente, el resultado deseado, la configuración paso
-   a paso, las pruebas y la verificación, y una **Fuente o nota de verificación**.
-4. En **Privacidad y verificación**, deja **Anonimizado** activado salvo que el
+2. Añade el título, la descripción breve del problema, el sector y las funciones de Pilot
+   utilizadas, uno al lado del otro; después la dificultad, el tiempo estimado de
+   implantación, el orden y el estado, en una sola fila. No hay idioma que elegir: un
+   caso nuevo toma automáticamente el idioma de tu cuenta o del panel. Cuando esté
+   escrito, usa **Traducir** en la página de edición para añadir los demás idiomas. Un
+   socio lee la traducción donde existe y el original en todo lo demás.
+3. Completa las secciones del caso, cada una en su propio recuadro numerado («Paso 1 · …»,
+   «Paso 2 · …», etc.). Cuatro siempre están visibles, porque sin ellas el caso no puede
+   publicarse: el escenario, el resultado deseado, la configuración paso a paso, y las
+   pruebas y la verificación. Junto a ellas, la **Fuente o nota de verificación** en
+   **Privacidad y verificación**, más abajo.
+4. Las otras cinco secciones —requisitos previos, funciones de Pilot utilizadas,
+   resultados esperados, solución de problemas y formas de adaptar la solución— empiezan
+   ocultas, para que un caso rápido no muestre nueve recuadros vacíos. Añade una con
+   **Añadir paso** al final de la lista, que solo ofrece las que aún no se ven. Cada una
+   que añadas tiene su propio enlace **Quitar este paso** en la esquina, que abre una sola
+   confirmación con dos opciones: **Ocultar** (la predeterminada) solo oculta el recuadro,
+   sin borrar nada de lo escrito, y **Añadir paso** lo devuelve exactamente como estaba;
+   **Eliminar** borra el texto y las imágenes del paso para siempre, y no se puede deshacer.
+5. En **Privacidad y verificación**, deja **Anonimizado** activado salvo que el
    cliente haya aprobado expresamente que se le identifique. Activa **Aprobado por
    el cliente** solo cuando esa aprobación conste. Usa **Nota sobre afirmaciones
    cuantificadas** para registrar las pruebas de cualquier ahorro, reducción,
    disponibilidad u otro resultado medido. Las dos notas son para editores: los
    socios nunca las ven, así que escríbelas para tus compañeros.
-5. Añade imágenes a cualquier paso de dos maneras: el clip de la barra de
+6. Añade imágenes a cualquier paso de dos maneras: el clip de la barra de
    herramientas de ese paso inserta una imagen dentro del texto, y la casilla bajo
    el paso acepta una captura pegada, un archivo arrastrado o una selección de
    archivo normal, y las muestra debajo del paso. Opcional: añade una imagen de
    portada o un diagrama anonimizados, lecciones relacionadas de la academia y
    enlaces de documentación. No subas nombres de clientes, ubicaciones exactas,
    credenciales, datos reales de vehículos ni capturas que permitan identificar a nadie.
-6. Guarda el caso como **Borrador** y luego usa **Vista previa** para revisar su
+7. Guarda el caso como **Borrador** y luego usa **Vista previa** para revisar su
    página pública. La vista previa está disponible para los editores autorizados,
    pero los socios normales no pueden abrir el borrador.
-7. Vuelve a la lista de casos prácticos y haz clic en **Publicar**. Un caso al que
+8. Vuelve a la lista de casos prácticos y haz clic en **Publicar**. Un caso al que
    le falte una sección obligatoria o la nota de fuente sigue como borrador, y el
    panel explica qué falta completar. **Despublicar** devuelve un caso publicado a
    Borrador sin eliminarlo.

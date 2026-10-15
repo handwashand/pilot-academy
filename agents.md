@@ -420,6 +420,20 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-15 — Translated admin guides follow the case study changes
+
+The five translated admin guides (`ru`, `es`, `fr`, `pt`, `ar`) still described
+the old case study form: a **Written in** field, and no numbered steps, **Add
+step**, or Hide/Delete. Their case study sections now match the English guide
+— same eight steps in the same order, with the button names taken from each
+language's `admin_case_studies.php` (`remove_step`, `hide_step`, `delete_step`,
+`add_step`). Machine-drafted; not yet read by a native speaker. **Still stale:**
+the learner guide translations (`ru`, `es`, `fr`, `pt`, `ar`) are missing their
+"Your profile" section, which predates this change.
+
+**Verified (run):** heading counts match English in all five; steps are numbered
+1–8 in each; `AdminGuide` tests 8 passed (22 assertions).
+
 ### 2026-10-15 — Case study steps: numbered, spaced, fewer upload boxes, and removable
 
 The owner tested the case study screen against production and asked for four
@@ -502,6 +516,94 @@ inside changed, only how much of the page the whole block takes. Confirmed
 in Chrome the rendered box is the full 1056px content width against the
 492px the other sections keep, with no overflow and `CaseStudyTest` still
 18/18.
+
+**Second follow-up, same day: merged into one form, no "Written in" field,
+and Remove opens a Hide-or-Delete choice.** The owner asked to simplify
+further: drop the separate "Written in" language select, merge the basics,
+the steps and related content into one box, and let Privacy and Media span
+the page too. `configure()` is now three top-level `Section`s, not four:
+one page-wide **Case study** holding the basics fields plus
+`static::studySections()` and `static::relatedContent()` as its own inner,
+headed sub-sections, then **Privacy and verification** and **Media**, both
+`->columnSpanFull()->columns(2)` so Difficulty/Implementation time/Sort
+order/Status and Industry/Relevant Pilot features sit two-up inside the
+merged box rather than stacking (a further owner correction — the first cut
+left them one per row).
+
+**"Automatic" language, re-explained after a correction.** The first pass
+read the brief as "default to the site's configured language" —
+`app(Translator::class)->defaultCode()` — which the owner pointed out reads
+as "defaults to English", not real detection. `SetLocale` middleware already
+sets `App::setLocale()` per request from the editor's own `users.locale`
+before the form ever renders, so `Hidden::make('language')->default(fn ():
+string => app()->getLocale())` is the panel's own current language — a
+Russian-speaking creator with their panel in Russian gets a Russian study
+without saying so, and only a login with no language preference falls
+through to the site default. `test_a_new_study_takes_the_editors_own_panel_
+language_not_the_site_default` sets an admin's `locale` to `ru` and asserts
+the saved column — it has to set `app()->setLocale('ru')` itself first,
+since `Livewire::test()` mounts the component directly and never runs
+`SetLocale` or any other HTTP middleware.
+
+**Remove this step now offers Hide or Delete, not just Hide.** The owner
+asked, in order: first for two separate buttons (built, then reverted when
+the owner asked for one link instead), then for one **Remove this step**
+link whose confirmation offers both. It is built the way Filament's own
+"Create" / "Create & create another" is: one `Action`, and
+`->extraModalFooterActions([$action->makeModalSubmitAction(...)])` adds a
+second button to the same modal that resubmits the *same* action with
+different `$arguments` — so there is exactly one place (`numberedStep()`'s
+`->action()` closure) deciding what either button does, not two actions that
+could drift apart. Hide (the modal's default submit) is the existing
+"just take the key out of `active_optional_steps`" behaviour; Delete
+additionally calls the new `clearStepContent()`, which writes `null` (and,
+for the two gallery steps, an emptied `section_images` entry) straight to
+the record — a hidden field is never dehydrated on save (see above), which
+is exactly why Hide is safe and why Delete cannot rely on the same
+mechanism and updates the row directly instead.
+
+**Testing a Section's own `->headerActions()` needed a real detour.**
+`Section` only uses Filament's `HasHeaderActions` concern, not `HasActions`,
+so a header action is never in the page's own `cachedActions` and a bare
+`->callAction('remove_prerequisites')` fails with "action not visible" —
+nothing resembling a useful error pointing at the real cause. It only
+resolves through `resolveSchemaComponentAction()`, which needs
+`context.schemaComponent` set; `TestAction::make('remove_prerequisites')
+->schemaComponent()` (no argument — passing a literal `'form'` double-
+prefixes to `form.form` and fails differently) builds exactly that context
+and is what finally found it. Testing the Delete button reuses the same
+action name with `->arguments(['delete' => true])`, which is a faithful
+test of the real click: `makeModalSubmitAction()`'s extra button sends
+nothing else.
+
+**Tooltip glow removed, panel-wide, on the way to the day's last ask** (a
+glow around the Lesson form's rich-editor toolbar tooltips on hover).
+Filament's bundled tippy "light" tooltip theme carries a soft multi-layer
+`box-shadow`; the panel's own "dark" theme already has none. One rule in
+`theme.css`, `.tippy-box[data-theme~='light'] { box-shadow: none; }`, brings
+light mode to the same plain bubble dark mode already had — not scoped to
+the rich editor specifically, since the glow was never specific to it.
+**Needed a local `npm run build` before it was visible** — this repository's
+CSS bundle is CI-built and committed, not built inside the Docker image (see
+*Traps*), so a straight `docker compose up --build` carried the stale
+bundle and the fix looked like it had done nothing until the bundle itself
+was rebuilt first.
+
+**Verified (run):** full suite — 601 passed — and Pint clean on the three
+changed files, after each round of changes described above. Driven live in
+Chrome: the merged create-page screenshot shows Industry and Relevant Pilot
+features on one row, Difficulty/Implementation time/Sort order/Status on
+another, and no "Written in" field; an edit page for a study with
+`prerequisites` filled shows a single **Remove this step** header link (not
+two); hovering the Lesson form's Bold/Import toolbar buttons in a
+light-mode tab showed a plain dark tooltip bubble with `box-shadow: none`,
+confirmed by reading the tooltip element's own computed style, not just a
+screenshot. **Not captured on screen:** actually clicking **Remove this
+step** through to its Hide/Delete modal in Puppeteer — the same class of
+picker/modal-click friction already on record in the 2026-10-08 and earlier
+2026-10-15 entries — so that path is proven by the PHPUnit action tests
+instead, which exercise the real action object and its real `$arguments`,
+not a stand-in.
 
 ### 2026-10-14 — The five translated admin guides are full translations now
 

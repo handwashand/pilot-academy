@@ -271,16 +271,20 @@ When a student passes, the certificate is made **automatically**: a PDF with the
 
 Use **Content → Case Studies** for a practical deployment guide that partners
 can reproduce. A case study is reference material rather than a course: it does
-not track completion or issue a certificate.
+not track completion or issue a certificate. The form is one page-wide box for
+the basics, the steps and related content, with **Privacy and verification**
+and **Media** below it.
 
 1. Click **New case study** and choose the **Product** where relevant. Creators
    must choose one of their assigned products and can only manage studies for
    those products.
-2. Add the title, short problem statement, industry, relevant Pilot features,
-   difficulty and estimated implementation time. **Written in** is the study's
-   own language — write in yours, then use **Translate** on the edit page to
-   add the other languages. A partner reads the translation where one exists
-   and the original everywhere else.
+2. Add the title, short problem statement, industry and relevant Pilot
+   features, side by side, then difficulty, time estimate, sort order and
+   status on one row. There is no language to choose: a new study takes the
+   language your own account or the panel is set to, automatically. Use
+   **Translate** on the edit page to add the other languages once it is
+   written. A partner reads the translation where one exists and the original
+   everywhere else.
 3. Complete the study sections, under **Study sections**. Each one is its own
    numbered box — **Step 1 · Customer scenario and problem**, **Step 2 ·
    Desired outcome**, and so on — so it is clear where one ends and the next
@@ -293,9 +297,11 @@ not track completion or issue a certificate.
    hidden, so a quick study is not nine empty boxes to scroll past. Add one
    with **Add step** at the bottom of the list, which only offers the ones not
    already showing. Each one you add gets its own **Remove this step** link in
-   its corner; removing a step only hides its box, it does not clear anything
-   already written in it — add it back later with **Add step** and the text is
-   still there.
+   its corner, which opens one confirmation with two choices: **Hide**, the
+   default, only hides the box — it does not clear anything already written
+   in it, and **Add step** brings it back exactly as it was — and **Delete**
+   clears that step's text and pictures for good instead, which cannot be
+   undone.
 5. Under **Privacy and verification**, leave **Anonymized** on unless the
    customer has explicitly approved identification. Turn on **Customer
    approved** only when that approval is recorded. Use **Performance claim

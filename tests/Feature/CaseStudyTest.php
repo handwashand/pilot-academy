@@ -568,7 +568,7 @@ class CaseStudyTest extends TestCase
         Livewire::actingAs($this->admin())
             ->test(EditCaseStudy::class, ['record' => $study->getRouteKey()])
             ->assertFormFieldVisible('prerequisites')
-            ->callAction(TestAction::make('remove_prerequisites')->arguments(['delete' => true]))
+            ->callAction(TestAction::make('remove_prerequisites')->schemaComponent()->arguments(['delete' => true]))
             ->assertFormFieldDoesNotExist('prerequisites');
 
         $this->assertNull($study->fresh()->prerequisites);
@@ -585,7 +585,7 @@ class CaseStudyTest extends TestCase
         Livewire::actingAs($this->admin())
             ->test(EditCaseStudy::class, ['record' => $study->getRouteKey()])
             ->assertFormFieldVisible('expected_results')
-            ->callAction(TestAction::make('remove_results')->arguments(['delete' => true]))
+            ->callAction(TestAction::make('remove_results')->schemaComponent()->arguments(['delete' => true]))
             ->assertFormFieldDoesNotExist('expected_results');
 
         $fresh = $study->fresh();

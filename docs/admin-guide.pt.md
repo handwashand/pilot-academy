@@ -270,35 +270,47 @@ Quando um aluno é aprovado, o certificado é criado **automaticamente**: um PDF
 Use **Conteúdo → Estudos de caso** para um guia prático de implantação que os
 parceiros possam reproduzir. Um estudo de caso é material de referência, não um
 curso: não acompanha a conclusão nem emite certificado.
+O formulário é uma caixa larga única com os dados básicos, as etapas e o conteúdo relacionado, e abaixo dela **Privacidade e verificação** e **Mídia**.
 
 1. Clique em **Criar estudo de caso** e escolha o **Produto**, quando fizer sentido.
    Os criadores devem escolher um dos seus produtos atribuídos e só podem gerenciar
    estudos desses produtos.
-2. Adicione o título, a descrição curta do problema, o setor, os recursos do Pilot
-   usados, a dificuldade e o tempo estimado de implantação. **Escrito em** é o
-   idioma do próprio estudo — escreva no seu e depois use **Traduzir** na página de
-   edição para adicionar os outros idiomas. Um parceiro lê a tradução onde ela
-   existe e o original em todo o resto.
-3. Preencha as seções do estudo. Antes de publicar, a academia exige o cenário e o
-   problema do cliente, o resultado desejado, a configuração passo a passo, os
-   testes e a verificação, além de uma **Fonte ou nota de verificação**.
-4. Em **Privacidade e verificação**, deixe **Anonimizado** ativado, a menos que o
+2. Adicione o título, a descrição curta do problema, o setor e os recursos do Pilot
+   usados, lado a lado; depois a dificuldade, o tempo estimado de implantação, a ordem e
+   o status, em uma única linha. Não há idioma a escolher: um estudo novo assume
+   automaticamente o idioma da sua conta ou do painel. Depois de escrito, use **Traduzir**
+   na página de edição para adicionar os outros idiomas. Um parceiro lê a tradução onde
+   ela existe e o original em todo o resto.
+3. Preencha as seções do estudo, cada uma em sua própria caixa numerada («Etapa 1 · …»,
+   «Etapa 2 · …» etc.). Quatro sempre aparecem, porque sem elas o estudo não pode ser
+   publicado: o cenário, o resultado desejado, a configuração passo a passo e os testes e
+   a verificação. Junto delas, a **Fonte ou nota de verificação** em **Privacidade e
+   verificação**, mais abaixo.
+4. As outras cinco seções — pré-requisitos, recursos do Pilot usados, resultados
+   esperados, solução de problemas e formas de adaptar a solução — começam ocultas, para
+   que um estudo rápido não mostre nove caixas vazias. Adicione uma com **Adicionar etapa**
+   no fim da lista, que só oferece as que ainda não aparecem. Cada etapa que você adicionar
+   tem seu próprio link **Remover esta etapa** no canto, que abre uma única confirmação com
+   duas opções: **Ocultar** (a padrão) apenas esconde a caixa, sem apagar o que foi escrito,
+   e **Adicionar etapa** a traz de volta exatamente como estava; **Excluir** apaga o texto
+   e as imagens da etapa para sempre, e isso não pode ser desfeito.
+5. Em **Privacidade e verificação**, deixe **Anonimizado** ativado, a menos que o
    cliente tenha aprovado expressamente ser identificado. Ative **Aprovado pelo
    cliente** somente quando essa aprovação estiver registrada. Use **Nota sobre
    afirmações quantificadas** para registrar a evidência de qualquer economia,
    redução, disponibilidade ou outro resultado medido. As duas notas são para os
    editores: os parceiros nunca as veem, então escreva-as para os seus colegas.
-5. Adicione imagens a qualquer etapa de duas formas: o clipe na barra de
+6. Adicione imagens a qualquer etapa de duas formas: o clipe na barra de
    ferramentas da etapa insere uma imagem no texto, e a caixa abaixo da etapa
    aceita uma captura colada, um arquivo arrastado ou a escolha normal de arquivo,
    e as mostra abaixo dessa etapa. Opcional: adicione uma imagem de capa ou um
    diagrama anonimizados, aulas relacionadas da academia e links de documentação.
    Não envie nomes de clientes, localizações exatas, credenciais, dados reais de
    veículos nem capturas que identifiquem alguém.
-6. Salve o estudo como **Rascunho** e use **Pré-visualizar** para revisar a página
+7. Salve o estudo como **Rascunho** e use **Pré-visualizar** para revisar a página
    pública. A pré-visualização está disponível para editores autorizados, mas os
    parceiros comuns não conseguem abrir o rascunho.
-7. Volte à lista de estudos de caso e clique em **Publicar**. Um estudo sem uma
+8. Volte à lista de estudos de caso e clique em **Publicar**. Um estudo sem uma
    seção obrigatória ou sem a nota de fonte continua como rascunho, e o painel
    explica o que falta preencher. **Despublicar** devolve um estudo publicado a
    Rascunho sem excluí-lo.
