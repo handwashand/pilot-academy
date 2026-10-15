@@ -512,8 +512,9 @@ class CaseStudyTest extends TestCase
     }
 
     /**
-     * "Add step" reveals an optional step's box; "Hide this step" hides it
-     * again without clearing whatever was written in it.
+     * "Add step" reveals an optional step's box; "Remove this step", left on
+     * its default Hide button, hides it again without clearing whatever was
+     * written in it.
      */
     public function test_add_step_shows_an_optional_step_and_hide_step_only_hides_it(): void
     {
@@ -553,9 +554,12 @@ class CaseStudyTest extends TestCase
     }
 
     /**
-     * "Delete this step", next to "Hide this step" and with its own
-     * confirmation, clears the step's own column for good — unlike Hide, it
-     * is not recoverable through "Add step".
+     * "Remove this step" opens one confirmation with two ways out — Hide
+     * (tested above, the modal's default) and Delete, its other button.
+     * Delete clears the step's own column for good — unlike Hide, it is not
+     * recoverable through "Add step". Both are the same action with
+     * different arguments (see CaseStudyForm::numberedStep()), which is
+     * exactly what clicking the modal's "Delete" button sends.
      */
     public function test_deleting_a_step_clears_its_saved_content(): void
     {
@@ -564,7 +568,7 @@ class CaseStudyTest extends TestCase
         Livewire::actingAs($this->admin())
             ->test(EditCaseStudy::class, ['record' => $study->getRouteKey()])
             ->assertFormFieldVisible('prerequisites')
-            ->callAction(TestAction::make('delete_prerequisites')->schemaComponent())
+            ->callAction(TestAction::make('remove_prerequisites')->arguments(['delete' => true]))
             ->assertFormFieldDoesNotExist('prerequisites');
 
         $this->assertNull($study->fresh()->prerequisites);
@@ -581,7 +585,7 @@ class CaseStudyTest extends TestCase
         Livewire::actingAs($this->admin())
             ->test(EditCaseStudy::class, ['record' => $study->getRouteKey()])
             ->assertFormFieldVisible('expected_results')
-            ->callAction(TestAction::make('delete_results')->schemaComponent())
+            ->callAction(TestAction::make('remove_results')->arguments(['delete' => true]))
             ->assertFormFieldDoesNotExist('expected_results');
 
         $fresh = $study->fresh();

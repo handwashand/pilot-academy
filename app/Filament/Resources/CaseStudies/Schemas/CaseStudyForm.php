@@ -356,44 +356,38 @@ class CaseStudyForm
             return $section_;
         }
 
+        // One link in the header, not two competing buttons: "Remove this
+        // step" opens a single confirmation with two ways out — Hide (the
+        // default) keeps everything written and can come back through "Add
+        // step"; Delete, the modal's other button, cannot and says so. Both
+        // are the same action with different $arguments — Filament's own
+        // "Create" / "Create & create another" is built the same way — so
+        // there is one place deciding what either one does.
+        $removeAction = Action::make("remove_{$section}")
+            ->label(__t('admin_case_studies.form.remove_step'))
+            ->icon('heroicon-o-x-mark')
+            ->color('gray')
+            ->link()
+            ->requiresConfirmation()
+            ->modalHeading(__t('admin_case_studies.form.remove_step_confirm_heading'))
+            ->modalDescription(__t('admin_case_studies.form.remove_step_confirm_description'))
+            ->modalSubmitActionLabel(__t('admin_case_studies.form.hide_step'))
+            ->action(function (array $arguments, Get $get, Set $set, ?CaseStudy $record) use ($name, $section, $withGallery): void {
+                if ($arguments['delete'] ?? false) {
+                    static::clearStepContent($name, $section, $withGallery, $record, $set);
+                }
+
+                static::hideStep($get, $set, $section);
+            });
+
+        $removeAction->extraModalFooterActions([
+            $removeAction->makeModalSubmitAction("remove_{$section}_delete", ['delete' => true])
+                ->label(__t('admin_case_studies.form.delete_step')),
+        ]);
+
         return $section_
             ->visible(fn (Get $get): bool => in_array($section, (array) $get('active_optional_steps'), true))
-            ->headerActions([
-                // Two separate buttons, not one action with a choice buried
-                // in its modal: Hide keeps everything written and can come
-                // back through "Add step"; Delete cannot, and says so in its
-                // own confirmation. Hide alone can go through the same
-                // "just hide" ->action() it always has, since a hidden field
-                // is never dehydrated on save; Delete cannot rely on that
-                // and writes straight to the record instead — see
-                // clearStepContent().
-                Action::make("hide_{$section}")
-                    ->label(__t('admin_case_studies.form.hide_step'))
-                    ->icon('heroicon-o-eye-slash')
-                    ->color('gray')
-                    ->link()
-                    ->requiresConfirmation()
-                    ->modalHeading(__t('admin_case_studies.form.hide_step_confirm_heading'))
-                    ->modalDescription(__t('admin_case_studies.form.hide_step_confirm_description'))
-                    ->modalSubmitActionLabel(__t('admin_case_studies.form.hide_step'))
-                    ->action(function (Get $get, Set $set) use ($section): void {
-                        static::hideStep($get, $set, $section);
-                    }),
-
-                Action::make("delete_{$section}")
-                    ->label(__t('admin_case_studies.form.delete_step'))
-                    ->icon('heroicon-o-trash')
-                    ->color('danger')
-                    ->link()
-                    ->requiresConfirmation()
-                    ->modalHeading(__t('admin_case_studies.form.delete_step_confirm_heading'))
-                    ->modalDescription(__t('admin_case_studies.form.delete_step_confirm_description'))
-                    ->modalSubmitActionLabel(__t('admin_case_studies.form.delete_step'))
-                    ->action(function (Get $get, Set $set, ?CaseStudy $record) use ($name, $section, $withGallery): void {
-                        static::clearStepContent($name, $section, $withGallery, $record, $set);
-                        static::hideStep($get, $set, $section);
-                    }),
-            ]);
+            ->headerActions([$removeAction]);
     }
 
     /** Takes a step's key out of the open list — see the Hidden field above. */
