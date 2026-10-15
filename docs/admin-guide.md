@@ -281,25 +281,40 @@ not track completion or issue a certificate.
    own language — write in yours, then use **Translate** on the edit page to
    add the other languages. A partner reads the translation where one exists
    and the original everywhere else.
-3. Complete the study sections. Before publishing, the academy requires the
-   customer scenario and problem, desired outcome, step-by-step configuration,
-   testing and verification, and a **Source or verification note**.
-4. Under **Privacy and verification**, leave **Anonymized** on unless the
+3. Complete the study sections, under **Study sections**. Each one is its own
+   numbered box — **Step 1 · Customer scenario and problem**, **Step 2 ·
+   Desired outcome**, and so on — so it is clear where one ends and the next
+   begins. Four always show, because the study cannot publish without them:
+   the scenario, the desired outcome, the step-by-step configuration, and
+   testing and verification, alongside a **Source or verification note** under
+   **Privacy and verification** below.
+4. The other five sections — prerequisites, Pilot features used, expected
+   results, troubleshooting, and ways partners can adapt the solution — start
+   hidden, so a quick study is not nine empty boxes to scroll past. Add one
+   with **Add step** at the bottom of the list, which only offers the ones not
+   already showing. Each one you add gets its own **Remove this step** link in
+   its corner; removing a step only hides its box, it does not clear anything
+   already written in it — add it back later with **Add step** and the text is
+   still there.
+5. Under **Privacy and verification**, leave **Anonymized** on unless the
    customer has explicitly approved identification. Turn on **Customer
    approved** only when that approval is recorded. Use **Performance claim
    note** to record the evidence behind any measured saving, reduction, uptime
    or other quantified result. Both notes are for editors: partners never see
    them, so write them for your colleagues.
-5. Add pictures to any step, two ways: the paperclip in that step's toolbar
-   puts an image inside the text, and the box under the step takes a pasted
-   screenshot, a dropped file or a normal file pick, showing them beneath that
-   step. Optional: add a sanitized cover image or diagram, related Academy
-   lessons, and documentation links. Do not upload customer names, exact locations,
+6. Add pictures to any step with the paperclip in its text toolbar, which puts
+   an image inside the words. Two steps — **Step-by-step configuration** and
+   **Expected results and limitations** — also have a box underneath for a
+   separate gallery: paste a screenshot, drop a file, or pick one, and it shows
+   beneath that step on the partner's page. Those two are the ones partners
+   actually screenshot in practice; the rest keep the paperclip option only.
+   Optional: add a sanitized cover image or diagram, related Academy lessons,
+   and documentation links. Do not upload customer names, exact locations,
    credentials, live vehicle data or identifying screenshots.
-6. Save the study as **Draft**, then use **Preview** to inspect its public page.
+7. Save the study as **Draft**, then use **Preview** to inspect its public page.
    The preview is available to authorized editors, but ordinary partners cannot
    open the draft.
-7. Return to the Case Studies list and click **Publish**. A study missing a
+8. Return to the Case Studies list and click **Publish**. A study missing a
    required section or source note stays a draft and the panel explains what
    needs to be completed. **Unpublish** returns a live study to Draft without
    deleting it.

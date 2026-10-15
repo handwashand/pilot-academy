@@ -196,13 +196,22 @@ class CaseStudyForm
                         $withGallery = ['configuration_steps', 'expected_results'];
 
                         return [
+                            // A virtual field, nowhere in the database: just
+                            // which optional boxes are open right now. A
+                            // ->default() here would only ever apply on
+                            // Create — Filament skips a field's default on
+                            // Edit, where state comes from the record instead
+                            // — so this has to be worked out in
+                            // afterStateHydrated(), which runs both times.
                             Hidden::make('active_optional_steps')
                                 ->dehydrated(false)
-                                ->default(fn (?CaseStudy $record): array => collect($optional)
-                                    ->reject(fn (array $step) => blank($record?->{$step[0]}))
-                                    ->map(fn (array $step): string => $step[1])
-                                    ->values()
-                                    ->all()),
+                                ->afterStateHydrated(function (Set $set, ?CaseStudy $record) use ($optional): void {
+                                    $set('active_optional_steps', collect($optional)
+                                        ->reject(fn (array $step) => blank($record?->{$step[0]}))
+                                        ->map(fn (array $step): string => $step[1])
+                                        ->values()
+                                        ->all());
+                                }),
 
                             ...collect($required)
                                 ->map(fn (array $step): Section => static::numberedStep(...$step, withGallery: in_array($step[0], $withGallery, true)))

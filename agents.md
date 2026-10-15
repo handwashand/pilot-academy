@@ -420,6 +420,76 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-15 — Case study steps: numbered, spaced, fewer upload boxes, and removable
+
+The owner tested the case study screen against production and asked for four
+things: cut the nine separate photo-upload boxes down to one or two, make the
+nine steps read as distinct steps rather than one run-together block, let an
+editor remove a step that is not needed, and add an "Add step" button to bring
+one back.
+
+**Reduced to two upload boxes.** `CaseStudyForm::step()` (the gallery
+`FileUpload`) is now only attached to **configuration_steps** and
+**expected_results** — the two a partner would actually screenshot — chosen
+and said so in the changelog rather than picked silently. The other seven
+steps keep the paperclip-in-text option on their `RichEditor`, which every
+step already had; nothing about pasting an image mid-sentence changed.
+
+**Numbered and boxed.** Each step is now its own `Section` (`numberedStep()`),
+headed "Step :number · :name", instead of nine fields sitting directly inside
+one big `Section::make(sections.study)` with nothing between them. The
+Section's own border and padding does the separating — no new CSS.
+
+**Remove and Add step, without a schema change.** The four sections a study
+cannot publish without (scenario, outcome, configuration, verification) are
+not fixed DB columns the form could drop — `CaseStudy::SECTION_FIELDS` is nine
+real columns, and turning that into a repeater was a bigger change than asked
+for. Instead a virtual, non-persisted `Hidden::make('active_optional_steps')`
+field (`dehydrated(false)`) drives `->visible()` on the five optional
+sections' `Section` components; an **Add step** `Select` at the end adds a key
+to it, and each optional section's own **Remove this step** header action
+(`->headerActions()`) takes its key back out. **Hiding one never deletes its
+text**: a Filament component that is not visible is not dehydrated
+(`isHiddenAndNotDehydratedWhenHidden()`), so `$record->update($data)` on save
+simply never receives that key and the column is untouched — proven with a
+test that hides a filled step, saves, and asserts the column still has its
+original value.
+
+**One real bug, found by testing in the browser, not by the first pass of
+PHPUnit tests.** A `Hidden` field's `->default()` closure only runs when
+Filament is filling a **Create** form from its own defaults array
+(`hydrateDefaultState()` only applies when `$hydratedDefaultState !== null`,
+which is the Create path); on **Edit** the component hydrates from the
+record instead and `default()` is never consulted. So a study edited with
+`prerequisites` already written showed no "Step 3" box at all on first load —
+`active_optional_steps` stayed empty because nothing computed it for Edit.
+Switched to `afterStateHydrated()`, which Filament calls at the end of
+`hydrateState()` on both Create and Edit, with `$record` either null or real.
+**The first version of the regression tests did not catch this either**:
+`assertFormFieldExists()` checks `getFlatFields(withHidden: true)` — it is
+true for a hidden field too, so it proved nothing about visibility. Only
+`assertFormFieldVisible()` (`getFlatFields(withHidden: false)`) and an actual
+Chrome screenshot caught it. Re-wrote the "already shows a filled optional
+step" assertions to use `assertFormFieldVisible()`.
+
+**Verified (run):** full suite — see the final report; `CaseStudyTest` 18
+passed including 4 new tests (a new study shows only the required steps; an
+edited study with `prerequisites` already written shows it without needing
+Add step; Add step reveals a hidden step and Remove step hides it again with
+its text intact after a real save; hiding a filled step and saving keeps the
+column). Pint clean. Driven live in Chrome against PostgreSQL: the edit page
+for a study with one optional field filled showed exactly that one extra
+numbered box, with a working **Remove this step** link, and the **Add step**
+dropdown listed exactly the four remaining hidden sections by their real
+names. Clicking through the dropdown's own option list in Puppeteer did not
+work reliably (a known friction with this picker's JS, not a product bug —
+see the 2026-10-08 entry for the same class of issue) so the final click
+was not captured on screen; the save-path is covered end-to-end by the
+PHPUnit test instead. The public-facing case study pages (`index.blade.php`,
+`show.blade.php`) were read and found fine — mobile-responsive, sticky aside,
+no overflow — and were not changed; the owner's complaint was specifically
+about the admin editing screen.
+
 ### 2026-10-14 — The five translated admin guides are full translations now
 
 Until today `docs/admin-guide.{ru,es,fr,pt,ar}.md` were short summaries,

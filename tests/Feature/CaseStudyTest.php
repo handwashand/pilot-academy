@@ -428,8 +428,8 @@ class CaseStudyTest extends TestCase
     {
         Livewire::actingAs($this->admin())
             ->test(CreateCaseStudy::class)
-            ->assertFormFieldExists('scenario_problem')
-            ->assertFormFieldExists('configuration_steps')
+            ->assertFormFieldVisible('scenario_problem')
+            ->assertFormFieldVisible('configuration_steps')
             ->assertFormFieldDoesNotExist('prerequisites')
             ->assertFormFieldDoesNotExist('pilot_features')
             ->assertFormFieldDoesNotExist('expected_results')
@@ -444,7 +444,7 @@ class CaseStudyTest extends TestCase
 
         Livewire::actingAs($this->admin())
             ->test(EditCaseStudy::class, ['record' => $study->getRouteKey()])
-            ->assertFormFieldExists('prerequisites')
+            ->assertFormFieldVisible('prerequisites')
             ->assertFormSet(['prerequisites' => '<p>Prerequisites.</p>']);
     }
 
@@ -458,14 +458,14 @@ class CaseStudyTest extends TestCase
 
         $page = Livewire::actingAs($this->admin())
             ->test(EditCaseStudy::class, ['record' => $study->getRouteKey()])
-            ->assertFormFieldExists('prerequisites')
+            ->assertFormFieldVisible('prerequisites')
             ->set('data.active_optional_steps', ['features', 'results', 'troubleshooting', 'adaptation'])
             ->assertFormFieldDoesNotExist('prerequisites');
 
         // "Add step" only offers what is not already shown, and ticking one
         // brings its box back into the form.
         $page->set('data.add_step', 'prerequisites')
-            ->assertFormFieldExists('prerequisites')
+            ->assertFormFieldVisible('prerequisites')
             ->assertFormSet(['prerequisites' => '<p>Prerequisites.</p>'])
             ->call('save')
             ->assertHasNoFormErrors();

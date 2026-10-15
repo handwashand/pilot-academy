@@ -368,6 +368,20 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Changed
 
+- **A case study's steps are numbered, boxed, and most start hidden.** On
+  **Content → Case Studies**, each of the nine study sections is now its own
+  bordered, numbered box — Step 1, Step 2, and so on — instead of nine fields
+  running together with nothing between them. The four sections a study
+  cannot publish without stay on screen; the other five (prerequisites,
+  Pilot features used, expected results, troubleshooting, adaptation) start
+  hidden and are brought in one at a time with **Add step** at the bottom of
+  the list, so a quick study is not nine empty boxes to scroll past. Each
+  added step has its own **Remove this step** link; removing one only hides
+  it — nothing written in it is lost, and it comes back with its text intact
+  through **Add step**. Only two steps — step-by-step configuration and
+  expected results — still have a separate picture-upload box underneath,
+  since those are the ones partners actually screenshot; every step still
+  takes a picture through the paperclip in its own text toolbar.
 - **A new lesson's web address keeps up with its title.** In the **New
   lesson** window on a course, retyping the title now updates the address
   too, until you type an address of your own.
