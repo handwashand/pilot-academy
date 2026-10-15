@@ -553,9 +553,9 @@ class CaseStudyTest extends TestCase
     }
 
     /**
-     * "Delete instead", offered in the same confirm dialog as "Hide this
-     * step", clears the step's own column for good — unlike Hide, it is not
-     * recoverable through "Add step".
+     * "Delete this step", next to "Hide this step" and with its own
+     * confirmation, clears the step's own column for good — unlike Hide, it
+     * is not recoverable through "Add step".
      */
     public function test_deleting_a_step_clears_its_saved_content(): void
     {
@@ -564,9 +564,7 @@ class CaseStudyTest extends TestCase
         Livewire::actingAs($this->admin())
             ->test(EditCaseStudy::class, ['record' => $study->getRouteKey()])
             ->assertFormFieldVisible('prerequisites')
-            // Delete sits as an extra footer button inside Hide's own
-            // confirm dialog, so reaching it means mounting both.
-            ->callAction(['hide_prerequisites', 'delete_prerequisites'])
+            ->callAction(TestAction::make('delete_prerequisites')->schemaComponent())
             ->assertFormFieldDoesNotExist('prerequisites');
 
         $this->assertNull($study->fresh()->prerequisites);
@@ -583,7 +581,7 @@ class CaseStudyTest extends TestCase
         Livewire::actingAs($this->admin())
             ->test(EditCaseStudy::class, ['record' => $study->getRouteKey()])
             ->assertFormFieldVisible('expected_results')
-            ->callAction(['hide_results', 'delete_results'])
+            ->callAction(TestAction::make('delete_results')->schemaComponent())
             ->assertFormFieldDoesNotExist('expected_results');
 
         $fresh = $study->fresh();

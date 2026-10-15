@@ -359,13 +359,13 @@ class CaseStudyForm
         return $section_
             ->visible(fn (Get $get): bool => in_array($section, (array) $get('active_optional_steps'), true))
             ->headerActions([
-                // Hide is the main button — the one you reach for by habit —
-                // and keeps everything written; Delete, in the same confirm
-                // dialog rather than a second click-through, actually clears
-                // the step's text and pictures. Hide alone can go through
-                // the same "just hide" ->action() as before, since a hidden
-                // field is never dehydrated on save; Delete cannot rely on
-                // that and writes straight to the record instead — see
+                // Two separate buttons, not one action with a choice buried
+                // in its modal: Hide keeps everything written and can come
+                // back through "Add step"; Delete cannot, and says so in its
+                // own confirmation. Hide alone can go through the same
+                // "just hide" ->action() it always has, since a hidden field
+                // is never dehydrated on save; Delete cannot rely on that
+                // and writes straight to the record instead — see
                 // clearStepContent().
                 Action::make("hide_{$section}")
                     ->label(__t('admin_case_studies.form.hide_step'))
@@ -376,16 +376,21 @@ class CaseStudyForm
                     ->modalHeading(__t('admin_case_studies.form.hide_step_confirm_heading'))
                     ->modalDescription(__t('admin_case_studies.form.hide_step_confirm_description'))
                     ->modalSubmitActionLabel(__t('admin_case_studies.form.hide_step'))
-                    ->extraModalFooterActions([
-                        Action::make("delete_{$section}")
-                            ->label(__t('admin_case_studies.form.delete_step'))
-                            ->color('danger')
-                            ->action(function (Get $get, Set $set, ?CaseStudy $record) use ($name, $section, $withGallery): void {
-                                static::clearStepContent($name, $section, $withGallery, $record, $set);
-                                static::hideStep($get, $set, $section);
-                            }),
-                    ])
                     ->action(function (Get $get, Set $set) use ($section): void {
+                        static::hideStep($get, $set, $section);
+                    }),
+
+                Action::make("delete_{$section}")
+                    ->label(__t('admin_case_studies.form.delete_step'))
+                    ->icon('heroicon-o-trash')
+                    ->color('danger')
+                    ->link()
+                    ->requiresConfirmation()
+                    ->modalHeading(__t('admin_case_studies.form.delete_step_confirm_heading'))
+                    ->modalDescription(__t('admin_case_studies.form.delete_step_confirm_description'))
+                    ->modalSubmitActionLabel(__t('admin_case_studies.form.delete_step'))
+                    ->action(function (Get $get, Set $set, ?CaseStudy $record) use ($name, $section, $withGallery): void {
+                        static::clearStepContent($name, $section, $withGallery, $record, $set);
                         static::hideStep($get, $set, $section);
                     }),
             ]);
