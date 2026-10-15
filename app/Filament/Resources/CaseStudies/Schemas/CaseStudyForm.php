@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\CaseStudies\Schemas;
 
-use App\Filament\Resources\Courses\Schemas\CourseForm;
 use App\Models\CaseStudy;
 use App\Models\Lesson;
+use App\Services\Translator;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
@@ -31,7 +31,14 @@ class CaseStudyForm
     {
         return $schema
             ->components([
+                // One form, not four cards scattered across the page: the
+                // basics, the numbered steps and the related content below
+                // them are all one piece of writing, so they read as one now
+                // — full width, with the steps and related content still
+                // marked off by their own inner heading so it is still clear
+                // where one part ends and the next begins.
                 Section::make(__t('admin_case_studies.sections.main'))
+                    ->columnSpanFull()
                     ->columns(2)
                     ->schema([
                         Select::make('product_id')
@@ -67,10 +74,6 @@ class CaseStudyForm
                                     $set('slug', Str::slug($state));
                                 }
                             }),
-
-                        // Written in any language; Translate on the edit page
-                        // adds the rest. Same field courses and lessons use.
-                        CourseForm::writtenIn(),
 
                         TextInput::make('slug')
                             ->label(__t('admin_common.slug'))
@@ -126,10 +129,27 @@ class CaseStudyForm
                                     }
                                 },
                             ]),
+
+                        // No "Written in" field to fill: a study simply opens
+                        // in the academy's default language, the same way a
+                        // blank value has always read for one. If the record
+                        // already has a language of its own — every study
+                        // written before this changed does — that value is
+                        // left alone; this only decides what a brand new one
+                        // gets, and HasContentTranslations::contentLanguageCode()
+                        // already falls back to the default for a blank column,
+                        // so nothing downstream had to change for this to work.
+                        Hidden::make('language')
+                            ->default(fn (): string => app(Translator::class)->defaultCode()),
+
+                        static::studySections(),
+
+                        static::relatedContent(),
                     ]),
 
                 Section::make(__t('admin_case_studies.sections.privacy'))
                     ->description(__t('admin_case_studies.sections.privacy_hint'))
+                    ->columnSpanFull()
                     ->columns(2)
                     ->schema([
                         Toggle::make('is_anonymized')
@@ -152,137 +172,145 @@ class CaseStudyForm
                             ->columnSpanFull(),
                     ]),
 
+                // Full width too, to match: once everything else spans the
+                // page, a lone half-width box here would just leave empty
+                // space beside it rather than reading as deliberate.
                 Section::make(__t('admin_case_studies.sections.media'))
                     ->description(__t('admin_case_studies.sections.media_hint'))
+                    ->columnSpanFull()
                     ->columns(2)
                     ->schema([
                         static::mediaSelect('cover_media_item_id', __t('admin_case_studies.form.cover')),
                         static::mediaSelect('diagram_media_item_id', __t('admin_case_studies.form.diagram')),
                     ]),
+            ]);
+    }
 
-                // The editor writes under the same headings a partner reads —
-                // see CaseStudy::sections() and academy.case_studies.sections.
-                //
-                // Nine fields in a row used to run together with nothing between
-                // them. Each step is now its own bordered, numbered sub-section —
-                // spacing and a heading do the separating, not new fields. The
-                // four the study cannot publish without (scenario, outcome,
-                // configuration, verification) are always here; the other five
-                // start hidden unless the record already has something written
-                // in them, and are brought in with "Add step" at the end — see
-                // numberedStep() for why that is safe to hide and unhide.
-                // Full width on its own: with nine steps inside, it is the
-                // longest section on the page by far. Left in the page's
-                // default two columns it stacked in one column while the
-                // other sat mostly empty beside it — wasted space, and the
-                // page read as lopsided rather than one steady form.
-                Section::make(__t('admin_case_studies.sections.study'))
-                    ->columnSpanFull()
-                    ->schema(function (): array {
-                        $required = [
-                            ['scenario_problem', 'scenario', 1],
-                            ['desired_outcome', 'outcome', 2],
-                            ['configuration_steps', 'configuration', 5],
-                            ['testing_verification', 'verification', 6],
-                        ];
+    /**
+     * The nine study steps, as one inner section inside the merged form — see
+     * configure(). The editor writes under the same headings a partner
+     * reads — see CaseStudy::sections() and academy.case_studies.sections.
+     *
+     * Nine fields in a row used to run together with nothing between them.
+     * Each step is its own bordered, numbered sub-section — spacing and a
+     * heading do the separating, not new fields. The four the study cannot
+     * publish without (scenario, outcome, configuration, verification) are
+     * always here; the other five start hidden unless the record already has
+     * something written in them, and are brought in with "Add step" at the
+     * end — see numberedStep() for why that is safe to hide and unhide.
+     */
+    protected static function studySections(): Section
+    {
+        return Section::make(__t('admin_case_studies.sections.study'))
+            ->columnSpanFull()
+            ->schema(function (): array {
+                $required = [
+                    ['scenario_problem', 'scenario', 1],
+                    ['desired_outcome', 'outcome', 2],
+                    ['configuration_steps', 'configuration', 5],
+                    ['testing_verification', 'verification', 6],
+                ];
 
-                        $optional = [
-                            ['prerequisites', 'prerequisites', 3],
-                            ['pilot_features', 'features', 4],
-                            ['expected_results', 'results', 7],
-                            ['troubleshooting', 'troubleshooting', 8],
-                            ['adaptation', 'adaptation', 9],
-                        ];
+                $optional = [
+                    ['prerequisites', 'prerequisites', 3],
+                    ['pilot_features', 'features', 4],
+                    ['expected_results', 'results', 7],
+                    ['troubleshooting', 'troubleshooting', 8],
+                    ['adaptation', 'adaptation', 9],
+                ];
 
-                        // Step-by-step configuration and expected results are
-                        // the two steps partners actually screenshot in
-                        // practice (the "before/after" of a setup); the other
-                        // seven keep the paperclip-in-text option only, so the
-                        // form is not nine upload boxes deep.
-                        $withGallery = ['configuration_steps', 'expected_results'];
+                // Step-by-step configuration and expected results are the two
+                // steps partners actually screenshot in practice (the
+                // "before/after" of a setup); the other seven keep the
+                // paperclip-in-text option only, so the form is not nine
+                // upload boxes deep.
+                $withGallery = ['configuration_steps', 'expected_results'];
 
-                        return [
-                            // A virtual field, nowhere in the database: just
-                            // which optional boxes are open right now. A
-                            // ->default() here would only ever apply on
-                            // Create — Filament skips a field's default on
-                            // Edit, where state comes from the record instead
-                            // — so this has to be worked out in
-                            // afterStateHydrated(), which runs both times.
-                            Hidden::make('active_optional_steps')
-                                ->dehydrated(false)
-                                ->afterStateHydrated(function (Set $set, ?CaseStudy $record) use ($optional): void {
-                                    $set('active_optional_steps', collect($optional)
-                                        ->reject(fn (array $step) => blank($record?->{$step[0]}))
-                                        ->map(fn (array $step): string => $step[1])
-                                        ->values()
-                                        ->all());
-                                }),
+                return [
+                    // A virtual field, nowhere in the database: just which
+                    // optional boxes are open right now. A ->default() here
+                    // would only ever apply on Create — Filament skips a
+                    // field's default on Edit, where state comes from the
+                    // record instead — so this has to be worked out in
+                    // afterStateHydrated(), which runs both times.
+                    Hidden::make('active_optional_steps')
+                        ->dehydrated(false)
+                        ->afterStateHydrated(function (Set $set, ?CaseStudy $record) use ($optional): void {
+                            $set('active_optional_steps', collect($optional)
+                                ->reject(fn (array $step) => blank($record?->{$step[0]}))
+                                ->map(fn (array $step): string => $step[1])
+                                ->values()
+                                ->all());
+                        }),
 
-                            ...collect($required)
-                                ->map(fn (array $step): Section => static::numberedStep(...$step, withGallery: in_array($step[0], $withGallery, true)))
-                                ->all(),
+                    ...collect($required)
+                        ->map(fn (array $step): Section => static::numberedStep(...$step, withGallery: in_array($step[0], $withGallery, true)))
+                        ->all(),
 
-                            ...collect($optional)
-                                ->map(fn (array $step): Section => static::numberedStep(...$step, withGallery: in_array($step[0], $withGallery, true), optional: true))
-                                ->all(),
+                    ...collect($optional)
+                        ->map(fn (array $step): Section => static::numberedStep(...$step, withGallery: in_array($step[0], $withGallery, true), optional: true))
+                        ->all(),
 
-                            Select::make('add_step')
-                                ->label(__t('admin_case_studies.form.add_step'))
-                                ->placeholder(__t('admin_case_studies.form.add_step_placeholder'))
-                                ->native(false)
-                                ->dehydrated(false)
-                                ->live()
-                                ->options(fn (Get $get): array => collect($optional)
-                                    ->reject(fn (array $step) => in_array($step[1], (array) $get('active_optional_steps'), true))
-                                    ->mapWithKeys(fn (array $step): array => [$step[1] => __t("academy.case_studies.sections.{$step[1]}")])
-                                    ->all())
-                                ->visible(fn (Get $get): bool => count((array) $get('active_optional_steps')) < count($optional))
-                                ->afterStateUpdated(function (?string $state, Get $get, Set $set): void {
-                                    if (blank($state)) {
-                                        return;
-                                    }
+                    Select::make('add_step')
+                        ->label(__t('admin_case_studies.form.add_step'))
+                        ->placeholder(__t('admin_case_studies.form.add_step_placeholder'))
+                        ->native(false)
+                        ->dehydrated(false)
+                        ->live()
+                        ->options(fn (Get $get): array => collect($optional)
+                            ->reject(fn (array $step) => in_array($step[1], (array) $get('active_optional_steps'), true))
+                            ->mapWithKeys(fn (array $step): array => [$step[1] => __t("academy.case_studies.sections.{$step[1]}")])
+                            ->all())
+                        ->visible(fn (Get $get): bool => count((array) $get('active_optional_steps')) < count($optional))
+                        ->afterStateUpdated(function (?string $state, Get $get, Set $set): void {
+                            if (blank($state)) {
+                                return;
+                            }
 
-                                    $set('active_optional_steps', [...(array) $get('active_optional_steps'), $state]);
-                                    $set('add_step', null);
-                                })
-                                ->columnSpanFull(),
-                        ];
-                    }),
+                            $set('active_optional_steps', [...(array) $get('active_optional_steps'), $state]);
+                            $set('add_step', null);
+                        })
+                        ->columnSpanFull(),
+                ];
+            });
+    }
 
-                Section::make(__t('admin_case_studies.sections.related'))
+    /** Related lessons and documentation links, as the last inner section inside the merged form. */
+    protected static function relatedContent(): Section
+    {
+        return Section::make(__t('admin_case_studies.sections.related'))
+            ->columnSpanFull()
+            ->columns(2)
+            ->schema([
+                Select::make('related_lesson_ids')
+                    ->label(__t('admin_case_studies.form.related_lessons'))
+                    ->multiple()
+                    ->searchable()
+                    ->preload()
+                    ->options(fn (): array => Lesson::query()
+                        ->when(auth()->user()?->isCreator(), fn (Builder $query) => $query->whereHas('course', fn (Builder $course) => $course->whereIn('product_id', auth()->user()->products()->pluck('products.id'))))
+                        ->orderBy('title')
+                        ->pluck('title', 'id')
+                        ->all())
+                    ->columnSpanFull(),
+
+                Repeater::make('related_links')
+                    ->label(__t('admin_case_studies.form.links'))
+                    ->defaultItems(0)
+                    ->addActionLabel(__t('admin_case_studies.form.add_link'))
                     ->columns(2)
+                    ->columnSpanFull()
                     ->schema([
-                        Select::make('related_lesson_ids')
-                            ->label(__t('admin_case_studies.form.related_lessons'))
-                            ->multiple()
-                            ->searchable()
-                            ->preload()
-                            ->options(fn (): array => Lesson::query()
-                                ->when(auth()->user()?->isCreator(), fn (Builder $query) => $query->whereHas('course', fn (Builder $course) => $course->whereIn('product_id', auth()->user()->products()->pluck('products.id'))))
-                                ->orderBy('title')
-                                ->pluck('title', 'id')
-                                ->all())
-                            ->columnSpanFull(),
+                        TextInput::make('title')
+                            ->label(__t('admin_common.title'))
+                            ->required()
+                            ->maxLength(255),
 
-                        Repeater::make('related_links')
-                            ->label(__t('admin_case_studies.form.links'))
-                            ->defaultItems(0)
-                            ->addActionLabel(__t('admin_case_studies.form.add_link'))
-                            ->columns(2)
-                            ->columnSpanFull()
-                            ->schema([
-                                TextInput::make('title')
-                                    ->label(__t('admin_common.title'))
-                                    ->required()
-                                    ->maxLength(255),
-
-                                TextInput::make('url')
-                                    ->label(__t('admin_case_studies.form.link_url'))
-                                    ->url()
-                                    ->required()
-                                    ->maxLength(2048),
-                            ]),
+                        TextInput::make('url')
+                            ->label(__t('admin_case_studies.form.link_url'))
+                            ->url()
+                            ->required()
+                            ->maxLength(2048),
                     ]),
             ]);
     }

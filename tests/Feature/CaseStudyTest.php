@@ -13,6 +13,7 @@ use App\Models\Lesson;
 use App\Models\Product;
 use App\Models\User;
 use Database\Seeders\LanguageSeeder;
+use Filament\Forms\Components\Hidden;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -418,6 +419,30 @@ class CaseStudyTest extends TestCase
             ->assertOk()
             ->assertSee('Troubleshooting and common mistakes')
             ->assertSee('/storage/case-study-images/error.png', false);
+    }
+
+    /** There is no "Written in" field to fill: a new study takes the academy's default language on its own. */
+    public function test_a_new_study_is_written_in_the_academys_default_language_with_no_field_to_set_it(): void
+    {
+        Livewire::actingAs($this->admin())
+            ->test(CreateCaseStudy::class)
+            // The field is still there to carry the value, but hidden — not
+            // a Select an editor could open and choose from.
+            ->assertFormFieldExists('language', checkFieldUsing: fn ($field) => $field instanceof Hidden)
+            ->fillForm([
+                'title' => 'No written-in field',
+                'slug' => 'no-written-in-field',
+                'short_problem' => 'Short problem.',
+                'scenario_problem' => '<p>Scenario.</p>',
+                'desired_outcome' => '<p>Outcome.</p>',
+                'configuration_steps' => '<p>Config.</p>',
+                'testing_verification' => '<p>Verify.</p>',
+                'source_note' => 'Note.',
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $this->assertSame('en', CaseStudy::where('slug', 'no-written-in-field')->value('language'));
     }
 
     /**
