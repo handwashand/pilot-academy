@@ -20,19 +20,7 @@ Add a new entry here whenever something visible to admins or students changes.
      are stripped before anything is rendered, so notes to the next editor can
      live right here. -->
 
-## 2.1.0 — September 2026
-
-### Fixed
-
-- **A case study's industry and time estimate now translate.** They used to
-  always show in the language the study was written in, even when every other
-  field had been translated. **Translate** on a case study now includes them,
-  so once an editor adds the translation a partner reading in that language
-  sees it there too.
-- **Clearer wording for a case study's privacy status.** The sidebar used to
-  say "Anonymized" or "Customer approved" with no explanation; it now reads
-  "Customer details anonymized", "Published with the customer's approval", or
-  "Not reviewed with the customer yet".
+## 2.2.0 — October 2026
 
 ### Added
 
@@ -42,51 +30,13 @@ Add a new entry here whenever something visible to admins or students changes.
   on one row, with the title widest. Industry, difficulty, time estimate, sort
   order and status sit on one row, and Relevant Pilot features sit beside
   related lessons at the bottom of the form. A new study no longer asks what
-  language it is written in — it takes the language your own account or panel is set to
-  automatically, the same as the editor itself is written in. Each optional
-  step's **Remove this step** opens one confirmation with two choices: **Hide**
-  (the default) keeps its text and pictures — **Add step** brings it back
-  exactly as it was — and **Delete** clears them for good instead, which
+  language it is written in — it takes the language your own account or panel
+  is set to automatically, the same as the editor itself is written in. Each
+  optional step's **Remove this step** opens one confirmation with two choices:
+  **Hide** (the default) keeps its text and pictures — **Add step** brings it
+  back exactly as it was — and **Delete** clears them for good instead, which
   cannot be undone.
-- **Deleted content can be restored.** Deleting a course, lesson, final-quiz
-  question, case study, tutorial, webinar, product or media item now hides it
-  instead of removing it. **Settings → General → Recycle bin** lists what was
-  deleted, by kind, with a **Restore** button. It is for admins who are given
-  **Open the recycle bin and restore deleted content** under **People → Users →
-  Extra permissions**. Users and partners are the exception: deleting one is
-  still final.
-- **Deleting a course no longer deletes its lessons.** They stay under
-  **Content → Lessons** as **Not in any course**, and the course's
-  certificates, quiz attempts and feedback are kept too.
-- **A lesson can be written before it has a course.** **New lesson** under
-  **Content → Lessons** no longer insists on a course; choose one now or
-  later. Students see the lesson once it is in a published course.
-- **A lesson's text can be imported from a Markdown file.** On the lesson
-  form, the last button in the **Lesson text** box's row of buttons — **Import
-  a Markdown file** — takes a `.md` or `.txt` file and fills the box with it — headings, bold, lists, links and
-  tables kept. A first line like `# Title` names the lesson when it has no
-  title yet. Nothing is saved until you save the lesson; videos, pictures and
-  the knowledge check are added on the lesson as before.
-- **A course's final quiz can be uploaded from an Excel file.** On the
-  course's **Final questions** tab, **Upload from Excel** offers an example
-  file to download and fill in — one row per question, with its answers and
-  the letter of the right one — and adds every question in it to the bank at
-  once. If a row has a mistake nothing is added, and each mistake is listed
-  with its row number. Writing questions by hand works as before.
-- **Any lesson can be removed from a course.** **Remove from course** on a
-  course's **Lessons** tab used to be missing for a lesson that was only in
-  that course, so one added by mistake could not be taken out. It is now on
-  every lesson. A lesson removed from its only course is kept under
-  **Content → Lessons**, in no course and hidden from students, with its
-  questions and student progress; the new **Not in any course** filter finds
-  it, and **Add existing lesson** puts it back in a course.
-- **A privacy policy**, in the footer of every page — Pilot Telematics' own
-  company privacy policy, since Pilot Academy is one of its Services and
-  that policy already covers it: what personal data is collected, why,
-  your rights, how it may be shared, and how to reach the company about it.
-- **A friendlier page when a link is broken or out of date.** Instead of a
-  bare error, a page that looks like the rest of the academy, with a way back
-  to Home or the course catalogue.
+
 - **Quiz questions translate too.** **Translate quiz** on a lesson's edit page
   covers its own knowledge check; on a course's **Final questions** tab it
   covers the whole final-quiz bank, including questions used by more than one
@@ -94,30 +44,14 @@ Add a new entry here whenever something visible to admins or students changes.
   ChatGPT or DeepSeek can draft the empty boxes, nothing is stored until
   **Save translations**, and a question's answer options translate right
   alongside it.
-- **A profile photo**, for admins, creators and learners alike. Upload one
-  from your Profile page (Settings → Profile for staff, account menu →
-  Profile for everyone); it replaces your initials everywhere they show.
-  JPG or PNG, up to 2 MB.
+
 - **Already translated? Edit, don't redo.** When a course or lesson already has
   text in a language, choosing **Translate with …** says so and keeps it for you
   to edit; only the empty boxes are drafted. Tick **Replace the existing
   translations with new drafts** if you really want fresh ones — and even then
   nothing changes until **Save translations**. **Translate whole course** does
   the same per language.
-- **Lesson videos dubbed into other languages.** With Descript on, **Translate
-  video** on a lesson (and **Translate lesson videos** on a course) now asks
-  what to make: **Voice** — the video dubbed in that language — or **Subtitles
-  and transcript only**. A dubbed video is made once, saved in the academy, and
-  played automatically for anyone reading the academy in that language, with
-  **Play original audio** one click away. Descript uses the speaker's own voice
-  when the video has one it can copy, otherwise a stock voice. A voice uses more
-  AI credits than subtitles, and each dubbed language is a full extra video file
-  on the server.
-- **Download a lesson video.** Admins get a **Download video** button under each
-  uploaded lesson video. A learner gets it only when an admin ticks **Download
-  lesson videos** for their account under **People → Users → Extra
-  permissions**; without it, the player's own download entry is hidden too.
-  YouTube videos cannot be downloaded.
+
 - **Translate a whole course at once.** On a course, **Translate whole course**
   opens one window for the course's own text and every lesson's: pick a language
   and either write by hand or let DeepL, ChatGPT or DeepSeek (whichever is on for
@@ -129,36 +63,7 @@ Add a new entry here whenever something visible to admins or students changes.
   acknowledgement; videos or languages already translated or under way are
   skipped and cost nothing. **Check progress** then moves them along a few at a
   time.
-- **Subtitles on translated lesson videos.** When Descript has translated an
-  uploaded lesson video, the player now offers that language's subtitles under
-  the **CC** button, and switches them on by itself when the page is in that
-  language. The subtitle files are the ones the academy saved when the
-  translation finished, so watching never calls Descript.
-- **Add the Descript and translation tokens in the panel.** A new **Settings →
-  Integrations** page (admins only) takes the API token for Descript, DeepL, ChatGPT and DeepSeek, each with a
-  switch to turn it on. The token is stored encrypted and is never shown again;
-  leave the box blank to keep it, or tick **Remove the saved token**. Once a
-  provider is on, anyone an admin has given **Draft translations with DeepL** or
-  **Draft translations with ChatGPT or DeepSeek** (under **People → Users →
-  Extra permissions**) finds **Translate** on a course or lesson turned into a
-  small menu: **Translate by hand**, or **Translate with DeepL / ChatGPT /
-  DeepSeek** — only what is switched on for them. After a confirmation the
-  Translate window opens with the empty boxes drafted, for the editor to read and
-  correct — nothing is saved until **Save translations**, and text that is
-  already there is never replaced.
-  Typing translations by hand works exactly as before. A DeepL key already set
-  in the server's `.env` keeps working until one is saved here. A Descript
-  token saved here connects lesson video translation the same way (the lesson's
-  **Translate video** button still needs the per-account right), and its switch
-  there turns the connection on or off.
-- **Descript video translation is an assignable right.** Enabling the Descript
-  connection on the server no longer gives every editor its credit-using
-  controls. An admin chooses each permitted account under **People → Users →
-  Extra permissions → Use Descript video translation**; the right is not part
-  of the Admin or Creator role automatically. Starting a translation opens a
-  confirmation that names the video upload and possible media-minute and AI
-  credit use, and nothing is sent until the editor accepts it. The normal
-  **Translate** button remains separate for manually translating lesson text.
+
 - **Arabic, and the academy reads right to left.** Arabic joins English,
   Russian, Spanish, French and Portuguese. Choosing it turns the whole student
   site around — the text runs right to left, and the arrows that say "next" and
@@ -175,15 +80,7 @@ Add a new entry here whenever something visible to admins or students changes.
   its letters disconnected and in the wrong order.
   Course and lesson content is separate: it stays in whatever language the
   trainer wrote it in until somebody adds an Arabic version with **Translate**.
-- **Write a lesson without leaving the course.** The course's **Lessons** tab
-  now has **New lesson** beside **Add existing lesson**. Give it a title and a
-  web address and it joins the end of that course, written in the course's
-  language — no more going to **Lessons**, creating one, and picking the course
-  back again. Open it with **Edit** when you are ready for the content, the
-  videos and the knowledge check. **Add existing lesson** now opens with the
-  lessons you can add already listed, each showing which course it comes from,
-  instead of an empty box that only filled in once you typed; lessons this
-  course already has are left out.
+
 - **Dashboard filters and partner engagement you can act on.** Administrators
   can filter learner reporting by date, partner, product and course. The old
   company percentage has been replaced by a partner table with learners,
@@ -194,13 +91,7 @@ Add a new entry here whenever something visible to admins or students changes.
   opens, webinar page opens, joins and recording opens. Stalled follow-up is
   course-specific, so a certificate or recent work in one course no longer
   hides a learner who went quiet in another.
-- **A top bar with the four things partners come for.** **Courses** is a
-  catalogue of every published course, with a search box and filters for level
-  and who the course is written for. **Case Studies** is beside it, then
-  **Tutorials** — every lesson video in the academy gathered under its course —
-  and **Webinars**. The home page is unchanged: it stays your own starting
-  point, with where you left off at the top. Help moved into the account menu
-  and stays in the footer of every page.
+
 - **Pictures on every step of a case study.** Each of the ten steps now takes
   screenshots two ways: the paperclip in its toolbar, for an image that belongs
   mid-sentence, and a box beneath it that accepts a paste from the clipboard, a
@@ -208,6 +99,7 @@ Add a new entry here whenever something visible to admins or students changes.
   partner's page, in the order you put them. Images added inside a step are
   stored where partners can actually see them — before this they were saved
   privately and would have shown as broken.
+
 - **The dashboard funnel and the completion count tell the same story.**
   **Learner journey** used to read every stage from the activity log, which
   only goes back to the day the academy started recording it — so an academy
@@ -216,23 +108,7 @@ Add a new entry here whenever something visible to admins or students changes.
   were there, so no bar can stand taller than the one before it, and
   **Lesson completions** counts finished lessons from the record rather than
   the log. **Most opened courses** is full width like the other charts.
-- **Forgot your password? Set a new one yourself.** Both login pages — the
-  academy and the panel — now offer **Forgot password?**. Give the address you
-  sign in with and a link arrives, written in your language, good for one hour
-  and one use. The page says the same thing whether or not the address has an
-  account, so it cannot be used to find out who is a customer.
-- **Someone other than an admin can check whether emails are arriving.**
-  **Settings → Mail** now opens with the question it answers — not getting
-  emails? — and a test you send yourself. Admins still see it, and an admin can
-  now hand **Check mail delivery** to anyone else under **People → Users →
-  Permissions**, so a support colleague can answer "did that certificate email
-  go out?" without being made an admin of the whole academy. The settings
-  themselves stay in the server’s `.env`, out of the panel.
-- **Translations read across, not down.** **Settings → Translations** now
-  shows one row per line of text with a column for each language, so you can
-  see at a glance where a wording is still the shipped one — or missing. Click
-  the cell in the language you want to fix. Searching still finds a line by
-  words from any language.
+
 - **Tutorials you add yourself, by link or upload.** Alongside the lesson
   videos gathered from the courses, admins and product creators can add
   standalone how-to videos under **Content → Tutorials** — a YouTube link or a
@@ -240,6 +116,7 @@ Add a new entry here whenever something visible to admins or students changes.
   the course videos on **Tutorials**, each on its own page with the player. A
   tutorial cannot be published until its video actually works, and it can be
   written in any language and translated like a course.
+
 - **Webinars: live sessions, and the recordings afterwards.** Partners see what
   is coming up with a **Join** button, and past sessions with **Watch the
   recording**. Times are shown in UTC, with the zone named, so nobody joins an
@@ -247,6 +124,7 @@ Add a new entry here whenever something visible to admins or students changes.
   Webinars**: a session needs a date and either a join link or a recording
   before it can be published, and it can be written in any language and
   translated like a course.
+
 - **Case Studies turn proven deployments into reusable partner playbooks.**
   Partners can open **Case Studies** from the academy, search by problem or
   solution, and filter by industry, Pilot feature and difficulty. Each
@@ -264,6 +142,7 @@ Add a new entry here whenever something visible to admins or students changes.
   added — search finds a study by its translations too. The source and
   performance-claim notes are for editors only and are no longer shown to
   partners.
+
 - **The whole admin panel follows your language.** Menus, page titles, every
   form label and help text, table columns, buttons, confirmation messages,
   notifications, the dashboard, Content health, Final quiz health, Mail and
@@ -272,6 +151,7 @@ Add a new entry here whenever something visible to admins or students changes.
   exported spreadsheet headings, and the alerts in the notification bell follow
   it too; an alert about a broken course is written in its owner's language.
   Anything that reads oddly can be corrected under **Settings → Translations**.
+
 - **Emails and certificates in the student's language.** The certificate email,
   the reminder to continue and the certificate PDF itself are written in the
   language the student chose — with the course title in that language where it
@@ -279,6 +159,7 @@ Add a new entry here whenever something visible to admins or students changes.
   resends or regenerates them. Someone whose language is switched off gets the
   default. The test email under **Settings → Mail** and the What's new PDF
   follow the language of the admin who asks for them.
+
 - **Write courses in any language, and translate them into the others.** Courses
   and lessons have a **Written in** field (English by default), so French and
   Russian trainers can write in their own language. **Translate** on the edit
@@ -286,22 +167,64 @@ Add a new entry here whenever something visible to admins or students changes.
   summary, lesson text and transcript. Students see the translation in their
   language and the original wherever none has been written, and search finds a
   course by its translations too.
-- **A language button in the top right corner of every student page.** Like
-  the one in the admin panel — the current language code, such as **EN** —
-  it sits at the right-hand end of the header at every width, on a phone too,
-  and opens a short list of languages. The languages are also listed at the
-  foot of every page.
-- **One lesson in several courses.** On a course's **Lessons** tab, **Add
-  existing lesson** now shares the lesson instead of moving it out of its old
-  course, and the lesson form has a **Courses** field. It is the same lesson in
-  each course — one set of questions, and a student who finishes it once has it
-  finished everywhere — while each course keeps its own order. **Remove from
-  course** takes it out of one course only.
-- **Every admin can correct translations** under **Settings → Translations**.
-  Search for the words students see, in any language, type the correction and
-  save; it shows on the student site straight away. Clear it to go back to the
-  original text. Before, the page needed a special permission and did not list
-  the student site's text at all.
+
+- **The whole student site reads in the student's language.** Home, courses,
+  lessons, the final quiz, certificates, search, profile, sign-up and invite
+  pages now follow the language chosen in the top bar, or the browser's
+  language: English, Russian, Spanish, French or Portuguese (Brazil). Before,
+  only the top bar, sign-in and Help changed. Counts read naturally in each
+  language ("5 уроков", not "5 урок"). Course and lesson text is still shown as
+  written.
+
+### Changed
+
+- **A case study's steps are numbered, boxed, and most start hidden.** On
+  **Content → Case Studies**, each of the nine study sections is now its own
+  bordered, numbered box — Step 1, Step 2, and so on — instead of nine fields
+  running together with nothing between them. The four sections a study
+  cannot publish without stay on screen; the other five (prerequisites,
+  Pilot features used, expected results, troubleshooting, adaptation) start
+  hidden and are brought in one at a time with **Add step** at the bottom of
+  the list, so a quick study is not nine empty boxes to scroll past. Each
+  added step has its own **Remove this step** link; removing one only hides
+  it — nothing written in it is lost, and it comes back with its text intact
+  through **Add step**. Only two steps — step-by-step configuration and
+  expected results — still have a separate picture-upload box underneath,
+  since those are the ones partners actually screenshot; every step still
+  takes a picture through the paperclip in its own text toolbar. The whole
+  **Study sections** block now spans the full width of the page, instead of
+  sitting in one narrow column with empty space beside it.
+
+- **The Dashboard now distinguishes recent activity from historical progress.**
+  **Active students** means learners who signed in or worked in the academy
+  during the last 30 days; reminder emails and staff activity do not inflate the
+  number. Published lesson totals and partner progress now include only lessons
+  that learners can actually reach through a published course. The activity
+  graph now plots unique active learners as a line and completed lessons as bars,
+  so repeated sign-ins by one person no longer look like wider adoption.
+
+- **Product creators now have a useful, private Dashboard.** It summarizes their
+  assigned products' Courses, Case Studies, Tutorials and Webinars by published,
+  draft and archived status, with each card linking to its content list. It does
+  not expose learner, company, quiz, feedback or certificate data.
+
+### Fixed
+
+- **A case study's industry and time estimate now translate.** They used to
+  always show in the language the study was written in, even when every other
+  field had been translated. **Translate** on a case study now includes them,
+  so once an editor adds the translation a partner reading in that language
+  sees it there too.
+
+- **Clearer wording for a case study's privacy status.** The sidebar used to
+  say "Anonymized" or "Customer approved" with no explanation; it now reads
+  "Customer details anonymized", "Published with the customer's approval", or
+  "Not reviewed with the customer yet".
+
+## 2.1.5 — September 2026
+
+### Added
+
 - **Final quiz health** (**Results → Final quiz health**, admins only) tells you
   whether the final quiz is doing its job. **First-time pass rate** is judged
   against a suggested 65–80% band — above it the quiz is likely too easy, below
@@ -354,8 +277,6 @@ Add a new entry here whenever something visible to admins or students changes.
   passed and **Grant another attempt** for one person. A count in the menu shows
   how many are waiting. Before, the only option was raising Max attempts for
   everyone.
-- **All student feedback in one list** — **Results → Student feedback**, with
-  filters by verdict, course and partner.
 - **Settings → Mail** says plainly whether the academy is really sending email —
   the default setting only writes it to a log — and sends you a test email.
 - **Correct the name on a certificate.** **Certificates → Edit name** reprints
@@ -364,38 +285,214 @@ Add a new entry here whenever something visible to admins or students changes.
 - **Guide is in the admin account menu too** (your initials, top right).
 - **Student site in the admin account menu**, to see the academy the way
   students do.
-- **A language button in the admin top bar.** It shows the current language
-  code (such as **EN**) and opens a short menu of languages. The choice is saved
-  to your account, so the panel and the student site both follow it.
-- **The whole student site reads in the student's language.** Home, courses,
-  lessons, the final quiz, certificates, search, profile, sign-up and invite
-  pages now follow the language chosen in the top bar, or the browser's
-  language: English, Russian, Spanish, French or Portuguese (Brazil). Before,
-  only the top bar, sign-in and Help changed. Counts read naturally in each
-  language ("5 уроков", not "5 урок"). Course and lesson text is still shown as
-  written.
 - **Lessons can carry several videos.** In the lesson editor, each video has a
   **YouTube** or **Upload** source selector, and you can add up to five video
   entries. The student lesson page renders each saved video in order.
+- **A language button in the top right corner of every student page.** Like
+  the one in the admin panel — the current language code, such as **EN** —
+  it sits at the right-hand end of the header at every width, on a phone too,
+  and opens a short list of languages. The languages are also listed at the
+  foot of every page.
+- **All student feedback in one list** — **Results → Student feedback**, with
+  filters by verdict, course and partner.
+- **A language button in the admin top bar.** It shows the current language
+  code (such as **EN**) and opens a short menu of languages. The choice is saved
+  to your account, so the panel and the student site both follow it.
 
 ### Changed
 
-- **A case study's steps are numbered, boxed, and most start hidden.** On
-  **Content → Case Studies**, each of the nine study sections is now its own
-  bordered, numbered box — Step 1, Step 2, and so on — instead of nine fields
-  running together with nothing between them. The four sections a study
-  cannot publish without stay on screen; the other five (prerequisites,
-  Pilot features used, expected results, troubleshooting, adaptation) start
-  hidden and are brought in one at a time with **Add step** at the bottom of
-  the list, so a quick study is not nine empty boxes to scroll past. Each
-  added step has its own **Remove this step** link; removing one only hides
-  it — nothing written in it is lost, and it comes back with its text intact
-  through **Add step**. Only two steps — step-by-step configuration and
-  expected results — still have a separate picture-upload box underneath,
-  since those are the ones partners actually screenshot; every step still
-  takes a picture through the paperclip in its own text toolbar. The whole
-  **Study sections** block now spans the full width of the page, instead of
-  sitting in one narrow column with empty space beside it.
+- **Certificates now live in the account menu.** The separate certificate link
+  beside your avatar repeated the same destination and crowded the student top
+  bar. Open your account menu and choose **Certificates** instead; the page and
+  all downloads work as before.
+- **The admin menu is more compact.** The sidebar had grown to nineteen items
+  across six groups and ran off the bottom of a normal screen, so you had to
+  scroll the menu to reach **Docs** and **Settings**. The rows are shorter and
+  sit closer together, the gaps between groups are smaller, and the labels and
+  icons are a little smaller — around a quarter less height, so the whole menu
+  is on screen at once with nothing to scroll.
+- **The dashboard is down to two colours.** Blue carries the ordinary numbers,
+  and amber marks only what wants your attention: lessons students keep failing,
+  learners who have gone quiet and have not been reminded, and the reminder
+  buttons themselves. The line under each headline figure is one quiet grey, so
+  the top row reads straight across.
+- **The left menu is grouped by what you are doing**: **Content** (Courses,
+  Lessons, Products, Media Items), **People** (Users, Companies), **Results**
+  (Certificates, Final quiz health) and **Docs** (Guide, What's new). Nothing was
+  renamed and every screen keeps its address.
+- **YouTube lessons use YouTube's privacy-enhanced player.** No tracking cookie
+  is set until the student presses play, and the end of a video only suggests
+  videos from the same channel — not whatever YouTube would recommend next.
+- **The top bar fits on small phones.** With Help added, the student site's
+  header stays on one line down to 360px wide, and **Log in**, **Log out** and
+  **Register** are now comfortable to tap.
+- **Content needing attention is no longer on the Dashboard.** It moved to
+  **Content health**, where its menu count is visible from every screen.
+- **Publishing checks for problems first.** **Publish** on a course — and on a
+  lesson going into a live course — refuses anything students would get stuck on
+  and says what, in bulk too. Unpublishing the last lesson of a live course warns
+  first.
+- **The student site shows the full PILOT ACADEMY logo** in its top bar, the
+  same as the admin panel, and a student's name and **Log out** moved into the
+  account menu.
+- **Certificates has no count in the menu any more.** It showed the total issued,
+  which nobody needed to act on.
+
+### Known limitations
+
+- **The bell does not notice changes to a final quiz's question bank** made with
+  Attach or Detach on the Final questions tab. Content health still lists the
+  problem.
+
+### Fixed
+
+- **A YouTube link that is not a video no longer saves silently.** A playlist,
+  channel or Vimeo link used to save without complaint and leave the lesson
+  with no video at all. The lesson form now refuses it and says what to paste
+  instead. **YouTube live links** (`youtube.com/live/…`) used to be one of the
+  casualties and now play.
+- **Links saved before this fix are listed** under **Content → Content health**,
+  as *YouTube link that is not a playable video*, each with a link straight to
+  the lesson.
+
+## 2.1.0 — September 2026
+
+### Added
+
+- **Deleted content can be restored.** Deleting a course, lesson, final-quiz
+  question, case study, tutorial, webinar, product or media item now hides it
+  instead of removing it. **Settings → General → Recycle bin** lists what was
+  deleted, by kind, with a **Restore** button. It is for admins who are given
+  **Open the recycle bin and restore deleted content** under **People → Users →
+  Extra permissions**. Users and partners are the exception: deleting one is
+  still final.
+- **Deleting a course no longer deletes its lessons.** They stay under
+  **Content → Lessons** as **Not in any course**, and the course's
+  certificates, quiz attempts and feedback are kept too.
+- **A lesson can be written before it has a course.** **New lesson** under
+  **Content → Lessons** no longer insists on a course; choose one now or
+  later. Students see the lesson once it is in a published course.
+- **A lesson's text can be imported from a Markdown file.** On the lesson
+  form, the last button in the **Lesson text** box's row of buttons — **Import
+  a Markdown file** — takes a `.md` or `.txt` file and fills the box with it — headings, bold, lists, links and
+  tables kept. A first line like `# Title` names the lesson when it has no
+  title yet. Nothing is saved until you save the lesson; videos, pictures and
+  the knowledge check are added on the lesson as before.
+- **A course's final quiz can be uploaded from an Excel file.** On the
+  course's **Final questions** tab, **Upload from Excel** offers an example
+  file to download and fill in — one row per question, with its answers and
+  the letter of the right one — and adds every question in it to the bank at
+  once. If a row has a mistake nothing is added, and each mistake is listed
+  with its row number. Writing questions by hand works as before.
+- **Any lesson can be removed from a course.** **Remove from course** on a
+  course's **Lessons** tab used to be missing for a lesson that was only in
+  that course, so one added by mistake could not be taken out. It is now on
+  every lesson. A lesson removed from its only course is kept under
+  **Content → Lessons**, in no course and hidden from students, with its
+  questions and student progress; the new **Not in any course** filter finds
+  it, and **Add existing lesson** puts it back in a course.
+- **A privacy policy**, in the footer of every page — Pilot Telematics' own
+  company privacy policy, since Pilot Academy is one of its Services and
+  that policy already covers it: what personal data is collected, why,
+  your rights, how it may be shared, and how to reach the company about it.
+- **A friendlier page when a link is broken or out of date.** Instead of a
+  bare error, a page that looks like the rest of the academy, with a way back
+  to Home or the course catalogue.
+- **A profile photo**, for admins, creators and learners alike. Upload one
+  from your Profile page (Settings → Profile for staff, account menu →
+  Profile for everyone); it replaces your initials everywhere they show.
+  JPG or PNG, up to 2 MB.
+- **Lesson videos dubbed into other languages.** With Descript on, **Translate
+  video** on a lesson (and **Translate lesson videos** on a course) now asks
+  what to make: **Voice** — the video dubbed in that language — or **Subtitles
+  and transcript only**. A dubbed video is made once, saved in the academy, and
+  played automatically for anyone reading the academy in that language, with
+  **Play original audio** one click away. Descript uses the speaker's own voice
+  when the video has one it can copy, otherwise a stock voice. A voice uses more
+  AI credits than subtitles, and each dubbed language is a full extra video file
+  on the server.
+- **Download a lesson video.** Admins get a **Download video** button under each
+  uploaded lesson video. A learner gets it only when an admin ticks **Download
+  lesson videos** for their account under **People → Users → Extra
+  permissions**; without it, the player's own download entry is hidden too.
+  YouTube videos cannot be downloaded.
+- **Subtitles on translated lesson videos.** When Descript has translated an
+  uploaded lesson video, the player now offers that language's subtitles under
+  the **CC** button, and switches them on by itself when the page is in that
+  language. The subtitle files are the ones the academy saved when the
+  translation finished, so watching never calls Descript.
+- **Add the Descript and translation tokens in the panel.** A new **Settings →
+  Integrations** page (admins only) takes the API token for Descript, DeepL, ChatGPT and DeepSeek, each with a
+  switch to turn it on. The token is stored encrypted and is never shown again;
+  leave the box blank to keep it, or tick **Remove the saved token**. Once a
+  provider is on, anyone an admin has given **Draft translations with DeepL** or
+  **Draft translations with ChatGPT or DeepSeek** (under **People → Users →
+  Extra permissions**) finds **Translate** on a course or lesson turned into a
+  small menu: **Translate by hand**, or **Translate with DeepL / ChatGPT /
+  DeepSeek** — only what is switched on for them. After a confirmation the
+  Translate window opens with the empty boxes drafted, for the editor to read and
+  correct — nothing is saved until **Save translations**, and text that is
+  already there is never replaced.
+  Typing translations by hand works exactly as before. A DeepL key already set
+  in the server's `.env` keeps working until one is saved here. A Descript
+  token saved here connects lesson video translation the same way (the lesson's
+  **Translate video** button still needs the per-account right), and its switch
+  there turns the connection on or off.
+- **Descript video translation is an assignable right.** Enabling the Descript
+  connection on the server no longer gives every editor its credit-using
+  controls. An admin chooses each permitted account under **People → Users →
+  Extra permissions → Use Descript video translation**; the right is not part
+  of the Admin or Creator role automatically. Starting a translation opens a
+  confirmation that names the video upload and possible media-minute and AI
+  credit use, and nothing is sent until the editor accepts it. The normal
+  **Translate** button remains separate for manually translating lesson text.
+- **Write a lesson without leaving the course.** The course's **Lessons** tab
+  now has **New lesson** beside **Add existing lesson**. Give it a title and a
+  web address and it joins the end of that course, written in the course's
+  language — no more going to **Lessons**, creating one, and picking the course
+  back again. Open it with **Edit** when you are ready for the content, the
+  videos and the knowledge check. **Add existing lesson** now opens with the
+  lessons you can add already listed, each showing which course it comes from,
+  instead of an empty box that only filled in once you typed; lessons this
+  course already has are left out.
+- **A top bar with the four things partners come for.** **Courses** is a
+  catalogue of every published course, with a search box and filters for level
+  and who the course is written for. **Case Studies** is beside it, then
+  **Tutorials** — every lesson video in the academy gathered under its course —
+  and **Webinars**. The home page is unchanged: it stays your own starting
+  point, with where you left off at the top. Help moved into the account menu
+  and stays in the footer of every page.
+- **Forgot your password? Set a new one yourself.** Both login pages — the
+  academy and the panel — now offer **Forgot password?**. Give the address you
+  sign in with and a link arrives, written in your language, good for one hour
+  and one use. The page says the same thing whether or not the address has an
+  account, so it cannot be used to find out who is a customer.
+- **Someone other than an admin can check whether emails are arriving.**
+  **Settings → Mail** now opens with the question it answers — not getting
+  emails? — and a test you send yourself. Admins still see it, and an admin can
+  now hand **Check mail delivery** to anyone else under **People → Users →
+  Permissions**, so a support colleague can answer "did that certificate email
+  go out?" without being made an admin of the whole academy. The settings
+  themselves stay in the server’s `.env`, out of the panel.
+- **Translations read across, not down.** **Settings → Translations** now
+  shows one row per line of text with a column for each language, so you can
+  see at a glance where a wording is still the shipped one — or missing. Click
+  the cell in the language you want to fix. Searching still finds a line by
+  words from any language.
+- **One lesson in several courses.** On a course's **Lessons** tab, **Add
+  existing lesson** now shares the lesson instead of moving it out of its old
+  course, and the lesson form has a **Courses** field. It is the same lesson in
+  each course — one set of questions, and a student who finishes it once has it
+  finished everywhere — while each course keeps its own order. **Remove from
+  course** takes it out of one course only.
+- **Every admin can correct translations** under **Settings → Translations**.
+  Search for the words students see, in any language, type the correction and
+  save; it shows on the student site straight away. Clear it to go back to the
+  original text. Before, the page needed a special permission and did not list
+  the student site's text at all.
+
+### Changed
+
 - **A new lesson's web address keeps up with its title.** In the **New
   lesson** window on a course, retyping the title now updates the address
   too, until you type an address of your own.
@@ -434,62 +531,12 @@ Add a new entry here whenever something visible to admins or students changes.
 - **The admin sidebar is slightly narrower on desktop.** Navigation rows are
   shorter horizontally, leaving more room for the page. Row height, group
   spacing and the mobile menu are unchanged.
-- **Certificates now live in the account menu.** The separate certificate link
-  beside your avatar repeated the same destination and crowded the student top
-  bar. Open your account menu and choose **Certificates** instead; the page and
-  all downloads work as before.
-- **The admin menu is more compact.** The sidebar had grown to nineteen items
-  across six groups and ran off the bottom of a normal screen, so you had to
-  scroll the menu to reach **Docs** and **Settings**. The rows are shorter and
-  sit closer together, the gaps between groups are smaller, and the labels and
-  icons are a little smaller — around a quarter less height, so the whole menu
-  is on screen at once with nothing to scroll.
-- **The dashboard is down to two colours.** Blue carries the ordinary numbers,
-  and amber marks only what wants your attention: lessons students keep failing,
-  learners who have gone quiet and have not been reminded, and the reminder
-  buttons themselves. The line under each headline figure is one quiet grey, so
-  the top row reads straight across.
-- **The Dashboard now distinguishes recent activity from historical progress.**
-  **Active students** means learners who signed in or worked in the academy
-  during the last 30 days; reminder emails and staff activity do not inflate the
-  number. Published lesson totals and partner progress now include only lessons
-  that learners can actually reach through a published course. The activity
-  graph now plots unique active learners as a line and completed lessons as bars,
-  so repeated sign-ins by one person no longer look like wider adoption.
-- **Product creators now have a useful, private Dashboard.** It summarizes their
-  assigned products' Courses, Case Studies, Tutorials and Webinars by published,
-  draft and archived status, with each card linking to its content list. It does
-  not expose learner, company, quiz, feedback or certificate data.
-- **The left menu is grouped by what you are doing**: **Content** (Courses,
-  Lessons, Products, Media Items), **People** (Users, Companies), **Results**
-  (Certificates, Final quiz health) and **Docs** (Guide, What's new). Nothing was
-  renamed and every screen keeps its address.
-- **YouTube lessons use YouTube's privacy-enhanced player.** No tracking cookie
-  is set until the student presses play, and the end of a video only suggests
-  videos from the same channel — not whatever YouTube would recommend next.
-- **The top bar fits on small phones.** With Help added, the student site's
-  header stays on one line down to 360px wide, and **Log in**, **Log out** and
-  **Register** are now comfortable to tap.
-- **Content needing attention is no longer on the Dashboard.** It moved to
-  **Content health**, where its menu count is visible from every screen.
-- **Publishing checks for problems first.** **Publish** on a course — and on a
-  lesson going into a live course — refuses anything students would get stuck on
-  and says what, in bulk too. Unpublishing the last lesson of a live course warns
-  first.
-- **The student site shows the full PILOT ACADEMY logo** in its top bar, the
-  same as the admin panel, and a student's name and **Log out** moved into the
-  account menu.
-- **Certificates has no count in the menu any more.** It showed the total issued,
-  which nobody needed to act on.
 
 ### Known limitations
 
 - **Final quiz health cannot say which questions are the problem.** The academy
   keeps each attempt's total score, not the answer given to each question, so
   the page shows *Question difficulty* as **Not measured** rather than guessing.
-- **The bell does not notice changes to a final quiz's question bank** made with
-  Attach or Detach on the Final questions tab. Content health still lists the
-  problem.
 
 ### Fixed
 
@@ -501,14 +548,6 @@ Add a new entry here whenever something visible to admins or students changes.
 - **The admin panel opens on PostgreSQL again when the notification bell is on.**
   The notification payload is now stored as JSON, so Filament can count unread
   alerts without a database error.
-- **A YouTube link that is not a video no longer saves silently.** A playlist,
-  channel or Vimeo link used to save without complaint and leave the lesson
-  with no video at all. The lesson form now refuses it and says what to paste
-  instead. **YouTube live links** (`youtube.com/live/…`) used to be one of the
-  casualties and now play.
-- **Links saved before this fix are listed** under **Content → Content health**,
-  as *YouTube link that is not a playable video*, each with a link straight to
-  the lesson.
 
 <!-- For contributors, not for the panel: this section explains how the page
      itself works, which is our business rather than an admin's. It stays in
