@@ -446,6 +446,35 @@ class CaseStudyTest extends TestCase
     }
 
     /**
+     * "Automatic" means the editor's own panel language, not a flat site
+     * default — a Russian-speaking creator with their panel set to Russian
+     * gets a Russian study without having to say so anywhere.
+     */
+    public function test_a_new_study_takes_the_editors_own_panel_language_not_the_site_default(): void
+    {
+        $this->seed(LanguageSeeder::class);
+        $admin = $this->admin();
+        $admin->forceFill(['locale' => 'ru'])->save();
+
+        Livewire::actingAs($admin)
+            ->test(CreateCaseStudy::class)
+            ->fillForm([
+                'title' => 'Written in Russian',
+                'slug' => 'written-in-russian',
+                'short_problem' => 'Short problem.',
+                'scenario_problem' => '<p>Scenario.</p>',
+                'desired_outcome' => '<p>Outcome.</p>',
+                'configuration_steps' => '<p>Config.</p>',
+                'testing_verification' => '<p>Verify.</p>',
+                'source_note' => 'Note.',
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $this->assertSame('ru', CaseStudy::where('slug', 'written-in-russian')->value('language'));
+    }
+
+    /**
      * A new study starts with only the four required steps; the five optional
      * ones are not in the form at all until "Add step" brings one in.
      */

@@ -4,7 +4,6 @@ namespace App\Filament\Resources\CaseStudies\Schemas;
 
 use App\Models\CaseStudy;
 use App\Models\Lesson;
-use App\Services\Translator;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
@@ -97,8 +96,7 @@ class CaseStudyForm
                             ->placeholder(__t('admin_case_studies.form.add_feature'))
                             // Pilot's own names, and the same spelling the seeded
                             // studies use — the listing filter matches them exactly.
-                            ->suggestions(['GeoZones', 'Notifications', 'Reports', 'History', 'Speed control', 'Fuel sensors', 'Sensors', 'Object groups'])
-                            ->columnSpanFull(),
+                            ->suggestions(['GeoZones', 'Notifications', 'Reports', 'History', 'Speed control', 'Fuel sensors', 'Sensors', 'Object groups']),
 
                         Select::make('difficulty')
                             ->label(__t('admin_case_studies.form.difficulty'))

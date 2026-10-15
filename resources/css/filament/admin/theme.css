@@ -156,3 +156,19 @@
     width: 1.125rem;           /* was 20px */
     height: 1.125rem;
 }
+
+/*
+ * Tooltip glow removed (owner's request, 2026-10-15): hovering a toolbar
+ * button — the rich editor's Bold, the lesson Markdown-import action, and
+ * every other `x-tooltip` in the panel — showed a soft, wide, multi-layer
+ * shadow around the tooltip bubble that read as a stray glow next to the
+ * button, not just the tooltip's own text. It comes from Filament/tippy's
+ * built-in "light" tooltip theme; the panel's own "dark" theme already
+ * carries none (`box-shadow: none`), which is why it was easy to miss in a
+ * quick look at the panel in dark mode. This brings light mode to the same
+ * plain, shadowless bubble the dark theme already has, panel-wide — not
+ * just on the rich editor, since the glow was never specific to it.
+ */
+.tippy-box[data-theme~='light'] {
+    box-shadow: none;
+}
