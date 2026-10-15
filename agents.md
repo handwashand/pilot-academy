@@ -420,6 +420,16 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-15 — Case study layout: product, title and slug on one row
+
+Product, title and slug share a four-column row (product 1, title 2, slug 1).
+Industry joined difficulty, time, sort order and status in a five-column row.
+Relevant Pilot features moved into Related content, beside related lessons.
+Guides, changelog and translated step 2 text updated to match.
+
+**Verified (run):** `CaseStudyTest`, `AdminGuide` and `ChangelogPageTest` — 52
+passed. Pint clean. Screenshot of the create page checked in Chrome.
+
 ### 2026-10-15 — Translated admin guides follow the case study changes
 
 The five translated admin guides (`ru`, `es`, `fr`, `pt`, `ar`) still described

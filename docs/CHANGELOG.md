@@ -38,10 +38,11 @@ Add a new entry here whenever something visible to admins or students changes.
 
 - **The case study editing screen is tidier.** The basics, the steps and
   related content now sit in one page-wide box, with Privacy and Media below
-  it, instead of four cards of mismatched widths. Difficulty, time estimate,
-  sort order and status sit on one row, and Industry and Relevant Pilot
-  features sit side by side. A new study no longer asks what language it is
-  written in — it takes the language your own account or panel is set to
+  it, instead of four cards of mismatched widths. Product, title and slug sit
+  on one row, with the title widest. Industry, difficulty, time estimate, sort
+  order and status sit on one row, and Relevant Pilot features sit beside
+  related lessons at the bottom of the form. A new study no longer asks what
+  language it is written in — it takes the language your own account or panel is set to
   automatically, the same as the editor itself is written in. Each optional
   step's **Remove this step** opens one confirmation with two choices: **Hide**
   (the default) keeps its text and pictures — **Add step** brings it back

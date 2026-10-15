@@ -41,45 +41,55 @@ class CaseStudyForm
                     ->columnSpanFull()
                     ->columns(2)
                     ->schema([
-                        Select::make('product_id')
-                            ->label(__t('admin_common.product'))
-                            ->relationship('product', 'name', function ($query) {
-                                $user = auth()->user();
+                        // Product is the narrowest, the title the widest: the
+                        // title is what a reader scans for, the product is a
+                        // label, and the slug follows the title.
+                        Grid::make(4)
+                            ->columnSpanFull()
+                            ->schema([
+                                Select::make('product_id')
+                                    ->label(__t('admin_common.product'))
+                                    ->relationship('product', 'name', function ($query) {
+                                        $user = auth()->user();
 
-                                return $user?->isCreator()
-                                    ? $query->whereIn('products.id', $user->products()->pluck('products.id'))
-                                    : $query;
-                            })
-                            ->searchable()
-                            ->preload()
-                            ->required(fn (): bool => (bool) auth()->user()?->isCreator())
-                            ->default(fn () => auth()->user()?->isCreator() ? auth()->user()->products()->value('products.id') : null)
-                            ->rules([
-                                fn (): Closure => function (string $attribute, $value, Closure $fail): void {
-                                    $user = auth()->user();
+                                        return $user?->isCreator()
+                                            ? $query->whereIn('products.id', $user->products()->pluck('products.id'))
+                                            : $query;
+                                    })
+                                    ->searchable()
+                                    ->preload()
+                                    ->required(fn (): bool => (bool) auth()->user()?->isCreator())
+                                    ->default(fn () => auth()->user()?->isCreator() ? auth()->user()->products()->value('products.id') : null)
+                                    ->rules([
+                                        fn (): Closure => function (string $attribute, $value, Closure $fail): void {
+                                            $user = auth()->user();
 
-                                    if ($user && $user->isCreator() && ! $user->products()->whereKey($value)->exists()) {
-                                        $fail(__t('admin_case_studies.form.own_product'));
-                                    }
-                                },
+                                            if ($user && $user->isCreator() && ! $user->products()->whereKey($value)->exists()) {
+                                                $fail(__t('admin_case_studies.form.own_product'));
+                                            }
+                                        },
+                                    ])
+                                    ->columnSpan(1),
+
+                                TextInput::make('title')
+                                    ->label(__t('admin_common.title'))
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->live(onBlur: true)
+                                    ->afterStateUpdated(function (string $operation, $state, callable $set) {
+                                        if ($operation === 'create') {
+                                            $set('slug', Str::slug($state));
+                                        }
+                                    })
+                                    ->columnSpan(2),
+
+                                TextInput::make('slug')
+                                    ->label(__t('admin_common.slug'))
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->unique(ignoreRecord: true)
+                                    ->columnSpan(1),
                             ]),
-
-                        TextInput::make('title')
-                            ->label(__t('admin_common.title'))
-                            ->required()
-                            ->maxLength(255)
-                            ->live(onBlur: true)
-                            ->afterStateUpdated(function (string $operation, $state, callable $set) {
-                                if ($operation === 'create') {
-                                    $set('slug', Str::slug($state));
-                                }
-                            }),
-
-                        TextInput::make('slug')
-                            ->label(__t('admin_common.slug'))
-                            ->required()
-                            ->maxLength(255)
-                            ->unique(ignoreRecord: true),
 
                         Textarea::make('short_problem')
                             ->label(__t('admin_case_studies.form.short_problem'))
@@ -87,25 +97,18 @@ class CaseStudyForm
                             ->required()
                             ->columnSpanFull(),
 
-                        TextInput::make('industry')
-                            ->label(__t('admin_case_studies.form.industry'))
-                            ->maxLength(120)
-                            ->datalist(['Delivery', 'Field service', 'Fuel logistics', 'Passenger transport', 'Construction']),
-
-                        TagsInput::make('features_used')
-                            ->label(__t('admin_case_studies.form.features'))
-                            ->placeholder(__t('admin_case_studies.form.add_feature'))
-                            // Pilot's own names, and the same spelling the seeded
-                            // studies use — the listing filter matches them exactly.
-                            ->suggestions(['GeoZones', 'Notifications', 'Reports', 'History', 'Speed control', 'Fuel sensors', 'Sensors', 'Object groups']),
-
-                        // One row of four, not two rows of two: these are
+                        // One row of five, not two rows of two: these are
                         // short, glanceable settings, not writing — grouped
                         // so they read as a strip rather than taking as much
                         // vertical space as the longer fields around them.
-                        Grid::make(4)
+                        Grid::make(5)
                             ->columnSpanFull()
                             ->schema([
+                                TextInput::make('industry')
+                                    ->label(__t('admin_case_studies.form.industry'))
+                                    ->maxLength(120)
+                                    ->datalist(['Delivery', 'Field service', 'Fuel logistics', 'Passenger transport', 'Construction']),
+
                                 Select::make('difficulty')
                                     ->label(__t('admin_case_studies.form.difficulty'))
                                     ->options(CaseStudy::difficultyLabels())
@@ -301,8 +304,14 @@ class CaseStudyForm
                         ->when(auth()->user()?->isCreator(), fn (Builder $query) => $query->whereHas('course', fn (Builder $course) => $course->whereIn('product_id', auth()->user()->products()->pluck('products.id'))))
                         ->orderBy('title')
                         ->pluck('title', 'id')
-                        ->all())
-                    ->columnSpanFull(),
+                        ->all()),
+
+                TagsInput::make('features_used')
+                    ->label(__t('admin_case_studies.form.features'))
+                    ->placeholder(__t('admin_case_studies.form.add_feature'))
+                    // Pilot's own names, and the same spelling the seeded
+                    // studies use — the listing filter matches them exactly.
+                    ->suggestions(['GeoZones', 'Notifications', 'Reports', 'History', 'Speed control', 'Fuel sensors', 'Sensors', 'Object groups']),
 
                 Repeater::make('related_links')
                     ->label(__t('admin_case_studies.form.links'))

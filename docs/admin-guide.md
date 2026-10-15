@@ -278,13 +278,14 @@ and **Media** below it.
 1. Click **New case study** and choose the **Product** where relevant. Creators
    must choose one of their assigned products and can only manage studies for
    those products.
-2. Add the title, short problem statement, industry and relevant Pilot
-   features, side by side, then difficulty, time estimate, sort order and
-   status on one row. There is no language to choose: a new study takes the
-   language your own account or the panel is set to, automatically. Use
-   **Translate** on the edit page to add the other languages once it is
-   written. A partner reads the translation where one exists and the original
-   everywhere else.
+2. Add the **Product**, **Title** and **Slug** on one row, with the title widest,
+   then the short problem statement. Next, **Industry**, difficulty, time
+   estimate, sort order and status sit on one row. Relevant Pilot features sit
+   beside related Academy lessons under **Related content**, at the bottom of
+   the box. There is no language to choose: a new study takes the language your
+   own account or the panel is set to, automatically. Use **Translate** on the
+   edit page to add the other languages once it is written. A partner reads the
+   translation where one exists and the original everywhere else.
 3. Complete the study sections, under **Study sections**. Each one is its own
    numbered box — **Step 1 · Customer scenario and problem**, **Step 2 ·
    Desired outcome**, and so on — so it is clear where one ends and the next

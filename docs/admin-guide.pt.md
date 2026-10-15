@@ -275,12 +275,13 @@ O formulário é uma caixa larga única com os dados básicos, as etapas e o con
 1. Clique em **Criar estudo de caso** e escolha o **Produto**, quando fizer sentido.
    Os criadores devem escolher um dos seus produtos atribuídos e só podem gerenciar
    estudos desses produtos.
-2. Adicione o título, a descrição curta do problema, o setor e os recursos do Pilot
-   usados, lado a lado; depois a dificuldade, o tempo estimado de implantação, a ordem e
-   o status, em uma única linha. Não há idioma a escolher: um estudo novo assume
-   automaticamente o idioma da sua conta ou do painel. Depois de escrito, use **Traduzir**
-   na página de edição para adicionar os outros idiomas. Um parceiro lê a tradução onde
-   ela existe e o original em todo o resto.
+2. Adicione em uma única linha o **Produto**, o título e o slug, com o título como o campo mais
+   largo, e depois a descrição curta do problema. Em seguida, o setor, a dificuldade, o tempo
+   estimado de implantação, a ordem e o status em uma única linha. Os recursos do Pilot relevantes
+   ficam junto às aulas relacionadas da Academia, em **Conteúdo relacionado**, no fim da caixa. Não
+   há idioma a escolher: um estudo novo assume automaticamente o idioma da sua conta ou do painel.
+   Depois de escrito, use **Traduzir** na página de edição para adicionar os outros idiomas. Um
+   parceiro lê a tradução onde ela existe e o original em todo o resto.
 3. Preencha as seções do estudo, cada uma em sua própria caixa numerada («Etapa 1 · …»,
    «Etapa 2 · …» etc.). Quatro sempre aparecem, porque sem elas o estudo não pode ser
    publicado: o cenário, o resultado desejado, a configuração passo a passo e os testes e

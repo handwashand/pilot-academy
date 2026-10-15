@@ -281,12 +281,13 @@ Le formulaire est un seul grand encadré pour les informations de base, les éta
 1. Cliquez sur **Créer** et choisissez le **Produit** le cas échéant. Les créateurs
    doivent choisir l’un de leurs produits et ne peuvent gérer que les études de
    ces produits.
-2. Ajoutez le titre, l’énoncé court du problème, le secteur et les fonctions Pilot
-   concernées, côte à côte ; puis la difficulté, le temps de mise en œuvre estimé, l’ordre
-   et le statut, sur une seule ligne. Il n’y a pas de langue à choisir : une nouvelle étude
-   prend automatiquement la langue de votre compte ou du panneau. Une fois rédigée,
-   utilisez **Traduire** sur la page de modification pour ajouter les autres langues. Un
-   partenaire lit la traduction là où elle existe, et l’original partout ailleurs.
+2. Ajoutez sur une seule ligne le **Produit**, le titre et le slug, le titre étant le champ le plus
+   large, puis l’énoncé court du problème. Ensuite, le secteur, la difficulté, le temps de mise en
+   œuvre estimé, l’ordre et le statut sur une seule ligne. Les fonctions Pilot concernées sont à
+   côté des leçons associées de l’Académie, sous **Contenu associé**, en bas de l’encadré. Il n’y a
+   pas de langue à choisir : une nouvelle étude prend automatiquement la langue de votre compte ou
+   du panneau. Une fois rédigée, utilisez **Traduire** sur la page de modification pour ajouter les
+   autres langues. Un partenaire lit la traduction là où elle existe, et l’original partout ailleurs.
 3. Complétez les sections de l’étude, chacune dans son propre encadré numéroté (« Étape 1 · … »,
    « Étape 2 · … », etc.). Quatre sont toujours visibles, car l’étude ne peut pas être
    publiée sans elles : le scénario, le résultat souhaité, la configuration pas à pas, ainsi

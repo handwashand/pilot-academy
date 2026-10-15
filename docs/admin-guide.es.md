@@ -278,12 +278,14 @@ El formulario es un único recuadro ancho con los datos básicos, los pasos y el
 1. Haz clic en **Crear caso práctico** y elige el **Producto** cuando corresponda. Los
    creadores deben elegir uno de sus productos asignados y solo pueden gestionar
    casos de esos productos.
-2. Añade el título, la descripción breve del problema, el sector y las funciones de Pilot
-   utilizadas, uno al lado del otro; después la dificultad, el tiempo estimado de
-   implantación, el orden y el estado, en una sola fila. No hay idioma que elegir: un
-   caso nuevo toma automáticamente el idioma de tu cuenta o del panel. Cuando esté
-   escrito, usa **Traducir** en la página de edición para añadir los demás idiomas. Un
-   socio lee la traducción donde existe y el original en todo lo demás.
+2. Añade en una sola fila el **Producto**, el título y el slug, con el título como el campo más
+   ancho, y después la descripción breve del problema. A continuación, el sector, la dificultad,
+   el tiempo estimado de implantación, el orden y el estado van en una sola fila. Las funciones
+   de Pilot utilizadas están junto a las lecciones relacionadas de la Academia, en **Contenido
+   relacionado**, al final del recuadro. No hay idioma que elegir: un caso nuevo toma
+   automáticamente el idioma de tu cuenta o del panel. Cuando esté escrito, usa **Traducir** en
+   la página de edición para añadir los demás idiomas. Un socio lee la traducción donde existe y
+   el original en todo lo demás.
 3. Completa las secciones del caso, cada una en su propio recuadro numerado («Paso 1 · …»,
    «Paso 2 · …», etc.). Cuatro siempre están visibles, porque sin ellas el caso no puede
    publicarse: el escenario, el resultado deseado, la configuración paso a paso, y las
