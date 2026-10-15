@@ -512,10 +512,10 @@ class CaseStudyTest extends TestCase
     }
 
     /**
-     * "Add step" reveals an optional step's box; "Remove this step" hides it
+     * "Add step" reveals an optional step's box; "Hide this step" hides it
      * again without clearing whatever was written in it.
      */
-    public function test_add_step_shows_an_optional_step_and_remove_step_only_hides_it(): void
+    public function test_add_step_shows_an_optional_step_and_hide_step_only_hides_it(): void
     {
         $study = $this->completeStudy();
 
@@ -550,6 +550,45 @@ class CaseStudyTest extends TestCase
             ->assertHasNoFormErrors();
 
         $this->assertSame('<p>Prerequisites.</p>', $study->fresh()->prerequisites, 'Hidden, not deleted.');
+    }
+
+    /**
+     * "Delete instead", offered in the same confirm dialog as "Hide this
+     * step", clears the step's own column for good — unlike Hide, it is not
+     * recoverable through "Add step".
+     */
+    public function test_deleting_a_step_clears_its_saved_content(): void
+    {
+        $study = $this->completeStudy();
+
+        Livewire::actingAs($this->admin())
+            ->test(EditCaseStudy::class, ['record' => $study->getRouteKey()])
+            ->assertFormFieldVisible('prerequisites')
+            // Delete sits as an extra footer button inside Hide's own
+            // confirm dialog, so reaching it means mounting both.
+            ->callAction(['hide_prerequisites', 'delete_prerequisites'])
+            ->assertFormFieldDoesNotExist('prerequisites');
+
+        $this->assertNull($study->fresh()->prerequisites);
+    }
+
+    /** Deleting a step with a picture gallery clears its pictures too. */
+    public function test_deleting_a_step_with_pictures_clears_its_gallery(): void
+    {
+        $study = $this->completeStudy([
+            'expected_results' => '<p>Results.</p>',
+            'section_images' => ['results' => ['results-1.png']],
+        ]);
+
+        Livewire::actingAs($this->admin())
+            ->test(EditCaseStudy::class, ['record' => $study->getRouteKey()])
+            ->assertFormFieldVisible('expected_results')
+            ->callAction(['hide_results', 'delete_results'])
+            ->assertFormFieldDoesNotExist('expected_results');
+
+        $fresh = $study->fresh();
+        $this->assertNull($fresh->expected_results);
+        $this->assertArrayNotHasKey('results', $fresh->section_images ?? []);
     }
 
     public function test_creators_only_see_and_manage_their_products_case_studies(): void

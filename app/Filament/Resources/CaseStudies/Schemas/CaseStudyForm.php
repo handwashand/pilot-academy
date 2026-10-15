@@ -359,22 +359,78 @@ class CaseStudyForm
         return $section_
             ->visible(fn (Get $get): bool => in_array($section, (array) $get('active_optional_steps'), true))
             ->headerActions([
-                Action::make("remove_{$section}")
-                    ->label(__t('admin_case_studies.form.remove_step'))
-                    ->icon('heroicon-o-x-mark')
+                // Hide is the main button — the one you reach for by habit —
+                // and keeps everything written; Delete, in the same confirm
+                // dialog rather than a second click-through, actually clears
+                // the step's text and pictures. Hide alone can go through
+                // the same "just hide" ->action() as before, since a hidden
+                // field is never dehydrated on save; Delete cannot rely on
+                // that and writes straight to the record instead — see
+                // clearStepContent().
+                Action::make("hide_{$section}")
+                    ->label(__t('admin_case_studies.form.hide_step'))
+                    ->icon('heroicon-o-eye-slash')
                     ->color('gray')
                     ->link()
                     ->requiresConfirmation()
-                    ->modalHeading(__t('admin_case_studies.form.remove_step_confirm_heading'))
-                    ->modalDescription(__t('admin_case_studies.form.remove_step_confirm_description'))
-                    ->modalSubmitActionLabel(__t('admin_case_studies.form.remove_step'))
+                    ->modalHeading(__t('admin_case_studies.form.hide_step_confirm_heading'))
+                    ->modalDescription(__t('admin_case_studies.form.hide_step_confirm_description'))
+                    ->modalSubmitActionLabel(__t('admin_case_studies.form.hide_step'))
+                    ->extraModalFooterActions([
+                        Action::make("delete_{$section}")
+                            ->label(__t('admin_case_studies.form.delete_step'))
+                            ->color('danger')
+                            ->action(function (Get $get, Set $set, ?CaseStudy $record) use ($name, $section, $withGallery): void {
+                                static::clearStepContent($name, $section, $withGallery, $record, $set);
+                                static::hideStep($get, $set, $section);
+                            }),
+                    ])
                     ->action(function (Get $get, Set $set) use ($section): void {
-                        $set('active_optional_steps', array_values(Arr::where(
-                            (array) $get('active_optional_steps'),
-                            fn (string $key): bool => $key !== $section,
-                        )));
+                        static::hideStep($get, $set, $section);
                     }),
             ]);
+    }
+
+    /** Takes a step's key out of the open list — see the Hidden field above. */
+    protected static function hideStep(Get $get, Set $set, string $section): void
+    {
+        $set('active_optional_steps', array_values(Arr::where(
+            (array) $get('active_optional_steps'),
+            fn (string $key): bool => $key !== $section,
+        )));
+    }
+
+    /**
+     * Deletes a step's own text and, if it has one, its picture gallery —
+     * unlike hiding, this cannot be undone with "Add step".
+     *
+     * A hidden field is never dehydrated (see numberedStep()), so leaving
+     * this to the form's own save would hide the step without ever actually
+     * clearing its old value — the same safe-by-default behaviour "Hide"
+     * relies on, but wrong here. So an existing record is updated directly,
+     * on the spot, rather than waiting for the page's own Save.
+     */
+    protected static function clearStepContent(string $name, string $section, bool $withGallery, ?CaseStudy $record, Set $set): void
+    {
+        $set($name, null);
+
+        if ($withGallery) {
+            $set("section_images.{$section}", null);
+        }
+
+        if (! $record) {
+            return;
+        }
+
+        $record->forceFill([$name => null]);
+
+        if ($withGallery) {
+            $images = $record->section_images ?? [];
+            unset($images[$section]);
+            $record->forceFill(['section_images' => $images]);
+        }
+
+        $record->save();
     }
 
     /**
