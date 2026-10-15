@@ -456,6 +456,15 @@ class CaseStudyTest extends TestCase
         $admin = $this->admin();
         $admin->forceFill(['locale' => 'ru'])->save();
 
+        // Livewire::test() mounts the component directly and never runs the
+        // HTTP middleware stack, so SetLocale — the thing that would apply
+        // the admin's own locale on a real page load — never runs either.
+        // Setting it here stands in for that middleware, the same as a real
+        // request to this page would have already done by the time the form
+        // renders; test_the_editor_screens_read_in_the_editors_language
+        // proves SetLocale itself does this on a real request.
+        app()->setLocale('ru');
+
         Livewire::actingAs($admin)
             ->test(CreateCaseStudy::class)
             ->fillForm([

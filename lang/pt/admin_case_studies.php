@@ -19,6 +19,8 @@ return [
         'images_help' => 'Adicione uma imagem a qualquer etapa: o clipe na barra, ou cole ou arraste um arquivo direto. Higienize as capturas: sem nomes de clientes, locais ou dados reais.',
         'step_label' => 'Etapa :number · :name',
         'remove_step' => 'Remover esta etapa',
+        'remove_step_confirm_heading' => 'Remover esta etapa?',
+        'remove_step_confirm_description' => 'Isso apenas oculta a etapa do formulário — o texto e as imagens são mantidos, e "Adicionar etapa" a traz de volta exatamente como estava.',
         'add_step' => 'Adicionar etapa',
         'add_step_placeholder' => 'Escolha uma seção para adicionar…',
         'short_problem' => 'Descrição breve do problema',

@@ -16,6 +16,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
@@ -98,34 +99,42 @@ class CaseStudyForm
                             // studies use — the listing filter matches them exactly.
                             ->suggestions(['GeoZones', 'Notifications', 'Reports', 'History', 'Speed control', 'Fuel sensors', 'Sensors', 'Object groups']),
 
-                        Select::make('difficulty')
-                            ->label(__t('admin_case_studies.form.difficulty'))
-                            ->options(CaseStudy::difficultyLabels())
-                            ->default(CaseStudy::DIFFICULTY_INTERMEDIATE)
-                            ->required(),
+                        // One row of four, not two rows of two: these are
+                        // short, glanceable settings, not writing — grouped
+                        // so they read as a strip rather than taking as much
+                        // vertical space as the longer fields around them.
+                        Grid::make(4)
+                            ->columnSpanFull()
+                            ->schema([
+                                Select::make('difficulty')
+                                    ->label(__t('admin_case_studies.form.difficulty'))
+                                    ->options(CaseStudy::difficultyLabels())
+                                    ->default(CaseStudy::DIFFICULTY_INTERMEDIATE)
+                                    ->required(),
 
-                        TextInput::make('implementation_time')
-                            ->label(__t('admin_case_studies.form.implementation_time'))
-                            ->maxLength(120)
-                            ->placeholder('2-4 hours'),
+                                TextInput::make('implementation_time')
+                                    ->label(__t('admin_case_studies.form.implementation_time'))
+                                    ->maxLength(120)
+                                    ->placeholder('2-4 hours'),
 
-                        TextInput::make('sort_order')
-                            ->label(__t('admin_courses.form.sort_order'))
-                            ->numeric()
-                            ->default(0),
+                                TextInput::make('sort_order')
+                                    ->label(__t('admin_courses.form.sort_order'))
+                                    ->numeric()
+                                    ->default(0),
 
-                        Select::make('status')
-                            ->label(__t('admin_common.status'))
-                            ->options(CaseStudy::statusLabels())
-                            ->default(CaseStudy::STATUS_DRAFT)
-                            ->disabled(fn (string $operation): bool => $operation === 'create')
-                            ->required()
-                            ->rules([
-                                fn (?CaseStudy $record): Closure => function (string $attribute, $value, Closure $fail) use ($record): void {
-                                    if ($value === CaseStudy::STATUS_PUBLISHED && $record && ! $record->canBePublished()) {
-                                        $fail(__t('admin_case_studies.form.before_publishing'));
-                                    }
-                                },
+                                Select::make('status')
+                                    ->label(__t('admin_common.status'))
+                                    ->options(CaseStudy::statusLabels())
+                                    ->default(CaseStudy::STATUS_DRAFT)
+                                    ->disabled(fn (string $operation): bool => $operation === 'create')
+                                    ->required()
+                                    ->rules([
+                                        fn (?CaseStudy $record): Closure => function (string $attribute, $value, Closure $fail) use ($record): void {
+                                            if ($value === CaseStudy::STATUS_PUBLISHED && $record && ! $record->canBePublished()) {
+                                                $fail(__t('admin_case_studies.form.before_publishing'));
+                                            }
+                                        },
+                                    ]),
                             ]),
 
                         // No "Written in" field to fill: the study takes the
@@ -355,6 +364,10 @@ class CaseStudyForm
                     ->icon('heroicon-o-x-mark')
                     ->color('gray')
                     ->link()
+                    ->requiresConfirmation()
+                    ->modalHeading(__t('admin_case_studies.form.remove_step_confirm_heading'))
+                    ->modalDescription(__t('admin_case_studies.form.remove_step_confirm_description'))
+                    ->modalSubmitActionLabel(__t('admin_case_studies.form.remove_step'))
                     ->action(function (Get $get, Set $set) use ($section): void {
                         $set('active_optional_steps', array_values(Arr::where(
                             (array) $get('active_optional_steps'),

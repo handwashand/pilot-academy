@@ -24,6 +24,8 @@ return [
         'images_help' => 'Add a picture to any step: the paperclip in the toolbar, or paste or drag one straight in. Keep screenshots sanitized — no customer names, locations or live data.',
         'step_label' => 'Step :number · :name',
         'remove_step' => 'Remove this step',
+        'remove_step_confirm_heading' => 'Remove this step?',
+        'remove_step_confirm_description' => 'This only hides the step from the form — its text and pictures are kept, and Add step brings it back exactly as it was.',
         'add_step' => 'Add step',
         'add_step_placeholder' => 'Choose a section to add…',
         'short_problem' => 'Short problem statement',

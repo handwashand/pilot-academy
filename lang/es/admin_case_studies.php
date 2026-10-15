@@ -19,6 +19,8 @@ return [
         'images_help' => 'Añade una imagen a cualquier paso: el clip de la barra, o pega o arrastra un archivo directamente. Depura las capturas: sin nombres de clientes, ubicaciones ni datos reales.',
         'step_label' => 'Paso :number · :name',
         'remove_step' => 'Quitar este paso',
+        'remove_step_confirm_heading' => '¿Quitar este paso?',
+        'remove_step_confirm_description' => 'Esto solo oculta el paso del formulario: su texto e imágenes se conservan, y «Añadir paso» lo trae de vuelta tal como estaba.',
         'add_step' => 'Añadir paso',
         'add_step_placeholder' => 'Elige una sección para añadir…',
         'short_problem' => 'Descripción breve del problema',

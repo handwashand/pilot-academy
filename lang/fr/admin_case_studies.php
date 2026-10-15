@@ -19,6 +19,8 @@ return [
         'images_help' => 'Ajoutez une image à n’importe quelle étape : le trombone de la barre d’outils, ou collez ou glissez un fichier directement. Nettoyez les captures : ni noms de clients, ni lieux, ni données réelles.',
         'step_label' => 'Étape :number · :name',
         'remove_step' => 'Retirer cette étape',
+        'remove_step_confirm_heading' => 'Retirer cette étape ?',
+        'remove_step_confirm_description' => 'Cela ne fait que masquer l’étape du formulaire — son texte et ses images sont conservés, et « Ajouter une étape » la ramène exactement comme elle était.',
         'add_step' => 'Ajouter une étape',
         'add_step_placeholder' => 'Choisissez une section à ajouter…',
         'short_problem' => 'Énoncé court du problème',
