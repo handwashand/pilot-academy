@@ -9,7 +9,7 @@ return [
     'error_title' => 'Something went wrong',
     'error_body' => 'That could not be completed. Please try again; if it keeps happening, tell your administrator.',
     'reading' => [
-        'notice' => 'Shown in :language, as students reading in :language see it. Saving changes the :language translation; switch the panel to :original to see or edit the original.',
+        'notice' => 'Originally written in :original. You are reading and editing the :language version.',
     ],
     'title' => 'Title',
     'slug' => 'Slug',

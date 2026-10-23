@@ -6,7 +6,7 @@ return [
     'error_title' => 'Algo deu errado',
     'error_body' => 'Não foi possível concluir. Tente novamente; se continuar acontecendo, avise o seu administrador.',
     'reading' => [
-        'notice' => 'Exibido em :language, como os alunos que leem em :language o veem. Salvar altera a tradução em :language; mude o painel para :original para ver ou editar o original.',
+        'notice' => 'Escrito originalmente em :original. Você está lendo e editando a versão em :language.',
     ],
     'title' => 'Título',
     'slug' => 'Slug',

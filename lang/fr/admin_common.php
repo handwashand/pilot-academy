@@ -6,7 +6,7 @@ return [
     'error_title' => 'Une erreur est survenue',
     'error_body' => 'L’action n’a pas pu aboutir. Réessayez ; si cela se reproduit, prévenez votre administrateur.',
     'reading' => [
-        'notice' => 'Affiché en :language, comme le voient les apprenants qui lisent en :language. Enregistrer modifie la traduction en :language ; passez le panneau en :original pour voir ou modifier l’original.',
+        'notice' => 'Rédigé à l’origine en :original. Vous lisez et modifiez la version en :language.',
     ],
     'title' => 'Titre',
     'slug' => 'Slug',
