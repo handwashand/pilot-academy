@@ -6,6 +6,8 @@ return [
     'users' => [
         'password' => 'Mot de passe',
         'password_help' => 'Laissez vide pour conserver le mot de passe actuel lors de la modification.',
+        'badges' => 'Badges',
+        'no_badges' => 'Pas encore de badge.',
         'company_help' => 'Le partenaire auquel appartient cet utilisateur (laissez vide pour les administrateurs).',
         'role' => 'Rôle',
         'role_help' => 'Les administrateurs gèrent la plateforme. Les créateurs gèrent uniquement la formation de leurs propres produits. Les apprenants suivent les cours.',

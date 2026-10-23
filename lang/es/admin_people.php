@@ -6,6 +6,8 @@ return [
     'users' => [
         'password' => 'Contraseña',
         'password_help' => 'Déjalo vacío para mantener la contraseña actual al editar.',
+        'badges' => 'Insignias',
+        'no_badges' => 'Todavía no hay insignias.',
         'company_help' => 'El socio al que pertenece este usuario (déjalo vacío para administradores).',
         'role' => 'Rol',
         'role_help' => 'Los administradores gestionan la plataforma. Los creadores gestionan solo la formación de sus propios productos. Los estudiantes hacen los cursos.',

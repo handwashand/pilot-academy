@@ -259,6 +259,28 @@ return [
         'set_password' => 'Définir le mot de passe',
     ],
 
+    'badges' => [
+        'heading' => 'Vos badges',
+        'none' => 'Pas encore de badge. Terminez votre première leçon pour en obtenir un.',
+        'earned_on' => 'Obtenu le :date',
+        'first_lesson' => [
+            'name' => 'Première leçon',
+            'description' => 'Vous avez terminé votre première leçon.',
+        ],
+        'first_certificate' => [
+            'name' => 'Premier certificat',
+            'description' => 'Vous avez obtenu votre premier certificat.',
+        ],
+        'product_complete' => [
+            'name' => 'Tous les cours terminés : :name',
+            'description' => 'Vous avez terminé tous les cours de ce produit.',
+        ],
+        'perfect_score' => [
+            'name' => 'Sans faute : :name',
+            'description' => 'Vous avez réussi ce quiz final du premier coup, sans aucune erreur.',
+        ],
+    ],
+
     'signup' => [
         'create_heading' => 'Créez votre compte',
         'create_intro' => 'Suivez votre progression et obtenez des certificats.',

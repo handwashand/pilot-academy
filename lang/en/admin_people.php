@@ -10,6 +10,8 @@ return [
     'users' => [
         'password' => 'Password',
         'password_help' => 'Leave blank to keep the current password when editing.',
+        'badges' => 'Badges',
+        'no_badges' => 'No badges yet.',
         'company_help' => 'The partner this user belongs to (leave empty for admins).',
         'role' => 'Role',
         'role_help' => 'Admins run the platform. Creators manage the training for their own products only. Learners take courses.',

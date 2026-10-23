@@ -6,6 +6,7 @@ use App\Models\User;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 
 class UserForm
@@ -83,6 +84,18 @@ class UserForm
                         $component->state($record?->permissions()->pluck('permission')->all() ?? []);
                     })
                     ->visible(fn (): bool => (bool) auth()->user()?->isAdmin())
+                    ->columnSpanFull(),
+
+                // Badges are given by App\Actions\AwardBadges; shown here, never edited.
+                TextEntry::make('earned_badges')
+                    ->label(__t('admin_people.users.badges'))
+                    ->state(fn (?User $record): array => $record?->badges
+                        ->map(fn ($badge): string => $badge->label().' · '.$badge->awarded_at->isoFormat('ll'))
+                        ->all() ?? [])
+                    ->placeholder(__t('admin_people.users.no_badges'))
+                    ->listWithLineBreaks()
+                    ->bulleted()
+                    ->visible(fn (?User $record): bool => (bool) $record?->isLearner() && (bool) auth()->user()?->isAdmin())
                     ->columnSpanFull(),
             ]);
     }

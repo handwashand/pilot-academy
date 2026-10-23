@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\AwardBadges;
 use App\Filament\Pages\AdminGuide;
 use App\Models\ActivityEvent;
 use App\Models\Course;
@@ -835,6 +836,8 @@ class AcademyController extends Controller
             $user->completedLessons()->syncWithoutDetaching([
                 $lessonId => ['completed_at' => now()],
             ]);
+
+            app(AwardBadges::class)->handle($user);
 
             return;
         }

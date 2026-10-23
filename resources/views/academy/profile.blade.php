@@ -33,6 +33,32 @@
             <p class="mt-3 text-sm text-slate-500">{{ __t('academy.profile.contact_to_change') }}</p>
         </section>
 
+        {{-- Badges: given by App\Actions\AwardBadges, only ever added. --}}
+        <section id="badges" aria-labelledby="badges-heading" class="mt-6 scroll-mt-20 bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6">
+            <h2 id="badges-heading" class="text-lg font-extrabold text-navy">{{ __t('academy.badges.heading') }}</h2>
+
+            @if($user->badges->isEmpty())
+                <p class="mt-2 text-sm text-slate-500">{{ __t('academy.badges.none') }}</p>
+            @else
+                <ul class="mt-4 grid gap-3 sm:grid-cols-2">
+                    @foreach($user->badges as $badge)
+                        <li class="flex items-start gap-3 rounded-xl border border-slate-200 p-3">
+                            <span class="flex h-11 w-11 flex-none items-center justify-center rounded-full bg-gradient-to-br from-brand to-navy text-white" aria-hidden="true">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 0 1-.982-3.172M9.497 14.25a7.454 7.454 0 0 0 .981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 0 0 7.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 0 0 2.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 0 1 2.916.52 6.003 6.003 0 0 1-5.395 4.972m0 0a6.726 6.726 0 0 1-2.749 1.35m0 0a6.772 6.772 0 0 1-3.044 0" />
+                                </svg>
+                            </span>
+                            <div class="min-w-0">
+                                <p class="font-semibold text-navy break-words">{{ $badge->label() }}</p>
+                                <p class="text-sm text-slate-500">{{ $badge->description() }}</p>
+                                <p class="mt-1 text-xs text-slate-400">{{ __t('academy.badges.earned_on', ['date' => $badge->awarded_at->isoFormat('LL')]) }}</p>
+                            </div>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
+        </section>
+
         {{-- Your details --}}
         <form method="POST" action="{{ route('academy.profile.update') }}" enctype="multipart/form-data"
               class="mt-6 bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6">

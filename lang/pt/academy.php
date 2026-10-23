@@ -258,6 +258,28 @@ return [
         'set_password' => 'Definir senha',
     ],
 
+    'badges' => [
+        'heading' => 'Suas insígnias',
+        'none' => 'Ainda sem insígnias. Conclua sua primeira aula para ganhar uma.',
+        'earned_on' => 'Conquistada em :date',
+        'first_lesson' => [
+            'name' => 'Primeira aula',
+            'description' => 'Você concluiu sua primeira aula.',
+        ],
+        'first_certificate' => [
+            'name' => 'Primeiro certificado',
+            'description' => 'Você conquistou seu primeiro certificado.',
+        ],
+        'product_complete' => [
+            'name' => 'Todos os cursos concluídos: :name',
+            'description' => 'Você concluiu todos os cursos deste produto.',
+        ],
+        'perfect_score' => [
+            'name' => 'Nota máxima: :name',
+            'description' => 'Você passou neste questionário final na primeira tentativa, acertando todas as respostas.',
+        ],
+    ],
+
     'signup' => [
         'create_heading' => 'Crie sua conta',
         'create_intro' => 'Acompanhe seu progresso e obtenha certificados.',

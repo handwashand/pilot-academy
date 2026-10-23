@@ -270,6 +270,28 @@ return [
         'set_password' => 'Set password',
     ],
 
+    'badges' => [
+        'heading' => 'Your badges',
+        'none' => 'No badges yet. Finish your first lesson to earn one.',
+        'earned_on' => 'Earned :date',
+        'first_lesson' => [
+            'name' => 'First lesson',
+            'description' => 'You finished your first lesson.',
+        ],
+        'first_certificate' => [
+            'name' => 'First certificate',
+            'description' => 'You earned your first certificate.',
+        ],
+        'product_complete' => [
+            'name' => 'All courses done: :name',
+            'description' => 'You finished every course for this product.',
+        ],
+        'perfect_score' => [
+            'name' => 'Perfect score: :name',
+            'description' => 'You passed this final quiz on your first try with every answer right.',
+        ],
+    ],
+
     'signup' => [
         'create_heading' => 'Create your account',
         'create_intro' => 'Track your progress and earn certificates.',

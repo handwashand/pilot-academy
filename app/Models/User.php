@@ -285,6 +285,12 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasLocale
         return $this->hasMany(Certificate::class)->latest('issued_at');
     }
 
+    /** Badges this student has earned, oldest first. See App\Actions\AwardBadges. */
+    public function badges(): HasMany
+    {
+        return $this->hasMany(UserBadge::class)->oldest('awarded_at');
+    }
+
     /** Stamp the last login time and log a login activity event. */
     public function recordLogin(): void
     {

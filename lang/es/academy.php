@@ -258,6 +258,28 @@ return [
         'set_password' => 'Crear contraseña',
     ],
 
+    'badges' => [
+        'heading' => 'Tus insignias',
+        'none' => 'Todavía no tienes insignias. Termina tu primera lección para conseguir una.',
+        'earned_on' => 'Obtenida el :date',
+        'first_lesson' => [
+            'name' => 'Primera lección',
+            'description' => 'Terminaste tu primera lección.',
+        ],
+        'first_certificate' => [
+            'name' => 'Primer certificado',
+            'description' => 'Obtuviste tu primer certificado.',
+        ],
+        'product_complete' => [
+            'name' => 'Todos los cursos terminados: :name',
+            'description' => 'Terminaste todos los cursos de este producto.',
+        ],
+        'perfect_score' => [
+            'name' => 'Puntuación perfecta: :name',
+            'description' => 'Aprobaste este cuestionario final al primer intento con todas las respuestas correctas.',
+        ],
+    ],
+
     'signup' => [
         'create_heading' => 'Crea tu cuenta',
         'create_intro' => 'Sigue tu progreso y obtén certificados.',

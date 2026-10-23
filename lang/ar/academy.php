@@ -274,6 +274,28 @@ return [
         'set_password' => 'تعيين كلمة المرور',
     ],
 
+    'badges' => [
+        'heading' => 'شاراتك',
+        'none' => 'لا شارات بعد. أنهِ درسك الأول لتحصل على واحدة.',
+        'earned_on' => 'حُصل عليها في :date',
+        'first_lesson' => [
+            'name' => 'الدرس الأول',
+            'description' => 'أنهيت درسك الأول.',
+        ],
+        'first_certificate' => [
+            'name' => 'الشهادة الأولى',
+            'description' => 'حصلت على شهادتك الأولى.',
+        ],
+        'product_complete' => [
+            'name' => 'كل الدورات مكتملة: :name',
+            'description' => 'أنهيت كل دورات هذا المنتج.',
+        ],
+        'perfect_score' => [
+            'name' => 'علامة كاملة: :name',
+            'description' => 'نجحت في هذا الاختبار النهائي من المحاولة الأولى وكل إجاباتك صحيحة.',
+        ],
+    ],
+
     'signup' => [
         'create_heading' => 'أنشئ حسابك',
         'create_intro' => 'تابع تقدّمك واحصل على الشهادات.',

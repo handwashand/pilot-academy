@@ -6,6 +6,8 @@ return [
     'users' => [
         'password' => 'Senha',
         'password_help' => 'Deixe em branco para manter a senha atual ao editar.',
+        'badges' => 'Insígnias',
+        'no_badges' => 'Ainda sem insígnias.',
         'company_help' => 'O parceiro a que este usuário pertence (deixe vazio para administradores).',
         'role' => 'Função',
         'role_help' => 'Administradores gerenciam a plataforma. Criadores gerenciam apenas o treinamento dos próprios produtos. Alunos fazem os cursos.',

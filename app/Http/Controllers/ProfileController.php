@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\AwardBadges;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -16,10 +17,15 @@ use Illuminate\Validation\Rule;
  */
 class ProfileController extends Controller
 {
-    public function edit(Request $request)
+    public function edit(Request $request, AwardBadges $awardBadges)
     {
+        $user = $request->user();
+
+        // Catches up anything earned before badges existed, or elsewhere.
+        $awardBadges->handle($user);
+
         return view('academy.profile', [
-            'user' => $request->user()->load('company'),
+            'user' => $user->load(['company', 'badges']),
         ]);
     }
 
