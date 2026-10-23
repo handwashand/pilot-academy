@@ -420,6 +420,63 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-23 — The admin panel shows and edits content in the panel language
+
+**Why.** The owner translated a course with DeepSeek in production, saved, and
+the panel still showed English. The translation was saved: the panel never
+read `content_translations`, only the student site did. The owner's course
+reviewers check translations in the panel before a course goes out, so asked:
+with the panel in Spanish, show the Spanish, with no original beside it. Say in
+one line that it was written in English, and let reviewers add or remove text
+in that language.
+
+**How.** The rule is "the panel shows the record as a student reading in the
+panel language would", and editing follows the same rule:
+- `HasContentTranslations` gained these methods:
+  - `readingLanguage()`: the panel language when it is not the record's own.
+  - `readingValues()`: `translated()` for every translatable field.
+  - `readingRow()`: the same for a repeater row.
+  - `showsTranslation()`.
+  - `saveReadingValues()`: writes the translatable fields as that translation
+    and returns the rest for the record.
+  - scope `whereTranslatedLike()`: list search over the original and its
+    translations, with `LOWER()` because PostgreSQL's `LIKE` is case-sensitive.
+- `EditsInReadingLanguage` (page trait, on `EditCourse` and `EditLesson`): fill,
+  save, the heading and breadcrumb (`getRecordTitle`), and the "Originally
+  written in …" notice above the content-problems subheading
+  (`admin_common.reading.notice`, six languages).
+- The lesson form's questions and options repeaters, and the Final questions
+  edit action and its options, use the same methods.
+- **While a translation is shown, questions and options cannot be added,
+  removed or reordered.** That is the original's structure, and a row created
+  in Spanish would be stored as an "English" original.
+- Lists (Courses, Lessons with their course badges, a course's Lessons and
+  Final questions tabs) format titles and prompts with `translated()`,
+  eager-loading `contentTranslations`.
+
+**The one subtle rule.** A box with no translation shows the original, as the
+student site does. Saving must not copy that original in as the translation.
+`saveReadingValues` skips a field that has no translation and still reads as
+the original, compared as plain text, because the rich editor rewrites HTML on
+load. A test pins this with a list-in-heading lesson body.
+
+**Not covered:** case studies, tutorials and webinars still show their
+originals in the panel (they have their own Translate). The dashboard and
+other pages that name a course are also unchanged. Both are the same few lines
+each if the owner wants them.
+
+**Verified (run):** `AdminReadingLanguageTest` (8): Spanish fill, Spanish save
+leaving English intact, no copy of untranslated text (textarea and rich
+editor), English reviewer edits the original, Spanish list titles and search,
+lesson quiz shown and saved in Spanish, no add-question while in a translation
+(with an English control), and final question edit in Spanish. Translation,
+course-lesson, Markdown-import and video-list suites passed (84). Pint clean.
+In Chrome against PostgreSQL with a Spanish reviewer (temporary, removed
+afterwards): Courses and Lessons lists show the Spanish titles; the course and
+lesson edit pages show the Spanish title in the field, heading and breadcrumb,
+with "Escrito originalmente en English…" under it; no sideways scroll. Full
+suite: see the final report.
+
 ### 2026-10-23 — Production: lesson save hit `lessons_course_id_slug_unique`; debug page on
 
 **What happened.** On production, saving a new lesson into course 5 failed with

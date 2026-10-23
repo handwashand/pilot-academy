@@ -23,6 +23,12 @@ trait EditsInReadingLanguage
         return $record->readingLanguage() ? [...$data, ...$record->readingValues()] : $data;
     }
 
+    /** The page heading and breadcrumb name it in the reader's language too. */
+    public function getRecordTitle(): string|Htmlable
+    {
+        return (string) $this->getRecord()->translated('title');
+    }
+
     /** @param  array<string, mixed>  $data */
     protected function mutateFormDataBeforeSave(array $data): array
     {

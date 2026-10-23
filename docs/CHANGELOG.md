@@ -244,6 +244,13 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Fixed
 
+- **Translations now show in the admin panel, so reviewers can check and
+  correct them before a course goes out.** With the panel in another language,
+  the course and lesson lists, a course's tabs and the edit pages show the
+  translated titles, text, quiz questions and answers. A line under the title
+  says which language the course was originally written in. Saving there
+  changes only that translation; switch the panel to the original's language to
+  see or edit the original.
 - **Saving a lesson no longer fails with a database error when its address is
   already held by a hidden lesson.** A deleted lesson, or one taken out of the
   course, still holds its web address in that course. The lesson form now names
