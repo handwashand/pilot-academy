@@ -66,13 +66,8 @@ class LessonForm
                                 ->collapsed()
                                 ->columns(1)
                                 ->helperText(__t('admin_lessons.form.videos_help'))
-                                // A lesson saved before the Videos list: show the video
-                                // students see now, so the next save carries it over.
-                                ->afterStateHydrated(function (callable $set, $state, $record): void {
-                                    if (empty($state) && $record && $record->videoEntries() !== []) {
-                                        $set('video_sources', $record->videoEntries());
-                                    }
-                                })
+                                // An older lesson's single video is put into this list
+                                // by EditLesson::mutateFormDataBeforeFill().
                                 ->schema([
                                     Select::make('type')
                                         ->label(__t('admin_lessons.form.source'))

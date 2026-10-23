@@ -8,6 +8,7 @@ use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -153,6 +154,41 @@ class LessonVideoListTest extends TestCase
 
         $this->assertCount(1, $state);
         $this->assertSame('upload', array_values($state)[0]['type']);
+    }
+
+    /**
+     * Rich text travels as nested blocks; a list inside a table cell runs
+     * well past ten levels, which Livewire used to refuse outright.
+     */
+    public function test_deeply_nested_lesson_text_is_accepted(): void
+    {
+        $lesson = $this->lesson();
+
+        Livewire::actingAs($this->admin())
+            ->test(EditLesson::class, ['record' => $lesson->getRouteKey()])
+            ->set('data.content.content.0.content.0.content.0.content.0.content.0.content.0.text', 'Deep')
+            ->assertOk();
+    }
+
+    /**
+     * Saving an older lesson with an uploaded video used to crash: the file's
+     * path reached the upload field as a bare string, which Filament's own
+     * validation cannot take.
+     */
+    public function test_an_older_lesson_with_an_uploaded_video_can_be_saved(): void
+    {
+        Storage::fake('public')->put('lesson-videos/sample.mp4', 'video');
+        $lesson = $this->lesson(legacy: ['video_path' => 'lesson-videos/sample.mp4']);
+
+        Livewire::actingAs($this->admin())
+            ->test(EditLesson::class, ['record' => $lesson->getRouteKey()])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $entries = $lesson->fresh()->video_sources;
+        $this->assertCount(1, $entries);
+        $this->assertSame('upload', $entries[0]['type']);
+        $this->assertSame('lesson-videos/sample.mp4', $entries[0]['video_path']);
     }
 
     public function test_a_broken_link_anywhere_in_the_list_is_reported(): void

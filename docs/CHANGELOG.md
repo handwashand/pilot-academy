@@ -210,6 +210,12 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Fixed
 
+- **Older lessons with an uploaded video save again.** A lesson made before
+  the Videos list, with an uploaded file, showed an error page on **Save**.
+  It now saves, and its video is kept in the list.
+- **Long or richly formatted lesson text no longer causes an error.** Text
+  with tables or lists inside lists could show an error page while you were
+  typing or saving.
 - **A case study's industry and time estimate now translate.** They used to
   always show in the language the study was written in, even when every other
   field had been translated. **Translate** on a case study now includes them,

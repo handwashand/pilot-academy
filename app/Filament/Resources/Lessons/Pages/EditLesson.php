@@ -38,6 +38,21 @@ class EditLesson extends EditRecord
     }
 
     /**
+     * A lesson saved before the Videos list: put the video students see now
+     * into the list before the form is filled, so the next save carries it
+     * over. Done here rather than by setting the list afterwards, so the
+     * upload field reads the stored path the way it reads any other.
+     */
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        if (empty($data['video_sources'])) {
+            $data['video_sources'] = $this->getRecord()->videoEntries();
+        }
+
+        return $data;
+    }
+
+    /**
      * Saves the lesson, then which courses it is in. Taken out of its home
      * course, the first course left owns it.
      */

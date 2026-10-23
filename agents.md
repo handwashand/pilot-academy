@@ -420,6 +420,35 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-23 — Two production crashes on the lesson form
+
+Reported from academy.pilot-gps.com.
+
+**Save crashed on older lessons with an uploaded video** (`TypeError` in
+`BaseFileUpload` validation, "array, string given"). The Videos repeater's
+`afterStateHydrated` used `$set('video_sources', $record->videoEntries())` for
+a lesson that only had the legacy `video_path` column. `$set` after hydration
+skips the child `FileUpload`'s own hydration, so the path stayed a bare string.
+Moved to `EditLesson::mutateFormDataBeforeFill()`, so the entries are in the
+data before the form is filled and the upload field hydrates them normally.
+Note: the upload field drops a path whose file is missing from the `public`
+disk, so a lesson pointing at a deleted file now shows "file required" instead.
+
+**Typing or saving rich text crashed** (`MaxNestingDepthExceededException`).
+Livewire's `payload.max_nesting_depth` was 10; TipTap state for a list in a
+table cell is ~17 levels. Raised to 30 in `config/livewire.php`; the 1 MB
+`max_size` cap is unchanged.
+
+**Verified (run):** two new tests in `LessonVideoListTest`, each confirmed to
+reproduce the production error before the fix (the nesting one by setting the
+limit back to 10); lesson, YouTube, Markdown import and content translation
+tests 27 passed; Pint clean.
+
+**Not yet explained:** "translated, saved, switched language, still English".
+The Translate window saves on its own (not through the page's Save), and
+`test_students_see_course_and_lesson_text_in_their_language` passes. Needs the
+page and language the owner checked.
+
 ### 2026-10-15 — Case study layout: product, title and slug on one row
 
 Product, title and slug share a four-column row (product 1, title 2, slug 1).
