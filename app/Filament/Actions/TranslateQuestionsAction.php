@@ -58,7 +58,9 @@ class TranslateQuestionsAction
     {
         return Action::make('translateQuestions')
             ->label(fn (): string => __t('admin_common.translate.questions.button'))
-            ->icon(Heroicon::OutlinedLanguage)
+            ->tooltip(fn (): string => __t('admin_common.translate.questions.button'))
+            ->icon(Heroicon::OutlinedClipboardDocumentCheck)
+            ->iconButton()
             ->color('gray')
             ->modalHeading(fn (): string => __t('admin_common.translate.questions.heading'))
             ->modalWidth('6xl')
@@ -72,7 +74,9 @@ class TranslateQuestionsAction
     {
         return Action::make('translateFinalQuestions')
             ->label(fn (): string => __t('admin_common.translate.questions.button'))
-            ->icon(Heroicon::OutlinedLanguage)
+            ->tooltip(fn (): string => __t('admin_common.translate.questions.button'))
+            ->icon(Heroicon::OutlinedClipboardDocumentCheck)
+            ->iconButton()
             ->color('gray')
             ->modalHeading(fn (): string => __t('admin_common.translate.questions.heading'))
             ->modalWidth('6xl')

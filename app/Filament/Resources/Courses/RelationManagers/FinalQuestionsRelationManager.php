@@ -124,7 +124,9 @@ class FinalQuestionsRelationManager extends RelationManager
 
                 Action::make('addAllLessonQuestions')
                     ->label(__t('admin_courses.final_tab.add_all'))
+                    ->tooltip(__t('admin_courses.final_tab.add_all'))
                     ->icon('heroicon-o-plus-circle')
+                    ->iconButton()
                     ->color('gray')
                     ->requiresConfirmation()
                     ->modalDescription(__t('admin_courses.final_tab.add_all_description'))
@@ -198,9 +200,10 @@ class FinalQuestionsRelationManager extends RelationManager
                             ->deleteFileAfterSend()),
                 ])
                     ->label(__t('admin_courses.final_import.group'))
+                    ->tooltip(__t('admin_courses.final_import.group'))
                     ->icon('heroicon-o-table-cells')
                     ->color('gray')
-                    ->button(),
+                    ->iconButton(),
             ])
             ->recordActions([
                 EditAction::make(),

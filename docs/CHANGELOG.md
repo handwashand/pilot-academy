@@ -24,6 +24,18 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **One Translate button on a course, for everything in it.** It asks what to
+  translate — the course's own title and description, or the whole course with
+  every lesson, each lesson's quiz and the final quiz — then how and into which
+  language. With a translation service switched on you can also pick **All
+  languages at once**: every language is drafted and saved straight away, into
+  empty boxes only. Open **Translate** again for one language to read and
+  correct the result. The separate **Translate whole course** button is gone.
+- **A lesson's quiz can come from the same Markdown file as its text.** The
+  Import button on the lesson text box now also reads a one-line summary and
+  quiz questions written under `## Quiz`. **Download the template** in the same
+  window gives a file in the right layout. A question without exactly one right
+  answer is reported and nothing is filled until it is fixed.
 - **The case study editing screen is tidier.** The basics, the steps and
   related content now sit in one page-wide box, with Privacy and Media below
   it, instead of four cards of mismatched widths. Product, title and slug sit
@@ -178,6 +190,21 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Changed
 
+- **The admin panel is a size smaller.** Text, buttons, icons, boxes and
+  spacing are all slightly smaller across the panel, so more fits on screen.
+  The sidebar keeps its size.
+- **Smaller buttons where the label was long.** **Upload from Excel**, **Add
+  all lesson questions**, **Translate quiz**, **Translate video** and **Check
+  progress** are now icons; hover one to see its name.
+- **Translate video always makes the voice and the subtitles.** It no longer
+  asks whether to make subtitles only: each language gets the dubbed voice and
+  its subtitles together.
+- **New lesson on a course opens the full lesson form**, with the course already
+  chosen — text, videos and knowledge check in one go — and **Create** returns
+  you to the course.
+- **Visitors see courses on the home page, not every lesson.** Each course shows
+  how many lessons it has and links to its page. Signed-in students still see
+  the lesson cards.
 - **A case study's steps are numbered, boxed, and most start hidden.** On
   **Content → Case Studies**, each of the nine study sections is now its own
   bordered, numbered box — Step 1, Step 2, and so on — instead of nine fields

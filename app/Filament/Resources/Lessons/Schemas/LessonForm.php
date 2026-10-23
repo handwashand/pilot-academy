@@ -18,7 +18,6 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
-use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
@@ -145,6 +144,15 @@ class LessonForm
                                                 ->storeFiles(false)
                                                 ->required(),
                                         ])
+                                        // The layout to follow, in a file to fill in.
+                                        ->extraModalFooterActions([
+                                            Action::make('downloadLessonTemplate')
+                                                ->label(__t('admin_lessons.form.import_template'))
+                                                ->icon('heroicon-o-document-arrow-down')
+                                                ->color('gray')
+                                                ->url(asset('templates/lesson-template.md'))
+                                                ->openUrlInNewTab(),
+                                        ])
                                         ->action(function (array $data, Get $get, Set $set, Action $action): void {
                                             $lesson = app(ReadLessonMarkdown::class)->handle((string) file_get_contents($data['file']->getRealPath()));
 
@@ -157,7 +165,34 @@ class LessonForm
                                                 $action->halt();
                                             }
 
+                                            // A quiz nobody could pass is worse than none: say what to fix, change nothing.
+                                            if ($lesson['errors'] !== []) {
+                                                Notification::make()
+                                                    ->title(__t('admin_lessons.form.import_errors'))
+                                                    ->body(implode("\n", array_slice($lesson['errors'], 0, 15)))
+                                                    ->danger()
+                                                    ->persistent()
+                                                    ->send();
+
+                                                $action->halt();
+                                            }
+
                                             $set('content', $lesson['html']);
+
+                                            if (filled($lesson['summary']) && blank($get('summary'))) {
+                                                $set('summary', $lesson['summary']);
+                                            }
+
+                                            // Added after any questions already there; nothing is removed.
+                                            if ($lesson['questions'] !== []) {
+                                                $set('questions', [
+                                                    ...(array) $get('questions'),
+                                                    ...collect($lesson['questions'])->mapWithKeys(fn (array $question): array => [(string) Str::uuid() => [
+                                                        'prompt' => $question['prompt'],
+                                                        'options' => collect($question['options'])->mapWithKeys(fn (array $option): array => [(string) Str::uuid() => $option])->all(),
+                                                    ]])->all(),
+                                                ]);
+                                            }
 
                                             // The file's heading names the lesson
                                             // only when nobody has named it yet.
@@ -171,7 +206,9 @@ class LessonForm
 
                                             Notification::make()
                                                 ->title(__t('admin_lessons.form.import_done'))
-                                                ->body(__t('admin_lessons.form.import_done_body'))
+                                                ->body($lesson['questions'] !== []
+                                                    ? __t('admin_lessons.form.import_done_quiz', ['count' => count($lesson['questions'])])
+                                                    : __t('admin_lessons.form.import_done_body'))
                                                 ->success()
                                                 ->send();
                                         }),
@@ -422,56 +459,5 @@ class LessonForm
                         ]),
                 ])->columnSpan(['lg' => 1]),
             ]);
-    }
-
-    /**
-     * The little a lesson needs to exist inside a course, for the New lesson
-     * button on the course's Lessons tab.
-     *
-     * Its course, its language and its place in the order all follow from the
-     * course it is written in (see CourseLessons::create), so the editor is
-     * asked only for what cannot be inferred. The content, the videos and the
-     * knowledge check are on the lesson's own form, which is one click away —
-     * this is the shell, not a second copy of that form.
-     *
-     * @return array<int, Component>
-     */
-    public static function insideCourse(Course $course): array
-    {
-        return [
-            TextInput::make('title')
-                ->label(__t('admin_common.title'))
-                ->required()
-                ->maxLength(255)
-                ->live(onBlur: true)
-                // The address follows the title as it is retyped — until the
-                // editor writes one themselves, which then survives a change
-                // of mind about the title.
-                ->afterStateUpdated(function ($state, $old, callable $set, Get $get): void {
-                    if (blank($get('slug')) || $get('slug') === Str::slug((string) $old)) {
-                        $set('slug', Str::slug((string) $state));
-                    }
-                }),
-
-            TextInput::make('slug')
-                ->label(__t('admin_common.slug'))
-                ->required()
-                ->maxLength(255)
-                ->helperText(__t('admin_lessons.form.slug_help'))
-                // The student URL finds a lesson by this inside its course, so
-                // two lessons in one course cannot share a slug.
-                ->rules([
-                    fn (): Closure => function (string $attribute, $value, Closure $fail) use ($course): void {
-                        if ($course->lessons()->where('lessons.slug', $value)->exists()) {
-                            $fail(__t('admin_lessons.form.slug_taken'));
-                        }
-                    },
-                ]),
-
-            Textarea::make('summary')
-                ->label(__t('admin_lessons.form.summary'))
-                ->rows(2)
-                ->columnSpanFull(),
-        ];
     }
 }

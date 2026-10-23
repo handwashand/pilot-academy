@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Filament\Pages\Integrations;
-use App\Filament\Resources\Courses\Pages\EditCourse;
+use App\Filament\Resources\Lessons\Pages\EditLesson;
 use App\Models\AiProvider;
 use App\Models\Course;
 use App\Models\Product;
@@ -107,10 +107,10 @@ class IntegrationsTest extends TestCase
         $this->assertSame('abc-123:fx', AiProvider::for('deepl')->api_key);
 
         Livewire::actingAs($this->admin(User::PERMISSION_DEEPL_TRANSLATE))
-            ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
+            ->test(EditLesson::class, ['record' => Course::first()->lessons()->first()->getRouteKey()])
             ->callAction('translateWithDeepL')
             ->assertHasNoActionErrors()
-            ->assertSet('mountedActions.0.data.fr.title', '[deepl] '.Course::first()->title);
+            ->assertSet('mountedActions.0.data.fr.title', '[deepl] '.Course::first()->lessons()->first()->title);
 
         Http::assertSent(fn (Request $request): bool => str_starts_with($request->url(), 'https://api-free.deepl.com/v2/translate')
             && $request->hasHeader('Authorization', 'DeepL-Auth-Key abc-123:fx'));
@@ -151,7 +151,7 @@ class IntegrationsTest extends TestCase
         ]);
 
         Livewire::actingAs($this->admin(User::PERMISSION_DEEPL_TRANSLATE))
-            ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
+            ->test(EditLesson::class, ['record' => Course::first()->lessons()->first()->getRouteKey()])
             ->callAction('translateWithDeepL')
             ->assertHasNoActionErrors();
 
@@ -214,10 +214,10 @@ class IntegrationsTest extends TestCase
     public function test_chatgpt_drafts_the_dialog_with_its_own_address_and_token(): void
     {
         $this->enable('chatgpt');
-        $course = Course::first();
+        $course = Course::first()->lessons()->first();
 
         Livewire::actingAs($this->admin(User::PERMISSION_AI_TRANSLATE))
-            ->test(EditCourse::class, ['record' => $course->getRouteKey()])
+            ->test(EditLesson::class, ['record' => $course->getRouteKey()])
             ->callAction('translateWithChatgpt')
             ->assertHasNoActionErrors()
             ->assertSet('mountedActions.0.data.fr.title', '[llm] '.$course->title);
@@ -233,7 +233,7 @@ class IntegrationsTest extends TestCase
         $this->enable('deepseek', 'ds-token');
 
         Livewire::actingAs($this->admin(User::PERMISSION_AI_TRANSLATE))
-            ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
+            ->test(EditLesson::class, ['record' => Course::first()->lessons()->first()->getRouteKey()])
             ->callAction('translateWithDeepseek')
             ->assertHasNoActionErrors();
 
@@ -252,7 +252,7 @@ class IntegrationsTest extends TestCase
         $creator->products()->attach($product);
 
         Livewire::actingAs($creator)
-            ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
+            ->test(EditLesson::class, ['record' => Course::first()->lessons()->first()->getRouteKey()])
             ->assertActionDoesNotExist('translateWithChatgpt');
     }
 
@@ -261,7 +261,7 @@ class IntegrationsTest extends TestCase
         $this->enable('deepseek');
 
         Livewire::actingAs($this->admin())
-            ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
+            ->test(EditLesson::class, ['record' => Course::first()->lessons()->first()->getRouteKey()])
             ->assertActionVisible('translateWithDeepseek');
     }
 
@@ -279,18 +279,18 @@ class IntegrationsTest extends TestCase
     public function test_existing_translations_are_kept_unless_the_editor_chooses_to_replace_them(): void
     {
         $this->enable('chatgpt');
-        $course = Course::first();
+        $course = Course::first()->lessons()->first();
         $course->setTranslation('title', 'fr', 'Écrit par une personne');
 
         // Default: kept, and offered for editing.
         Livewire::actingAs($this->admin())
-            ->test(EditCourse::class, ['record' => $course->getRouteKey()])
+            ->test(EditLesson::class, ['record' => $course->getRouteKey()])
             ->callAction('translateWithChatgpt')
             ->assertSet('mountedActions.0.data.fr.title', 'Écrit par une personne');
 
         // Chosen: a new draft replaces it in the window — still unsaved.
         Livewire::actingAs($this->admin())
-            ->test(EditCourse::class, ['record' => $course->getRouteKey()])
+            ->test(EditLesson::class, ['record' => $course->getRouteKey()])
             ->callAction('translateWithChatgpt', data: ['overwrite' => true])
             ->assertSet('mountedActions.0.data.fr.title', '[llm] '.$course->title);
 

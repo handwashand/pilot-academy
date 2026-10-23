@@ -21,6 +21,28 @@ class AcademySmokeTest extends TestCase
         $this->seed(PilotQuickStartSeeder::class);
     }
 
+    private function learner(): User
+    {
+        return User::firstOrCreate(['email' => 'learner@partner.test'], [
+            'name' => 'Partner Learner',
+            'password' => bcrypt('password'),
+            'role' => User::ROLE_LEARNER,
+        ]);
+    }
+
+    /** A visitor sees each course and how many lessons it has, not the lessons themselves. */
+    public function test_a_visitor_sees_courses_without_their_lesson_cards(): void
+    {
+        $course = Course::first();
+        $lesson = $course->lessons()->first();
+
+        $this->get('/')
+            ->assertStatus(200)
+            ->assertSee($course->title)
+            ->assertSee(route('academy.course', $course), false)
+            ->assertDontSee(route('academy.lesson', [$course, $lesson]), false);
+    }
+
     public function test_home_lists_the_course(): void
     {
         $this->get('/')
@@ -44,7 +66,8 @@ class AcademySmokeTest extends TestCase
         $lesson = $course->lessons()->first();
         $lesson->update(['image_path' => 'lesson-images/cover.jpg']);
 
-        $this->get('/')
+        // Lesson cards are for signed-in students; visitors see the courses.
+        $this->actingAs($this->learner())->get('/')
             ->assertStatus(200)
             ->assertSee('lesson-images/cover.jpg', false);
     }
@@ -321,7 +344,7 @@ class AcademySmokeTest extends TestCase
         $media = MediaItem::create(['name' => 'Shared cover', 'path' => 'media-library/shared.jpg']);
         $lesson->update(['media_item_id' => $media->id]);
 
-        $this->get('/')
+        $this->actingAs($this->learner())->get('/')
             ->assertStatus(200)
             ->assertSee('media-library/shared.jpg', false);
     }

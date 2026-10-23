@@ -197,7 +197,7 @@
                                 <span class="text-[11px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full bg-blue-50 text-brand">{{ __t('academy.common.for_audience', ['audience' => __t('academy.common.audience.'.$course->audience)]) }}</span>
                             @endif
                         </div>
-                        <h2 class="text-xl font-extrabold text-navy">{{ $course->translated('title') }}</h2>
+                        <h2 class="text-xl font-extrabold text-navy"><a href="{{ route('academy.course', $course) }}" class="hover:text-brand transition">{{ $course->translated('title') }}</a></h2>
                         <p class="text-slate-500 mt-1 max-w-2xl">{{ $course->translated('description') }}</p>
                         <div class="mt-2 flex flex-wrap items-center gap-2 text-sm text-slate-500">
                             <span>{{ __tc('academy.common.lessons', $total) }}</span>
@@ -206,6 +206,11 @@
                                 <span>{{ $course->durationLabel() }}</span>
                             @endif
                         </div>
+                        @guest
+                            <a href="{{ route('academy.course', $course) }}" class="mt-3 inline-flex items-center min-h-11 font-semibold text-brand hover:underline">
+                                {{ __t('academy.tutorials.open_course') }} <span aria-hidden="true" class="ms-1 rtl:rotate-180">&rarr;</span>
+                            </a>
+                        @endguest
                     </div>
                     <div class="text-end">
                         <div class="text-sm text-slate-500 mb-1">{{ __t('academy.common.lessons_done', ['done' => $done, 'total' => $total]) }}</div>
@@ -218,6 +223,8 @@
                 </div>
             </div>
 
+            {{-- Visitors see the course and its lesson count; the lessons are on the course page. --}}
+            @auth
             <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach($course->publishedLessons as $i => $lesson)
                     @php($isDone = in_array($lesson->id, $completed, true))
@@ -253,6 +260,7 @@
                     </a>
                 @endforeach
             </div>
+            @endauth
         </section>
     @empty
         <p class="text-slate-500">{{ __t('academy.home.no_courses') }}</p>

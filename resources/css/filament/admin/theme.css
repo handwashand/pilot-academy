@@ -87,6 +87,17 @@
 }
 
 /*
+ * The whole panel one step smaller (owner's request, 2026-10-23): text,
+ * buttons, icons, inputs and spacing were all reading large. Filament sizes
+ * everything in rem, so one root size scales it all together. This file is
+ * only loaded by the /admin panel, so the student site is not affected. The
+ * sidebar keeps its own sizes below, in px, so it is not shrunk twice.
+ */
+html {
+    font-size: 90%;
+}
+
+/*
  * Slightly tighter page chrome (owner's request, 2026-10-08): a little less
  * breathing room around page content. The padding inside cards, tables and
  * forms is Filament's own and is left alone.
@@ -137,14 +148,14 @@
 .fi-sidebar-group-btn {
     padding-top: 0.3125rem;    /* row height 40px -> ~30px */
     padding-bottom: 0.3125rem;
-    font-size: 0.875rem;       /* was 16px */
+    font-size: 14px;           /* was 16px; px so the 90% root above leaves it alone */
 }
 
 /* Filament gives the group labels (Content, People, …) the same font-medium
    weight as the item labels beneath them — only colour tells them apart, a
    weak hierarchy signal. Bold sets them apart by weight too. */
 .fi-sidebar-group-label {
-    font-size: 0.8125rem;
+    font-size: 13px;
     font-weight: 700;
 }
 
@@ -153,8 +164,8 @@
 .fi-sidebar-group-btn .fi-icon,
 .fi-sidebar-item-btn svg,
 .fi-sidebar-group-btn > svg {
-    width: 1.125rem;           /* was 20px */
-    height: 1.125rem;
+    width: 18px;               /* was 20px */
+    height: 18px;
 }
 
 /*

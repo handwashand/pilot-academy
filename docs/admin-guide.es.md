@@ -26,9 +26,9 @@ socios. El menú de la izquierda te lleva a cada parte de la academia.
 
 **Escribe en tu propio idioma.** Cada curso y cada lección tiene un campo **Escrito en**: inglés, salvo que elijas otro. Una lección nueva toma el idioma de su primer curso.
 
-**Traduce un curso o una lección** con **Traducir** en la parte superior de su página de edición, para que un curso escrito en un idioma sirva también en los demás. Hay una pestaña por cada idioma excepto el original: el título y la descripción de un curso, o el título, el resumen, el texto y la transcripción del vídeo de una lección. Los estudiantes ven la traducción en su idioma; donde una casilla está vacía, ven el original. La búsqueda del sitio también encuentra un curso por sus traducciones.
+**Traduce un curso o una lección** con **Traducir** en la parte superior de su página de edición, para que un curso escrito en un idioma sirva también en los demás. En una **lección** hay una pestaña por cada idioma excepto el original: su título, resumen, texto y transcripción del vídeo. En un **curso**, **Traducir** pregunta primero qué traducir —**Solo el curso** (título y descripción) o **El curso completo** (cada lección, cuestionario de lección y el cuestionario final)—, después cómo (a mano o con un servicio de traducción, si hay uno activado) y a qué idioma. El paso siguiente muestra todas las casillas para leerlas y corregirlas antes de **Guardar traducciones**. Con un servicio de traducción también puedes elegir **Todos los idiomas a la vez**: cada idioma se traduce y se guarda al momento, solo en las casillas vacías; abre **Traducir** de nuevo y elige un idioma para leerlas y corregirlas. Los estudiantes ven la traducción en su idioma; donde una casilla está vacía, ven el original. La búsqueda del sitio también encuentra un curso por sus traducciones.
 
-**Traduce el cuestionario de una lección o el examen final de un curso** con **Traducir el cuestionario**: en la página de edición de la lección para su propia comprobación de conocimientos, o en la pestaña **Preguntas del examen final** del curso para su banco de preguntas. Elige un idioma, revisa cada pregunta y sus opciones de respuesta (redactadas por ti si DeepL, ChatGPT o DeepSeek están activados) y pulsa **Guardar traducciones**. Una pregunta que se usa en los exámenes finales de varios cursos se traduce una sola vez y se lee bien en todos ellos.
+**Traduce el cuestionario de una lección o el examen final de un curso** con **Traducir el cuestionario** (el icono del portapapeles): en la página de edición de la lección para su propia comprobación de conocimientos, o en la pestaña **Preguntas del examen final** del curso para su banco de preguntas. Elige un idioma, revisa cada pregunta y sus opciones de respuesta (redactadas por ti si DeepL, ChatGPT o DeepSeek están activados) y pulsa **Guardar traducciones**. Una pregunta que se usa en los exámenes finales de varios cursos se traduce una sola vez y se lee bien en todos ellos.
 
 ---
 
@@ -125,11 +125,11 @@ todas las lecciones de ese curso.
 - **Para cambiar el orden**, arrastra una fila por el asa de su izquierda. El orden
   que fijas aquí es el orden en que los estudiantes avanzan: en la página del curso,
   en la barra lateral de la lección y en «Continúa donde lo dejaste». No hay nada que guardar.
-- **Para escribir una lección nueva**, haz clic en **Nueva lección**. Dale un título y
-  una dirección web y se añade al final de este curso, en el idioma del curso:
-  no hace falta ir primero a **Lecciones** y elegir el curso después.
-  Ábrela con **Editar** cuando quieras escribir el contenido, añadir vídeos y
-  preparar la comprobación de conocimientos.
+- **Para escribir una lección nueva**, haz clic en **Nueva lección**. Se abre el
+  formulario completo de la lección —texto, vídeos y comprobación de
+  conocimientos— con este curso ya elegido y su idioma puesto. **Crear** la añade
+  al final de este curso y te devuelve aquí: no hace falta ir primero a
+  **Lecciones** y elegir el curso después.
 - **Para reutilizar una lección que ya existe**, haz clic en **Añadir lección existente**.
   La lista se abre con todas las lecciones que puedes añadir, cada una con el curso
   del que viene, y puedes escribir para acotarla. Las lecciones que ya están en este
@@ -145,10 +145,15 @@ todas las lecciones de ese curso.
 > el último botón de la fila de botones de **Texto de la lección**, **Importar un
 > archivo Markdown**, acepta un archivo Markdown (`.md` o `.txt`, hasta 512 KB) y
 > llena la casilla con él, conservando títulos, negritas, listas, enlaces y tablas.
-> Una primera línea como `# Título` se convierte en el título de la lección si aún
-> no tiene. Sustituye lo que hay en la casilla y no guarda nada hasta que pulsas
-> **Guardar cambios**. Añade después los vídeos, las imágenes y la comprobación de
-> conocimientos en la lección.
+> Una primera línea como `# Título` se convierte en el título de la lección y una
+> línea `> ` debajo en el resumen, si están vacíos. Las preguntas bajo un título
+> `## Quiz` —`1. ¿Pregunta?` y luego líneas `- [x] respuesta correcta` y
+> `- [ ] respuesta incorrecta`— se añaden a la comprobación de conocimientos. Cada
+> pregunta necesita al menos dos respuestas y exactamente una marcada `[x]`; si no,
+> no se rellena nada y la ventana dice qué pregunta corregir. **Descargar la
+> plantilla**, en la misma ventana, da un archivo con este formato. Sustituye el
+> texto de la casilla, añade a las preguntas que ya hay y no guarda nada hasta que
+> guardes la lección. Añade después los vídeos y las imágenes.
 
 > **Una lección no necesita curso.** En **Contenido → Lecciones**, **Crear
 > lección** te deja dejar **Cursos** vacío y elegir uno más tarde; los estudiantes
@@ -326,9 +331,9 @@ y que sus lecciones y documentación relacionadas se abren correctamente.
 
 ### Editar las preguntas del examen final
 
-Abre el curso → pestaña **Preguntas del examen final**. Aquí puedes **Adjuntar pregunta de lección** (añadir una pregunta existente), **Añadir todas las preguntas de las lecciones** (añadirlas todas a la vez) o **Nueva pregunta final** (escribir una pregunta de control que solo existe en el examen final).
+Abre el curso → pestaña **Preguntas del examen final**. Aquí puedes **Adjuntar pregunta de lección** (añadir una pregunta existente), **Añadir todas las preguntas de las lecciones** (el icono del signo más en un círculo: añadirlas todas a la vez) o **Nueva pregunta final** (escribir una pregunta de control que solo existe en el examen final). Pasa el ratón por un icono para ver su nombre.
 
-**Para cargar muchas preguntas a la vez**, haz clic en **Subir desde Excel**:
+**Para cargar muchas preguntas a la vez**, haz clic en **Subir desde Excel** (el icono de la tabla):
 
 1. Elige **Descargar archivo de ejemplo**. Es un archivo de Excel con una fila de encabezados y dos preguntas de ejemplo.
 2. Sustituye los dos ejemplos por los tuyos. Una fila es una pregunta: la pregunta, hasta seis respuestas (columnas **Respuesta A** a **Respuesta F**) y, en la última columna, la letra de la respuesta correcta. Si hay más de una respuesta correcta, escribe las letras separadas por comas: `A, C`.
@@ -661,7 +666,7 @@ opcional con Descript. Este permiso no se incluye automáticamente ni en el rol 
 administrador ni en el de creador.
 
 En una lección con un vídeo subido, el editor autorizado puede hacer clic en
-**Traducir vídeo**, elegir el vídeo y los idiomas y marcar la confirmación de que
+**Traducir vídeo** (el icono del altavoz, junto a **Traducir**), elegir el vídeo y los idiomas y marcar la confirmación de que
 el vídeo se enviará a Descript y puede consumir minutos multimedia y créditos de
 IA. No se envía nada hasta hacer clic en **Iniciar traducción**. Los enlaces de
 YouTube no se pueden enviar. Usa **Comprobar progreso** hasta que se guarde el
@@ -675,16 +680,14 @@ Los vídeos o idiomas ya traducidos o en curso se omiten y no cuestan nada. Una
 traducción terminada también da al reproductor de la lección subtítulos en ese
 idioma (el botón **CC**).
 
-**Voz o subtítulos.** **Traducir vídeo** pregunta qué hacer. **Voz** dobla el
-vídeo: Descript lo traduce, lo locuta en ese idioma (con la propia voz del orador
+**Voz y subtítulos a la vez.** **Traducir vídeo** siempre hace las dos cosas:
+Descript traduce el vídeo, lo locuta en ese idioma (con la propia voz del orador
 cuando puede copiarla; si no, con una voz estándar) y la academia guarda el vídeo
-doblado. Un estudiante que usa la academia en ese idioma lo oye entonces
-automáticamente, con **Reproducir el audio original** junto al reproductor.
-**Solo subtítulos y transcripción** es más barato y da los subtítulos **CC** sin
-cambiar el sonido. Un idioma ya hecho nunca se vuelve a cobrar, y una voz pedida
-después de los subtítulos reutiliza esa traducción. Cada idioma doblado es un
-archivo de vídeo adicional completo, así que vigila el disco del servidor en las
-lecciones largas.
+doblado y sus subtítulos. Un estudiante que usa la academia en ese idioma lo oye
+automáticamente, con **Reproducir el audio original** junto al reproductor y los
+subtítulos **CC** disponibles. Un idioma ya hecho nunca se vuelve a cobrar. Cada
+idioma doblado es un archivo de vídeo adicional completo, así que vigila el disco
+del servidor en las lecciones largas.
 
 ## Permitir descargar los vídeos de las lecciones
 
@@ -734,16 +737,20 @@ Un administrador añade el token de API de cada proveedor en **Ajustes →
 Integraciones** y lo activa. Los administradores pueden usarlos de inmediato; los
 demás necesitan el permiso correspondiente (**Generar borradores de traducción con
 DeepL** o **… con ChatGPT o DeepSeek**, en **Personas → Usuarios → Permisos
-adicionales**). Entonces ven que **Traducir** en un curso, una lección, un caso
+adicionales**). Entonces ven que **Traducir** en una lección, un caso
 práctico, un tutorial o un seminario web se convierte en un menú: **Traducir a
 mano** o traducir con cada proveedor activado. Tras una confirmación, la ventana de
 traducción se abre con las casillas vacías redactadas; léelas, corrígelas y pulsa
 **Guardar traducciones**. Antes no se guarda nada, y el texto ya escrito nunca se
 sustituye.
 
-En un **curso**, **Traducir todo el curso** traduce el curso y todas sus lecciones
-en una sola ventana: elige el idioma y la forma (a mano o con un proveedor) y
-revisa el curso y cada lección antes de guardar.
+En un **curso**, **Traducir** pide el proveedor en su primer paso, junto a qué
+traducir (**Solo el curso** o **El curso completo**, con cada lección y
+cuestionario) y el idioma. Un solo idioma pasa a un paso de revisión antes de
+guardar. **Todos los idiomas a la vez** solo se ofrece con un proveedor: traduce
+cada idioma y guarda al momento, solo en las casillas vacías —salvo que marques
+**Reemplazar**—, así que abre **Traducir** de nuevo para un idioma y lee el
+resultado. Envía el texto de todo el curso varias veces, por lo que cuesta más.
 
 ---
 

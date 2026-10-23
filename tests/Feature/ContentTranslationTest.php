@@ -45,7 +45,7 @@ class ContentTranslationTest extends TestCase
 
         Livewire::actingAs($admin)
             ->test(EditCourse::class, ['record' => $course->getRouteKey()])
-            ->callAction('translateContent', data: ['ru' => ['title' => 'Быстрый старт Pilot', 'description' => 'Всё, что нужно для начала работы.']])
+            ->callAction('translateWholeCourse', data: ['scope' => 'course', 'engine' => 'manual', 'language' => 'ru', 'course' => ['title' => 'Быстрый старт Pilot', 'description' => 'Всё, что нужно для начала работы.']])
             ->assertHasNoActionErrors();
 
         Livewire::actingAs($admin)
@@ -67,7 +67,10 @@ class ContentTranslationTest extends TestCase
         $lesson->setTranslation('content', 'ru', '<p>Текст урока на русском.</p>');
 
         $this->withHeader('Accept-Language', 'ru')->get(route('academy.home'))
-            ->assertOk()->assertSee('Быстрый старт Pilot')->assertSee('Начало работы с Pilot');
+            ->assertOk()->assertSee('Быстрый старт Pilot');
+
+        $this->withHeader('Accept-Language', 'ru')->get(route('academy.course', $course))
+            ->assertOk()->assertSee('Начало работы с Pilot');
 
         $this->withHeader('Accept-Language', 'ru')->get(route('academy.lesson', [$course, $lesson]))
             ->assertOk()->assertSee('Начало работы с Pilot')->assertSee('Текст урока на русском.', false);
@@ -86,11 +89,15 @@ class ContentTranslationTest extends TestCase
             'status' => Course::STATUS_PUBLISHED,
         ]);
 
-        Livewire::actingAs($this->admin())
-            ->test(EditCourse::class, ['record' => $course->getRouteKey()])
-            ->assertFormSet(['language' => 'fr'])
-            ->callAction('translateContent', data: ['en' => ['title' => 'Quick start'], 'ru' => ['title' => 'Быстрый старт']])
-            ->assertHasNoActionErrors();
+        $admin = $this->admin();
+
+        foreach (['en' => 'Quick start', 'ru' => 'Быстрый старт'] as $code => $title) {
+            Livewire::actingAs($admin)
+                ->test(EditCourse::class, ['record' => $course->getRouteKey()])
+                ->assertFormSet(['language' => 'fr'])
+                ->callAction('translateWholeCourse', data: ['scope' => 'course', 'engine' => 'manual', 'language' => $code, 'course' => ['title' => $title]])
+                ->assertHasNoActionErrors();
+        }
 
         $course = $course->fresh();
         $this->assertSame('Quick start', $course->translated('title', 'en'), 'English is a translation of a French course.');
@@ -130,8 +137,8 @@ class ContentTranslationTest extends TestCase
 
         Livewire::actingAs($this->admin())
             ->test(EditCourse::class, ['record' => $course->getRouteKey()])
-            ->assertActionVisible('translateContent')
-            ->callAction('translateContent', data: ['pt' => ['title' => '']])
+            ->assertActionVisible('translateWholeCourse')
+            ->callAction('translateWholeCourse', data: ['scope' => 'course', 'engine' => 'manual', 'language' => 'pt', 'course' => ['title' => '']])
             ->assertHasNoActionErrors();
 
         $this->assertSame($course->title, $course->fresh()->translated('title', 'pt'));

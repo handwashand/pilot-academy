@@ -3,10 +3,9 @@
 namespace App\Filament\Resources\Courses\RelationManagers;
 
 use App\Filament\Resources\Lessons\LessonResource;
-use App\Filament\Resources\Lessons\Schemas\LessonForm;
 use App\Models\Lesson;
+use Filament\Actions\Action;
 use Filament\Actions\AttachAction;
-use Filament\Actions\CreateAction;
 use Filament\Actions\DetachAction;
 use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
@@ -83,13 +82,13 @@ class LessonsRelationManager extends RelationManager
                 // course as its home and the course's language; the stock
                 // create would save it with no course at all, which the
                 // lessons table refuses.
-                CreateAction::make()
+                // The whole lesson form — videos, text and knowledge check —
+                // already in this course; saving comes back here.
+                Action::make('create')
                     ->label(__t('admin_courses.lessons_tab.create'))
-                    ->modalHeading(__t('admin_courses.lessons_tab.create_heading'))
-                    ->modalDescription(__t('admin_courses.lessons_tab.create_description'))
-                    ->modalSubmitActionLabel(__t('admin_courses.lessons_tab.create_submit'))
-                    ->schema(fn (): array => LessonForm::insideCourse($this->getOwnerRecord()))
-                    ->using(fn (array $data): Lesson => $this->getOwnerRecord()->lessons()->create($data)),
+                    ->icon('heroicon-o-plus')
+                    ->visible(fn (): bool => LessonResource::canCreate())
+                    ->url(fn (): string => LessonResource::getUrl('create', ['course' => $this->getOwnerRecord()->getKey()])),
 
                 AttachAction::make()
                     ->label(__t('admin_courses.lessons_tab.attach'))

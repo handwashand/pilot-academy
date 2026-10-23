@@ -26,9 +26,9 @@ parceiros. O menu à esquerda leva a todas as partes da academia.
 
 **Escreva no seu próprio idioma.** Cada curso e cada aula tem um campo **Escrito em** — inglês, a menos que você escolha outro. Uma aula nova assume o idioma do seu primeiro curso.
 
-**Traduza um curso ou uma aula** com **Traduzir** no topo da página de edição, para que um curso escrito em um idioma sirva também nos outros. Há uma aba para cada idioma, exceto o original: o título e a descrição de um curso, ou o título, o resumo, o texto e a transcrição do vídeo de uma aula. Os alunos veem a tradução no idioma deles; onde uma caixa está vazia, veem o original. A pesquisa do site também encontra um curso pelas traduções.
+**Traduza um curso ou uma aula** com **Traduzir** no topo da página de edição, para que um curso escrito em um idioma sirva também nos outros. Em uma **aula** há uma aba para cada idioma, exceto o original: o título, o resumo, o texto e a transcrição do vídeo. Em um **curso**, **Traduzir** pergunta primeiro o que traduzir — **Só o curso** (título e descrição) ou **O curso inteiro** (cada aula, questionário de aula e o questionário final) —, depois como (manualmente ou com um serviço de tradução, se houver um ativado) e para qual idioma. A etapa seguinte mostra todas as caixas para ler e corrigir antes de **Salvar traduções**. Com um serviço de tradução você também pode escolher **Todos os idiomas de uma vez**: cada idioma é traduzido e salvo na hora, só nas caixas vazias; abra **Traduzir** de novo e escolha um idioma para ler e corrigir. Os alunos veem a tradução no idioma deles; onde uma caixa está vazia, veem o original. A pesquisa do site também encontra um curso pelas traduções.
 
-**Traduza o teste de uma aula ou o teste final de um curso** com **Traduzir o teste** — na página de edição da aula para a própria verificação de conhecimento, ou na aba **Perguntas do teste final** do curso para o banco de perguntas. Escolha um idioma, revise cada pergunta e suas opções de resposta (redigidas para você se o DeepL, o ChatGPT ou o DeepSeek estiver ativado) e pressione **Salvar traduções**. Uma pergunta usada nos testes finais de vários cursos é traduzida uma vez e fica correta em todos eles.
+**Traduza o teste de uma aula ou o teste final de um curso** com **Traduzir o teste** (o ícone da prancheta) — na página de edição da aula para a própria verificação de conhecimento, ou na aba **Perguntas do teste final** do curso para o banco de perguntas. Escolha um idioma, revise cada pergunta e suas opções de resposta (redigidas para você se o DeepL, o ChatGPT ou o DeepSeek estiver ativado) e pressione **Salvar traduções**. Uma pergunta usada nos testes finais de vários cursos é traduzida uma vez e fica correta em todos eles.
 
 ---
 
@@ -125,11 +125,11 @@ as aulas desse curso.
 - **Para mudar a ordem**, arraste uma linha pela alça à esquerda. A ordem definida
   aqui é a ordem em que os alunos avançam: na página do curso, na barra lateral da
   aula e em "Continue de onde parou". Não há nada para salvar.
-- **Para escrever uma aula nova**, clique em **Nova aula**. Dê a ela um título e um
-  endereço web e ela é adicionada ao final deste curso, no idioma do curso — não é
-  preciso ir primeiro a **Aulas** e escolher o curso depois. Abra-a com **Editar**
-  quando estiver pronto para escrever o conteúdo, adicionar vídeos e montar a
-  verificação de conhecimento.
+- **Para escrever uma aula nova**, clique em **Nova aula**. Abre-se o formulário
+  completo da aula — texto, vídeos e verificação de conhecimento — com este curso
+  já escolhido e o idioma dele definido. **Criar** a adiciona ao final deste curso
+  e traz você de volta aqui — não é preciso ir primeiro a **Aulas** e escolher o
+  curso depois.
 - **Para reaproveitar uma aula que já existe**, clique em **Adicionar aula existente**.
   A lista abre com todas as aulas que você pode adicionar, cada uma mostrando de
   qual curso vem, e você pode digitar para filtrar. As aulas que já estão neste
@@ -145,9 +145,14 @@ as aulas desse curso.
 > da fileira de botões de **Texto da aula**, **Importar um arquivo Markdown**, aceita
 > um arquivo Markdown (`.md` ou `.txt`, até 512 KB) e preenche a caixa com ele,
 > mantendo títulos, negrito, listas, links e tabelas. Uma primeira linha como
-> `# Título` vira o título da aula se ela ainda não tiver um. Isso substitui o que
-> estiver na caixa e não salva nada até você pressionar **Guardar alterações**.
-> Depois, adicione vídeos, imagens e a verificação de conhecimento na aula.
+> `# Título` vira o título da aula e uma linha `> ` abaixo vira o resumo, se
+> estiverem vazios. As perguntas sob um título `## Quiz` — `1. Pergunta?` e depois
+> linhas `- [x] resposta certa` e `- [ ] resposta errada` — são adicionadas à
+> verificação de conhecimento. Cada pergunta precisa de pelo menos duas respostas
+> e exatamente uma marcada `[x]`; se não, nada é preenchido e a janela diz qual
+> pergunta corrigir. **Baixar o modelo**, na mesma janela, dá um arquivo nesse
+> formato. Isso substitui o texto da caixa, soma às perguntas que já existem e não
+> salva nada até você salvar a aula. Depois, adicione vídeos e imagens.
 
 > **Uma aula não precisa de curso.** Em **Conteúdo → Aulas**, **Criar aula** permite
 > deixar **Cursos** vazio e escolher um depois; os alunos não veem a aula até que ela
@@ -322,9 +327,9 @@ aulas e a documentação relacionadas abrem corretamente.
 
 ### Editar as perguntas do teste final
 
-Abra o curso → aba **Perguntas do teste final**. Aqui você pode **Anexar pergunta de aula** (adicionar uma pergunta existente), **Adicionar todas as perguntas das aulas** (adicionar todas de uma vez) ou **Nova pergunta final** (escrever uma pergunta de controle que só existe no teste final).
+Abra o curso → aba **Perguntas do teste final**. Aqui você pode **Anexar pergunta de aula** (adicionar uma pergunta existente), **Adicionar todas as perguntas das aulas** (o ícone de mais num círculo: adicionar todas de uma vez) ou **Nova pergunta final** (escrever uma pergunta de controle que só existe no teste final). Passe o mouse sobre um ícone para ver o nome.
 
-**Para carregar muitas perguntas de uma vez**, clique em **Enviar do Excel**:
+**Para carregar muitas perguntas de uma vez**, clique em **Enviar do Excel** (o ícone da tabela):
 
 1. Escolha **Baixar arquivo de exemplo**. É um arquivo do Excel com uma linha de cabeçalhos e duas perguntas de exemplo.
 2. Substitua os dois exemplos pelos seus. Uma linha é uma pergunta: a pergunta, até seis respostas (colunas **Resposta A** a **Resposta F**) e, na última coluna, a letra da resposta certa. Para mais de uma resposta certa, escreva as letras separadas por vírgulas — `A, C`.
@@ -651,8 +656,8 @@ equipe, marca **Usar a tradução de vídeo do Descript** em **Permissões extra
 salva. O servidor também precisa ter a integração opcional com o Descript ativada.
 Esse direito não vem automaticamente com a função Administrador nem com a de Criador.
 
-Em uma aula com vídeo enviado, o editor autorizado pode clicar em **Traduzir vídeo**,
-escolher o vídeo e os idiomas e marcar a confirmação de que o vídeo será enviado ao
+Em uma aula com vídeo enviado, o editor autorizado pode clicar em **Traduzir vídeo**
+(o ícone do alto-falante, ao lado de **Traduzir**), escolher o vídeo e os idiomas e marcar a confirmação de que o vídeo será enviado ao
 Descript e pode consumir minutos de mídia e créditos de IA. Nada é enviado antes de
 clicar em **Iniciar tradução**. Links do YouTube não podem ser enviados. Use
 **Verificar andamento** até o resultado ser salvo; um idioma concluído não pode ser
@@ -665,15 +670,14 @@ agendada do servidor) as faça avançar algumas por vez. Vídeos ou idiomas já
 traduzidos ou em andamento são pulados e não custam nada. Uma tradução concluída
 também dá ao player da aula legendas nesse idioma (o botão **CC**).
 
-**Voz ou legendas.** **Traduzir vídeo** pergunta o que fazer. **Voz** dubla o vídeo:
-o Descript o traduz, narra nesse idioma (com a voz do próprio palestrante quando
-consegue copiá-la; caso contrário, com uma voz padrão) e a academia guarda o vídeo
-dublado. Um aluno que usa a academia nesse idioma passa a ouvi-lo automaticamente,
-com **Ouvir o áudio original** ao lado do player. **Somente legendas e transcrição**
-é mais barato e dá as legendas **CC** sem mudar o som. Um idioma já feito nunca é
-cobrado de novo, e uma voz pedida depois das legendas reaproveita essa tradução.
-Cada idioma dublado é um arquivo de vídeo extra completo, então fique de olho no
-disco do servidor em aulas longas.
+**Voz e legendas juntas.** **Traduzir vídeo** sempre faz as duas coisas: o
+Descript traduz o vídeo, narra nesse idioma (com a voz do próprio palestrante
+quando consegue copiá-la; caso contrário, com uma voz padrão) e a academia guarda o
+vídeo dublado e as legendas. Um aluno que usa a academia nesse idioma passa a
+ouvi-lo automaticamente, com **Ouvir o áudio original** ao lado do player e as
+legendas **CC** disponíveis. Um idioma já feito nunca é cobrado de novo. Cada idioma
+dublado é um arquivo de vídeo extra completo, então fique de olho no disco do
+servidor em aulas longas.
 
 ## Permitir baixar os vídeos das aulas
 
@@ -722,15 +726,19 @@ Um administrador adiciona o token de API de cada provedor em **Configurações �
 Integrações** e o ativa. Os administradores podem usá-los na hora; os demais
 precisam do direito correspondente (**Gerar rascunhos de tradução com o DeepL** ou
 **… com ChatGPT ou DeepSeek**, em **Pessoas → Usuários → Permissões extras**). Então
-veem **Traduzir** em um curso, aula, estudo de caso, tutorial ou webinar virar um
+veem **Traduzir** em uma aula, estudo de caso, tutorial ou webinar virar um
 menu: **Traduzir manualmente** ou traduzir com cada provedor ativado. Após uma
 confirmação, a janela de tradução abre com as caixas vazias redigidas; leia e
 corrija, depois pressione **Salvar traduções**. Nada é salvo antes disso, e o texto
 já escrito nunca é substituído.
 
-Em um **curso**, **Traduzir o curso inteiro** traduz o curso e todas as aulas em uma
-só janela: escolha o idioma e a forma (manualmente ou com um provedor) e revise o
-curso e cada aula antes de salvar.
+Em um **curso**, **Traduzir** pede o provedor na primeira etapa, junto com o que
+traduzir (**Só o curso** ou **O curso inteiro**, com cada aula e questionário) e o
+idioma. Um só idioma passa por uma etapa de revisão antes de salvar. **Todos os
+idiomas de uma vez** só aparece com um provedor: traduz cada idioma e salva na
+hora, só nas caixas vazias — a menos que você marque **Substituir** —, então abra
+**Traduzir** de novo para um idioma e leia o resultado. O texto do curso inteiro é
+enviado várias vezes, por isso custa mais.
 
 ---
 

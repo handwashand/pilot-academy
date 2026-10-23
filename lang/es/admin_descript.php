@@ -9,7 +9,7 @@ return [
     'action' => [
         'button' => 'Traducir vídeo',
         'heading' => 'Traducir el vídeo con Descript',
-        'description' => 'Descript traduce lo que se dice en el vídeo. Cada idioma se traduce una sola vez y se guarda aquí, así que volver a pedirlo nunca gasta créditos dos veces. Solo se pueden enviar vídeos subidos, no enlaces de YouTube.',
+        'description' => 'Descript traduce lo que se dice en el vídeo y crea la voz doblada y los subtítulos de cada idioma que marques. Cada idioma se traduce una sola vez y se guarda aquí, así que volver a pedirlo nunca gasta créditos dos veces. Solo se pueden enviar vídeos subidos, no enlaces de YouTube.',
         'video' => 'Vídeo',
         'languages' => 'Idiomas',
         'languages_help' => 'Los idiomas ya traducidos o en curso se muestran, pero no se pueden volver a enviar.',

@@ -9,7 +9,7 @@ return [
     'action' => [
         'button' => 'Translate video',
         'heading' => 'Translate the video with Descript',
-        'description' => 'Descript translates what is said in the video. Each language is translated once and kept here, so asking again never spends credits twice. Only uploaded videos can be sent — not YouTube links.',
+        'description' => 'Descript translates what is said in the video and makes a dubbed voice and subtitles for each language you tick. Each language is translated once and kept here, so asking again never spends credits twice. Only uploaded videos can be sent — not YouTube links.',
         'video' => 'Video',
         'languages' => 'Languages',
         'languages_help' => 'Languages already translated or under way are shown but cannot be sent again.',

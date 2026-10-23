@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Courses\Pages;
 
 use App\Actions\FindContentProblems;
-use App\Filament\Actions\TranslateContentAction;
 use App\Filament\Actions\TranslateCourseAction;
 use App\Filament\Actions\TranslateVideoWithDescriptAction;
 use App\Filament\Resources\Courses\CourseResource;
@@ -24,7 +23,8 @@ class EditCourse extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            TranslateContentAction::make(),
+            // One Translate: the course's own text or the whole course, one
+            // language or all of them — chosen in its first step.
             TranslateCourseAction::make(),
             TranslateVideoWithDescriptAction::course(),
             TranslateVideoWithDescriptAction::checkCourse(),

@@ -26,9 +26,9 @@ the left takes you to every part of the academy.
 
 **Write in your own language.** Every course and lesson has a **Written in** field — English unless you choose another. A new lesson takes the language of its first course.
 
-**Translate a course or a lesson** with **Translate** at the top of its edit page, so a course written in one language is useful in the others. There is a tab for every language except the one it is written in: the title and description of a course, or the title, summary, lesson text and video transcript of a lesson. Students see the translation in their language; wherever a box is empty they see the original. Student search finds a course by its translations too.
+**Translate a course or a lesson** with **Translate** at the top of its edit page, so a course written in one language is useful in the others. On a **lesson**, there is a tab for every language except the one it is written in: its title, summary, lesson text and video transcript. On a **course**, **Translate** first asks what to translate — **This course** (its title and description) or **The whole course** (every lesson, each lesson's quiz and the final quiz) — then how (by hand, or a translation service if one is switched on) and into which language. The next step shows every box to read and correct before **Save translations**. With a translation service you can also choose **All languages at once**: every language is drafted and saved straight away, into empty boxes only; open **Translate** again and pick one language to read and correct them. Students see the translation in their language; wherever a box is empty they see the original. Student search finds a course by its translations too.
 
-**Translate a lesson's quiz, or a course's final quiz**, with **Translate quiz** — on the lesson's edit page for its own knowledge check, or on the course's **Final questions** tab for its final-quiz bank. Pick a language, review each question and its answer options (drafted for you if DeepL, ChatGPT or DeepSeek is switched on), and press **Save translations**. A question used in several courses' final quizzes translates once and reads correctly in every one of them.
+**Translate a lesson's quiz, or a course's final quiz**, with **Translate quiz** (the clipboard icon) — on the lesson's edit page for its own knowledge check, or on the course's **Final questions** tab for its final-quiz bank. **The whole course** on a course's **Translate** includes both. Pick a language, review each question and its answer options (drafted for you if DeepL, ChatGPT or DeepSeek is switched on), and press **Save translations**. A question used in several courses' final quizzes translates once and reads correctly in every one of them.
 
 ---
 
@@ -125,11 +125,11 @@ lists every lesson in that course.
 - **To change the order**, drag a row by the handle on its left. The order you
   set here is the order students work through, on the course page, in the lesson
   sidebar and in "Continue where you left off". There is nothing to save.
-- **To write a new lesson**, click **New lesson**. Give it a title and a web
-  address and it is added to the end of this course, in the course's language —
-  there is no need to go to **Lessons** first and pick the course afterwards.
-  Open it with **Edit** when you are ready to write the content, add videos and
-  set the knowledge check.
+- **To write a new lesson**, click **New lesson**. The full lesson form opens —
+  text, videos and knowledge check — with this course already chosen and the
+  course's language set. **Create** adds it to the end of this course and brings
+  you back here; there is no need to go to **Lessons** first and pick the course
+  afterwards.
 - **To reuse a lesson that already exists**, click **Add existing lesson**. The
   list opens with every lesson you can add, each showing which course it comes
   from, and you can type to narrow it. Lessons already in this course are not
@@ -146,9 +146,14 @@ lists every lesson in that course.
 > file**, takes a Markdown file (`.md`
 > or `.txt`, up to 512 KB) and fills the box with it, keeping headings, bold,
 > lists, links and tables. A first line like `# Title` becomes the lesson's
-> title if it has none yet. It replaces what is in the box and saves nothing
-> until you press **Save changes**. Add videos, pictures and the knowledge
-> check on the lesson afterwards.
+> title and a `> ` line under it the summary, if they are empty. Questions
+> written under a `## Quiz` heading — `1. Question?` then `- [x] right answer`
+> and `- [ ] wrong answer` lines — are added to the knowledge check. Each
+> question needs at least two answers and exactly one marked `[x]`; if one does
+> not, nothing is filled and the window says which question to fix. **Download
+> the template** in the same window gives a file in this layout to fill in. It
+> replaces what is in the text box, adds to the questions already there, and
+> saves nothing until you save the lesson. Add videos and pictures afterwards.
 
 > **A lesson does not need a course.** Under **Content → Lessons**, **New
 > lesson** lets you leave **Courses** empty and choose one later; students do
@@ -332,9 +337,9 @@ and that its related lessons and documentation open correctly.
 
 ### Edit the final quiz questions
 
-Open the course → **Final questions** tab. Here you can **Attach lesson question** (add one existing question), **Add all lesson questions** (add them all at once), or **New final question** (write a control question that lives only in the final).
+Open the course → **Final questions** tab. Here you can **Attach lesson question** (add one existing question), **Add all lesson questions** (the plus-circle icon: add them all at once), or **New final question** (write a control question that lives only in the final). Hover an icon to see its name.
 
-**To load many questions at once**, click **Upload from Excel**:
+**To load many questions at once**, click **Upload from Excel** (the table icon):
 
 1. Choose **Download example file**. It is an Excel file with a heading row and two example questions.
 2. Replace the two examples with your own. One row is one question: the question, up to six answers (columns **Answer A** to **Answer F**), then the letter of the right answer in the last column. For more than one right answer, write the letters with commas — `A, C`.
@@ -668,7 +673,7 @@ must also have the optional Descript integration enabled. The right is not
 included automatically with either the Admin or Creator role.
 
 On a lesson with an uploaded video, the permitted editor can click **Translate
-video**, choose the upload and languages, then tick the acknowledgement that
+video** (the speaker icon, beside **Translate**), choose the upload and languages, then tick the acknowledgement that
 the video will be sent to Descript and may use media minutes and AI credits.
 Nothing is sent until **Start translation** is clicked. YouTube links cannot be
 sent. Use **Check progress** until the result is saved; a completed language
@@ -682,15 +687,14 @@ already translated or under way are skipped and cost nothing. A finished
 translation also gives the lesson's player subtitles in that language (the
 **CC** button).
 
-**Voice or subtitles.** **Translate video** asks what to make. **Voice** dubs
-the video: Descript translates it, speaks it in that language (the speaker's
-own voice when it can copy one, otherwise a stock voice) and the academy keeps
-the dubbed video. A learner reading the academy in that language then hears it
-automatically, with **Play original audio** beside the player. **Subtitles and
-transcript only** is cheaper and gives the **CC** captions without changing the
-sound. A language already made is never charged again, and a voice requested
-after subtitles reuses that translation. Each dubbed language is a whole extra
-video file, so watch the server's disk on long lessons.
+**Voice and subtitles together.** **Translate video** always makes both:
+Descript translates the video, speaks it in that language (the speaker's own
+voice when it can copy one, otherwise a stock voice) and the academy keeps the
+dubbed video and its subtitles. A learner reading the academy in that language
+then hears it automatically, with **Play original audio** beside the player and
+the **CC** captions available. A language already made is never charged again.
+Each dubbed language is a whole extra video file, so watch the server's disk on
+long lessons.
 
 ## Letting people download lesson videos
 
@@ -738,15 +742,19 @@ database.
 An admin adds each provider's API token under **Settings → Integrations** and
 switches it on. Admins can use them straight away; anyone else needs the
 matching right (**Draft translations with DeepL**, or **… with ChatGPT or
-DeepSeek**, under **People → Users → Extra permissions**). They then see **Translate** on a course, lesson, case study, tutorial
+DeepSeek**, under **People → Users → Extra permissions**). They then see **Translate** on a lesson, case study, tutorial
 or webinar become a menu: **Translate by hand**, or **Translate with …** for each
 provider that is on. After a confirmation the Translate window opens with the
 empty boxes drafted; read and correct them, then **Save translations**. Nothing
 is saved before that, and text already written is never replaced.
 
-On a **course**, **Translate whole course** does the course and all its lessons
-in one window: choose the language and how (by hand or a provider), then review
-the course and each lesson before saving.
+On a **course**, **Translate** asks for the provider in its first step, next to
+what to translate (**This course** or **The whole course**, with every lesson
+and quiz) and the language. One language goes to a review step before saving.
+**All languages at once** is only offered with a provider: it drafts every
+language and saves straight away, into empty boxes only — unless you tick
+**Replace** — so open **Translate** again for one language to read the result.
+It sends a whole course's text several times over, so it costs more.
 
 ---
 

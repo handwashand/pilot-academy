@@ -420,6 +420,53 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-23 — Owner's production list: translate, import, home page, sizes
+
+Seven items from the owner's production notes, built after asking first.
+
+- **One Translate on a course** (`TranslateCourseAction`, still action name
+  `translateWholeCourse`). Step 1: scope (`course` = title/description, `whole`
+  = + every lesson, each lesson's questions/options and the final questions),
+  engine, language. `plan()` builds the records and the review sections in one
+  place. The course page no longer has `TranslateContentAction`; lessons, case
+  studies, tutorials and webinars keep it. Questions are included only when
+  written in the course's language, the same rule as lessons.
+- **All languages at once — a deliberate departure, flagged to the owner.**
+  Offered only with an engine. It drafts and **saves without the review step**,
+  into empty boxes only unless Replace is ticked. Reason: five languages of a
+  whole course in one review would exceed Livewire's 1 MB request cap, and the
+  owner asked for all at once. Risk not handled: a long course with an LLM may
+  outrun the web request's time limit; a failure stops the run and keeps what
+  was saved.
+- **Markdown import reads summary and quiz.** `ReadLessonMarkdown` now returns
+  `summary` (a `> ` line after the title) and `questions` (under `## Quiz`).
+  The lesson form has no question-type field, so lesson questions are always
+  single-answer: a question without exactly one `[x]` is an error and nothing
+  is filled. Questions are appended to the repeater, never replace. Template:
+  `public/templates/lesson-template.md`, linked from the import window.
+- **New lesson on a course** links to the full create page with `?course=`.
+  `CreateLesson::afterFill()` checks `canManageCourse()` before preselecting —
+  the id comes from the address bar — and `getRedirectUrl()` returns to the
+  course. `LessonForm::insideCourse()` was deleted. Its lang keys
+  (`lessons_tab.create_heading/description/submit`) are now unused.
+- **Visitors' home page** shows course cards with lesson counts, no lesson grid
+  (`@auth` around it). Signed-in students unchanged.
+- **Panel one size smaller**: `html { font-size: 90% }` in the panel theme;
+  sidebar sizes moved to px so it is not shrunk twice. Rebuilt with
+  `npm run build`.
+- **Icon buttons with tooltips**: Excel upload, Add all lesson questions,
+  Translate quiz (new clipboard icon, so it is not confused with Translate),
+  Translate video, Check progress.
+- **Translate video always dubs**: the kind select is gone; a dub carries its
+  own subtitles. `KIND_TRANSCRIPT` rows already stored still serve captions.
+
+**Verified (run):** see the final report — full suite, Pint, and Chrome checks
+of the visitor home page (no lesson links, no sideways scroll at 1280/375),
+panel root 14.4px with sidebar items still 14px, one Translate on the course
+page opening the wizard with both scopes, and the create page preselecting the
+course. **Not run:** an engine end to end in the browser (none configured
+locally), and the import window's template link clicked in a browser.
+
 ### 2026-10-23 — Two production crashes on the lesson form
 
 Reported from academy.pilot-gps.com.

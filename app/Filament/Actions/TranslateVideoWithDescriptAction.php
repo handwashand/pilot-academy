@@ -35,7 +35,9 @@ class TranslateVideoWithDescriptAction
     {
         return Action::make('translateVideoWithDescript')
             ->label(fn (): string => __t('admin_descript.action.button'))
+            ->tooltip(fn (): string => __t('admin_descript.action.button'))
             ->icon(Heroicon::OutlinedSpeakerWave)
+            ->iconButton()
             ->color('gray')
             ->modalHeading(fn (): string => __t('admin_descript.action.heading'))
             ->modalDescription(fn (): string => __t('admin_descript.action.description'))
@@ -46,7 +48,6 @@ class TranslateVideoWithDescriptAction
                 && TranslateLessonVideo::targetLanguages($record) !== [])
             ->fillForm(fn (Lesson $record): array => [
                 'video' => array_key_first(TranslateLessonVideo::uploadedVideos($record)),
-                'kind' => VideoTranslation::KIND_DUB,
                 'languages' => [],
                 'confirmed' => false,
             ])
@@ -57,13 +58,11 @@ class TranslateVideoWithDescriptAction
                     ->required()
                     ->live(),
 
-                static::kindSelect(),
-
                 CheckboxList::make('languages')
                     ->label(fn (): string => __t('admin_descript.action.languages'))
                     ->helperText(fn (): string => __t('admin_descript.action.languages_help'))
-                    ->options(fn (Get $get): array => static::languageOptions($record, (string) $get('video'), (string) $get('kind')))
-                    ->disableOptionWhen(fn (string $value, Get $get): bool => static::isTaken($record, (string) $get('video'), $value, (string) $get('kind')))
+                    ->options(fn (Get $get): array => static::languageOptions($record, (string) $get('video')))
+                    ->disableOptionWhen(fn (string $value, Get $get): bool => static::isTaken($record, (string) $get('video'), $value))
                     ->required()
                     ->columns(2),
 
@@ -82,7 +81,7 @@ class TranslateVideoWithDescriptAction
                     (string) $data['video'],
                     (array) ($data['languages'] ?? []),
                     auth()->user(),
-                    kind: (string) ($data['kind'] ?? VideoTranslation::KIND_DUB),
+                    kind: VideoTranslation::KIND_DUB,
                 );
 
                 if ($outcome['requested'] === []) {
@@ -119,7 +118,9 @@ class TranslateVideoWithDescriptAction
     {
         return Action::make('translateCourseVideosWithDescript')
             ->label(fn (): string => __t('admin_descript.course.button'))
+            ->tooltip(fn (): string => __t('admin_descript.course.button'))
             ->icon(Heroicon::OutlinedSpeakerWave)
+            ->iconButton()
             ->color('gray')
             ->modalHeading(fn (): string => __t('admin_descript.course.heading'))
             ->modalDescription(fn (Course $record): string => static::courseDescription($record))
@@ -128,10 +129,8 @@ class TranslateVideoWithDescriptAction
             ->visible(fn (Course $record): bool => app(TranslateLessonVideo::class)->enabled()
                 && TranslateLessonVideo::courseVideos($record, auth()->user()) !== []
                 && static::courseLanguages($record) !== [])
-            ->fillForm(['languages' => [], 'kind' => VideoTranslation::KIND_DUB, 'confirmed' => false])
+            ->fillForm(['languages' => [], 'confirmed' => false])
             ->schema(fn (Course $record): array => [
-                static::kindSelect(),
-
                 CheckboxList::make('languages')
                     ->label(fn (): string => __t('admin_descript.action.languages'))
                     ->options(static::courseLanguages($record))
@@ -153,7 +152,7 @@ class TranslateVideoWithDescriptAction
                 $queued = 0;
 
                 foreach (TranslateLessonVideo::courseVideos($record, $user) as $video) {
-                    $queued += count(app(TranslateLessonVideo::class)->request($video['lesson'], $video['path'], $languages, $user, advance: false, kind: (string) ($data['kind'] ?? VideoTranslation::KIND_DUB))['requested']);
+                    $queued += count(app(TranslateLessonVideo::class)->request($video['lesson'], $video['path'], $languages, $user, advance: false, kind: VideoTranslation::KIND_DUB)['requested']);
                 }
 
                 if ($queued === 0) {
@@ -179,7 +178,9 @@ class TranslateVideoWithDescriptAction
     {
         return Action::make('checkDescriptCourseProgress')
             ->label(fn (): string => __t('admin_descript.action.check'))
+            ->tooltip(fn (): string => __t('admin_descript.action.check'))
             ->icon(Heroicon::OutlinedArrowPath)
+            ->iconButton()
             ->color('gray')
             ->authorize(fn (): bool => (bool) auth()->user()?->hasPermission(User::PERMISSION_DESCRIPT_TRANSLATE))
             ->visible(fn (Course $record): bool => app(TranslateLessonVideo::class)->enabled()
@@ -235,27 +236,14 @@ class TranslateVideoWithDescriptAction
         return VideoTranslation::query()->whereIn('lesson_id', $course->lessons()->pluck('lessons.id'));
     }
 
-    /** Voice (the video dubbed) or subtitles only. Voice is why Descript is here, so it is the default. */
-    private static function kindSelect(): Select
-    {
-        return Select::make('kind')
-            ->label(fn (): string => __t('admin_descript.action.kind'))
-            ->options(fn (): array => [
-                VideoTranslation::KIND_DUB => __t('admin_descript.action.kind_dub'),
-                VideoTranslation::KIND_TRANSCRIPT => __t('admin_descript.action.kind_transcript'),
-            ])
-            ->helperText(fn (): string => __t('admin_descript.action.kind_help'))
-            ->selectablePlaceholder(false)
-            ->required()
-            ->live();
-    }
-
     /** Shown only while something is still under way for this lesson. */
     public static function check(): Action
     {
         return Action::make('checkDescriptProgress')
             ->label(fn (): string => __t('admin_descript.action.check'))
+            ->tooltip(fn (): string => __t('admin_descript.action.check'))
             ->icon(Heroicon::OutlinedArrowPath)
+            ->iconButton()
             ->color('gray')
             ->authorize(fn (): bool => (bool) auth()->user()?->hasPermission(User::PERMISSION_DESCRIPT_TRANSLATE))
             ->visible(fn (Lesson $record): bool => app(TranslateLessonVideo::class)->enabled()
@@ -278,9 +266,9 @@ class TranslateVideoWithDescriptAction
     }
 
     /** @return array<string, string> code => "Français — done" */
-    private static function languageOptions(Lesson $record, string $videoPath, string $kind): array
+    private static function languageOptions(Lesson $record, string $videoPath): array
     {
-        $rows = static::rowsFor($record, $videoPath, $kind);
+        $rows = static::rowsFor($record, $videoPath);
 
         return collect(TranslateLessonVideo::targetLanguages($record))
             ->mapWithKeys(function (string $name, string $code) use ($rows): array {
@@ -294,15 +282,20 @@ class TranslateVideoWithDescriptAction
     }
 
     /** Done or under way: not to be sent again. A failed one may be. */
-    private static function isTaken(Lesson $record, string $videoPath, string $code, string $kind): bool
+    private static function isTaken(Lesson $record, string $videoPath, string $code): bool
     {
-        $row = static::rowsFor($record, $videoPath, $kind)->get($code);
+        $row = static::rowsFor($record, $videoPath)->get($code);
 
         return $row !== null && ($row->isDone() || $row->isInFlight());
     }
 
-    /** @return Collection<string, VideoTranslation> keyed by language */
-    private static function rowsFor(Lesson $record, string $videoPath, string $kind): Collection
+    /**
+     * The dubbed versions of this video, keyed by language. A dub carries its
+     * own subtitles, so it is the one thing this button makes.
+     *
+     * @return Collection<string, VideoTranslation>
+     */
+    private static function rowsFor(Lesson $record, string $videoPath): Collection
     {
         $import = DescriptImport::query()
             ->where('lesson_id', $record->id)
@@ -310,7 +303,7 @@ class TranslateVideoWithDescriptAction
             ->first();
 
         return $import
-            ? $import->translations()->where('kind', $kind === VideoTranslation::KIND_TRANSCRIPT ? $kind : VideoTranslation::KIND_DUB)->get()->keyBy('language')
+            ? $import->translations()->where('kind', VideoTranslation::KIND_DUB)->get()->keyBy('language')
             : collect();
     }
 }

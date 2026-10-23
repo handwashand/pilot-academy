@@ -106,6 +106,56 @@ class LessonMarkdownUploadTest extends TestCase
         $this->assertStringContainsString('<strong>Account</strong>', $lesson->content);
     }
 
+    private const FULL = "# Drawing a GeoZone\n\n> Mark a customer site on the map.\n\nOpen **GeoZones** and draw.\n\n## Quiz\n\n1. Where are GeoZones drawn?\n- [x] On the map\n- [ ] In Reports\n\n2. What alerts on arrival?\n- [ ] History\n- [x] A notification\n";
+
+    /** The template's layout: summary under the title, questions under "## Quiz". */
+    public function test_the_summary_and_the_quiz_are_read_from_the_file(): void
+    {
+        $lesson = app(ReadLessonMarkdown::class)->handle(self::FULL);
+
+        $this->assertSame('Drawing a GeoZone', $lesson['title']);
+        $this->assertSame('Mark a customer site on the map.', $lesson['summary']);
+        $this->assertStringNotContainsString('Quiz', $lesson['html'], 'The quiz is not part of the lesson text.');
+        $this->assertStringNotContainsString('Mark a customer site', $lesson['html']);
+        $this->assertSame([], $lesson['errors']);
+        $this->assertCount(2, $lesson['questions']);
+        $this->assertSame('Where are GeoZones drawn?', $lesson['questions'][0]['prompt']);
+        $this->assertSame([['text' => 'On the map', 'is_correct' => true], ['text' => 'In Reports', 'is_correct' => false]], $lesson['questions'][0]['options']);
+    }
+
+    /** A lesson's knowledge check takes one right answer, so none or two is a mistake to fix. */
+    public function test_a_question_without_exactly_one_right_answer_is_reported(): void
+    {
+        $lesson = app(ReadLessonMarkdown::class)->handle("# T\n\nText.\n\n## Quiz\n\n1. No right one?\n- [ ] A\n- [ ] B\n\n2. Two right?\n- [x] A\n- [x] B\n\n3. One answer?\n- [x] A\n");
+
+        $this->assertCount(3, $lesson['errors']);
+    }
+
+    public function test_importing_a_full_file_fills_the_lesson_and_its_quiz_and_it_saves(): void
+    {
+        Livewire::actingAs($this->admin())
+            ->test(CreateLesson::class)
+            ->callAction($this->upload(), ['file' => $this->file(self::FULL)])
+            ->assertHasNoActionErrors()
+            ->assertSchemaStateSet(['title' => 'Drawing a GeoZone', 'summary' => 'Mark a customer site on the map.'])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $lesson = Lesson::where('slug', 'drawing-a-geozone')->firstOrFail();
+        $questions = $lesson->questions()->with('options')->orderBy('sort_order')->get();
+
+        $this->assertSame(['Where are GeoZones drawn?', 'What alerts on arrival?'], $questions->pluck('prompt')->all());
+        $this->assertSame('A notification', $questions[1]->options->firstWhere('is_correct', true)->text);
+    }
+
+    public function test_a_file_with_a_broken_quiz_changes_nothing(): void
+    {
+        Livewire::actingAs($this->admin())
+            ->test(CreateLesson::class)
+            ->callAction($this->upload(), ['file' => $this->file("# T\n\nText.\n\n## Quiz\n\n1. Q?\n- [ ] A\n- [ ] B\n")])
+            ->assertSchemaStateSet(['title' => null, 'content' => null]);
+    }
+
     public function test_nothing_is_stored_until_the_lesson_is_saved(): void
     {
         $course = Course::create(['title' => 'Course A', 'slug' => 'course-a', 'level' => 'beginner']);

@@ -7,6 +7,7 @@ use App\Models\AiProvider;
 use App\Models\Course;
 use App\Models\DescriptImport;
 use App\Models\Lesson;
+use App\Models\Question;
 use App\Models\User;
 use App\Models\VideoTranslation;
 use Database\Seeders\LanguageSeeder;
@@ -166,6 +167,7 @@ class CourseTranslationTest extends TestCase
         Livewire::actingAs($this->admin())
             ->test(EditCourse::class, ['record' => $course->getRouteKey()])
             ->callAction('translateWholeCourse', data: [
+                'scope' => 'whole',
                 'language' => 'fr',
                 'engine' => 'manual',
                 'course' => ['title' => 'Démarrage rapide', 'description' => 'Tout pour commencer.'],
@@ -190,7 +192,7 @@ class CourseTranslationTest extends TestCase
         $component = Livewire::actingAs($this->admin(User::PERMISSION_AI_TRANSLATE))
             ->test(EditCourse::class, ['record' => $course->getRouteKey()])
             ->mountAction('translateWholeCourse')
-            ->setActionData(['language' => 'fr', 'engine' => 'translateWithChatgpt'])
+            ->setActionData(['scope' => 'whole', 'language' => 'fr', 'engine' => 'translateWithChatgpt'])
             ->goToNextWizardStep();
 
         $component->assertSet('mountedActions.0.data.course.title', 'Écrit par une personne');
@@ -199,5 +201,97 @@ class CourseTranslationTest extends TestCase
         Http::assertSent(fn (Request $request): bool => ! str_contains($request->data()['messages'][1]['content'], 'course.title'));
         $this->assertSame(1, $course->contentTranslations()->count(), 'Only the person’s own text is stored.');
         $this->assertNull(Lesson::find($lesson->id)->contentTranslations()->first());
+    }
+
+    /** The whole course takes in each lesson's quiz and the final quiz, answers included. */
+    public function test_the_whole_course_includes_lesson_quizzes_and_the_final_quiz(): void
+    {
+        $course = Course::first();
+        $lesson = $course->lessons()->first();
+        $lessonQuestion = $lesson->questions()->create(['prompt' => 'Where are GeoZones drawn?', 'type' => Question::TYPE_SINGLE]);
+        $lessonOption = $lessonQuestion->options()->create(['text' => 'On the map', 'is_correct' => true]);
+        $final = Question::create(['prompt' => 'What does a report show?', 'type' => Question::TYPE_SINGLE]);
+        $finalOption = $final->options()->create(['text' => 'History', 'is_correct' => true]);
+        $course->finalQuestions()->attach($final->id);
+
+        Livewire::actingAs($this->admin())
+            ->test(EditCourse::class, ['record' => $course->getRouteKey()])
+            ->callAction('translateWholeCourse', data: [
+                'scope' => 'whole',
+                'language' => 'fr',
+                'engine' => 'manual',
+                "question_{$lessonQuestion->id}" => ['prompt' => 'Où dessine-t-on les GeoZones ?'],
+                "option_{$lessonOption->id}" => ['text' => 'Sur la carte'],
+                "question_{$final->id}" => ['prompt' => 'Que montre un rapport ?'],
+                "option_{$finalOption->id}" => ['text' => 'L’historique'],
+            ])
+            ->assertHasNoActionErrors();
+
+        $this->assertSame('Où dessine-t-on les GeoZones ?', $lessonQuestion->fresh()->translated('prompt', 'fr'));
+        $this->assertSame('Sur la carte', $lessonOption->fresh()->translated('text', 'fr'));
+        $this->assertSame('Que montre un rapport ?', $final->fresh()->translated('prompt', 'fr'));
+        $this->assertSame('L’historique', $finalOption->fresh()->translated('text', 'fr'));
+    }
+
+    /** "This course" is the course's own title and description, nothing else. */
+    public function test_the_course_only_choice_leaves_the_lessons_alone(): void
+    {
+        $course = Course::first();
+        $lesson = $course->lessons()->first();
+
+        Livewire::actingAs($this->admin())
+            ->test(EditCourse::class, ['record' => $course->getRouteKey()])
+            ->callAction('translateWholeCourse', data: [
+                'scope' => 'course',
+                'language' => 'fr',
+                'engine' => 'manual',
+                'course' => ['title' => 'Démarrage rapide'],
+                "lesson_{$lesson->id}" => ['title' => 'Ignorée'],
+            ])
+            ->assertHasNoActionErrors();
+
+        $this->assertSame('Démarrage rapide', $course->fresh()->translated('title', 'fr'));
+        $this->assertNull(Lesson::find($lesson->id)->contentTranslations()->first());
+    }
+
+    /** Every language at once: drafted and saved into empty boxes, a person's text kept. */
+    public function test_all_languages_at_once_saves_drafts_into_every_language(): void
+    {
+        AiProvider::for('chatgpt')->fill(['enabled' => true, 'api_key' => 'sk-test'])->save();
+        $course = Course::first();
+        $course->setTranslation('title', 'fr', 'Écrit par une personne');
+
+        Livewire::actingAs($this->admin(User::PERMISSION_AI_TRANSLATE))
+            ->test(EditCourse::class, ['record' => $course->getRouteKey()])
+            ->callAction('translateWholeCourse', data: [
+                'scope' => 'course',
+                'engine' => 'translateWithChatgpt',
+                'language' => '*all',
+            ])
+            ->assertHasNoActionErrors();
+
+        $course = $course->fresh();
+        $this->assertSame('Écrit par une personne', $course->translated('title', 'fr'), 'A person’s text is kept.');
+        $this->assertSame('[gpt] '.$course->description, $course->translated('description', 'fr'), 'The empty French box is drafted.');
+
+        foreach (['ru', 'es', 'pt', 'ar'] as $code) {
+            $this->assertSame('[gpt] '.$course->title, $course->translated('title', $code), "Drafted into {$code}.");
+        }
+    }
+
+    public function test_all_languages_at_once_needs_an_engine(): void
+    {
+        $course = Course::first();
+
+        Livewire::actingAs($this->admin())
+            ->test(EditCourse::class, ['record' => $course->getRouteKey()])
+            ->callAction('translateWholeCourse', data: [
+                'scope' => 'course',
+                'engine' => 'manual',
+                'language' => '*all',
+            ])
+            ->assertHasActionErrors(['language']);
+
+        $this->assertSame(0, $course->contentTranslations()->count());
     }
 }

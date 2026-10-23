@@ -2,12 +2,16 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Resources\Courses\CourseResource;
 use App\Filament\Resources\Courses\Pages\EditCourse;
 use App\Filament\Resources\Courses\RelationManagers\LessonsRelationManager;
+use App\Filament\Resources\Lessons\LessonResource;
+use App\Filament\Resources\Lessons\Pages\CreateLesson;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Product;
 use App\Models\User;
+use Database\Seeders\LanguageSeeder;
 use Database\Seeders\PilotQuickStartSeeder;
 use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Select;
@@ -97,17 +101,29 @@ class CourseLessonsRelationTest extends TestCase
             ->assertCanNotSeeTableRecords([$theirs]);
     }
 
-    public function test_a_lesson_can_be_written_from_inside_the_course(): void
+    /** New lesson opens the whole lesson form, already in this course. */
+    public function test_new_lesson_opens_the_full_form_in_this_course(): void
     {
-        $course = $this->newCourse('Fleet basics', ['language' => 'fr']);
+        $course = $this->newCourse('Fleet basics');
 
         $this->manager($course)
-            ->callAction(TestAction::make('create')->table(), [
-                'title' => 'Draw a GeoZone',
-                'slug' => 'draw-a-geozone',
-                'summary' => 'Where to start.',
-            ])
-            ->assertHasNoActionErrors();
+            ->assertActionHasUrl(TestAction::make('create')->table(), LessonResource::getUrl('create', ['course' => $course->id]));
+    }
+
+    public function test_a_lesson_written_from_the_course_lands_in_it_and_comes_back(): void
+    {
+        $this->seed(LanguageSeeder::class);
+        $course = $this->newCourse('Fleet basics', ['language' => 'fr']);
+
+        Livewire::actingAs($this->admin())
+            ->withQueryParams(['course' => $course->id])
+            ->test(CreateLesson::class)
+            ->assertSet('data.course_ids', [$course->id])
+            ->assertSet('data.language', 'fr')
+            ->fillForm(['title' => 'Draw a GeoZone', 'slug' => 'draw-a-geozone', 'content' => '<p>Body.</p>'])
+            ->call('create')
+            ->assertHasNoFormErrors()
+            ->assertRedirect(CourseResource::getUrl('edit', ['record' => $course]));
 
         $lesson = Lesson::where('slug', 'draw-a-geozone')->sole();
 
@@ -116,50 +132,32 @@ class CourseLessonsRelationTest extends TestCase
         $this->assertSame('fr', $lesson->language, 'It is written in the course\'s language.');
     }
 
-    public function test_the_address_follows_the_title_until_the_editor_writes_their_own(): void
-    {
-        $window = $this->manager($this->newCourse('Fleet basics'))
-            ->mountAction(TestAction::make('create')->table())
-            ->set('mountedActions.0.data.title', 'Draw a zone')
-            ->assertSet('mountedActions.0.data.slug', 'draw-a-zone')
-            // Retyped: the address must not keep the first attempt.
-            ->set('mountedActions.0.data.title', 'Draw a GeoZone')
-            ->assertSet('mountedActions.0.data.slug', 'draw-a-geozone');
-
-        $window
-            ->set('mountedActions.0.data.slug', 'my-own-address')
-            ->set('mountedActions.0.data.title', 'Something else')
-            ->assertSet('mountedActions.0.data.slug', 'my-own-address');
-    }
-
     public function test_a_new_lesson_cannot_reuse_a_slug_already_in_the_course(): void
     {
         $course = $this->newCourse('Fleet basics');
         $this->lessonIn($course, 'Intro', ['slug' => 'intro']);
 
-        $this->manager($course)
-            ->callAction(TestAction::make('create')->table(), [
-                'title' => 'Another intro',
-                'slug' => 'intro',
-            ])
-            ->assertHasActionErrors(['slug']);
+        Livewire::actingAs($this->admin())
+            ->withQueryParams(['course' => $course->id])
+            ->test(CreateLesson::class)
+            ->fillForm(['title' => 'Another intro', 'slug' => 'intro', 'content' => '<p>Body.</p>'])
+            ->call('create')
+            ->assertHasFormErrors(['slug']);
 
         $this->assertSame(1, $course->lessons()->count());
     }
 
-    public function test_a_creator_can_write_a_lesson_in_their_own_course(): void
+    /** The course id comes from the address bar, so a creator cannot slip into someone else's. */
+    public function test_a_creator_is_not_put_into_a_course_they_do_not_own(): void
     {
         $mine = Product::create(['name' => 'GARM', 'slug' => 'garm']);
-        $course = $this->newCourse('My course', ['product_id' => $mine->id]);
+        $theirs = Product::create(['name' => 'PTM', 'slug' => 'ptm']);
+        $course = $this->newCourse('Their course', ['product_id' => $theirs->id]);
 
-        $this->manager($course, $this->creator($mine))
-            ->callAction(TestAction::make('create')->table(), [
-                'title' => 'My lesson',
-                'slug' => 'my-lesson',
-            ])
-            ->assertHasNoActionErrors();
-
-        $this->assertTrue($course->hasLesson(Lesson::where('slug', 'my-lesson')->sole()));
+        Livewire::actingAs($this->creator($mine))
+            ->withQueryParams(['course' => $course->id])
+            ->test(CreateLesson::class)
+            ->assertSet('data.course_ids', []);
     }
 
     /**

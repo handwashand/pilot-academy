@@ -9,7 +9,7 @@ return [
     'action' => [
         'button' => 'Traduire la vidéo',
         'heading' => 'Traduire la vidéo avec Descript',
-        'description' => 'Descript traduit ce qui est dit dans la vidéo. Chaque langue est traduite une seule fois et conservée ici : redemander ne dépense donc jamais de crédits deux fois. Seules les vidéos téléversées peuvent être envoyées, pas les liens YouTube.',
+        'description' => 'Descript traduit ce qui est dit dans la vidéo et crée la voix doublée et les sous-titres de chaque langue cochée. Chaque langue est traduite une seule fois et conservée ici : redemander ne dépense donc jamais de crédits deux fois. Seules les vidéos téléversées peuvent être envoyées, pas les liens YouTube.',
         'video' => 'Vidéo',
         'languages' => 'Langues',
         'languages_help' => 'Les langues déjà traduites ou en cours sont affichées, mais ne peuvent pas être renvoyées.',

@@ -26,9 +26,9 @@ apprenants ni sur les partenaires. Le menu de gauche mène à chaque partie de l
 
 **Écrivez dans votre propre langue.** Chaque cours et chaque leçon a un champ **Écrit en** — l’anglais, sauf si vous en choisissez une autre. Une nouvelle leçon prend la langue de son premier cours.
 
-**Traduisez un cours ou une leçon** avec **Traduire** en haut de sa page de modification, pour qu’un cours écrit dans une langue serve aussi dans les autres. Il y a un onglet pour chaque langue sauf celle d’origine : le titre et la description d’un cours, ou le titre, le résumé, le texte et la transcription de la vidéo d’une leçon. Les apprenants voient la traduction dans leur langue ; là où une case est vide, ils voient l’original. La recherche du site trouve aussi un cours par ses traductions.
+**Traduisez un cours ou une leçon** avec **Traduire** en haut de sa page de modification, pour qu’un cours écrit dans une langue serve aussi dans les autres. Sur une **leçon**, il y a un onglet pour chaque langue sauf celle d’origine : son titre, son résumé, son texte et la transcription de sa vidéo. Sur un **cours**, **Traduire** demande d’abord quoi traduire — **Le cours seul** (titre et description) ou **Le cours entier** (chaque leçon, quiz de leçon et le quiz final) —, puis comment (à la main ou avec un service de traduction s’il est activé) et dans quelle langue. L’étape suivante montre toutes les cases à relire et corriger avant **Enregistrer les traductions**. Avec un service de traduction, vous pouvez aussi choisir **Toutes les langues à la fois** : chaque langue est traduite et enregistrée aussitôt, dans les cases vides uniquement ; rouvrez **Traduire** et choisissez une langue pour les relire et les corriger. Les apprenants voient la traduction dans leur langue ; là où une case est vide, ils voient l’original. La recherche du site trouve aussi un cours par ses traductions.
 
-**Traduisez le quiz d’une leçon ou le quiz final d’un cours** avec **Traduire le quiz** — sur la page de modification de la leçon pour sa propre vérification des connaissances, ou dans l’onglet **Questions du quiz final** du cours pour sa banque de questions. Choisissez une langue, relisez chaque question et ses options de réponse (rédigées pour vous si DeepL, ChatGPT ou DeepSeek est activé), puis appuyez sur **Enregistrer les traductions**. Une question utilisée dans les quiz finaux de plusieurs cours se traduit une seule fois et se lit correctement dans chacun d’eux.
+**Traduisez le quiz d’une leçon ou le quiz final d’un cours** avec **Traduire le quiz** (l’icône du presse-papiers) — sur la page de modification de la leçon pour sa propre vérification des connaissances, ou dans l’onglet **Questions du quiz final** du cours pour sa banque de questions. Choisissez une langue, relisez chaque question et ses options de réponse (rédigées pour vous si DeepL, ChatGPT ou DeepSeek est activé), puis appuyez sur **Enregistrer les traductions**. Une question utilisée dans les quiz finaux de plusieurs cours se traduit une seule fois et se lit correctement dans chacun d’eux.
 
 ---
 
@@ -126,11 +126,11 @@ liste toutes les leçons de ce cours.
   L’ordre défini ici est celui que suivent les apprenants : sur la page du cours,
   dans la barre latérale de la leçon et dans « Reprendre là où vous vous êtes
   arrêté ». Il n’y a rien à enregistrer.
-- **Pour écrire une nouvelle leçon**, cliquez sur **Nouvelle leçon**. Donnez-lui un
-  titre et une adresse web, et elle est ajoutée à la fin de ce cours, dans la langue
-  du cours — inutile de passer d’abord par **Leçons** puis de choisir le cours.
-  Ouvrez-la avec **Modifier** quand vous êtes prêt à écrire le contenu, ajouter des
-  vidéos et préparer la vérification des connaissances.
+- **Pour écrire une nouvelle leçon**, cliquez sur **Nouvelle leçon**. Le
+  formulaire complet de la leçon s’ouvre — texte, vidéos et vérification des
+  connaissances — avec ce cours déjà choisi et sa langue réglée. **Créer** l’ajoute
+  à la fin de ce cours et vous ramène ici — inutile de passer d’abord par
+  **Leçons** puis de choisir le cours.
 - **Pour réutiliser une leçon qui existe déjà**, cliquez sur **Ajouter une leçon existante**.
   La liste s’ouvre avec toutes les leçons que vous pouvez ajouter, chacune avec le
   cours dont elle vient, et vous pouvez taper pour la filtrer. Les leçons déjà dans
@@ -147,10 +147,15 @@ liste toutes les leçons de ce cours.
 > le dernier bouton de la rangée de boutons de **Texte de la leçon**, **Importer un
 > fichier Markdown**, accepte un fichier Markdown (`.md` ou `.txt`, jusqu’à 512 Ko)
 > et remplit la case avec, en conservant titres, gras, listes, liens et tableaux.
-> Une première ligne comme `# Titre` devient le titre de la leçon si elle n’en a pas
-> encore. Il remplace ce qui se trouve dans la case et n’enregistre rien avant que
-> vous appuyiez sur **Sauvegarder les modifications**. Ajoutez ensuite les vidéos,
-> les images et la vérification des connaissances dans la leçon.
+> Une première ligne comme `# Titre` devient le titre de la leçon et une ligne `> `
+> en dessous le résumé, s’ils sont vides. Les questions sous un titre `## Quiz` —
+> `1. Question ?` puis des lignes `- [x] bonne réponse` et `- [ ] mauvaise
+> réponse` — sont ajoutées à la vérification des connaissances. Chaque question
+> demande au moins deux réponses et exactement une marquée `[x]` ; sinon rien
+> n’est rempli et la fenêtre indique la question à corriger. **Télécharger le
+> modèle**, dans la même fenêtre, donne un fichier dans ce format. Il remplace le
+> texte de la case, s’ajoute aux questions existantes et n’enregistre rien avant
+> l’enregistrement de la leçon. Ajoutez ensuite les vidéos et les images.
 
 > **Une leçon n’a pas besoin de cours.** Dans **Contenu → Leçons**, **Créer** vous
 > permet de laisser **Cours** vide et d’en choisir un plus tard ; les apprenants ne
@@ -328,9 +333,9 @@ difficulté, et que ses leçons et sa documentation liées s’ouvrent correctem
 
 ### Modifier les questions du quiz final
 
-Ouvrez le cours → onglet **Questions du quiz final**. Vous pouvez y **Joindre une question de leçon** (ajouter une question existante), **Ajouter toutes les questions des leçons** (les ajouter toutes d’un coup) ou **Nouvelle question finale** (écrire une question de contrôle qui n’existe que dans le quiz final).
+Ouvrez le cours → onglet **Questions du quiz final**. Vous pouvez y **Joindre une question de leçon** (ajouter une question existante), **Ajouter toutes les questions des leçons** (l’icône plus dans un cercle : les ajouter toutes d’un coup) ou **Nouvelle question finale** (écrire une question de contrôle qui n’existe que dans le quiz final). Survolez une icône pour voir son nom.
 
-**Pour charger beaucoup de questions d’un coup**, cliquez sur **Importer depuis Excel** :
+**Pour charger beaucoup de questions d’un coup**, cliquez sur **Importer depuis Excel** (l’icône du tableau) :
 
 1. Choisissez **Télécharger le fichier d’exemple**. C’est un fichier Excel avec une ligne d’en-têtes et deux questions d’exemple.
 2. Remplacez les deux exemples par les vôtres. Une ligne est une question : la question, jusqu’à six réponses (colonnes **Réponse A** à **Réponse F**), puis, dans la dernière colonne, la lettre de la bonne réponse. S’il y a plusieurs bonnes réponses, écrivez les lettres séparées par des virgules — `A, C`.
@@ -674,7 +679,7 @@ l’intégration facultative Descript activée. Ce droit n’est inclus automati
 ni dans le rôle Administrateur ni dans le rôle Créateur.
 
 Sur une leçon avec une vidéo importée, l’éditeur autorisé peut cliquer sur
-**Traduire la vidéo**, choisir la vidéo et les langues, puis cocher la confirmation
+**Traduire la vidéo** (l’icône du haut-parleur, à côté de **Traduire**), choisir la vidéo et les langues, puis cocher la confirmation
 que la vidéo sera envoyée à Descript et peut consommer des minutes média et des
 crédits d’IA. Rien n’est envoyé avant le clic sur **Démarrer la traduction**. Les
 liens YouTube ne peuvent pas être envoyés. Utilisez **Vérifier l’avancement**
@@ -689,16 +694,15 @@ fasse avancer quelques-unes à la fois. Les vidéos ou langues déjà traduites 
 cours sont ignorées et ne coûtent rien. Une traduction terminée donne aussi au
 lecteur de la leçon des sous-titres dans cette langue (le bouton **CC**).
 
-**Voix ou sous-titres.** **Traduire la vidéo** demande quoi produire. **Voix**
-double la vidéo : Descript la traduit, la fait parler dans cette langue (avec la
-voix de l’intervenant lui-même quand il peut la copier, sinon avec une voix
-standard) et l’académie conserve la vidéo doublée. Un apprenant qui consulte
-l’académie dans cette langue l’entend alors automatiquement, avec **Écouter l’audio
-d’origine** à côté du lecteur. **Sous-titres et transcription uniquement** coûte
-moins cher et donne les sous-titres **CC** sans changer le son. Une langue déjà
-produite n’est jamais refacturée, et une voix demandée après des sous-titres
-réutilise cette traduction. Chaque langue doublée est un fichier vidéo
-supplémentaire complet ; surveillez donc le disque du serveur sur les longues leçons.
+**Voix et sous-titres ensemble.** **Traduire la vidéo** produit toujours les
+deux : Descript traduit la vidéo, la fait parler dans cette langue (avec la voix
+de l’intervenant lui-même quand il peut la copier, sinon avec une voix standard)
+et l’académie conserve la vidéo doublée et ses sous-titres. Un apprenant qui
+consulte l’académie dans cette langue l’entend automatiquement, avec **Écouter
+l’audio d’origine** à côté du lecteur et les sous-titres **CC** disponibles. Une
+langue déjà produite n’est jamais refacturée. Chaque langue doublée est un fichier
+vidéo supplémentaire complet ; surveillez donc le disque du serveur sur les
+longues leçons.
 
 ## Permettre de télécharger les vidéos des leçons
 
@@ -751,16 +755,21 @@ Un administrateur ajoute le jeton d’API de chaque fournisseur dans **Paramètr
 Intégrations** et l’active. Les administrateurs peuvent s’en servir tout de suite ;
 les autres ont besoin du droit correspondant (**Générer des brouillons de traduction
 avec DeepL**, ou **… avec ChatGPT ou DeepSeek**, dans **Personnes → Utilisateurs →
-Autorisations supplémentaires**). Ils voient alors **Traduire** sur un cours, une
+Autorisations supplémentaires**). Ils voient alors **Traduire** sur une
 leçon, une étude de cas, un tutoriel ou un webinaire devenir un menu : **Traduire à
 la main**, ou traduire avec chaque fournisseur activé. Après une confirmation, la
 fenêtre de traduction s’ouvre avec les cases vides pré-rédigées ; lisez-les et
 corrigez-les, puis appuyez sur **Enregistrer les traductions**. Rien n’est enregistré
 avant, et un texte déjà écrit n’est jamais remplacé.
 
-Sur un **cours**, **Traduire tout le cours** traite le cours et toutes ses leçons
-dans une seule fenêtre : choisissez la langue et la manière (à la main ou avec un
-fournisseur), puis relisez le cours et chaque leçon avant d’enregistrer.
+Sur un **cours**, **Traduire** demande le fournisseur à sa première étape, avec
+ce qu’il faut traduire (**Le cours seul** ou **Le cours entier**, avec chaque leçon
+et chaque quiz) et la langue. Une seule langue passe par une étape de relecture
+avant l’enregistrement. **Toutes les langues à la fois** n’est proposé qu’avec un
+fournisseur : chaque langue est traduite et enregistrée aussitôt, dans les cases
+vides uniquement — sauf si vous cochez **Remplacer** —, rouvrez donc **Traduire**
+pour une langue afin de relire le résultat. Le texte de tout le cours est envoyé
+plusieurs fois, cela coûte donc plus cher.
 
 ---
 

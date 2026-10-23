@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Actions\DraftTranslations;
-use App\Filament\Resources\Courses\Pages\EditCourse;
 use App\Filament\Resources\Lessons\Pages\EditLesson;
 use App\Models\Course;
 use App\Models\Language;
@@ -151,14 +150,14 @@ class DeepLDraftTranslationTest extends TestCase
     public function test_the_button_shows_for_someone_with_the_right(): void
     {
         Livewire::actingAs($this->editor())
-            ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
+            ->test(EditLesson::class, ['record' => Course::first()->lessons()->first()->getRouteKey()])
             ->assertActionVisible('translateWithDeepL');
     }
 
     public function test_the_button_is_hidden_from_a_creator_without_the_right(): void
     {
         Livewire::actingAs($this->creator())
-            ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
+            ->test(EditLesson::class, ['record' => Course::first()->lessons()->first()->getRouteKey()])
             ->assertActionDoesNotExist('translateWithDeepL');
     }
 
@@ -167,7 +166,7 @@ class DeepLDraftTranslationTest extends TestCase
         config(['services.deepl.enabled' => false]);
 
         Livewire::actingAs($this->editor())
-            ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
+            ->test(EditLesson::class, ['record' => Course::first()->lessons()->first()->getRouteKey()])
             ->assertActionDoesNotExist('translateWithDeepL');
     }
 
@@ -189,7 +188,7 @@ class DeepLDraftTranslationTest extends TestCase
     {
         // The choice travels from the browser; the engine is checked again on the server.
         Livewire::actingAs($this->creator())
-            ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
+            ->test(EditLesson::class, ['record' => Course::first()->lessons()->first()->getRouteKey()])
             ->mountAction('translateContent', ['engine' => 'translateWithDeepL'])
             ->assertSet('mountedActions.0.data.fr.title', null);
 
@@ -201,7 +200,7 @@ class DeepLDraftTranslationTest extends TestCase
         config(['services.deepl.enabled' => false]);
 
         Livewire::actingAs($this->editor())
-            ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
+            ->test(EditLesson::class, ['record' => Course::first()->lessons()->first()->getRouteKey()])
             ->assertActionVisible('translateContent')
             ->assertActionDoesNotExist('translateWithDeepL');
     }
@@ -209,7 +208,7 @@ class DeepLDraftTranslationTest extends TestCase
     public function test_translate_offers_a_menu_of_what_is_available(): void
     {
         Livewire::actingAs($this->editor())
-            ->test(EditCourse::class, ['record' => Course::first()->getRouteKey()])
+            ->test(EditLesson::class, ['record' => Course::first()->lessons()->first()->getRouteKey()])
             ->assertActionVisible('translateContent')
             ->assertActionVisible('translateWithDeepL')
             ->assertActionDoesNotExist('translateWithChatgpt');
@@ -218,10 +217,10 @@ class DeepLDraftTranslationTest extends TestCase
     public function test_manual_translation_still_works_with_deepl_off(): void
     {
         config(['services.deepl.enabled' => false]);
-        $course = Course::first();
+        $course = Course::first()->lessons()->first();
 
         Livewire::actingAs($this->editor())
-            ->test(EditCourse::class, ['record' => $course->getRouteKey()])
+            ->test(EditLesson::class, ['record' => $course->getRouteKey()])
             ->callAction('translateContent', data: ['ru' => ['title' => 'Быстрый старт']])
             ->assertHasNoActionErrors();
 
