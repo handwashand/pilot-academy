@@ -71,6 +71,17 @@ Los certificados no vencen.
 
 Cuando terminas un curso, la tarjeta **Curso completado** pregunta si fue útil. Puedes responder con pulgar arriba o abajo y dejar un comentario. Solo el equipo de la academia lo ve.
 
+## Insignias
+
+Tu perfil (menú de la cuenta → **Perfil**) muestra las insignias que has conseguido. Hay cuatro:
+
+- **Primera lección** — terminaste tu primera lección.
+- **Primer certificado** — obtuviste tu primer certificado.
+- **Todos los cursos terminados** — terminaste todos los cursos de un producto. Con examen final, un curso cuenta cuando tienes su certificado.
+- **Puntuación perfecta** — aprobaste el examen final de un curso al primer intento con todas las respuestas correctas. Un intento perfecto posterior no cuenta.
+
+Las insignias se dan cuando has iniciado sesión, y las conservas. Solo tú y el administrador de tu academia las ven.
+
 ## Si algo no funciona
 
 **Mi progreso desapareció.** Probablemente no habías iniciado sesión o cambiaste de navegador. Inicia sesión para conservarlo.

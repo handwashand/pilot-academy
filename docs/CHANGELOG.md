@@ -24,6 +24,13 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **Badges for students.** A student now earns a badge for their first finished
+  lesson, their first certificate, finishing every course of a product, and a
+  perfect score (passing a course's final quiz on the first try with every
+  answer right). They show on the student's **Profile**, in their language, and
+  on the student's page under **People → Users** for admins. Nobody else sees
+  them. Badges are given automatically, are never taken away, and students who
+  already reached a milestone get theirs the next time they open their profile.
 - **One Translate button on a course, for everything in it.** It asks what to
   translate — the course's own title and description, or the whole course with
   every lesson, each lesson's quiz and the final quiz — then how and into which

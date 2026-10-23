@@ -143,6 +143,20 @@ the name printed on your certificates.
 Your partner company is set by your academy administrator, so it is shown but
 cannot be changed there.
 
+## Badges
+
+Your profile also shows the badges you have earned. There are four:
+
+- **First lesson** — you finished your first lesson.
+- **First certificate** — you earned your first certificate.
+- **All courses done** — you finished every course for a product. With a final
+  quiz, a course counts once you have its certificate.
+- **Perfect score** — you passed a course's final quiz on your first try with
+  every answer right. A later perfect attempt does not count.
+
+Badges are given when you are signed in, and you keep them. Only you and your
+academy administrator see them.
+
 ## If something is not working
 
 **My progress has disappeared.** You were probably not logged in, or you are in

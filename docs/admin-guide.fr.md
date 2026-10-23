@@ -428,6 +428,8 @@ aussi des filtres **Rôle** et **Produit / module** si vous voulez les combiner 
 
 Allez dans **Utilisateurs** et ouvrez un apprenant. L’onglet **Leçons terminées** liste toutes les leçons qu’il a terminées. Le **Tableau de bord** montre l’activité générale de tous les apprenants.
 
+La même page liste les **Badges** de l’apprenant, avec la date de chacun : première leçon, premier certificat, tous les cours d’un produit terminés et sans faute (un quiz final réussi du premier coup sans aucune erreur). Ils sont attribués automatiquement et ne peuvent être ni modifiés ni retirés. L’apprenant voit les siens sur son profil ; aucun autre apprenant ne les voit.
+
 ### Ce que les apprenants pensent d’un cours
 
 Ouvrez **Résultats → Avis des apprenants** pour lire les avis de tous les cours

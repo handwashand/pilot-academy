@@ -420,6 +420,51 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-23 — Badges (**schema change**)
+
+The owner chose four milestones: first lesson, first certificate, every course
+of a product done, and a perfect score (first final-quiz attempt on a course,
+passed at 100%). **Visibility was assumed private**: the student's own profile
+and the admin's user page, nothing public, no leaderboard. Say so if the owner
+wants otherwise.
+
+One table, `user_badges` (`2026_10_23_000001`, so **the deploy must run
+`php8.4 artisan migrate --force`**): user, badge, subject, awarded_at, unique
+on all three. `subject` is `''` for the once-only badges, `product:ID` or
+`course:ID` otherwise. It is a non-null string because PostgreSQL treats NULLs
+as distinct in a unique index, so a nullable column would allow duplicates.
+
+`App\Actions\AwardBadges` is the only place badges are given. It reads only
+what is already recorded: `lesson_user`, unrevoked certificates, final
+`quiz_attempts`. "Product done" uses the home page's rule: every published
+course with published lessons, all of those finished, plus its certificate when
+the course has a final quiz. Badges are never taken away. The action is called
+after a lesson is completed, after a final quiz is submitted, and when the
+profile opens; that last call also catches up students who reached milestones
+before badges existed. There is no backfill migration, on purpose.
+
+Student profile: a **Your badges** card (empty state included), one column on
+a phone and two from `sm:`. Admin: a read-only **Badges** list on a learner's
+edit page (`TextEntry` in `UserForm`). Strings are in all six languages
+(`academy.badges.*`, `admin_people.users.badges/no_badges`). Learner guides (all
+six) have a new **Badges** section, admin guides (all six) a paragraph under
+"Who finished a course", and the changelog has a 2.2.0 Added entry. The
+privacy policy was not changed: badges are derived from data already held and
+go to no third party.
+
+**Verified (run):** full suite 625 passed (8885 assertions), then the badge,
+profile, dashboard, Help, changelog and guide tests again after the docs and
+ordering changes (66 + 52 passed). The 13 tests in `BadgesTest` cover each
+rule, idempotence, a product with an unfinished lesson, a certificate required
+when there is a final quiz, a perfect score that only counts on the first
+attempt, the profile catch-up and empty state, French wording, and the admin
+page. Pint is clean. Migrated on local PostgreSQL. In Chrome against PostgreSQL
+with a temporary learner (deleted afterwards), `/my/profile` returned 200 at
+1280px and 375px with no sideways scroll. That check found badges given in the
+same second listed out of order, so `User::badges()` now also sorts by `id`.
+**Not seen in a browser:** the admin user page (tested only) and the
+product badge (the local course has no product).
+
 ### 2026-10-23 — Owner's production list: translate, import, home page, sizes
 
 Seven items from the owner's production notes, built after asking first.

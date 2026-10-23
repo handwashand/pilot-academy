@@ -71,6 +71,17 @@ Certificados não expiram.
 
 Quando você termina um curso, o cartão **Curso concluído** pergunta se ele foi útil. Você pode responder com positivo ou negativo e deixar um comentário. Somente a equipe da academia lê isso.
 
+## Insígnias
+
+Seu perfil (menu da conta → **Perfil**) mostra as insígnias que você conquistou. São quatro:
+
+- **Primeira aula** — você concluiu sua primeira aula.
+- **Primeiro certificado** — você conquistou seu primeiro certificado.
+- **Todos os cursos concluídos** — você concluiu todos os cursos de um produto. Com teste final, um curso conta quando você tem o certificado dele.
+- **Nota máxima** — você passou no teste final de um curso na primeira tentativa, acertando todas as respostas. Uma tentativa perfeita depois não conta.
+
+As insígnias são dadas quando você está conectado, e você as mantém. Só você e o administrador da sua academia as veem.
+
 ## Se algo não funcionar
 
 **Meu progresso desapareceu.** Você provavelmente não estava conectado ou está em outro navegador. Entre para manter o progresso.

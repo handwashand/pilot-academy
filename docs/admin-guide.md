@@ -432,6 +432,12 @@ with a partner.
 
 Go to **Users** and open a student. The **Completed lessons** tab lists every lesson they finished. The **Dashboard** shows overall activity across all students.
 
+The same page lists the student's **Badges**, with the date each was earned:
+first lesson, first certificate, all courses done for a product, and a perfect
+score (a final quiz passed on the first try with every answer right). Badges are
+given automatically and cannot be edited or taken away. Students see their own
+on their profile; no other student sees them.
+
 ### What students thought of a course
 
 Open **Results → Student feedback** to read every course's feedback in one list

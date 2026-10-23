@@ -71,6 +71,17 @@ Les certificats n'expirent pas.
 
 Lorsque vous terminez un cours, la carte **Cours terminé** vous demande s'il a été utile. Vous pouvez répondre par pouce levé ou baissé et ajouter un commentaire. Seule l'équipe de l'académie le lit.
 
+## Badges
+
+Votre profil (menu du compte → **Profil**) montre les badges que vous avez obtenus. Il y en a quatre :
+
+- **Première leçon** — vous avez terminé votre première leçon.
+- **Premier certificat** — vous avez obtenu votre premier certificat.
+- **Tous les cours terminés** — vous avez terminé tous les cours d'un produit. Avec un quiz final, un cours compte une fois son certificat obtenu.
+- **Sans faute** — vous avez réussi le quiz final d'un cours du premier coup, sans aucune erreur. Une tentative parfaite plus tard ne compte pas.
+
+Les badges sont attribués lorsque vous êtes connecté, et vous les gardez. Seuls vous et votre administrateur de l'académie les voyez.
+
 ## Si quelque chose ne fonctionne pas
 
 **Ma progression a disparu.** Vous n'étiez probablement pas connecté, ou vous utilisez un autre navigateur. Connectez-vous pour la conserver.

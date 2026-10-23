@@ -420,6 +420,8 @@ também filtros de **Função** e **Produto / módulo**, caso queira combiná-lo
 
 Vá a **Usuários** e abra um aluno. A aba **Aulas concluídas** lista todas as aulas que ele concluiu. O **Painel de Controlo** mostra a atividade geral de todos os alunos.
 
+A mesma página lista as **Insígnias** do aluno, com a data de cada uma: primeira aula, primeiro certificado, todos os cursos de um produto concluídos e nota máxima (um teste final aprovado na primeira tentativa, acertando todas as respostas). São dadas automaticamente e não podem ser editadas nem retiradas. O aluno vê as suas no perfil; nenhum outro aluno as vê.
+
 ### O que os alunos acharam de um curso
 
 Abra **Resultados → Avaliações dos alunos** para ler as avaliações de todos os cursos

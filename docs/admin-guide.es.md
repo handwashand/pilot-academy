@@ -425,6 +425,8 @@ hay filtros de **Rol** y **Producto / módulo** si quieres combinarlos con un so
 
 Ve a **Usuarios** y abre un estudiante. La pestaña **Lecciones completadas** muestra todas las lecciones que terminó. El **Escritorio** muestra la actividad general de todos los estudiantes.
 
+La misma página muestra las **Insignias** del estudiante, con la fecha de cada una: primera lección, primer certificado, todos los cursos de un producto terminados y puntuación perfecta (un examen final aprobado al primer intento con todas las respuestas correctas). Se dan automáticamente y no se pueden editar ni retirar. El estudiante ve las suyas en su perfil; ningún otro estudiante las ve.
+
 ### Qué opinan los estudiantes de un curso
 
 Abre **Resultados → Opiniones de estudiantes** para leer las opiniones de todos los
