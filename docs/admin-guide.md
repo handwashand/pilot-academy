@@ -721,7 +721,10 @@ panel and from the student site at once, and can be brought back.
 - **A deleted course** keeps its students' certificates, attempts and feedback.
   Its lessons are not deleted: one that is also in another course stays there,
   and the rest become **Not in any course** under **Content → Lessons**.
-- **A deleted lesson** takes its questions out of every final quiz.
+- **A deleted lesson** takes its questions out of every final quiz, and keeps
+  its web address: a new lesson in the same course cannot use it. The lesson
+  form says which lesson holds it; restore that one, or choose another address.
+  A lesson taken out of a course holds its address there in the same way.
 - **A deleted product or image** is cleared from the courses and lessons that
   used it, exactly as before.
 - **Users and partners are different: deleting one is final.** Nothing of them

@@ -734,6 +734,8 @@ Il disparaît aussitôt du panneau et du site, et peut être récupéré.
   définitive.** Rien n’est conservé, pour qu’une personne qui demande l’effacement
   de ses données les voie effacées.
 
+**Une leçon supprimée garde son adresse web** : une nouvelle leçon du même cours ne peut pas l’utiliser. Le formulaire de la leçon indique quelle leçon l’occupe ; restaurez-la ou choisissez une autre adresse. Une leçon retirée d’un cours y garde son adresse de la même façon.
+
 **Pour restaurer quelque chose**, ouvrez **Paramètres → Général → Corbeille**,
 choisissez le type de contenu dans la rangée d’onglets et appuyez sur **Restaurer**
 sur sa ligne. Un cours restauré récupère ses leçons ; une leçon restaurée récupère

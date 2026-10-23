@@ -6,6 +6,8 @@
  */
 
 return [
+    'error_title' => 'Something went wrong',
+    'error_body' => 'That could not be completed. Please try again; if it keeps happening, tell your administrator.',
     'title' => 'Title',
     'slug' => 'Slug',
     'status' => 'Status',

@@ -706,6 +706,8 @@ hora do painel e do site, e pode ser trazido de volta.
 - **Usuários e parceiros são diferentes: excluí-los é definitivo.** Nada deles é
   guardado, para que quem pede a exclusão dos próprios dados os tenha excluídos.
 
+**Uma aula excluída mantém o seu endereço web**: uma aula nova no mesmo curso não pode usá-lo. O formulário da aula diz qual aula o ocupa; restaure-a ou escolha outro endereço. Uma aula retirada de um curso mantém ali o seu endereço da mesma forma.
+
 **Para restaurar algo**, abra **Configurações → Geral → Lixeira**, escolha o tipo de
 conteúdo na fileira de abas e pressione **Restaurar** na linha dele. Um curso
 restaurado traz as aulas de volta; uma aula restaurada traz as perguntas de volta.

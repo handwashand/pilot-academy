@@ -3,6 +3,8 @@
 // Russian. Keys mirror lang/en/admin_common.php — see the note there.
 
 return [
+    'error_title' => 'Что-то пошло не так',
+    'error_body' => 'Не удалось выполнить действие. Попробуйте ещё раз; если ошибка повторяется, сообщите администратору.',
     'title' => 'Название',
     'slug' => 'Адрес (slug)',
     'status' => 'Статус',

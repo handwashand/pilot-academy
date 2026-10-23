@@ -420,6 +420,47 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-23 — Production: lesson save hit `lessons_course_id_slug_unique`; debug page on
+
+**What happened.** On production, saving a new lesson into course 5 failed with
+`UniqueConstraintViolationException` on `(course_id, slug)`. The form's slug
+check only looked at live lessons linked to the chosen courses through
+`course_lesson`. The index sits on `lessons.course_id`, the home course, and
+counts rows the course no longer shows: soft-deleted lessons (Recycle bin, since
+2026-10-14) and lessons taken out of their last course, which keep their home
+(`CourseLesson::deleted` re-homes only when there is a next course). The suite
+reproduced it on SQLite in five ways before the fix.
+
+**Fix, no schema change.** `Lesson::holdingSlugAtHome($courseId, $slug,
+$ignoreId)` asks the same question the index does (`withTrashed`). It is used by:
+- the lesson form's slug rule, for the home the save will give the lesson;
+  `CreateLesson`/`EditLesson` pick that home, and the rule repeats their rule.
+  The message names the lesson (`slug_held_deleted` / `slug_held_removed`).
+- the **Add existing lesson** guard, for a lesson in no live course (it moves
+  its home on attach).
+- both re-homing hooks in `CourseLesson`, which now keep the old home rather
+  than collide.
+
+Changing the index to ignore deleted rows was considered and not done. A
+removed-but-live lesson still holds its home, and a schema change in production
+needs its own decision.
+
+**The error page showed SQL and data, so production has `APP_DEBUG=true`.**
+That needs to change on the server; code cannot do it. `config/app.php`
+defaults to false and `DEPLOY.md` already said false, so the server's `.env`
+has drifted. The panel now registers its own error notification
+(`registerErrorNotification`, `admin_common.error_title/error_body`, six
+languages). Filament injects it only when debug is off, so it replaces the
+generic "Error while loading page" there and changes nothing while debug is on.
+DEPLOY.md now says why.
+
+**Verified (run):** `LessonSlugClashTest` (6, five of them failing with the
+production error before the fix); course-lesson, shared-lesson, recycle-bin and
+translation suites (64 + 17 passed); Pint clean. The full suite result is in
+the final report. **Not done:** the notice was not seen in a browser with debug
+off; the test reads the script Filament injects and the panel's wording in
+Russian.
+
 ### 2026-10-23 — Badges (**schema change**)
 
 The owner chose four milestones: first lesson, first certificate, every course

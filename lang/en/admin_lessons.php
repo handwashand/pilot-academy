@@ -13,6 +13,8 @@ return [
         'order_help' => 'Where it goes in its first course. Drag lessons on a course’s Lessons tab to order each course.',
         'slug_help' => 'Part of the lesson’s web address. No two lessons in the same course may share it.',
         'slug_taken' => 'Another lesson in one of these courses already uses this address. Choose a different one.',
+        'slug_held_deleted' => 'A deleted lesson in this course, “:title”, still uses this address. Restore it from the Recycle bin, or choose a different address.',
+        'slug_held_removed' => '“:title” was taken out of this course but still uses this address. Change that lesson’s address, or choose a different one.',
         'summary' => 'Short summary',
         'cover' => 'Cover image',
         'cover_help' => 'Pick an image from the library, or add a new one — uploaded images are reusable across lessons. Leave empty for a placeholder.',

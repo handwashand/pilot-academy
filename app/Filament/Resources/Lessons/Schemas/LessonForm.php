@@ -417,6 +417,21 @@ class LessonForm
 
                                         if ($taken) {
                                             $fail(__t('admin_lessons.form.slug_taken'));
+
+                                            return;
+                                        }
+
+                                        // The home this save gives the lesson, as CreateLesson and
+                                        // EditLesson decide it. The database allows one slug per
+                                        // home, hidden lessons included.
+                                        $courseIds = array_values(array_map('intval', (array) $get('course_ids')));
+                                        $home = $record && ($courseIds === [] || in_array((int) $record->course_id, $courseIds, true))
+                                            ? $record->course_id
+                                            : ($courseIds[0] ?? null);
+                                        $holder = Lesson::holdingSlugAtHome($home, $value, $record?->getKey());
+
+                                        if ($holder) {
+                                            $fail(__t($holder->trashed() ? 'admin_lessons.form.slug_held_deleted' : 'admin_lessons.form.slug_held_removed', ['title' => $holder->title]));
                                         }
                                     },
                                 ]),

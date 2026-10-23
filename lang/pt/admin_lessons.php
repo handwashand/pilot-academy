@@ -10,6 +10,8 @@ return [
         'order_help' => 'A posição no primeiro curso. Arraste as aulas na aba Aulas de cada curso para ordená-lo.',
         'slug_help' => 'Parte do endereço web da aula. Duas aulas do mesmo curso não podem compartilhá-lo.',
         'slug_taken' => 'Outra aula em um desses cursos já usa este endereço. Escolha outro.',
+        'slug_held_deleted' => 'Uma aula excluída deste curso, “:title”, ainda usa este endereço. Restaure-a pela Lixeira ou escolha outro endereço.',
+        'slug_held_removed' => '“:title” foi retirada deste curso, mas ainda usa este endereço. Altere o endereço dessa aula ou escolha outro.',
         'summary' => 'Resumo curto',
         'cover' => 'Imagem de capa',
         'cover_help' => 'Escolha uma imagem da biblioteca ou adicione uma nova — imagens enviadas podem ser reutilizadas em outras aulas. Deixe vazio para usar uma imagem padrão.',

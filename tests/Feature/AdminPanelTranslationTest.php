@@ -13,6 +13,7 @@ use Database\Seeders\LanguageSeeder;
 use Filament\Actions\AttachAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\File;
@@ -60,6 +61,20 @@ class AdminPanelTranslationTest extends TestCase
             ->assertSee('Уроки')
             ->assertSee('Сертификаты')
             ->assertSee('Состояние контента');
+    }
+
+    public function test_a_failed_action_in_production_shows_a_short_notice_not_the_error(): void
+    {
+        config(['app.debug' => false]);
+
+        $this->actingAs($this->admin('en'))
+            ->get('/admin/courses')
+            ->assertOk()
+            ->assertSee('Something went wrong')
+            ->assertDontSee('Error while loading page');
+
+        App::setLocale('ru');
+        $this->assertSame('Что-то пошло не так', Filament::getPanel('admin')->getErrorNotifications()['']['title']);
     }
 
     public function test_an_english_admin_keeps_the_english_menu(): void

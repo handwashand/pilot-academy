@@ -35,7 +35,9 @@ class CourseLesson extends Pivot
                 ->exists();
             $lesson = $elsewhere ? null : Lesson::query()->find($link->lesson_id);
 
-            if ($lesson && (int) $lesson->course_id !== (int) $link->course_id) {
+            // Not where a hidden lesson already holds its slug: the database refuses that.
+            if ($lesson && (int) $lesson->course_id !== (int) $link->course_id
+                && ! Lesson::holdingSlugAtHome($link->course_id, $lesson->slug, $lesson->getKey())) {
                 $lesson->course_id = $link->course_id;
                 $lesson->saveQuietly();
             }
@@ -52,7 +54,9 @@ class CourseLesson extends Pivot
                 ->orderBy('created_at')
                 ->value('course_id');
 
-            if ($lesson && $next && (int) $lesson->course_id === (int) $link->course_id) {
+            // If the next course's slug is held by a hidden lesson, it keeps its old home.
+            if ($lesson && $next && (int) $lesson->course_id === (int) $link->course_id
+                && ! Lesson::holdingSlugAtHome($next, $lesson->slug, $lesson->getKey())) {
                 $lesson->course_id = $next;
                 $lesson->saveQuietly();
             }

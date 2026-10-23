@@ -244,6 +244,14 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Fixed
 
+- **Saving a lesson no longer fails with a database error when its address is
+  already held by a hidden lesson.** A deleted lesson, or one taken out of the
+  course, still holds its web address in that course. The lesson form now names
+  that lesson and says to restore it or choose another address. **Add existing
+  lesson** checks the same thing.
+- **A failed action shows "Something went wrong" instead of an error page**, in
+  the reader's language, on a server set up for production (`APP_DEBUG=false`).
+  The details go to the server's log, not the screen.
 - **Older lessons with an uploaded video save again.** A lesson made before
   the Videos list, with an uploaded file, showed an error page on **Save**.
   It now saves, and its video is kept in the list.

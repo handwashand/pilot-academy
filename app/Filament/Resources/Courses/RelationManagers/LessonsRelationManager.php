@@ -142,9 +142,15 @@ class LessonsRelationManager extends RelationManager
                     // The student URL finds a lesson by its slug inside the
                     // course, so two lessons with one slug cannot share a course.
                     ->before(function (array $data, AttachAction $action): void {
-                        $clashes = Lesson::query()
-                            ->whereIn('id', (array) ($data['recordId'] ?? []))
-                            ->whereIn('slug', $this->getOwnerRecord()->lessons()->pluck('lessons.slug'))
+                        $course = $this->getOwnerRecord();
+                        $adding = Lesson::query()->whereIn('id', (array) ($data['recordId'] ?? []))->withCount('courses')->get();
+                        $taken = $course->lessons()->pluck('lessons.slug')->all();
+
+                        // A lesson in no live course moves its home here (CourseLesson::created),
+                        // so a hidden lesson holding its slug at this home blocks it too.
+                        $clashes = $adding
+                            ->filter(fn (Lesson $lesson): bool => in_array($lesson->slug, $taken, true)
+                                || ($lesson->courses_count === 0 && Lesson::holdingSlugAtHome($course->getKey(), $lesson->slug, $lesson->getKey())))
                             ->pluck('title');
 
                         if ($clashes->isNotEmpty()) {

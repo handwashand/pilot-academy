@@ -92,6 +92,13 @@ class AdminPanelProvider extends PanelProvider
             // The bell, top right. First use: telling a course's owner when a
             // change leaves it broken for students (App\Actions\NotifyContentOwners).
             ->databaseNotifications()
+            // What a failed action shows when APP_DEBUG is off (production): a
+            // short notice instead of the error page. With debug on, Filament
+            // shows the full error, SQL included — never in production.
+            ->registerErrorNotification(
+                fn (): string => __t('admin_common.error_title'),
+                fn (): string => __t('admin_common.error_body'),
+            )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             // The Settings cluster: Profile, Integrations, Mail, Translations

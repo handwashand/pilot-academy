@@ -3,6 +3,8 @@
 // French. Keys mirror lang/en/admin_common.php — see the note there.
 
 return [
+    'error_title' => 'Une erreur est survenue',
+    'error_body' => 'L’action n’a pas pu aboutir. Réessayez ; si cela se reproduit, prévenez votre administrateur.',
     'title' => 'Titre',
     'slug' => 'Slug',
     'status' => 'Statut',

@@ -10,6 +10,8 @@ return [
         'order_help' => 'Sa place dans son premier cours. Faites glisser les leçons dans l’onglet Leçons d’un cours pour ordonner chaque cours.',
         'slug_help' => 'Partie de l’adresse web de la leçon. Deux leçons d’un même cours ne peuvent pas la partager.',
         'slug_taken' => 'Une autre leçon de l’un de ces cours utilise déjà cette adresse. Choisissez-en une autre.',
+        'slug_held_deleted' => 'Une leçon supprimée de ce cours, « :title », utilise encore cette adresse. Restaurez-la depuis la Corbeille ou choisissez une autre adresse.',
+        'slug_held_removed' => '« :title » a été retirée de ce cours mais utilise encore cette adresse. Changez l’adresse de cette leçon ou choisissez-en une autre.',
         'summary' => 'Résumé court',
         'cover' => 'Image de couverture',
         'cover_help' => 'Choisissez une image de la bibliothèque ou ajoutez-en une — les images importées sont réutilisables d’une leçon à l’autre. Laissez vide pour une image par défaut.',

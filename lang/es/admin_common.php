@@ -3,6 +3,8 @@
 // Spanish. Keys mirror lang/en/admin_common.php — see the note there.
 
 return [
+    'error_title' => 'Algo salió mal',
+    'error_body' => 'No se pudo completar. Inténtalo de nuevo; si sigue ocurriendo, avisa a tu administrador.',
     'title' => 'Título',
     'slug' => 'Slug',
     'status' => 'Estado',

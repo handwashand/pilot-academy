@@ -717,6 +717,8 @@ no lo borra. Desaparece del panel y del sitio al momento y se puede recuperar.
 - **Los usuarios y los socios son distintos: eliminarlos es definitivo.** No se
   conserva nada de ellos, para que a quien pide que se borren sus datos se le borren.
 
+**Una lección eliminada conserva su dirección web**: una lección nueva del mismo curso no puede usarla. El formulario de la lección indica qué lección la ocupa; restáurala o elige otra dirección. Una lección quitada de un curso ocupa allí su dirección del mismo modo.
+
 **Para restaurar algo**, abre **Ajustes → General → Papelera**, elige el tipo de
 contenido en la fila de pestañas y pulsa **Restaurar** en su línea. Un curso
 restaurado recupera sus lecciones; una lección restaurada recupera sus preguntas.

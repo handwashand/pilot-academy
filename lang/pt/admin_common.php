@@ -3,6 +3,8 @@
 // Portuguese (Brazil). Keys mirror lang/en/admin_common.php — see the note there.
 
 return [
+    'error_title' => 'Algo deu errado',
+    'error_body' => 'Não foi possível concluir. Tente novamente; se continuar acontecendo, avise o seu administrador.',
     'title' => 'Título',
     'slug' => 'Slug',
     'status' => 'Status',

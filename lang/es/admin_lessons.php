@@ -10,6 +10,8 @@ return [
         'order_help' => 'Su posición en su primer curso. Arrastra las lecciones en la pestaña Lecciones de cada curso para ordenarlo.',
         'slug_help' => 'Parte de la dirección web de la lección. Dos lecciones del mismo curso no pueden compartirla.',
         'slug_taken' => 'Otra lección de uno de estos cursos ya usa esta dirección. Elige otra.',
+        'slug_held_deleted' => 'Una lección eliminada de este curso, «:title», todavía usa esta dirección. Restáurala desde la Papelera o elige otra dirección.',
+        'slug_held_removed' => '«:title» se quitó de este curso pero todavía usa esta dirección. Cambia la dirección de esa lección o elige otra.',
         'summary' => 'Resumen breve',
         'cover' => 'Imagen de portada',
         'cover_help' => 'Elige una imagen de la biblioteca o añade una nueva; las imágenes subidas se pueden reutilizar en otras lecciones. Déjalo vacío para usar una imagen genérica.',

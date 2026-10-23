@@ -39,7 +39,11 @@ php artisan key:generate
 #
 # In .env set:
 #   APP_ENV=production
-#   APP_DEBUG=false
+#   APP_DEBUG=false          # never true in production: a failed save then shows
+#                            # the whole error page, SQL and data included, to
+#                            # whoever pressed the button. With false they get a
+#                            # short "Something went wrong" notice and the detail
+#                            # goes to storage/logs/laravel.log.
 #   APP_URL=https://<your-domain>
 #   DB_CONNECTION=pgsql
 #   DB_HOST=127.0.0.1

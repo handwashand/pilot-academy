@@ -80,6 +80,26 @@ class Lesson extends Model
             ->whereHas('courses', fn (Builder $courses): Builder => $courses->published());
     }
 
+    /**
+     * The lesson already holding this slug at this home course, if any. The
+     * database allows one per home (`lessons_course_id_slug_unique`), and it
+     * counts lessons a course no longer shows: one in the Recycle bin, and one
+     * taken out of the course it still calls home. Ask before giving a lesson
+     * a home or a slug, or the save fails with a database error.
+     */
+    public static function holdingSlugAtHome(mixed $courseId, ?string $slug, mixed $ignoreId = null): ?self
+    {
+        if (! $courseId || blank($slug)) {
+            return null;
+        }
+
+        return static::withTrashed()
+            ->where('course_id', $courseId)
+            ->where('slug', $slug)
+            ->when($ignoreId, fn (Builder $query) => $query->whereKeyNot($ignoreId))
+            ->first();
+    }
+
     /** Tell the owners of every course this lesson is in to look again. */
     public static function notifyOwnersOf(mixed $lessonId): void
     {
