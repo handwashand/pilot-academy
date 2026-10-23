@@ -6,6 +6,8 @@ use App\Actions\ReadLessonMarkdown;
 use App\Filament\Resources\Courses\Schemas\CourseForm;
 use App\Models\Course;
 use App\Models\Lesson;
+use App\Models\Option;
+use App\Models\Question;
 use App\Services\Translator;
 use Closure;
 use Filament\Actions\Action;
@@ -267,8 +269,16 @@ class LessonForm
                                 ->minValue(1)
                                 ->helperText(__t('admin_lessons.form.max_attempts_help')),
 
+                            // Shown and saved in the admin's panel language, like the
+                            // rest of the page (EditsInReadingLanguage). Adding,
+                            // removing or reordering questions is done in the original.
                             Repeater::make('questions')
                                 ->relationship()
+                                ->mutateRelationshipDataBeforeFillUsing(fn (array $data): array => Question::readingRow($data))
+                                ->mutateRelationshipDataBeforeSaveUsing(fn (array $data, Question $record): array => $record->saveReadingValues($data))
+                                ->addable(fn ($record): bool => ! Lesson::showsTranslation($record))
+                                ->deletable(fn ($record): bool => ! Lesson::showsTranslation($record))
+                                ->reorderable(fn ($record): bool => ! Lesson::showsTranslation($record))
                                 ->orderColumn('sort_order')
                                 ->itemLabel(fn (array $state): ?string => $state['prompt'] ?? __t('admin_lessons.form.new_question'))
                                 ->collapsible()
@@ -288,6 +298,11 @@ class LessonForm
                                         ->schema([
                                             Repeater::make('options')
                                                 ->relationship()
+                                                ->mutateRelationshipDataBeforeFillUsing(fn (array $data): array => Option::readingRow($data))
+                                                ->mutateRelationshipDataBeforeSaveUsing(fn (array $data, Option $record): array => $record->saveReadingValues($data))
+                                                ->addable(fn ($record): bool => ! Lesson::showsTranslation($record))
+                                                ->deletable(fn ($record): bool => ! Lesson::showsTranslation($record))
+                                                ->reorderable(fn ($record): bool => ! Lesson::showsTranslation($record))
                                                 ->orderColumn('sort_order')
                                                 ->defaultItems(2)
                                                 ->minItems(2)

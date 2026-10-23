@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Courses\RelationManagers;
 
 use App\Actions\ImportFinalQuizQuestions;
 use App\Filament\Actions\TranslateQuestionsAction;
+use App\Models\Option;
 use App\Models\Question;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -64,6 +65,11 @@ class FinalQuestionsRelationManager extends RelationManager
 
             Repeater::make('options')
                 ->relationship()
+                ->mutateRelationshipDataBeforeFillUsing(fn (array $data): array => Option::readingRow($data))
+                ->mutateRelationshipDataBeforeSaveUsing(fn (array $data, Option $record): array => $record->saveReadingValues($data))
+                ->addable(fn ($record): bool => ! Question::showsTranslation($record))
+                ->deletable(fn ($record): bool => ! Question::showsTranslation($record))
+                ->reorderable(fn ($record): bool => ! Question::showsTranslation($record))
                 ->orderColumn('sort_order')
                 ->label(__t('admin_common.answer_options'))
                 ->helperText(__t('admin_courses.final_tab.options_help'))
@@ -91,11 +97,13 @@ class FinalQuestionsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('prompt')
             ->columns([
+                // In the admin's panel language where translated.
                 TextColumn::make('prompt')
                     ->label(__t('admin_common.question'))
+                    ->formatStateUsing(fn (Question $record): string => (string) $record->translated('prompt'))
                     ->wrap()
                     ->limit(80)
-                    ->searchable(),
+                    ->searchable(query: fn (Builder $query, string $search): Builder => $query->whereTranslatedLike('prompt', $search)),
 
                 TextColumn::make('type')
                     ->label(__t('admin_common.type'))
@@ -206,7 +214,11 @@ class FinalQuestionsRelationManager extends RelationManager
                     ->iconButton(),
             ])
             ->recordActions([
-                EditAction::make(),
+                // In the admin's panel language, saved as that translation
+                // (HasContentTranslations::saveReadingValues), like the edit pages.
+                EditAction::make()
+                    ->mutateRecordDataUsing(fn (array $data, Question $record): array => $record->readingLanguage() ? [...$data, ...$record->readingValues()] : $data)
+                    ->mutateDataUsing(fn (array $data, Question $record): array => $record->saveReadingValues($data)),
                 DetachAction::make()
                     ->label(__t('admin_courses.final_tab.detach')),
                 DeleteAction::make()

@@ -8,6 +8,9 @@
 return [
     'error_title' => 'Something went wrong',
     'error_body' => 'That could not be completed. Please try again; if it keeps happening, tell your administrator.',
+    'reading' => [
+        'notice' => 'Shown in :language, as students reading in :language see it. Saving changes the :language translation; switch the panel to :original to see or edit the original.',
+    ],
     'title' => 'Title',
     'slug' => 'Slug',
     'status' => 'Status',

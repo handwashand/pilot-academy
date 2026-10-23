@@ -27,6 +27,7 @@ class LessonsTable
     {
         return $table
             ->defaultSort('sort_order')
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->with(['contentTranslations', 'courses.contentTranslations']))
             ->columns([
                 ImageColumn::make('cover')
                     ->label(__t('admin_lessons.table.cover'))
@@ -34,8 +35,10 @@ class LessonsTable
                     ->height(36)
                     ->state(fn ($record) => $record->media_item_id ? $record->mediaItem?->path : $record->image_path),
 
+                // Titles in the admin's panel language where translated.
                 TextColumn::make('courses.title')
                     ->label(__t('admin_common.courses'))
+                    ->state(fn (Lesson $record): array => $record->courses->map(fn ($course): string => (string) $course->translated('title'))->all())
                     ->badge()
                     ->placeholder(__t('admin_lessons.table.no_course')),
 
@@ -45,7 +48,8 @@ class LessonsTable
 
                 TextColumn::make('title')
                     ->label(__t('admin_common.title'))
-                    ->searchable()
+                    ->formatStateUsing(fn (Lesson $record): string => (string) $record->translated('title'))
+                    ->searchable(query: fn (Builder $query, string $search): Builder => $query->whereTranslatedLike('title', $search))
                     ->sortable()
                     ->weight('bold'),
 

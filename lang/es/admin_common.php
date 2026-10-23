@@ -5,6 +5,9 @@
 return [
     'error_title' => 'Algo salió mal',
     'error_body' => 'No se pudo completar. Inténtalo de nuevo; si sigue ocurriendo, avisa a tu administrador.',
+    'reading' => [
+        'notice' => 'Se muestra en :language, como lo ven los estudiantes que leen en :language. Al guardar cambias la traducción al :language; cambia el panel a :original para ver o editar el original.',
+    ],
     'title' => 'Título',
     'slug' => 'Slug',
     'status' => 'Estado',

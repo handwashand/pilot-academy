@@ -25,10 +25,13 @@ class CoursesTable
         return $table
             ->defaultSort('sort_order')
             ->reorderable('sort_order')
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->with('contentTranslations'))
             ->columns([
+                // In the admin's panel language where translated, as students reading it see it.
                 TextColumn::make('title')
                     ->label(__t('admin_common.title'))
-                    ->searchable()
+                    ->formatStateUsing(fn (Course $record): string => (string) $record->translated('title'))
+                    ->searchable(query: fn (Builder $query, string $search): Builder => $query->whereTranslatedLike('title', $search))
                     ->sortable()
                     ->weight('bold'),
 

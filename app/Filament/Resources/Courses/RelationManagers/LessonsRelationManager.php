@@ -45,10 +45,12 @@ class LessonsRelationManager extends RelationManager
             // one and last in another.
             ->reorderable('course_lesson.sort_order')
             ->columns([
+                // In the admin's panel language where translated.
                 TextColumn::make('title')
                     ->label(__t('admin_common.lesson'))
+                    ->formatStateUsing(fn (Lesson $record): string => (string) $record->translated('title'))
                     ->wrap()
-                    ->searchable()
+                    ->searchable(query: fn (Builder $query, string $search): Builder => $query->whereTranslatedLike('title', $search))
                     ->description(fn (Lesson $record): ?string => $this->alsoIn($record)),
 
                 TextColumn::make('status')

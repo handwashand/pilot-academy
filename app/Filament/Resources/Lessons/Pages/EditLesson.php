@@ -6,6 +6,7 @@ use App\Actions\FindContentProblems;
 use App\Filament\Actions\TranslateContentAction;
 use App\Filament\Actions\TranslateQuestionsAction;
 use App\Filament\Actions\TranslateVideoWithDescriptAction;
+use App\Filament\Resources\Concerns\EditsInReadingLanguage;
 use App\Filament\Resources\Lessons\LessonResource;
 use App\Models\Course;
 use Filament\Actions\DeleteAction;
@@ -15,12 +16,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class EditLesson extends EditRecord
 {
+    use EditsInReadingLanguage;
+
     protected static string $resource = LessonResource::class;
 
     /** What students hit in this lesson right now, where it gets fixed. */
     public function getSubheading(): string|Htmlable|null
     {
-        return FindContentProblems::summary(app(FindContentProblems::class)->forLesson($this->getRecord()));
+        return $this->withReadingNotice(FindContentProblems::summary(app(FindContentProblems::class)->forLesson($this->getRecord())));
     }
 
     protected function getHeaderActions(): array
@@ -49,7 +52,7 @@ class EditLesson extends EditRecord
             $data['video_sources'] = $this->getRecord()->videoEntries();
         }
 
-        return $data;
+        return $this->fillInReadingLanguage($data);
     }
 
     /**
