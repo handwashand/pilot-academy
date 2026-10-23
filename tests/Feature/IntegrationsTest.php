@@ -95,6 +95,24 @@ class IntegrationsTest extends TestCase
         $this->actingAs($this->admin())->get(Integrations::getUrl())->assertOk();
     }
 
+    public function test_each_card_says_whether_it_is_on_and_reads_env_for_descript(): void
+    {
+        config(['services.deepl.enabled' => false, 'services.deepl.key' => null]);
+        config(['services.descript.enabled' => true, 'services.descript.token' => 'from-env']);
+        AiProvider::for('chatgpt')->fill(['enabled' => true, 'api_key' => 'sk-on'])->save();
+        AiProvider::for('deepseek')->fill(['enabled' => false, 'api_key' => 'sk-off'])->save();
+
+        $page = Livewire::actingAs($this->admin())->test(Integrations::class)->html();
+
+        $status = fn (string $provider): string => preg_match('/'.$provider.'\s*<\/h3>.*?<p[^>]*fi-section-header-description[^>]*>\s*([^<]+?)\s*</s', $page, $m) ? $m[1] : '';
+
+        $this->assertSame('On', $status('ChatGPT'));
+        $this->assertSame('Off — token saved', $status('DeepSeek'));
+        $this->assertSame('Not connected', $status('DeepL'));
+        // Switched on in the server's .env, with nothing saved here: still on.
+        $this->assertSame('On', $status('Descript'));
+    }
+
     public function test_a_deepl_key_saved_here_is_used_on_the_host_its_key_belongs_to(): void
     {
         config(['services.deepl.enabled' => false, 'services.deepl.key' => null]);

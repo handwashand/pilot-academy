@@ -4,6 +4,8 @@ namespace App\Filament\Pages;
 
 use App\Filament\Clusters\Settings;
 use App\Models\AiProvider;
+use App\Services\DeepL\DeepLClient;
+use App\Services\Descript\DescriptClient;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -71,8 +73,9 @@ class Integrations extends Page
 
     public function getSubheading(): ?string
     {
-        // Said once for the page, rather than under every token box.
-        return __t('admin_integrations.subheading').' '.__t('admin_integrations.token_help');
+        // Said once for the page, rather than under every token box. Who may
+        // use what is said by each group below.
+        return __t('admin_integrations.token_help');
     }
 
     public function mount(): void
@@ -97,12 +100,41 @@ class Integrations extends Page
     public function form(Schema $schema): Schema
     {
         return $schema
-            // Small cards, two or three across, so the page stays tidy as integrations are added.
+            // Grouped by what they translate, each group headed by who may use
+            // it; the cards in a group sit in one even row.
             ->components([
-                Grid::make(['default' => 1, 'md' => 2, 'xl' => 3])
-                    ->schema(array_map(fn (string $provider): Section => $this->providerSection($provider), array_keys(AiProvider::PROVIDERS))),
+                $this->group('text', [AiProvider::DEEPL, AiProvider::CHATGPT, AiProvider::DEEPSEEK]),
+                $this->group('video', [AiProvider::DESCRIPT]),
             ])
             ->statePath('data');
+    }
+
+    /** @param  array<int, string>  $providers */
+    private function group(string $name, array $providers): Section
+    {
+        return Section::make(fn (): string => __t("admin_integrations.groups.{$name}"))
+            ->description(fn (): string => __t("admin_integrations.groups.{$name}_help"))
+            ->contained(false)
+            ->schema([
+                Grid::make(['default' => 1, 'md' => 2, 'xl' => 3])
+                    ->schema(array_map(fn (string $provider): Section => $this->providerSection($provider), $providers)),
+            ]);
+    }
+
+    /**
+     * Whether people can use the provider right now, read the way the buttons
+     * that use it decide: DeepL and Descript fall back to the server's .env
+     * when no token is saved here.
+     */
+    private function isOn(string $provider): bool
+    {
+        return match ($provider) {
+            AiProvider::DESCRIPT => app(DescriptClient::class)->enabled(),
+            AiProvider::DEEPL => ($saved = AiProvider::withToken(AiProvider::DEEPL))
+                ? (new DeepLClient($saved->deeplSettings()))->enabled()
+                : app(DeepLClient::class)->enabled(),
+            default => AiProvider::usable($provider) !== null,
+        };
     }
 
     public function content(Schema $schema): Schema
@@ -163,9 +195,20 @@ class Integrations extends Page
     {
         $label = AiProvider::PROVIDERS[$provider]['label'];
         $saved = AiProvider::withToken($provider) !== null;
+        $on = $this->isOn($provider);
 
         return Section::make($label)
+            // Its state at a glance, before reading any field.
+            ->icon($on ? Heroicon::CheckCircle : Heroicon::OutlinedMinusCircle)
+            ->iconColor($on ? 'success' : 'gray')
+            ->description(fn (): string => __t('admin_integrations.status.'.match (true) {
+                $on => 'on',
+                $saved => 'off',
+                default => 'not_connected',
+            }))
             ->compact()
+            // Cards in a row stay the same height whatever fields they carry.
+            ->extraAttributes(['class' => 'pa-fill-row'])
             ->statePath($provider)
             ->schema([
                 Toggle::make('enabled')

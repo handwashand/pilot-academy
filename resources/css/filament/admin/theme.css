@@ -151,13 +151,39 @@ html {
     font-size: 14px;           /* was 16px; px so the 90% root above leaves it alone */
 }
 
-/* Filament gives the group labels (Content, People, …) the same font-medium
-   weight as the item labels beneath them — only colour tells them apart, a
-   weak hierarchy signal. Bold sets them apart by weight too. */
+/*
+ * Hierarchy by contrast (owner's request, 2026-10-23). Filament draws group
+ * labels, items and the current page at much the same weight, and the item
+ * label's own text-sm put it at 12.6px — smaller than the headings. Three
+ * distinct levels instead:
+ *   - group labels (Content, People, …) are signposts: small, uppercase,
+ *     spaced, light grey;
+ *   - items are what you read: regular weight, darker, a size up;
+ *   - the current page is the one bold, coloured line.
+ * The colours are set in full here because this file's rules sit outside
+ * Filament's CSS layer and win over its own, active state included.
+ */
 .fi-sidebar-group-label {
-    font-size: 13px;
-    font-weight: 700;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--gray-500);
 }
+.dark .fi-sidebar-group-label { color: var(--gray-400); }
+
+.fi-sidebar-item-label {
+    font-size: 14px;           /* px so the 90% root above leaves it alone */
+    font-weight: 400;
+    color: var(--gray-700);
+}
+.dark .fi-sidebar-item-label { color: var(--gray-300); }
+
+.fi-sidebar-item.fi-active .fi-sidebar-item-label {
+    font-weight: 600;
+    color: var(--primary-600);
+}
+.dark .fi-sidebar-item.fi-active .fi-sidebar-item-label { color: var(--primary-400); }
 
 /* Icons shrink with the words, or they start to look like bullets. */
 .fi-sidebar-item-btn .fi-icon,
@@ -166,6 +192,18 @@ html {
 .fi-sidebar-group-btn > svg {
     width: 18px;               /* was 20px */
     height: 18px;
+}
+
+/*
+ * Cards in one grid row at one height (Settings → Integrations). A Section's
+ * extra class lands on Filament's wrapper div, which the grid already
+ * stretches; the visible card inside it has to be told to fill it.
+ */
+.pa-fill-row {
+    height: 100%;
+}
+.pa-fill-row > .fi-section {
+    height: 100%;
 }
 
 /*

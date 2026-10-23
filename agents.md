@@ -420,6 +420,47 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-23 — Integrations page arranged; sidebar hierarchy by contrast
+
+Owner's request: arrange the Integrations page well, and give the sidebar
+clear contrast, with some text bold and some light.
+
+**Measured first:**
+- Sidebar item labels were 500 weight at 12.6px. Filament's `text-sm` on the
+  label beat the 14px set on the row.
+- Group headings were 700 at 13px, and the current page was 500.
+- So there were three levels of near-equal weight.
+- On Integrations: the subheading was a five-line paragraph in large type,
+  DeepSeek sat alone on a second row, and the cards were of uneven height.
+
+**Sidebar (`theme.css`):**
+- Group labels: 11px, uppercase, 0.06em tracking, 600 weight, `--gray-500`
+  (`--gray-400` in dark mode).
+- Items: 14px, 400 weight, `--gray-700` (`--gray-300` in dark mode).
+- Active item: 600 weight, `--primary-600` (`--primary-400` in dark mode).
+- **The active colour has to be restated.** These rules sit outside Filament's
+  CSS layer and beat its own rules, active state included. Without it, the
+  current page would turn grey.
+
+**Integrations page:**
+- Two uncontained sections: **Text translation** (DeepL, ChatGPT, DeepSeek)
+  and **Video translation** (Descript). Each has a description saying who may
+  use it, replacing the old `subheading` key in all six languages.
+- The page subheading is just the token line.
+- Each card has a status icon and description: On, Off — token saved, or Not
+  connected. `isOn()` reads it the way the buttons decide, so DeepL and
+  Descript count `.env` as on when nothing is saved here.
+- Equal heights come from `.pa-fill-row`. A Section's extra class lands on
+  Filament's wrapper div, not the visible `.fi-section`, so `h-full` alone did
+  nothing; found by measuring the DOM.
+
+**Verified (run):** `IntegrationsTest` 18 passed, with a new test for the
+four statuses, including Descript switched on from `.env` only. Translation
+parity and the theme test passed. Pint clean. `npm run build`. Checked in
+Chrome at 1440px in light and dark: computed sidebar styles match the above,
+the three text cards are one even row (267px each), and there is no sideways
+scroll.
+
 ### 2026-10-23 — The admin panel shows and edits content in the panel language
 
 **Why.** The owner translated a course with DeepSeek in production, saved, and

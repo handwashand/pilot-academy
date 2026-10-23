@@ -757,6 +757,8 @@ n’est pas restauré ou retiré de la base de données.
 
 ## Traduire du texte avec DeepL, ChatGPT ou DeepSeek
 
+La page **Paramètres → Général → Intégrations** regroupe les services sous **Traduction de texte** (DeepL, ChatGPT, DeepSeek) et **Traduction vidéo** (Descript), et chaque carte indique son état : **Activé**, **Désactivé — jeton enregistré** ou **Non connecté**.
+
 Un administrateur ajoute le jeton d’API de chaque fournisseur dans **Paramètres →
 Intégrations** et l’active. Les administrateurs peuvent s’en servir tout de suite ;
 les autres ont besoin du droit correspondant (**Générer des brouillons de traduction

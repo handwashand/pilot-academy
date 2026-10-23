@@ -728,6 +728,8 @@ de dados.
 
 ## Traduzir texto com DeepL, ChatGPT ou DeepSeek
 
+A página **Configurações → Geral → Integrações** agrupa os serviços em **Tradução de texto** (DeepL, ChatGPT, DeepSeek) e **Tradução de vídeo** (Descript), e cada cartão mostra o estado: **Ativado**, **Desativado — token salvo** ou **Não conectado**.
+
 Um administrador adiciona o token de API de cada provedor em **Configurações →
 Integrações** e o ativa. Os administradores podem usá-los na hora; os demais
 precisam do direito correspondente (**Gerar rascunhos de tradução com o DeepL** ou

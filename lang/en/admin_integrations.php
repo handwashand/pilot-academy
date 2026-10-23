@@ -4,7 +4,17 @@
 // with the same key overrides a line.
 
 return [
-    'subheading' => 'Switch on an integration and add its API token. Admins can use the text translators straight away; anyone else, and Descript for everyone, needs the right ticked under People → Users → Extra permissions.',
+    'groups' => [
+        'text' => 'Text translation',
+        'text_help' => 'Drafts course, lesson and quiz translations in the Translate window. Admins can use these straight away; anyone else needs the right under People → Users → Extra permissions.',
+        'video' => 'Video translation',
+        'video_help' => 'Translates the speech in uploaded lesson videos. Everyone, admins included, needs the right under People → Users → Extra permissions.',
+    ],
+    'status' => [
+        'on' => 'On',
+        'off' => 'Off — token saved',
+        'not_connected' => 'Not connected',
+    ],
     'description' => [
         'descript' => 'Translates the speech in uploaded lesson videos (a lesson’s Translate video button). Each video is sent to Descript once and every translation is kept here. Uses your Descript media minutes and AI credits.',
         'deepl' => 'Drafts course and lesson text translations in the Translate window. The text of empty boxes is sent to DeepL only when someone presses the button and confirms. A key ending in :fx is a DeepL API Free key.',

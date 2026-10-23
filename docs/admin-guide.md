@@ -751,7 +751,9 @@ database.
 ## Translating text with DeepL, ChatGPT or DeepSeek
 
 An admin adds each provider's API token under **Settings → Integrations** and
-switches it on. Admins can use them straight away; anyone else needs the
+switches it on. The page groups them under **Text translation** (DeepL, ChatGPT,
+DeepSeek) and **Video translation** (Descript), and each card says where it
+stands: **On**, **Off — token saved**, or **Not connected**. Admins can use them straight away; anyone else needs the
 matching right (**Draft translations with DeepL**, or **… with ChatGPT or
 DeepSeek**, under **People → Users → Extra permissions**). They then see **Translate** on a lesson, case study, tutorial
 or webinar become a menu: **Translate by hand**, or **Translate with …** for each

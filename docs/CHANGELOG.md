@@ -200,6 +200,13 @@ Add a new entry here whenever something visible to admins or students changes.
 - **The admin panel is a size smaller.** Text, buttons, icons, boxes and
   spacing are all slightly smaller across the panel, so more fits on screen.
   The sidebar keeps its size.
+- **Settings → Integrations is easier to read.** The services are grouped
+  under **Text translation** and **Video translation**, each group saying once
+  who may use it, and every card shows at a glance whether it is **On**,
+  **Off — token saved**, or **Not connected**. The cards in a row line up.
+- **A clearer sidebar.** Group headings (Content, People, …) are small and
+  light, the pages under them are easy to read, and the page you are on stands
+  out in bold.
 - **Smaller buttons where the label was long.** **Upload from Excel**, **Add
   all lesson questions**, **Translate quiz**, **Translate video** and **Check
   progress** are now icons; hover one to see its name.

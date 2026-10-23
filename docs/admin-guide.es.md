@@ -739,6 +739,8 @@ se restaure o se elimine de la base de datos.
 
 ## Traducir texto con DeepL, ChatGPT o DeepSeek
 
+La página **Ajustes → General → Integraciones** agrupa los servicios en **Traducción de texto** (DeepL, ChatGPT, DeepSeek) y **Traducción de vídeo** (Descript), y cada tarjeta muestra su estado: **Activado**, **Desactivado — token guardado** o **Sin conectar**.
+
 Un administrador añade el token de API de cada proveedor en **Ajustes →
 Integraciones** y lo activa. Los administradores pueden usarlos de inmediato; los
 demás necesitan el permiso correspondiente (**Generar borradores de traducción con
