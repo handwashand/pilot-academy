@@ -92,6 +92,12 @@ class Lesson extends Model
             ->withTimestamps();
     }
 
+    /** Students who started or completed this lesson (the lesson_user pivot). */
+    public function completions(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
+    }
+
     /** Published lessons partners can actually reach through a live course. */
     public function scopeAvailableToLearners(Builder $query): Builder
     {

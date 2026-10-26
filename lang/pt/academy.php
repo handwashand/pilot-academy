@@ -343,6 +343,7 @@ return [
         'no_video_yet' => 'Este tutorial ainda não tem vídeo.',
         'reference_only' => 'Os tutoriais são vídeos de referência: não registram progresso nem emitem certificado.',
         'standalone_lessons' => 'Aulas avulsas',
+        'popular' => 'Aulas populares',
         'open_course' => 'Abrir o curso',
         'none' => 'Ainda não há vídeos.',
         'none_hint' => 'As aulas aparecem aqui assim que tiverem um vídeo.',

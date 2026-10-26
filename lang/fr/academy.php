@@ -344,6 +344,7 @@ return [
         'no_video_yet' => 'Ce tutoriel n’a pas encore de vidéo.',
         'reference_only' => 'Les tutoriels sont des vidéos de référence : ils ne suivent pas la progression et ne délivrent pas de certificat.',
         'standalone_lessons' => 'Leçons autonomes',
+        'popular' => 'Leçons populaires',
         'open_course' => 'Ouvrir le cours',
         'none' => 'Aucune vidéo pour le moment.',
         'none_hint' => 'Les leçons apparaissent ici dès qu’elles ont une vidéo.',

@@ -116,8 +116,52 @@
         </section>
     @endif
 
+    @if($popularLessons->isNotEmpty())
+        <section class="mb-10">
+            <h2 class="mb-4 text-xl font-extrabold text-navy">{{ __t('academy.tutorials.popular') }}</h2>
+
+            <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                @foreach($popularLessons as $lesson)
+                    @php
+                        $isDone = in_array($lesson->id, $completed, true);
+                        $firstCourse = $lesson->courses->first();
+                    @endphp
+                    @if($firstCourse)
+                        <a href="{{ route('academy.lesson', [$firstCourse, $lesson]) }}"
+                           class="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+                            <div class="relative flex h-28 items-center justify-center overflow-hidden bg-gradient-to-br from-brand to-navy">
+                                @if($lesson->image_url)
+                                    <img src="{{ $lesson->image_url }}" alt="" class="absolute inset-0 h-full w-full object-cover">
+                                @endif
+                                <span aria-hidden="true" class="relative flex h-11 w-11 items-center justify-center rounded-full bg-white/90">
+                                    <svg class="h-5 w-5 text-navy" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                    </svg>
+                                </span>
+                                @if($isDone)
+                                    <span class="absolute end-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-ok text-sm text-white shadow">
+                                        <span aria-hidden="true">✓</span>
+                                        <span class="vh">{{ __t('academy.common.completed') }}</span>
+                                    </span>
+                                @endif
+                            </div>
+
+                            <div class="p-5">
+                                <h3 class="font-bold text-navy transition group-hover:text-brand">{{ $lesson->translated('title') }}</h3>
+                                @if($lesson->translated('summary'))
+                                    <p class="mt-1 line-clamp-2 text-sm text-slate-500">{{ $lesson->translated('summary') }}</p>
+                                @endif
+                                <p class="mt-2 text-xs text-slate-400">{{ $firstCourse->translated('title') }}</p>
+                            </div>
+                        </a>
+                    @endif
+                @endforeach
+            </div>
+        </section>
+    @endif
+
     @if($courses->isNotEmpty())
-        @if($tutorials->isNotEmpty() || $standaloneLessons->isNotEmpty())
+        @if($tutorials->isNotEmpty() || $standaloneLessons->isNotEmpty() || $popularLessons->isNotEmpty())
             <h2 class="mb-4 text-xl font-extrabold text-navy">{{ __t('academy.tutorials.from_courses') }}</h2>
         @endif
     @endif
@@ -168,7 +212,7 @@
             </div>
         </section>
     @empty
-        @if($tutorials->isEmpty() && $standaloneLessons->isEmpty())
+        @if($tutorials->isEmpty() && $standaloneLessons->isEmpty() && $popularLessons->isEmpty())
             <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                 <p class="font-semibold text-slate-700">{{ __t('academy.tutorials.none') }}</p>
                 <p class="mt-1 text-sm text-slate-500">{{ __t('academy.tutorials.none_hint') }}</p>

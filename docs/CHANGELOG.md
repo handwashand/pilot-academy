@@ -39,10 +39,13 @@ Add a new entry here whenever something visible to admins or students changes.
   up from 1152px), giving course cards, lesson content and the tutorials page
   more room on large screens.
 - **Readiness color tags on lessons.** Admins can mark any lesson with a color
-  tag — red (not ready), blue (in progress) or green (good to go) — plus an
-  optional note. The tag appears as a colored badge on the Lessons list, with a
-  tooltip showing the note, and can be filtered. Students never see this; it is
-  an internal workflow aid for the content team.
+  tag — red (not ready), blue (in progress) or green (good to go) — directly
+  on the **Lessons** list with one click, plus an optional note in the edit
+  form. The tag can be filtered. Students never see this; it is an internal
+  workflow aid for the content team.
+- **Popular lessons on the Tutorials page.** The Tutorials page now shows the
+  20 most-completed lessons under a **Popular lessons** heading, so the page
+  has content even when there are no standalone lessons or course videos.
 - **Badges for students.** A student now earns a badge for their first finished
   lesson, their first certificate, finishing every course of a product, and a
   perfect score (passing a course's final quiz on the first try with every

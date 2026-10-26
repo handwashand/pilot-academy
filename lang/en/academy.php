@@ -357,6 +357,7 @@ return [
         'no_video_yet' => 'This tutorial has no video yet.',
         'reference_only' => 'Tutorials are reference videos: they do not record progress or issue a certificate.',
         'standalone_lessons' => 'Standalone lessons',
+        'popular' => 'Popular lessons',
         'open_course' => 'Open the course',
         'none' => 'No videos yet.',
         'none_hint' => 'Lessons appear here as soon as they have a video.',

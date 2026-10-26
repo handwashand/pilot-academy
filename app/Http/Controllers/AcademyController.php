@@ -119,6 +119,16 @@ class AcademyController extends Controller
 
         $completed = $this->completedIds($request);
 
+        // The 20 most-completed published lessons in published courses,
+        // so the page has content even when there are no standalone items.
+        $popularLessons = Lesson::availableToLearners()
+            ->withCount(['completions as completions_count' => fn ($query) => $query->whereNotNull('completed_at')])
+            ->with(['contentTranslations', 'courses' => fn ($query) => $query->published()->with('contentTranslations')])
+            ->orderByDesc('completions_count')
+            ->orderBy('title')
+            ->limit(20)
+            ->get();
+
         return view('academy.tutorials', [
             'courses' => $courses,
             'tutorials' => $tutorials,
@@ -126,6 +136,7 @@ class AcademyController extends Controller
             'standaloneTags' => Lesson::standaloneTags(),
             'activeTag' => $tag,
             'completed' => $completed,
+            'popularLessons' => $popularLessons,
             'videoCount' => $tutorials->count() + $courses->sum(fn (Course $course): int => $course->publishedLessons->count()),
         ]);
     }
