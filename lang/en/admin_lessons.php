@@ -69,6 +69,11 @@ return [
         'add_question' => 'Add question',
         'tick_correct' => 'Tick the correct answer(s).',
         'no_correct' => 'Tick the correct answer — a question with none can never be passed.',
+        'color_tag' => 'Readiness',
+        'color_tag_none' => 'No tag',
+        'color_tag_help' => 'A color marker for your team: red = not ready, blue = in progress, green = good to go. Students never see this.',
+        'color_tag_note' => 'Note',
+        'color_tag_note_help' => 'A short note about why this tag is set.',
     ],
 
     'table' => [
@@ -94,5 +99,6 @@ return [
         'no_questions' => 'No quiz questions, so students could never finish it',
         'no_correct_answer' => 'A question with no correct answer',
         'bad_youtube' => 'A YouTube link that is not a playable video',
+        'color_tag' => 'Readiness',
     ],
 ];

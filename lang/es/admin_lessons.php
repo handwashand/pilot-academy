@@ -66,6 +66,11 @@ return [
         'add_question' => 'Añadir pregunta',
         'tick_correct' => 'Marca la(s) respuesta(s) correcta(s).',
         'no_correct' => 'Marca la respuesta correcta: una pregunta sin ninguna nunca se puede aprobar.',
+        'color_tag' => 'Preparación',
+        'color_tag_none' => 'Sin etiqueta',
+        'color_tag_help' => 'Una marca de color para el equipo: rojo = no listo, azul = en progreso, verde = listo. Los estudiantes no lo ven.',
+        'color_tag_note' => 'Nota',
+        'color_tag_note_help' => 'Una nota breve sobre esta etiqueta.',
     ],
 
     'table' => [
@@ -91,5 +96,6 @@ return [
         'no_questions' => 'Sin preguntas de cuestionario, así que los estudiantes nunca podrían terminarla',
         'no_correct_answer' => 'Una pregunta sin respuesta correcta',
         'bad_youtube' => 'Un enlace de YouTube que no es un vídeo reproducible',
+        'color_tag' => 'Preparación',
     ],
 ];

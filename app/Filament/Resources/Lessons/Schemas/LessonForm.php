@@ -463,6 +463,19 @@ class LessonForm
                                 ->placeholder(__t('admin_lessons.form.add_tag'))
                                 ->helperText(__t('admin_lessons.form.tags_help')),
 
+                            Select::make('color_tag')
+                                ->label(__t('admin_lessons.form.color_tag'))
+                                ->options(Lesson::colorTagLabels())
+                                ->placeholder(__t('admin_lessons.form.color_tag_none'))
+                                ->helperText(__t('admin_lessons.form.color_tag_help'))
+                                ->live(),
+
+                            TextInput::make('color_tag_note')
+                                ->label(__t('admin_lessons.form.color_tag_note'))
+                                ->maxLength(255)
+                                ->visible(fn (Get $get): bool => filled($get('color_tag')))
+                                ->helperText(__t('admin_lessons.form.color_tag_note_help')),
+
                             TextInput::make('duration_minutes')
                                 ->label(__t('admin_common.duration_minutes'))
                                 ->numeric()

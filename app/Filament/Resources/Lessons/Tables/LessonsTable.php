@@ -90,6 +90,20 @@ class LessonsTable
                         default => 'warning',
                     })
                     ->sortable(),
+
+                TextColumn::make('color_tag')
+                    ->label(__t('admin_lessons.table.color_tag'))
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state): string => $state ? (Lesson::colorTagLabels()[$state] ?? $state) : '')
+                    ->color(fn (?string $state): ?string => match ($state) {
+                        Lesson::COLOR_TAG_RED => 'danger',
+                        Lesson::COLOR_TAG_BLUE => 'info',
+                        Lesson::COLOR_TAG_GREEN => 'success',
+                        default => null,
+                    })
+                    ->tooltip(fn (Lesson $record): ?string => $record->color_tag_note)
+                    ->placeholder('—')
+                    ->sortable(),
             ])
             ->filters([
                 Filter::make('needs_attention')
@@ -107,6 +121,10 @@ class LessonsTable
                 SelectFilter::make('status')
                     ->label(__t('admin_common.status'))
                     ->options(Lesson::statusLabels()),
+
+                SelectFilter::make('color_tag')
+                    ->label(__t('admin_lessons.table.color_tag'))
+                    ->options(Lesson::colorTagLabels()),
 
                 SelectFilter::make('course')
                     ->label(__t('admin_common.course'))

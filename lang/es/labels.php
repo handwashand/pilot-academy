@@ -52,4 +52,10 @@ return [
         'valid' => 'Válido',
         'revoked' => 'Revocado',
     ],
+
+    'color_tag' => [
+        'red' => 'No listo',
+        'blue' => 'En progreso',
+        'green' => 'Listo',
+    ],
 ];

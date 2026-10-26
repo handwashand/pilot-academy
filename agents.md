@@ -420,6 +420,39 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-27 — Readiness color tags on lessons (**schema change**)
+
+Owner's request: a lightweight way to mark lessons as ready, in progress, or not
+ready — color-coded, with an optional note, visible on the admin Lessons list
+and filterable.
+
+**One migration**, `2026_10_27_000001`: adds nullable `color_tag` (varchar 10)
+and `color_tag_note` (varchar 255) to `lessons`. **The deploy must run
+`php8.4 artisan migrate --force`.**
+
+**Model.** `Lesson::COLOR_TAG_RED`, `COLOR_TAG_BLUE`, `COLOR_TAG_GREEN`
+constants. `Lesson::colorTagLabels()` returns translated labels from
+`labels.color_tag`. Both columns added to `$fillable`.
+
+**Admin form.** A `Select` for color tag and a `TextInput` for the note in the
+Settings sidebar, between Tags and Duration. The note field appears only when a
+color is selected (`->live()` on the select). Helper text says students never
+see this.
+
+**Admin list.** A `color_tag` column with a colored badge (danger/info/success),
+tooltip showing the note, and a `SelectFilter` for it. Placed after the status
+column.
+
+**Lang.** `labels.color_tag.{red,blue,green}` and
+`admin_lessons.form.{color_tag,color_tag_none,color_tag_help,color_tag_note,
+color_tag_note_help}` plus `admin_lessons.table.color_tag` in all six languages.
+
+**Docs.** Changelog entry under 2.2.0 Added.
+
+**Not done:** admin guide updates (the color tag is a minor admin-only field,
+not a workflow change), dashboard widget (can be added later if the owner wants
+tagged lessons surfaced on the dashboard), and browser verification.
+
 ### 2026-10-27 — Standalone lessons moved to the Tutorials page; wider student portal; course thumbnails
 
 Owner's request: move standalone lessons from their own `/lessons` page onto the

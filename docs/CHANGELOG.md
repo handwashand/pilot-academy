@@ -38,6 +38,11 @@ Add a new entry here whenever something visible to admins or students changes.
 - **Wider student portal.** The student site's content area is wider (1280px,
   up from 1152px), giving course cards, lesson content and the tutorials page
   more room on large screens.
+- **Readiness color tags on lessons.** Admins can mark any lesson with a color
+  tag — red (not ready), blue (in progress) or green (good to go) — plus an
+  optional note. The tag appears as a colored badge on the Lessons list, with a
+  tooltip showing the note, and can be filtered. Students never see this; it is
+  an internal workflow aid for the content team.
 - **Badges for students.** A student now earns a badge for their first finished
   lesson, their first certificate, finishing every course of a product, and a
   perfect score (passing a course's final quiz on the first try with every

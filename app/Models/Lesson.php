@@ -40,6 +40,8 @@ class Lesson extends Model
         'status',
         'sort_order',
         'tags',
+        'color_tag',
+        'color_tag_note',
     ];
 
     protected $casts = [
@@ -47,6 +49,21 @@ class Lesson extends Model
         'video_sources' => 'array',
         'tags' => 'array',
     ];
+
+    public const COLOR_TAG_RED = 'red';
+
+    public const COLOR_TAG_BLUE = 'blue';
+
+    public const COLOR_TAG_GREEN = 'green';
+
+    public static function colorTagLabels(): array
+    {
+        return [
+            self::COLOR_TAG_RED => __t('labels.color_tag.red'),
+            self::COLOR_TAG_BLUE => __t('labels.color_tag.blue'),
+            self::COLOR_TAG_GREEN => __t('labels.color_tag.green'),
+        ];
+    }
 
     /**
      * Lessons are published as they are written — the course they belong to is

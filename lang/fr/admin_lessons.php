@@ -66,6 +66,11 @@ return [
         'add_question' => 'Ajouter une question',
         'tick_correct' => 'Cochez la ou les bonnes réponses.',
         'no_correct' => 'Cochez la bonne réponse — une question sans bonne réponse ne peut jamais être réussie.',
+        'color_tag' => 'État',
+        'color_tag_none' => 'Aucune étiquette',
+        'color_tag_help' => 'Un repère coloré pour l\'équipe : rouge = pas prêt, bleu = en cours, vert = prêt. Les apprenants ne le voient pas.',
+        'color_tag_note' => 'Note',
+        'color_tag_note_help' => 'Une note brève sur cette étiquette.',
     ],
 
     'table' => [
@@ -90,6 +95,7 @@ return [
         'empty_course_body' => 'Plus aucune leçon publiée dans : :courses. Publiez une leçon, ou dépubliez le cours.',
         'no_questions' => 'Aucune question de quiz, les apprenants ne pourraient donc jamais la terminer',
         'no_correct_answer' => 'Une question sans bonne réponse',
-        'bad_youtube' => 'Un lien YouTube qui n’est pas une vidéo lisible',
+        ‘bad_youtube’ => ‘Un lien YouTube qui n’est pas une vidéo lisible’,
+        ‘color_tag’ => ‘État’,
     ],
 ];
