@@ -117,6 +117,37 @@ class TutorialsPageTest extends TestCase
             ]);
     }
 
+    public function test_standalone_lessons_and_tags_render_on_the_tutorials_page(): void
+    {
+        Lesson::create([
+            'title' => 'Fuel system overview',
+            'slug' => 'fuel-system-overview',
+            'summary' => 'An introduction to fuel monitoring.',
+            'content' => '<p>Body.</p>',
+            'status' => Lesson::STATUS_PUBLISHED,
+            'tags' => ['Fuel', 'Sensors'],
+        ]);
+
+        $this->get(route('academy.tutorials'))
+            ->assertOk()
+            ->assertSee('Standalone lessons')
+            ->assertSee('Fuel system overview')
+            ->assertSee('fuel')
+            ->assertSee('sensors');
+    }
+
+    public function test_popular_lessons_require_a_recorded_completion(): void
+    {
+        $course = $this->course('monitoring', 'Pilot Monitoring');
+        $lesson = $this->lesson($course, 'completed', 'Completed lesson');
+        $lesson->completions()->attach($this->learner()->id, ['completed_at' => now()]);
+
+        $this->get(route('academy.tutorials'))
+            ->assertOk()
+            ->assertSee('Popular lessons')
+            ->assertSee('Completed lesson');
+    }
+
     public function test_an_uploaded_tutorial_plays_and_a_draft_is_hidden(): void
     {
         $uploaded = Tutorial::create([

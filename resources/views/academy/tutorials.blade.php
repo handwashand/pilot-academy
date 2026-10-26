@@ -10,6 +10,9 @@
     <div class="mb-6">
         <h1 class="text-2xl sm:text-3xl font-extrabold text-navy">{{ __t('academy.tutorials.title') }}</h1>
         <p class="mt-1 max-w-3xl text-slate-500">{{ __t('academy.tutorials.intro') }}</p>
+        @if($videoCount > 0)
+            <p class="mt-2 text-sm text-slate-500">{{ __tc('academy.tutorials.videos', $videoCount) }}</p>
+        @endif
     </div>
 
     @if($tutorials->isNotEmpty())
@@ -43,11 +46,11 @@
         </section>
     @endif
 
-    @if($standaloneLessons->isNotEmpty() || $standaloneTags->isNotEmpty())
+    @if($standaloneLessons->isNotEmpty() || $standaloneTags !== [])
         <section class="mb-10">
             <h2 class="mb-4 text-xl font-extrabold text-navy">{{ __t('academy.tutorials.standalone_lessons') }}</h2>
 
-            @if($standaloneTags->isNotEmpty())
+            @if($standaloneTags !== [])
                 <nav class="mb-5 flex flex-wrap gap-2" aria-label="{{ __t('academy.lessons.tags_aria') }}">
                     @if($activeTag !== '')
                         <a href="{{ route('academy.tutorials') }}"
@@ -67,7 +70,9 @@
             @if($standaloneLessons->isNotEmpty())
                 <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach($standaloneLessons as $lesson)
-                        @php($isDone = in_array($lesson->id, $completed, true))
+                        @php
+                            $isDone = in_array($lesson->id, $completed, true);
+                        @endphp
                         <a href="{{ route('academy.standalone.lesson', $lesson) }}"
                            class="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
                             <div class="relative flex h-28 items-center justify-center overflow-hidden bg-gradient-to-br from-brand to-navy">
@@ -177,7 +182,9 @@
 
             <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach($course->publishedLessons as $lesson)
-                    @php($isDone = in_array($lesson->id, $completed, true))
+                    @php
+                        $isDone = in_array($lesson->id, $completed, true);
+                    @endphp
                     <a href="{{ route('academy.lesson', [$course, $lesson]) }}"
                        class="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
                         <div class="relative flex h-28 items-center justify-center overflow-hidden bg-gradient-to-br from-brand to-navy">

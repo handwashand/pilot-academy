@@ -38,14 +38,14 @@ Add a new entry here whenever something visible to admins or students changes.
 - **Wider student portal.** The student site's content area is wider (1280px,
   up from 1152px), giving course cards, lesson content and the tutorials page
   more room on large screens.
-- **Readiness color tags on lessons.** Admins can mark any lesson with a color
-  tag — red (not ready), blue (in progress) or green (good to go) — directly
-  on the **Lessons** list with one click, plus an optional note in the edit
-  form. The tag can be filtered. Students never see this; it is an internal
-  workflow aid for the content team.
+- **Color tags on lessons.** Admins can mark any lesson red, yellow or blue
+  directly on the **Lessons** list, add an optional note in the edit form, and
+  filter by color. Students never see these internal tags.
 - **Popular lessons on the Tutorials page.** The Tutorials page now shows the
   20 most-completed lessons under a **Popular lessons** heading, so the page
-  has content even when there are no standalone lessons or course videos.
+  has content even when there are no standalone lessons or course videos. Only
+  lessons with at least one recorded completion appear there, and the page
+  shows the total number of videos.
 - **Badges for students.** A student now earns a badge for their first finished
   lesson, their first certificate, finishing every course of a product, and a
   perfect score (passing a course's final quiz on the first try with every
@@ -219,6 +219,8 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Changed
 
+- **Lesson tags are now simple colors.** The **Color tag** field offers red,
+  yellow and blue, with no readiness meanings attached.
 - **A course description is a short summary on the home page.** A long
   description is cut off after three lines with an ellipsis, so the course card
   stays the same size however much an editor writes. The whole text is still on
@@ -277,6 +279,10 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Fixed
 
+- **The Tutorials page opens again.** A type mismatch in its standalone-lesson
+  tag checks had caused an error page, even when there were no standalone
+  lessons. The page now loads with or without tagged lessons, and uncompleted
+  lessons no longer appear under **Popular lessons**.
 - **Translations now show in the admin panel, so reviewers can check and
   correct them before a course goes out.** With the panel in another language,
   the course and lesson lists, a course's tabs and the edit pages show the

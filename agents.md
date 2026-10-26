@@ -420,6 +420,24 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-27 — Tutorials page error with standalone lesson tags
+
+The Tutorials page called `isNotEmpty()` on `Lesson::standaloneTags()`, which
+returns an array, so `/tutorials` failed while rendering. The two view checks
+now compare against an empty array, and `TutorialsPageTest` covers rendering a
+published standalone lesson with tags. The page's inline `@php(...)` directives
+were also replaced with block directives to prevent Blade compilation errors.
+Popular lessons now require a recorded completion, and the existing total video
+count is displayed. The changelog records these visible fixes.
+
+### 2026-10-27 — Lesson color tags are red, yellow and blue
+
+The lesson field is now labeled **Color tag** and offers only red, yellow and
+blue, with plain color names and no readiness meanings. Existing green lesson
+tags are converted to yellow by migration `2026_10_27_000002`; deploy with
+`php8.4 artisan migrate --force`. Updated all six UI translations and the
+changelog.
+
 ### 2026-10-27 — Readiness color tags on lessons (**schema change**)
 
 Owner's request: a lightweight way to mark lessons as ready, in progress, or not

@@ -122,6 +122,7 @@ class AcademyController extends Controller
         // The 20 most-completed published lessons in published courses,
         // so the page has content even when there are no standalone items.
         $popularLessons = Lesson::availableToLearners()
+            ->whereHas('completions', fn ($query) => $query->whereNotNull('completed_at'))
             ->withCount(['completions as completions_count' => fn ($query) => $query->whereNotNull('completed_at')])
             ->with(['contentTranslations', 'courses' => fn ($query) => $query->published()->with('contentTranslations')])
             ->orderByDesc('completions_count')

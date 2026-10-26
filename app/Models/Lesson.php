@@ -52,16 +52,16 @@ class Lesson extends Model
 
     public const COLOR_TAG_RED = 'red';
 
-    public const COLOR_TAG_BLUE = 'blue';
+    public const COLOR_TAG_YELLOW = 'yellow';
 
-    public const COLOR_TAG_GREEN = 'green';
+    public const COLOR_TAG_BLUE = 'blue';
 
     public static function colorTagLabels(): array
     {
         return [
             self::COLOR_TAG_RED => __t('labels.color_tag.red'),
+            self::COLOR_TAG_YELLOW => __t('labels.color_tag.yellow'),
             self::COLOR_TAG_BLUE => __t('labels.color_tag.blue'),
-            self::COLOR_TAG_GREEN => __t('labels.color_tag.green'),
         ];
     }
 

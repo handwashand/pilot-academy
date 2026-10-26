@@ -54,8 +54,8 @@ return [
     ],
 
     'color_tag' => [
-        'red' => 'Pas prêt',
-        'blue' => 'En cours',
-        'green' => 'Prêt',
+        'red' => 'Rouge',
+        'yellow' => 'Jaune',
+        'blue' => 'Bleu',
     ],
 ];
