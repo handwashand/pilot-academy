@@ -14,4 +14,5 @@ return [
     'tutorials' => 'Tutoriais',
     'webinars' => 'Webinars',
     'courses' => 'Cursos',
+    'lessons' => 'Lições',
 ];

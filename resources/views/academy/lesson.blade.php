@@ -4,7 +4,9 @@
 
 @php
     $metaDescription = \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags($lesson->translated('summary') ?: $lesson->translated('content')))), 155)
-        ?: __t('academy.meta.lesson_description', ['lesson' => $lesson->translated('title'), 'course' => $course->translated('title')]);
+        ?: ($course
+            ? __t('academy.meta.lesson_description', ['lesson' => $lesson->translated('title'), 'course' => $course->translated('title')])
+            : $lesson->translated('title'));
 @endphp
 
 @section('content')
@@ -15,15 +17,23 @@
         $failed = session('quiz_failed');
     @endphp
 
-    <div class="grid lg:grid-cols-[1fr_280px] gap-6 lg:gap-8">
+    <div class="{{ $course ? 'grid lg:grid-cols-[1fr_280px] gap-6 lg:gap-8' : '' }}">
         {{-- Main column --}}
         <div>
-            <a href="{{ route('academy.course', $course) }}" class="text-sm text-brand font-semibold"><span class="inline-block rtl:rotate-180">&larr;</span> {{ $course->translated('title') }}</a>
+            @if($course)
+                <a href="{{ route('academy.course', $course) }}" class="text-sm text-brand font-semibold"><span class="inline-block rtl:rotate-180">&larr;</span> {{ $course->translated('title') }}</a>
+            @else
+                <a href="{{ route('academy.lessons') }}" class="text-sm text-brand font-semibold"><span class="inline-block rtl:rotate-180">&larr;</span> {{ __t('academy.lessons.title') }}</a>
+            @endif
 
-            @if(! $course->isPublished() || ! $lesson->isPublished())
-                {{-- Only admins ever reach this page for unpublished content. --}}
+            @if($course && (! $course->isPublished() || ! $lesson->isPublished()))
                 <div class="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
                     <strong>{{ ! $lesson->isPublished() ? __t('academy.lesson.preview_lesson', ['status' => $lesson->statusLabel()]) : __t('academy.lesson.preview_course', ['status' => $course->statusLabel()]) }}</strong>
+                    {{ __t('academy.lesson.admin_preview') }}
+                </div>
+            @elseif(! $course && ! $lesson->isPublished())
+                <div class="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                    <strong>{{ __t('academy.lesson.preview_lesson', ['status' => $lesson->statusLabel()]) }}</strong>
                     {{ __t('academy.lesson.admin_preview') }}
                 </div>
             @endif
@@ -86,7 +96,12 @@
                                 </a>
                             @endif
                             @if($canDownloadVideos)
-                                <a href="{{ route('academy.lesson.video.download', [$course, $lesson, $videoIndex] + ($dub && ! $playsDub ? ['audio' => 'original'] : [])) }}"
+                                @php
+                                    $downloadRoute = $course
+                                        ? route('academy.lesson.video.download', [$course, $lesson, $videoIndex] + ($dub && ! $playsDub ? ['audio' => 'original'] : []))
+                                        : route('academy.standalone.lesson.video.download', [$lesson, $videoIndex] + ($dub && ! $playsDub ? ['audio' => 'original'] : []));
+                                @endphp
+                                <a href="{{ $downloadRoute }}"
                                    class="inline-flex items-center h-11 px-3 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 active:bg-slate-100">
                                     {{ __t('academy.lesson.download_video') }}
                                 </a>
@@ -99,7 +114,7 @@
                                 if (!video) return;
 
                                 var startAt = {{ $remembersPosition ? (int) ($videoPosition ?? 0) : 0 }};
-                                var saveUrl = @json($remembersPosition ? route('academy.lesson.position', [$course, $lesson]) : null);
+                                var saveUrl = @json($remembersPosition ? ($course ? route('academy.lesson.position', [$course, $lesson]) : route('academy.standalone.lesson.position', $lesson)) : null);
                                 var token = document.querySelector('meta[name="csrf-token"]');
 
                                 if (startAt > 0) {
@@ -321,7 +336,7 @@
                                     <li>{{ __t('academy.lesson.enough_time') }}</li>
                                 </ul>
                             </div>
-                            <form method="POST" action="{{ route('academy.quiz.start', [$course, $lesson]) }}">
+                            <form method="POST" action="{{ $course ? route('academy.quiz.start', [$course, $lesson]) : route('academy.standalone.quiz.start', $lesson) }}">
                                 @csrf
                                 <button class="w-full sm:w-auto rounded-lg bg-brand text-white font-semibold px-6 py-3 hover:bg-blue-700">
                                     {{ __t('academy.lesson.start_quiz') }}
@@ -334,7 +349,7 @@
                         @endif
 
                         @if($showForm)
-                            <form method="POST" action="{{ route('academy.quiz', [$course, $lesson]) }}" id="quiz-form" class="space-y-6">
+                            <form method="POST" action="{{ $course ? route('academy.quiz', [$course, $lesson]) : route('academy.standalone.quiz', $lesson) }}" id="quiz-form" class="space-y-6">
                                 @csrf
                                 @foreach($lesson->questions as $qn => $question)
                                     @php
@@ -404,106 +419,114 @@
             @endif
 
             {{-- Lesson nav --}}
-            <div class="flex justify-between gap-3 mt-8">
-                <div>
-                    @if($prev)
-                        <a href="{{ route('academy.lesson', [$course, $prev]) }}"
-                           class="inline-block rounded-lg border border-slate-300 px-5 py-2.5 font-semibold text-slate-600 hover:bg-white">
-                            <span class="inline-block rtl:rotate-180">&larr;</span> {{ __t('academy.lesson.previous') }}
-                        </a>
-                    @endif
-                </div>
-                <div>
-                    @if($next && ($passed || $isDone))
-                        <a href="{{ route('academy.lesson', [$course, $next]) }}"
-                           class="inline-block rounded-lg bg-navy text-white px-5 py-2.5 font-semibold hover:bg-slate-800">
-                            {{ __t('academy.lesson.next_lesson') }} <span class="inline-block rtl:rotate-180">&rarr;</span>
-                        </a>
-                    @elseif(! $next && ($passed || $isDone))
-                        @if($course->final_quiz_enabled && $certificate)
-                            <a href="{{ route('certificates.index') }}"
-                               class="inline-block rounded-lg bg-ok text-white px-5 py-2.5 font-semibold hover:bg-green-700">
-                                {{ __t('academy.lesson.view_certificate') }} ✓
-                            </a>
-                        @elseif($course->final_quiz_enabled && $finalUnlocked)
-                            <a href="{{ route('academy.final.show', $course) }}"
-                               class="inline-block rounded-lg bg-brand text-white px-5 py-2.5 font-semibold hover:bg-blue-700">
-                                {{ __t('academy.home.take_final') }} <span class="inline-block rtl:rotate-180">&rarr;</span>
-                            </a>
-                        @else
-                            {{-- The course page, not the home page: it shows what
-                                 they finished and what to take next. --}}
-                            <a href="{{ route('academy.course', $course) }}"
-                               class="inline-block rounded-lg bg-ok text-white px-5 py-2.5 font-semibold hover:bg-green-700">
-                                {{ __t('academy.lesson.finish_course') }} ✓
+            @if($course)
+                <div class="flex justify-between gap-3 mt-8">
+                    <div>
+                        @if($prev)
+                            <a href="{{ route('academy.lesson', [$course, $prev]) }}"
+                               class="inline-block rounded-lg border border-slate-300 px-5 py-2.5 font-semibold text-slate-600 hover:bg-white">
+                                <span class="inline-block rtl:rotate-180">&larr;</span> {{ __t('academy.lesson.previous') }}
                             </a>
                         @endif
-                    @endif
-                </div>
-            </div>
-        </div>
-
-        {{-- Sidebar: lesson list --}}
-        <aside class="lg:sticky lg:top-20 self-start">
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
-                <div class="text-xs font-semibold uppercase tracking-wide text-slate-400 px-2 mb-2">{{ __t('academy.lesson.lessons') }}</div>
-                <ol class="space-y-1">
-                    @foreach($lessons as $i => $l)
-                        @php($lDone = in_array($l->id, $completed, true))
-                        <li>
-                            <a href="{{ route('academy.lesson', [$course, $l]) }}"
-                               @if($l->id === $lesson->id) aria-current="page" @endif
-                               class="flex items-center gap-3 px-2 py-2 rounded-lg text-sm {{ $l->id === $lesson->id ? 'bg-blue-50 text-brand font-semibold' : 'text-slate-600 hover:bg-slate-50' }}">
-                                <span class="w-6 h-6 flex-none rounded-full flex items-center justify-center text-xs {{ $lDone ? 'bg-ok text-white' : 'bg-slate-100 text-slate-500' }}">
-                                    <span aria-hidden="true">{{ $lDone ? '✓' : $i + 1 }}</span>
-                                    @if($lDone)
-                                        <span class="vh">{{ __t('academy.common.completed') }}</span>
-                                    @endif
-                                </span>
-                                <span class="min-w-0 flex-1">
-                                    <span class="block truncate">{{ $l->translated('title') }}</span>
-                                    @if($l->durationLabel())
-                                        <span class="block text-xs text-slate-400">{{ $l->durationLabel() }}</span>
-                                    @endif
-                                </span>
+                    </div>
+                    <div>
+                        @if($next && ($passed || $isDone))
+                            <a href="{{ route('academy.lesson', [$course, $next]) }}"
+                               class="inline-block rounded-lg bg-navy text-white px-5 py-2.5 font-semibold hover:bg-slate-800">
+                                {{ __t('academy.lesson.next_lesson') }} <span class="inline-block rtl:rotate-180">&rarr;</span>
                             </a>
-                        </li>
-                    @endforeach
-                </ol>
-
-                {{-- Final quiz entry --}}
-                @if($course->final_quiz_enabled)
-                    @php($remaining = $lessons->whereNotIn('id', $completed)->count())
-                    <div class="mt-2 pt-2 border-t border-slate-100">
-                        @auth
-                            @if($certificate)
+                        @elseif(! $next && ($passed || $isDone))
+                            @if($course->final_quiz_enabled && $certificate)
                                 <a href="{{ route('certificates.index') }}"
-                                   class="flex items-center gap-3 px-2 py-2.5 rounded-lg text-sm text-ok font-semibold hover:bg-green-50">
-                                    <span class="w-6 h-6 flex-none rounded-full bg-ok text-white flex items-center justify-center text-xs">🎓</span>
-                                    <span class="truncate">{{ __t('academy.lesson.certificate_ready') }}</span>
+                                   class="inline-block rounded-lg bg-ok text-white px-5 py-2.5 font-semibold hover:bg-green-700">
+                                    {{ __t('academy.lesson.view_certificate') }} ✓
                                 </a>
-                            @elseif($finalUnlocked)
+                            @elseif($course->final_quiz_enabled && $finalUnlocked)
                                 <a href="{{ route('academy.final.show', $course) }}"
-                                   class="flex items-center gap-3 px-2 py-2.5 rounded-lg text-sm text-brand font-semibold bg-blue-50 hover:bg-blue-100">
-                                    <span class="w-6 h-6 flex-none rounded-full bg-brand text-white flex items-center justify-center text-xs">★</span>
-                                    <span class="truncate">{{ __t('academy.lesson.final_start') }}</span>
+                                   class="inline-block rounded-lg bg-brand text-white px-5 py-2.5 font-semibold hover:bg-blue-700">
+                                    {{ __t('academy.home.take_final') }} <span class="inline-block rtl:rotate-180">&rarr;</span>
                                 </a>
                             @else
-                                <div class="flex items-center gap-3 px-2 py-2.5 rounded-lg text-sm text-slate-400">
-                                    <span class="w-6 h-6 flex-none rounded-full bg-slate-100 flex items-center justify-center text-xs">🔒</span>
-                                    <span class="min-w-0">{{ __t('academy.common.final_quiz') }} · <span class="text-slate-500 font-medium">{{ __tc('academy.lesson.final_lessons_left', $remaining) }}</span></span>
-                                </div>
+                                <a href="{{ route('academy.course', $course) }}"
+                                   class="inline-block rounded-lg bg-ok text-white px-5 py-2.5 font-semibold hover:bg-green-700">
+                                    {{ __t('academy.lesson.finish_course') }} ✓
+                                </a>
                             @endif
-                        @else
-                            <a href="{{ route('login') }}"
-                               class="flex items-center gap-3 px-2 py-2.5 rounded-lg text-sm text-slate-500 hover:bg-slate-50">
-                                <span class="w-6 h-6 flex-none rounded-full bg-slate-100 flex items-center justify-center text-xs">🔒</span>
-                                <span class="truncate">{{ __t('academy.lesson.final_login') }}</span>
-                            </a>
-                        @endauth
+                        @endif
                     </div>
-                @endif
-            </div>
-        </aside>
+                </div>
+            @else
+                <div class="mt-8">
+                    <a href="{{ route('academy.lessons') }}"
+                       class="inline-block rounded-lg border border-slate-300 px-5 py-2.5 font-semibold text-slate-600 hover:bg-white">
+                        <span class="inline-block rtl:rotate-180">&larr;</span> {{ __t('academy.lessons.back') }}
+                    </a>
+                </div>
+            @endif
+        </div>
+
+        {{-- Sidebar: lesson list (course lessons only) --}}
+        @if($course)
+            <aside class="lg:sticky lg:top-20 self-start">
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+                    <div class="text-xs font-semibold uppercase tracking-wide text-slate-400 px-2 mb-2">{{ __t('academy.lesson.lessons') }}</div>
+                    <ol class="space-y-1">
+                        @foreach($lessons as $i => $l)
+                            @php($lDone = in_array($l->id, $completed, true))
+                            <li>
+                                <a href="{{ route('academy.lesson', [$course, $l]) }}"
+                                   @if($l->id === $lesson->id) aria-current="page" @endif
+                                   class="flex items-center gap-3 px-2 py-2 rounded-lg text-sm {{ $l->id === $lesson->id ? 'bg-blue-50 text-brand font-semibold' : 'text-slate-600 hover:bg-slate-50' }}">
+                                    <span class="w-6 h-6 flex-none rounded-full flex items-center justify-center text-xs {{ $lDone ? 'bg-ok text-white' : 'bg-slate-100 text-slate-500' }}">
+                                        <span aria-hidden="true">{{ $lDone ? '✓' : $i + 1 }}</span>
+                                        @if($lDone)
+                                            <span class="vh">{{ __t('academy.common.completed') }}</span>
+                                        @endif
+                                    </span>
+                                    <span class="min-w-0 flex-1">
+                                        <span class="block truncate">{{ $l->translated('title') }}</span>
+                                        @if($l->durationLabel())
+                                            <span class="block text-xs text-slate-400">{{ $l->durationLabel() }}</span>
+                                        @endif
+                                    </span>
+                                </a>
+                            </li>
+                        @endforeach
+                    </ol>
+
+                    @if($course->final_quiz_enabled)
+                        @php($remaining = $lessons->whereNotIn('id', $completed)->count())
+                        <div class="mt-2 pt-2 border-t border-slate-100">
+                            @auth
+                                @if($certificate)
+                                    <a href="{{ route('certificates.index') }}"
+                                       class="flex items-center gap-3 px-2 py-2.5 rounded-lg text-sm text-ok font-semibold hover:bg-green-50">
+                                        <span class="w-6 h-6 flex-none rounded-full bg-ok text-white flex items-center justify-center text-xs">🎓</span>
+                                        <span class="truncate">{{ __t('academy.lesson.certificate_ready') }}</span>
+                                    </a>
+                                @elseif($finalUnlocked)
+                                    <a href="{{ route('academy.final.show', $course) }}"
+                                       class="flex items-center gap-3 px-2 py-2.5 rounded-lg text-sm text-brand font-semibold bg-blue-50 hover:bg-blue-100">
+                                        <span class="w-6 h-6 flex-none rounded-full bg-brand text-white flex items-center justify-center text-xs">★</span>
+                                        <span class="truncate">{{ __t('academy.lesson.final_start') }}</span>
+                                    </a>
+                                @else
+                                    <div class="flex items-center gap-3 px-2 py-2.5 rounded-lg text-sm text-slate-400">
+                                        <span class="w-6 h-6 flex-none rounded-full bg-slate-100 flex items-center justify-center text-xs">🔒</span>
+                                        <span class="min-w-0">{{ __t('academy.common.final_quiz') }} · <span class="text-slate-500 font-medium">{{ __tc('academy.lesson.final_lessons_left', $remaining) }}</span></span>
+                                    </div>
+                                @endif
+                            @else
+                                <a href="{{ route('login') }}"
+                                   class="flex items-center gap-3 px-2 py-2.5 rounded-lg text-sm text-slate-500 hover:bg-slate-50">
+                                    <span class="w-6 h-6 flex-none rounded-full bg-slate-100 flex items-center justify-center text-xs">🔒</span>
+                                    <span class="truncate">{{ __t('academy.lesson.final_login') }}</span>
+                                </a>
+                            @endauth
+                        </div>
+                    @endif
+                </div>
+            </aside>
+        @endif
     </div>
 @endsection

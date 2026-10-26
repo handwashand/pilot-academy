@@ -63,6 +63,16 @@ Route::get('/courses/{course:slug}/lessons/{lesson:slug}/captions/{video}/{langu
 Route::post('/courses/{course:slug}/lessons/{lesson:slug}/quiz/start', [AcademyController::class, 'startQuiz'])->name('academy.quiz.start');
 Route::post('/courses/{course:slug}/lessons/{lesson:slug}/quiz', [AcademyController::class, 'submitQuiz'])->name('academy.quiz');
 
+// Standalone lessons: published lessons not in any course, browseable by tag.
+Route::get('/lessons', [AcademyController::class, 'lessons'])->name('academy.lessons');
+Route::get('/lessons/{lesson:slug}', [AcademyController::class, 'standaloneLesson'])->name('academy.standalone.lesson');
+Route::get('/lessons/{lesson:slug}/captions/{video}/{language}', [AcademyController::class, 'standaloneCaptions'])
+    ->whereNumber('video')
+    ->where('language', '[a-z]{2,10}')
+    ->name('academy.standalone.lesson.captions');
+Route::post('/lessons/{lesson:slug}/quiz/start', [AcademyController::class, 'startStandaloneQuiz'])->name('academy.standalone.quiz.start');
+Route::post('/lessons/{lesson:slug}/quiz', [AcademyController::class, 'submitStandaloneQuiz'])->name('academy.standalone.quiz');
+
 // Remembering a place in a video, and what a student thought of a course, both
 // belong to an account — there is nowhere to keep them for an anonymous visitor.
 Route::middleware('auth')->group(function () {
@@ -74,6 +84,13 @@ Route::middleware('auth')->group(function () {
         ->name('academy.lesson.video.download');
     Route::post('/courses/{course:slug}/feedback', [AcademyController::class, 'saveFeedback'])
         ->name('academy.course.feedback');
+
+    // Standalone lesson video position and download.
+    Route::post('/lessons/{lesson:slug}/position', [AcademyController::class, 'saveStandaloneVideoPosition'])
+        ->name('academy.standalone.lesson.position');
+    Route::get('/lessons/{lesson:slug}/videos/{video}/download', [AcademyController::class, 'downloadStandaloneVideo'])
+        ->whereNumber('video')
+        ->name('academy.standalone.lesson.video.download');
 });
 
 // Final quiz + student certificates (logged-in students only)

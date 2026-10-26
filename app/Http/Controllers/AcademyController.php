@@ -337,7 +337,7 @@ class AcademyController extends Controller
      *
      * @return array<int, array<int, array{code: string, label: string, url: string, default: bool}>>
      */
-    private function captionTracks(Course $course, Lesson $lesson): array
+    private function captionTracks(?Course $course, Lesson $lesson): array
     {
         $translator = app(Translator::class);
         $finished = VideoTranslation::query()
@@ -346,7 +346,6 @@ class AcademyController extends Controller
             ->whereNotNull('subtitle_path')
             ->with('descriptImport:id,video_path')
             ->get()
-            // A language may have both subtitles and a dub: one track is enough.
             ->unique(fn (VideoTranslation $row): string => $row->descript_import_id.'-'.$row->language)
             ->groupBy(fn (VideoTranslation $row): string => (string) $row->descriptImport?->video_path);
 
@@ -360,10 +359,13 @@ class AcademyController extends Controller
                     continue;
                 }
 
+                $routeName = $course ? 'academy.lesson.captions' : 'academy.standalone.lesson.captions';
+                $routeParams = $course ? [$course, $lesson, $index, $language->code] : [$lesson, $index, $language->code];
+
                 $tracks[$index][] = [
                     'code' => $language->code,
                     'label' => $language->native_name,
-                    'url' => route('academy.lesson.captions', [$course, $lesson, $index, $language->code]),
+                    'url' => route($routeName, $routeParams),
                     'default' => $language->code === app()->getLocale(),
                 ];
             }
@@ -497,6 +499,218 @@ class AcademyController extends Controller
         return redirect()->route('academy.course', $course)->with('feedback_saved', true);
     }
 
+    // ---- Standalone lessons: published lessons not in any course ----
+
+    public function lessons(Request $request)
+    {
+        $term = trim((string) $request->query('q', ''));
+        $tag = trim((string) $request->query('tag', ''));
+
+        $lessons = Lesson::standalone()
+            ->withCount('questions')
+            ->with('contentTranslations')
+            ->when($term !== '', function ($query) use ($term): void {
+                $like = '%'.mb_strtolower($term).'%';
+
+                $query->where(fn ($match) => $match
+                    ->whereRaw('LOWER(lessons.title) LIKE ?', [$like])
+                    ->orWhereRaw('LOWER(lessons.summary) LIKE ?', [$like])
+                    ->orWhereHas('contentTranslations', fn ($translations) => $translations
+                        ->whereIn('field', ['title', 'summary'])
+                        ->whereRaw('LOWER(value) LIKE ?', [$like])));
+            })
+            ->when($tag !== '', function ($query) use ($tag): void {
+                $query->whereRaw('LOWER(CAST(tags AS TEXT)) LIKE ?', ['%'.mb_strtolower($tag).'%']);
+            })
+            ->orderBy('sort_order')
+            ->orderBy('title')
+            ->get();
+
+        if ($tag !== '') {
+            $lessons = $lessons->filter(fn (Lesson $lesson): bool => collect($lesson->tags ?? [])
+                ->contains(fn (string $t): bool => mb_strtolower(trim($t)) === mb_strtolower($tag)));
+        }
+
+        return view('academy.lessons', [
+            'lessons' => $lessons,
+            'tags' => Lesson::standaloneTags(),
+            'term' => $term,
+            'activeTag' => $tag,
+            'completed' => $this->completedIds($request),
+        ]);
+    }
+
+    public function standaloneLesson(Request $request, Lesson $lesson)
+    {
+        abort_unless($lesson->isPublished(), 404);
+        abort_unless($lesson->courses()->count() === 0, 404);
+
+        $lesson->load(['questions.contentTranslations', 'questions.options.contentTranslations', 'contentTranslations']);
+
+        ActivityEvent::record($request->user(), ActivityEvent::TYPE_LESSON_OPENED, $lesson->title, $request->path(), $lesson);
+
+        $user = $request->user();
+
+        return view('academy.lesson', [
+            'course' => null,
+            'lesson' => $lesson,
+            'lessons' => collect(),
+            'next' => null,
+            'prev' => null,
+            'completed' => $this->completedIds($request),
+            'quiz' => $this->quizState($request, $lesson),
+            'videoPosition' => $user
+                ? (int) VideoPosition::where('user_id', $user->id)->where('lesson_id', $lesson->id)->value('seconds')
+                : 0,
+            'finalUnlocked' => false,
+            'certificate' => null,
+            'captionTracks' => $this->captionTracks(null, $lesson),
+            'canDownloadVideos' => (bool) $user?->canDownloadVideos(),
+            'dubs' => $this->dubs($lesson),
+        ]);
+    }
+
+    public function startStandaloneQuiz(Request $request, Lesson $lesson)
+    {
+        abort_unless($lesson->isPublished(), 404);
+        abort_unless($lesson->courses()->count() === 0, 404);
+        $user = $request->user();
+        abort_unless($user && $lesson->hasQuizLimits(), 403);
+
+        $state = $this->quizState($request, $lesson);
+
+        if (! in_array($lesson->id, $this->completedIds($request), true)
+            && in_array($state['mode'], ['prestart'], true)
+        ) {
+            QuizAttempt::create([
+                'user_id' => $user->id,
+                'lesson_id' => $lesson->id,
+                'status' => QuizAttempt::STATUS_IN_PROGRESS,
+                'started_at' => now(),
+            ]);
+        }
+
+        return redirect()->route('academy.standalone.lesson', $lesson)->withFragment('quiz');
+    }
+
+    public function submitStandaloneQuiz(Request $request, Lesson $lesson)
+    {
+        abort_unless($lesson->isPublished(), 404);
+        abort_unless($lesson->courses()->count() === 0, 404);
+        $lesson->load('questions.options');
+
+        $user = $request->user();
+        $limited = $user && $lesson->hasQuizLimits();
+
+        [$allCorrect, $results, $score, $total] = $this->gradeAnswers($request, $lesson);
+
+        if ($limited) {
+            $attempt = QuizAttempt::where('user_id', $user->id)
+                ->where('lesson_id', $lesson->id)
+                ->where('status', QuizAttempt::STATUS_IN_PROGRESS)
+                ->latest()
+                ->first();
+
+            if (! $attempt) {
+                return redirect()->route('academy.standalone.lesson', $lesson)->withFragment('quiz');
+            }
+
+            $timedOut = $lesson->quiz_time_limit_minutes
+                && (int) $attempt->started_at->diffInSeconds(now()) > $lesson->quiz_time_limit_minutes * 60 + 3;
+
+            if ($timedOut) {
+                $attempt->update(['status' => QuizAttempt::STATUS_EXPIRED, 'submitted_at' => now(), 'score' => $score, 'total' => $total]);
+
+                return redirect()->route('academy.standalone.lesson', $lesson)->with('quiz_timeup', true)->withFragment('quiz');
+            }
+
+            if ($allCorrect) {
+                $attempt->update(['status' => QuizAttempt::STATUS_PASSED, 'submitted_at' => now(), 'score' => $score, 'total' => $total]);
+                $this->completeLesson($request, null, $lesson);
+
+                return redirect()->route('academy.standalone.lesson', $lesson)->with('quiz_passed', true)->withFragment('quiz');
+            }
+
+            $attempt->update(['status' => QuizAttempt::STATUS_FAILED, 'submitted_at' => now(), 'score' => $score, 'total' => $total]);
+
+            return redirect()->route('academy.standalone.lesson', $lesson)
+                ->with('quiz_failed', true)
+                ->with('quiz_score', "{$score}/{$total}")
+                ->withFragment('quiz');
+        }
+
+        if ($allCorrect) {
+            $this->completeLesson($request, null, $lesson);
+
+            return redirect()->route('academy.standalone.lesson', $lesson)->with('quiz_passed', true)->withFragment('quiz');
+        }
+
+        return redirect()->route('academy.standalone.lesson', $lesson)
+            ->withInput()
+            ->with('quiz_results', $results)
+            ->with('quiz_failed', true)
+            ->withFragment('quiz');
+    }
+
+    public function saveStandaloneVideoPosition(Request $request, Lesson $lesson)
+    {
+        abort_unless($lesson->isPublished(), 404);
+        abort_unless($lesson->courses()->count() === 0, 404);
+
+        $data = $request->validate([
+            'seconds' => ['required', 'integer', 'min:0', 'max:86400'],
+        ]);
+
+        VideoPosition::updateOrCreate(
+            ['user_id' => $request->user()->id, 'lesson_id' => $lesson->id],
+            ['seconds' => $data['seconds']],
+        );
+
+        return response()->noContent();
+    }
+
+    public function standaloneCaptions(Request $request, Lesson $lesson, int $video, string $language)
+    {
+        abort_unless($lesson->isPublished(), 404);
+        abort_unless($lesson->courses()->count() === 0, 404);
+
+        $path = $lesson->videoEntries()[$video]['video_path'] ?? null;
+        abort_if(blank($path), 404);
+
+        $subtitle = VideoTranslation::captionsFor($lesson, $path)->where('language', $language)->first()?->subtitle_path;
+        $disk = Storage::disk('public');
+        abort_unless($subtitle && $disk->exists($subtitle), 404);
+
+        return response(VideoTranslation::toVtt($disk->get($subtitle)), 200, [
+            'Content-Type' => 'text/vtt; charset=UTF-8',
+            'Cache-Control' => 'private, max-age=3600',
+        ]);
+    }
+
+    public function downloadStandaloneVideo(Request $request, Lesson $lesson, int $video)
+    {
+        abort_unless($lesson->isPublished(), 404);
+        abort_unless($lesson->courses()->count() === 0, 404);
+        abort_unless($request->user()->canDownloadVideos(), 403);
+
+        $entry = $lesson->videoEntries()[$video] ?? null;
+        $path = ($entry['type'] ?? null) === 'upload' ? ($entry['video_path'] ?? null) : null;
+        $disk = Storage::disk('public');
+        abort_unless(filled($path) && $disk->exists($path), 404);
+
+        $dub = $request->query('audio') === 'original' ? null : ($this->dubs($lesson)[$video] ?? null);
+
+        if ($dub && $disk->exists($dub->dub_path)) {
+            $path = $dub->dub_path;
+        }
+
+        $extension = pathinfo($path, PATHINFO_EXTENSION) ?: 'mp4';
+
+        return $disk->download($path, Str::slug($lesson->title).'-'.($video + 1).'.'.$extension);
+    }
+
+    // ---- End standalone lessons ----
+
     /**
      * Begin a timed/limited quiz attempt (logged-in students only).
      */
@@ -611,7 +825,7 @@ class AcademyController extends Controller
     }
 
     /** Mark a lesson complete and log completion activity (lesson + course). */
-    private function completeLesson(Request $request, Course $course, Lesson $lesson): void
+    private function completeLesson(Request $request, ?Course $course, Lesson $lesson): void
     {
         $user = $request->user();
         $isNewCompletion = ! in_array($lesson->id, $this->completedIds($request), true);
@@ -621,7 +835,7 @@ class AcademyController extends Controller
         if ($user && $isNewCompletion) {
             ActivityEvent::record($user, ActivityEvent::TYPE_LESSON_COMPLETED, $lesson->title, $request->path(), $lesson, $course);
 
-            if ($course->isCompletedBy($user)
+            if ($course && $course->isCompletedBy($user)
                 && ! $user->activities()
                     ->where('type', ActivityEvent::TYPE_COURSE_COMPLETED)
                     ->where('course_id', $course->id)

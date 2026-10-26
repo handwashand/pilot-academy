@@ -39,6 +39,7 @@
             <nav class="flex flex-1 md:flex-none items-center justify-center sm:gap-1" aria-label="{{ __t('nav.sections') }}">
                 @foreach([
                     ['name' => 'courses', 'route' => route('academy.courses'), 'label' => __t('nav.courses')],
+                    ['name' => 'lessons', 'route' => route('academy.lessons'), 'label' => __t('nav.lessons')],
                     ['name' => 'case_studies', 'route' => route('academy.case-studies.index'), 'label' => __t('nav.case_studies')],
                     ['name' => 'tutorials', 'route' => route('academy.tutorials'), 'label' => __t('nav.tutorials')],
                     ['name' => 'webinars', 'route' => route('academy.webinars'), 'label' => __t('nav.webinars')],

@@ -39,11 +39,13 @@ class Lesson extends Model
         'duration_minutes',
         'status',
         'sort_order',
+        'tags',
     ];
 
     protected $casts = [
         'doc_links' => 'array',
         'video_sources' => 'array',
+        'tags' => 'array',
     ];
 
     /**
@@ -129,6 +131,26 @@ class Lesson extends Model
     public function scopeWithoutQuestions(Builder $query): Builder
     {
         return $query->whereDoesntHave('questions');
+    }
+
+    /** Published lessons not in any course — available only on the /lessons page. */
+    public function scopeStandalone(Builder $query): Builder
+    {
+        return $query->published()->whereDoesntHave('courses');
+    }
+
+    /** Every distinct tag across standalone lessons, sorted alphabetically. */
+    public static function standaloneTags(): array
+    {
+        return static::standalone()
+            ->whereNotNull('tags')
+            ->pluck('tags')
+            ->flatten()
+            ->map(fn (string $tag): string => mb_strtolower(trim($tag)))
+            ->unique()
+            ->sort()
+            ->values()
+            ->all();
     }
 
     public function questions(): HasMany

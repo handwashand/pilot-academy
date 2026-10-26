@@ -14,4 +14,5 @@ return [
     'tutorials' => 'الشروحات',
     'webinars' => 'الندوات',
     'courses' => 'الدورات',
+    'lessons' => 'الدروس',
 ];

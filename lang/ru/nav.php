@@ -14,4 +14,5 @@ return [
     'tutorials' => 'Видеоуроки',
     'webinars' => 'Вебинары',
     'courses' => 'Курсы',
+    'lessons' => 'Уроки',
 ];

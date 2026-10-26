@@ -16,6 +16,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -456,6 +457,11 @@ class LessonForm
                                 ->numeric()
                                 ->default(0)
                                 ->helperText(__t('admin_lessons.form.order_help')),
+
+                            TagsInput::make('tags')
+                                ->label(__t('admin_lessons.form.tags'))
+                                ->placeholder(__t('admin_lessons.form.add_tag'))
+                                ->helperText(__t('admin_lessons.form.tags_help')),
 
                             TextInput::make('duration_minutes')
                                 ->label(__t('admin_common.duration_minutes'))
