@@ -36,6 +36,14 @@ Une étude s’affiche dans votre langue là où quelqu’un l’a traduite, et 
 
 Les études de cas sont des documents de référence : elles ne suivent pas la progression, ne comportent pas de quiz et ne délivrent pas de certificat. Les partenaires ne voient que les études publiées.
 
+## Leçons autonomes
+
+Ouvrez **Leçons** dans la navigation de l'académie pour trouver des leçons qui ne font partie d'aucun cours.
+
+Chaque leçon peut être étiquetée par thème — carburant, capteurs, vidéo, etc. Utilisez les tags pour filtrer ou saisissez un terme dans la barre de recherche.
+
+Une leçon autonome fonctionne comme les autres : regardez la vidéo, répondez au contrôle de connaissances et réussissez-le pour terminer. Les leçons autonomes n'ont pas de barre latérale de cours, d'examen final ni de certificat — elles servent à apprendre un seul sujet.
+
 ## Terminer une leçon
 
 Une leçon est terminée lorsque vous **réussissez son contrôle de connaissances**. Lire ou regarder ne suffit pas.

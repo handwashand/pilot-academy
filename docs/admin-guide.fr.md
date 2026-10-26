@@ -160,11 +160,14 @@ liste toutes les leçons de ce cours.
 > l’enregistrement de la leçon. Ajoutez ensuite les vidéos et les images.
 
 > **Une leçon n’a pas besoin de cours.** Dans **Contenu → Leçons**, **Créer** vous
-> permet de laisser **Cours** vide et d’en choisir un plus tard ; les apprenants ne
-> voient pas la leçon tant qu’elle n’est pas dans un cours publié. Un créateur voit
-> les leçons sans cours qu’il a écrites lui-même. **Supprimer un cours ne supprime
-> pas ses leçons** non plus : elles deviennent **Dans aucun cours**, et seul un
-> administrateur peut les reprendre.
+> permet de laisser **Cours** vide et d’en choisir un plus tard. Une leçon sans
+> cours apparaît sur la page **Leçons** des apprenants au lieu d’être dans un
+> cours. Utilisez le champ **Tags** dans les paramètres de la leçon pour ajouter
+> des tags thématiques (carburant, capteurs, vidéo, etc.) — les apprenants s’en
+> servent pour filtrer sur cette page. Un créateur voit les leçons sans cours
+> qu’il a écrites lui-même. **Supprimer un cours ne supprime pas ses leçons**
+> non plus : elles deviennent **Dans aucun cours**, et seul un administrateur
+> peut les reprendre.
 
 > **Une leçon peut faire partie de plusieurs cours.** Ajouter une leçon existante la
 > partage : elle reste dans les cours où elle se trouvait déjà. C’est la même leçon

@@ -36,6 +36,14 @@ Un caso se muestra en tu idioma donde alguien lo haya traducido, y en su idioma 
 
 Los casos prácticos son material de consulta: no registran progreso, no tienen examen y no emiten certificados. Los socios solo ven los casos publicados.
 
+## Lecciones independientes
+
+Abre **Lecciones** en la navegación de la academia para encontrar lecciones que no forman parte de ningún curso.
+
+Cada lección puede estar etiquetada por tema — combustible, sensores, vídeo, etc. Usa las etiquetas para filtrar o escribe en la barra de búsqueda.
+
+Una lección independiente funciona igual que cualquier otra: mira el vídeo, responde la prueba de conocimiento y apruébala para terminar. Las lecciones independientes no tienen barra lateral de curso, examen final ni certificado — son para aprender un tema concreto.
+
 ## Terminar una lección
 
 Una lección se termina cuando **apruebas su prueba de conocimiento**. Leer o ver el video no basta.

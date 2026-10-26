@@ -71,6 +71,19 @@ the language it was written in everywhere else.
 Case studies are reference guides. They do not record progress, have a quiz or
 issue a certificate. Only published studies appear to partners.
 
+## Standalone lessons
+
+Open **Lessons** in the academy navigation to find lessons that stand on their
+own and are not part of any course.
+
+Each lesson can be tagged by topic — fuel, sensors, video, and so on. Use the
+tag pills to filter by topic, or type in the search box.
+
+A standalone lesson works the same way as any other: watch the video, take the
+knowledge check, and pass it to finish the lesson. Standalone lessons do not
+have a course sidebar, a final quiz or a certificate — they are for learning a
+single topic.
+
 ## Finishing a lesson
 
 A lesson is finished when you **pass its knowledge check** — reading or watching

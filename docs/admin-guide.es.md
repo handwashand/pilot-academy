@@ -158,11 +158,13 @@ todas las lecciones de ese curso.
 > guardes la lección. Añade después los vídeos y las imágenes.
 
 > **Una lección no necesita curso.** En **Contenido → Lecciones**, **Crear
-> lección** te deja dejar **Cursos** vacío y elegir uno más tarde; los estudiantes
-> no ven la lección hasta que está en un curso publicado. Un creador ve las
-> lecciones sin curso que ha escrito él mismo. **Eliminar un curso tampoco
-> elimina sus lecciones**: pasan a **En ningún curso** y solo un administrador
-> puede recogerlas.
+> lección** te deja dejar **Cursos** vacío y elegir uno más tarde. Una lección sin
+> curso aparece en la página **Lecciones** de los estudiantes en lugar de dentro
+> de un curso. Usa el campo **Etiquetas** en los ajustes de la lección para añadir
+> etiquetas temáticas (combustible, sensores, vídeo, etc.) — los estudiantes
+> filtran por ellas en esa página. Un creador ve las lecciones sin curso que ha
+> escrito él mismo. **Eliminar un curso tampoco elimina sus lecciones**: pasan a
+> **En ningún curso** y solo un administrador puede recogerlas.
 
 > **Una lección puede estar en más de un curso.** Añadir una lección existente la
 > comparte: sigue en los cursos en los que ya estaba. Es la misma lección en

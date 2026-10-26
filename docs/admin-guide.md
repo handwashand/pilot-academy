@@ -158,11 +158,13 @@ lists every lesson in that course.
 > saves nothing until you save the lesson. Add videos and pictures afterwards.
 
 > **A lesson does not need a course.** Under **Content → Lessons**, **New
-> lesson** lets you leave **Courses** empty and choose one later; students do
-> not see the lesson until it is in a published course. A creator sees the
-> course-less lessons they wrote themselves. **Deleting a course does not
-> delete its lessons** either: they become **Not in any course**, and only an
-> admin can pick those up.
+> lesson** lets you leave **Courses** empty and choose one later. A lesson
+> not in any course appears on the student **Lessons** page instead of inside
+> a course. Use the **Tags** field in the lesson's settings to add topic tags
+> (fuel, sensors, video, etc.) — students filter by them on that page. A
+> creator sees the course-less lessons they wrote themselves. **Deleting a
+> course does not delete its lessons** either: they become **Not in any
+> course**, and only an admin can pick those up.
 
 > **A lesson can be in more than one course.** Adding an existing lesson shares
 > it: it stays in the courses it is already in. It is the same lesson

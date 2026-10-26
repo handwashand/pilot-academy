@@ -36,6 +36,14 @@ Um estudo aparece no seu idioma onde alguém o traduziu e no idioma original no 
 
 Os estudos de caso são materiais de referência: não registram progresso, não têm teste e não emitem certificado. Os parceiros veem apenas os estudos publicados.
 
+## Lições independentes
+
+Abra **Lições** na navegação da academia para encontrar aulas que não fazem parte de nenhum curso.
+
+Cada aula pode ser marcada por tema — combustível, sensores, vídeo, etc. Use as tags para filtrar ou digite na barra de pesquisa.
+
+Uma aula independente funciona como qualquer outra: assista ao vídeo, responda à verificação de conhecimento e passe para concluí-la. As aulas independentes não têm barra lateral de curso, teste final ou certificado — são para aprender um único tema.
+
 ## Concluir uma aula
 
 Uma aula é concluída quando você **passa na verificação de conhecimento**. Apenas ler ou assistir não conclui a aula.

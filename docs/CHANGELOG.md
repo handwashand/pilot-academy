@@ -24,6 +24,12 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **Standalone Lessons page.** Published lessons that are not in any course now
+  have their own page at **Lessons** in the student header. They can be tagged
+  by topic (fuel, sensors, video, etc.) and filtered or searched. Each lesson
+  keeps its knowledge check — completing it counts the same as any lesson — but
+  has no course sidebar, no final quiz and no certificate. Admins set tags on
+  the lesson form under **Settings → Tags**.
 - **Badges for students.** A student now earns a badge for their first finished
   lesson, their first certificate, finishing every course of a product, and a
   perfect score (passing a course's final quiz on the first try with every

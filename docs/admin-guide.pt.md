@@ -157,10 +157,12 @@ as aulas desse curso.
 > salva nada até você salvar a aula. Depois, adicione vídeos e imagens.
 
 > **Uma aula não precisa de curso.** Em **Conteúdo → Aulas**, **Criar aula** permite
-> deixar **Cursos** vazio e escolher um depois; os alunos não veem a aula até que ela
-> esteja em um curso publicado. Um criador vê as aulas sem curso que ele mesmo
-> escreveu. **Excluir um curso também não exclui as aulas dele**: elas passam a
-> **Em nenhum curso**, e só um administrador pode retomá-las.
+> deixar **Cursos** vazio e escolher um depois. Uma aula sem curso aparece na
+> página **Lições** dos alunos em vez de dentro de um curso. Use o campo **Tags**
+> nas configurações da aula para adicionar tags temáticas (combustível, sensores,
+> vídeo, etc.) — os alunos filtram por elas nessa página. Um criador vê as aulas
+> sem curso que ele mesmo escreveu. **Excluir um curso também não exclui as aulas
+> dele**: elas passam a **Em nenhum curso**, e só um administrador pode retomá-las.
 
 > **Uma aula pode estar em mais de um curso.** Adicionar uma aula existente a
 > compartilha: ela continua nos cursos em que já estava. É a mesma aula em todo
