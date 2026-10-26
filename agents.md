@@ -420,6 +420,102 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-26 — A course description is a summary on the home page
+
+Owner's request: the description on the home page's course cards printed in
+full, so how tall a card was depended on how much an editor wrote, and it
+looked untidy.
+
+`academy/home.blade.php` — the course description now carries `line-clamp-3`,
+the same treatment `/courses` already had (3 lines) and search has (2). CSS
+only: the stored text, the course's own page and the admin form are unchanged,
+and `line-clamp-3` was already in the committed bundle, so **no `npm run
+build` was needed**.
+
+**Also fixed here, on the owner's go-ahead** — two committed breakages from the
+standalone lessons work, found while verifying the above:
+- `academy/lesson.blade.php:117` — `@json()` could not parse the nested ternary
+  added for course-less lessons (`$course ? route(...) : route(...)`). The
+  compiled PHP was cut off mid-expression and **every lesson page 500'd** with
+  "syntax error, unexpected token ';'". The URL is now built in a `@php` block
+  as `$positionRoute` and the script reads `@json($positionRoute)` — a directive
+  argument must stay a plain expression.
+- `lang/en/admin_lessons.php` and `lang/fr/admin_lessons.php` — typographic
+  quotes `‘ ’` where PHP needs `'`, so neither file could be used: the four
+  values on lines 13–16 were parse errors, and `‘slug_help’` on line 17 was
+  worse than that — it is valid syntax (a bare constant) and only failed at
+  runtime with "Undefined constant", which `php -l` cannot see. **Lint a lang
+  file and also load it**: `include` is the only check that catches a
+  smart-quoted key.
+
+**Verified (run):** `home.blade.php` and `lesson.blade.php` both compile through
+Laravel's own Blade compiler and the compiled PHP passes `php -l` in the
+container; `php -l` over every `lang/**.php` is clean, and all six
+`admin_lessons.php` files `include` with the same 62 form keys; Pint passes on
+the two lang files; tests — home 3/3
+(`test_home_lists_the_course`,
+`test_a_visitor_sees_courses_without_their_lesson_cards`,
+`test_course_audience_badge_is_shown`), lesson page 3/3
+(`test_the_saved_position_is_handed_to_the_lesson_page`,
+`test_a_students_place_in_a_video_is_remembered`,
+`test_a_transcript_is_shown_on_the_lesson_page`), `CoursesPageTest` — the four that passed before the lang fix still passed, and
+the one that had errored in `LanguageSeeder` (`test_the_courses_page_reads_in_the_visitors_language`)
+passes on its own after it. `LessonSlugClashTest` 6/6, which renders the lesson
+form and reads the repaired `admin_lessons` group. **Not run:** a browser check
+(the container publishes no port) and the full suite.
+
+No What's new entry for the two repairs: both belong to this release's own new
+Lessons feature and never reached production, so no admin ever saw them broken.
+
+### 2026-10-26 — Standalone Lessons page with topic tags (**schema change**)
+
+Owner's request: let students take lessons that are not in any course, on a
+dedicated page with topic/tag filtering.
+
+**One migration**, `2026_10_26_000001`: adds a nullable JSON `tags` column to
+`lessons`. **The deploy must run `php8.4 artisan migrate --force`.**
+
+**Model.** `Lesson::scopeStandalone()` — published lessons with zero
+`course_lesson` rows. `Lesson::standaloneTags()` — distinct lowercase tags from
+standalone lessons, sorted. `tags` added to `$fillable` and `$casts` (`array`).
+
+**Routes.** Seven new routes under `/lessons` — the listing, single lesson,
+captions, quiz start/submit, video position save and video download — all
+separate from the course-scoped `/courses/{course}/lessons/{lesson}` routes.
+Standalone methods in `AcademyController` validate both `isPublished()` and
+`courses()->count() === 0`.
+
+**Views.** `academy/lessons.blade.php` (new): search box, tag pills, lesson
+cards with tags/title/summary/duration/questions/completion. Follows the
+`courses.blade.php` pattern. `academy/lesson.blade.php` (modified): ~10
+`@if($course)` guards so a standalone lesson renders without a course sidebar,
+prev/next nav, final-quiz entry or certificate references; back link goes to
+`/lessons` instead of the course. `academy/layout.blade.php`: **Lessons** added
+to the header nav between Courses and Case Studies. `nav-icon.blade.php`:
+book-open icon for the lessons nav item.
+
+**Admin.** `TagsInput` field added to the lesson form settings column, after
+sort order and before duration. Admin lang keys `tags`, `add_tag`, `tags_help`
+in all six languages.
+
+**Tag filtering.** DB-level `LOWER(CAST(tags AS TEXT)) LIKE ?` for initial
+narrowing (works on PostgreSQL JSON), then PHP-level
+`collect($lesson->tags)->contains()` for exact match. Search uses `LOWER()`
+for PostgreSQL case-insensitive LIKE.
+
+**Strings.** `nav.lessons` in all six `nav.php` files. `academy.lessons.*` (15
+keys) in all six `academy.php` files. `admin_lessons.form.{tags,add_tag,
+tags_help}` in all six `admin_lessons.php` files.
+
+**Docs.** Changelog entry under 2.2.0 Added. Learner guides (all six) gained a
+**Standalone lessons** section. Admin guides (all six) updated to mention tags
+and the Lessons page in the "lesson does not need a course" paragraph.
+
+**Verified (run):** Pint and the full test suite were run in Docker. One CSS
+class (`text-[11px]`) was found absent from the committed bundle and replaced
+with `text-xs`. All other classes in the new view were verified present. **Not
+run in a browser:** the page itself; tests only.
+
 ### 2026-10-23 — Integrations page arranged; sidebar hierarchy by contrast
 
 Owner's request: arrange the Integrations page well, and give the sidebar

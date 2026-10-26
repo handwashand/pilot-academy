@@ -198,7 +198,7 @@
                             @endif
                         </div>
                         <h2 class="text-xl font-extrabold text-navy"><a href="{{ route('academy.course', $course) }}" class="hover:text-brand transition">{{ $course->translated('title') }}</a></h2>
-                        <p class="text-slate-500 mt-1 max-w-2xl">{{ $course->translated('description') }}</p>
+                        <p class="text-slate-500 mt-1 max-w-2xl line-clamp-3">{{ $course->translated('description') }}</p>
                         <div class="mt-2 flex flex-wrap items-center gap-2 text-sm text-slate-500">
                             <span>{{ __tc('academy.common.lessons', $total) }}</span>
                             @if($course->durationLabel())

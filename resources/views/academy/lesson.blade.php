@@ -108,13 +108,21 @@
                             @endif
                         </div>
 
+                        @php
+                            $positionRoute = $remembersPosition
+                                ? ($course
+                                    ? route('academy.lesson.position', [$course, $lesson])
+                                    : route('academy.standalone.lesson.position', $lesson))
+                                : null;
+                        @endphp
+
                         <script>
                             (function () {
                                 var video = document.getElementById('lesson-video-{{ $videoIndex }}');
                                 if (!video) return;
 
                                 var startAt = {{ $remembersPosition ? (int) ($videoPosition ?? 0) : 0 }};
-                                var saveUrl = @json($remembersPosition ? ($course ? route('academy.lesson.position', [$course, $lesson]) : route('academy.standalone.lesson.position', $lesson)) : null);
+                                var saveUrl = @json($positionRoute);
                                 var token = document.querySelector('meta[name="csrf-token"]');
 
                                 if (startAt > 0) {

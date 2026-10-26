@@ -203,6 +203,10 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Changed
 
+- **A course description is a short summary on the home page.** A long
+  description is cut off after three lines with an ellipsis, so the course card
+  stays the same size however much an editor writes. The whole text is still on
+  the course's own page.
 - **The admin panel is a size smaller.** Text, buttons, icons, boxes and
   spacing are all slightly smaller across the panel, so more fits on screen.
   The sidebar keeps its size.
