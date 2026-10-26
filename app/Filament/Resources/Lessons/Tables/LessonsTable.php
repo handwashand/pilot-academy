@@ -14,6 +14,7 @@ use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -91,18 +92,13 @@ class LessonsTable
                     })
                     ->sortable(),
 
-                TextColumn::make('color_tag')
+                SelectColumn::make('color_tag')
                     ->label(__t('admin_lessons.table.color_tag'))
-                    ->badge()
-                    ->formatStateUsing(fn (?string $state): string => $state ? (Lesson::colorTagLabels()[$state] ?? $state) : '')
-                    ->color(fn (?string $state): ?string => match ($state) {
-                        Lesson::COLOR_TAG_RED => 'danger',
-                        Lesson::COLOR_TAG_BLUE => 'info',
-                        Lesson::COLOR_TAG_GREEN => 'success',
-                        default => null,
-                    })
+                    ->options(Lesson::colorTagLabels())
+                    ->placeholder(__t('admin_lessons.form.color_tag_none'))
+                    ->selectablePlaceholder()
                     ->tooltip(fn (Lesson $record): ?string => $record->color_tag_note)
-                    ->placeholder('—')
+                    ->disabled(fn (Lesson $record): bool => ! auth()->user()->canManageLesson($record))
                     ->sortable(),
             ])
             ->filters([
