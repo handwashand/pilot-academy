@@ -183,6 +183,15 @@ class CourseForm
                                 ->numeric()
                                 ->default(0)
                                 ->helperText(__t('admin_courses.form.sort_order_help')),
+
+                            FileUpload::make('thumbnail')
+                                ->label(__t('admin_courses.form.thumbnail'))
+                                ->image()
+                                ->disk('public')
+                                ->directory('course-thumbnails')
+                                ->visibility('public')
+                                ->maxSize(2048)
+                                ->helperText(__t('admin_courses.form.thumbnail_help')),
                         ]),
                 ])->columnSpan(['lg' => 1]),
             ]);

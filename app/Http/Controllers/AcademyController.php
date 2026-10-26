@@ -99,10 +99,33 @@ class AcademyController extends Controller
             ->orderBy('title')
             ->get();
 
+        // Standalone lessons (not in any course), shown between tutorials and course videos.
+        $tag = trim((string) $request->query('tag', ''));
+
+        $standaloneLessons = Lesson::standalone()
+            ->withCount('questions')
+            ->with('contentTranslations')
+            ->when($tag !== '', function ($query) use ($tag): void {
+                $query->whereRaw('LOWER(CAST(tags AS TEXT)) LIKE ?', ['%'.mb_strtolower($tag).'%']);
+            })
+            ->orderBy('sort_order')
+            ->orderBy('title')
+            ->get();
+
+        if ($tag !== '') {
+            $standaloneLessons = $standaloneLessons->filter(fn (Lesson $lesson): bool => collect($lesson->tags ?? [])
+                ->contains(fn (string $t): bool => mb_strtolower(trim($t)) === mb_strtolower($tag)));
+        }
+
+        $completed = $this->completedIds($request);
+
         return view('academy.tutorials', [
             'courses' => $courses,
             'tutorials' => $tutorials,
-            'completed' => $this->completedIds($request),
+            'standaloneLessons' => $standaloneLessons,
+            'standaloneTags' => Lesson::standaloneTags(),
+            'activeTag' => $tag,
+            'completed' => $completed,
             'videoCount' => $tutorials->count() + $courses->sum(fn (Course $course): int => $course->publishedLessons->count()),
         ]);
     }
@@ -503,41 +526,7 @@ class AcademyController extends Controller
 
     public function lessons(Request $request)
     {
-        $term = trim((string) $request->query('q', ''));
-        $tag = trim((string) $request->query('tag', ''));
-
-        $lessons = Lesson::standalone()
-            ->withCount('questions')
-            ->with('contentTranslations')
-            ->when($term !== '', function ($query) use ($term): void {
-                $like = '%'.mb_strtolower($term).'%';
-
-                $query->where(fn ($match) => $match
-                    ->whereRaw('LOWER(lessons.title) LIKE ?', [$like])
-                    ->orWhereRaw('LOWER(lessons.summary) LIKE ?', [$like])
-                    ->orWhereHas('contentTranslations', fn ($translations) => $translations
-                        ->whereIn('field', ['title', 'summary'])
-                        ->whereRaw('LOWER(value) LIKE ?', [$like])));
-            })
-            ->when($tag !== '', function ($query) use ($tag): void {
-                $query->whereRaw('LOWER(CAST(tags AS TEXT)) LIKE ?', ['%'.mb_strtolower($tag).'%']);
-            })
-            ->orderBy('sort_order')
-            ->orderBy('title')
-            ->get();
-
-        if ($tag !== '') {
-            $lessons = $lessons->filter(fn (Lesson $lesson): bool => collect($lesson->tags ?? [])
-                ->contains(fn (string $t): bool => mb_strtolower(trim($t)) === mb_strtolower($tag)));
-        }
-
-        return view('academy.lessons', [
-            'lessons' => $lessons,
-            'tags' => Lesson::standaloneTags(),
-            'term' => $term,
-            'activeTag' => $tag,
-            'completed' => $this->completedIds($request),
-        ]);
+        return redirect()->route('academy.tutorials', $request->query());
     }
 
     public function standaloneLesson(Request $request, Lesson $lesson)

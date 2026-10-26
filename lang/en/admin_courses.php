@@ -22,6 +22,8 @@ return [
         'audience_help' => 'Shown as a badge on the course card.',
         'sort_order' => 'Sort order',
         'sort_order_help' => 'Lower numbers appear first.',
+        'thumbnail' => 'Course banner',
+        'thumbnail_help' => 'Shown behind each lesson card on the Tutorials page. Leave empty for the default gradient.',
         'status_help' => 'Only published courses are visible to students. New courses start as a draft — use Publish in the course list when it is ready.',
         'needs_a_lesson' => 'Add at least one published lesson before publishing this course.',
         'fix_first' => 'Fix what students would hit before publishing: :problems.',

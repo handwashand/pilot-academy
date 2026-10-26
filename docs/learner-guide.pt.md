@@ -4,7 +4,7 @@ Como a Pilot Academy funciona, da primeira aula até o certificado.
 
 ## Primeiros passos
 
-A barra superior reúne quatro coisas: **Cursos**, todos os cursos publicados com pesquisa e filtros por nível e público; **Estudos de caso**; **Tutoriais**, todos os vídeos das aulas reunidos sob o seu curso; e **Webinars**, as sessões ao vivo com a equipe do Pilot e suas gravações. Os tutoriais reúnem vídeos práticos curtos e todos os vídeos das aulas: dá para assistir a um sem começar um curso. A ajuda está no menu sob as suas iniciais e no rodapé de cada página.
+A barra superior reúne quatro coisas: **Cursos**, todos os cursos publicados com pesquisa e filtros por nível e público; **Estudos de caso**; **Tutoriais**, vídeos práticos independentes, aulas independentes por tema e todos os vídeos dos cursos em um só lugar; e **Webinars**, as sessões ao vivo com a equipe do Pilot e suas gravações. A ajuda está no menu sob as suas iniciais e no rodapé de cada página.
 
 **Você pode começar uma aula sem conta.** Abra um curso na página inicial e siga em frente. Nesse caso, seu progresso fica salvo apenas neste navegador.
 
@@ -38,9 +38,9 @@ Os estudos de caso são materiais de referência: não registram progresso, não
 
 ## Lições independentes
 
-Abra **Lições** na navegação da academia para encontrar aulas que não fazem parte de nenhum curso.
+As aulas independentes aparecem na página **Tutoriais**, entre os vídeos práticos e os vídeos dos cursos. São aulas que não fazem parte de nenhum curso.
 
-Cada aula pode ser marcada por tema — combustível, sensores, vídeo, etc. Use as tags para filtrar ou digite na barra de pesquisa.
+Cada aula pode ser marcada por tema — combustível, sensores, vídeo, etc. Use as tags para filtrar.
 
 Uma aula independente funciona como qualquer outra: assista ao vídeo, responda à verificação de conhecimento e passe para concluí-la. As aulas independentes não têm barra lateral de curso, teste final ou certificado — são para aprender um único tema.
 

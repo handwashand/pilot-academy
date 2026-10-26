@@ -14,7 +14,7 @@
              and on a 375px phone the right side needs more room than that
              leaves — Log in ran into the icons. Below md the nav takes the
              space left over instead, which is what fitted before. --}}
-        <div class="max-w-6xl mx-auto px-4 sm:px-5 h-16 flex items-center gap-0.5 md:gap-2">
+        <div class="max-w-7xl mx-auto px-4 sm:px-5 h-16 flex items-center gap-0.5 md:gap-2">
             <a href="{{ route('academy.home') }}" class="flex min-w-0 md:flex-1 items-center">
                 {{-- The same PILOT ACADEMY lockup as the admin panel, at the same
                      1.75rem, so both sides of the academy read as one product.
@@ -39,7 +39,6 @@
             <nav class="flex flex-1 md:flex-none items-center justify-center sm:gap-1" aria-label="{{ __t('nav.sections') }}">
                 @foreach([
                     ['name' => 'courses', 'route' => route('academy.courses'), 'label' => __t('nav.courses')],
-                    ['name' => 'lessons', 'route' => route('academy.lessons'), 'label' => __t('nav.lessons')],
                     ['name' => 'case_studies', 'route' => route('academy.case-studies.index'), 'label' => __t('nav.case_studies')],
                     ['name' => 'tutorials', 'route' => route('academy.tutorials'), 'label' => __t('nav.tutorials')],
                     ['name' => 'webinars', 'route' => route('academy.webinars'), 'label' => __t('nav.webinars')],
@@ -176,11 +175,11 @@
         </div>
     </header>
 
-    <main id="main" class="max-w-6xl mx-auto px-5 py-8">
+    <main id="main" class="max-w-7xl mx-auto px-5 py-8">
         @yield('content')
     </main>
 
-    <footer class="max-w-6xl mx-auto px-5 py-10 text-center text-sm text-slate-400">
+    <footer class="max-w-7xl mx-auto px-5 py-10 text-center text-sm text-slate-400">
         {{-- Every language again at the foot of the page, spelled out — a second
              way in for anyone who scrolls rather than looks up. The button in
              the header's top right corner is the main one. --}}

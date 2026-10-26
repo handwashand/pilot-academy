@@ -4,7 +4,7 @@ Cómo funciona Pilot Academy, desde tu primera lección hasta tu certificado.
 
 ## Primeros pasos
 
-La barra superior reúne cuatro cosas: **Cursos**, todos los cursos publicados con búsqueda y filtros por nivel y público; **Casos prácticos**; **Tutoriales**, todos los vídeos de las lecciones reunidos bajo su curso; y **Seminarios web**, las sesiones en directo con el equipo de Pilot y sus grabaciones. Los tutoriales reúnen vídeos prácticos cortos y todos los vídeos de las lecciones: puedes ver uno sin empezar un curso. La ayuda está en el menú bajo tus iniciales y al pie de cada página.
+La barra superior reúne cuatro cosas: **Cursos**, todos los cursos publicados con búsqueda y filtros por nivel y público; **Casos prácticos**; **Tutoriales**, vídeos prácticos independientes, lecciones independientes por tema y todos los vídeos de los cursos en un solo lugar; y **Seminarios web**, las sesiones en directo con el equipo de Pilot y sus grabaciones. La ayuda está en el menú bajo tus iniciales y al pie de cada página.
 
 **Puedes empezar una lección sin cuenta.** Abre un curso desde la página principal y continúa. Tu progreso queda guardado solo en este navegador.
 
@@ -38,9 +38,9 @@ Los casos prácticos son material de consulta: no registran progreso, no tienen 
 
 ## Lecciones independientes
 
-Abre **Lecciones** en la navegación de la academia para encontrar lecciones que no forman parte de ningún curso.
+Las lecciones independientes aparecen en la página **Tutoriales**, entre los vídeos prácticos y los vídeos de los cursos. Son lecciones que no forman parte de ningún curso.
 
-Cada lección puede estar etiquetada por tema — combustible, sensores, vídeo, etc. Usa las etiquetas para filtrar o escribe en la barra de búsqueda.
+Cada lección puede estar etiquetada por tema — combustible, sensores, vídeo, etc. Usa las etiquetas para filtrar.
 
 Una lección independiente funciona igual que cualquier otra: mira el vídeo, responde la prueba de conocimiento y apruébala para terminar. Las lecciones independientes no tienen barra lateral de curso, examen final ni certificado — son para aprender un tema concreto.
 

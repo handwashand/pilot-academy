@@ -334,8 +334,8 @@ return [
     ],
     'tutorials' => [
         'title' => 'Tutoriels',
-        'meta' => 'Toutes les vidéos de Pilot Academy, réunies depuis les cours.',
-        'intro' => 'De courtes vidéos pratiques, et toutes les vidéos des leçons réunies sous leur cours. Ouvrez-en une pour la regarder ; une vidéo de leçon vous mène à la leçon.',
+        'meta' => 'Tutoriels, leçons autonomes par thème et toutes les vidéos des cours Pilot Academy.',
+        'intro' => 'Tutoriels, leçons autonomes par thème et toutes les vidéos des cours en un seul endroit.',
         'videos' => ':count vidéo|:count vidéos',
         'standalone' => 'Prise en main de Pilot',
         'from_courses' => 'Issues des cours',
@@ -343,6 +343,7 @@ return [
         'draft_hint' => 'les partenaires ne voient pas cette page. Vous la prévisualisez en tant qu’éditeur.',
         'no_video_yet' => 'Ce tutoriel n’a pas encore de vidéo.',
         'reference_only' => 'Les tutoriels sont des vidéos de référence : ils ne suivent pas la progression et ne délivrent pas de certificat.',
+        'standalone_lessons' => 'Leçons autonomes',
         'open_course' => 'Ouvrir le cours',
         'none' => 'Aucune vidéo pour le moment.',
         'none_hint' => 'Les leçons apparaissent ici dès qu’elles ont une vidéo.',

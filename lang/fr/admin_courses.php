@@ -18,6 +18,8 @@ return [
         'audience_help' => 'Affiché sous forme de badge sur la carte du cours.',
         'sort_order' => 'Ordre',
         'sort_order_help' => 'Les plus petits nombres apparaissent en premier.',
+        'thumbnail' => 'Bannière du cours',
+        'thumbnail_help' => 'Affichée derrière chaque leçon sur la page Tutoriels. Laissez vide pour le dégradé par défaut.',
         'status_help' => 'Seuls les cours publiés sont visibles par les apprenants. Un nouveau cours commence en brouillon — utilisez Publier dans la liste des cours quand il est prêt.',
         'needs_a_lesson' => 'Ajoutez au moins une leçon publiée avant de publier ce cours.',
         'fix_first' => 'Corrigez ce que les apprenants rencontreraient avant de publier : :problems.',

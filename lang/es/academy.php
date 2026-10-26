@@ -333,8 +333,8 @@ return [
     ],
     'tutorials' => [
         'title' => 'Tutoriales',
-        'meta' => 'Todos los vídeos de Pilot Academy, reunidos desde los cursos.',
-        'intro' => 'Vídeos prácticos cortos y todos los vídeos de las lecciones reunidos bajo su curso. Abre uno para verlo; un vídeo de lección te lleva a la lección.',
+        'meta' => 'Tutoriales, lecciones independientes por tema y todos los vídeos de los cursos de Pilot Academy.',
+        'intro' => 'Tutoriales, lecciones independientes por tema y todos los vídeos de los cursos en un solo lugar.',
         'videos' => ':count vídeo|:count vídeos',
         'standalone' => 'Cómo se hace en Pilot',
         'from_courses' => 'De los cursos',
@@ -342,6 +342,7 @@ return [
         'draft_hint' => 'los socios no ven esta página. La estás viendo como editor.',
         'no_video_yet' => 'Este tutorial aún no tiene vídeo.',
         'reference_only' => 'Los tutoriales son vídeos de consulta: no registran progreso ni emiten certificado.',
+        'standalone_lessons' => 'Lecciones independientes',
         'open_course' => 'Abrir el curso',
         'none' => 'Todavía no hay vídeos.',
         'none_hint' => 'Las lecciones aparecen aquí en cuanto tienen un vídeo.',

@@ -420,6 +420,51 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-27 — Standalone lessons moved to the Tutorials page; wider student portal; course thumbnails
+
+Owner's request: move standalone lessons from their own `/lessons` page onto the
+Tutorials page (between standalone tutorials and course videos), remove
+**Lessons** from the student navbar, widen the student portal, and add course
+banners behind lesson cards.
+
+**Tutorials consolidation.** `AcademyController::tutorials()` now also queries
+standalone lessons (`Lesson::standalone()`) and passes `standaloneLessons`,
+`standaloneTags`, `activeTag` to the view. `AcademyController::lessons()` is now
+a redirect to `route('academy.tutorials')`. `tutorials.blade.php` was rewritten
+with three sections: standalone tutorials, standalone lessons (with tag pills and
+search), and course videos with lesson cards showing step numbers. **Lessons**
+was removed from the header nav in `layout.blade.php` — down to four items:
+Courses, Case Studies, Tutorials, Webinars. `lesson.blade.php` back links now
+point to `route('academy.tutorials')`.
+
+**Wider portal.** All three `max-w-6xl` instances in `layout.blade.php` (header,
+main, footer) changed to `max-w-7xl` (1152px → 1280px).
+
+**Course thumbnails.** `Course::getThumbnailUrlAttribute()` added — returns a
+`Storage::disk('public')->url()` for the `thumbnail` column (already existed,
+nullable). `CourseForm.php` gained a `FileUpload` for thumbnail in the Settings
+side column. On `tutorials.blade.php`, course lesson cards show the course
+thumbnail as a background image with `opacity-60` when available.
+
+**Lang.** `academy.tutorials.standalone_lessons` key added in all six languages.
+`academy.tutorials.meta` and `academy.tutorials.intro` updated in all six.
+`admin_courses.form.thumbnail` and `admin_courses.form.thumbnail_help` added in
+all six.
+
+**Docs.** Changelog entries under 2.2.0 Added for the consolidation, course
+banners and wider portal. Learner guides (all six) updated: standalone lessons
+section now references the **Tutorials** page. Admin guides (all six) updated:
+the "lesson does not need a course" paragraph now says lessons appear on the
+student **Tutorials** page.
+
+**Dead code.** `resources/views/academy/lessons.blade.php` is now unused (the
+route redirects). Left in place for the owner to decide on removal.
+
+**Verified (run):** test suite ran with `MissingAppKeyException` on first
+attempt (container had no APP_KEY); rerun pending. Pint not yet run. **Not run
+in a browser:** the page itself; CSS classes checked against the committed bundle
+where possible.
+
 ### 2026-10-26 — A course description is a summary on the home page
 
 Owner's request: the description on the home page's course cards printed in

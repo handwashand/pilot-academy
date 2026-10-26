@@ -347,8 +347,8 @@ return [
     ],
     'tutorials' => [
         'title' => 'Tutorials',
-        'meta' => 'Every Pilot Academy video, gathered from the courses in one place.',
-        'intro' => 'Short how-tos, and every lesson video gathered under its course. Open one to watch it; a lesson video takes you to the lesson.',
+        'meta' => 'Pilot Academy tutorials, standalone lessons by topic, and every course video in one place.',
+        'intro' => 'How-tos, standalone lessons by topic, and every course video in one place.',
         'videos' => ':count video|:count videos',
         'standalone' => 'Pilot how-tos',
         'from_courses' => 'From the courses',
@@ -356,6 +356,7 @@ return [
         'draft_hint' => 'partners cannot see this page. You are previewing it as an editor.',
         'no_video_yet' => 'This tutorial has no video yet.',
         'reference_only' => 'Tutorials are reference videos: they do not record progress or issue a certificate.',
+        'standalone_lessons' => 'Standalone lessons',
         'open_course' => 'Open the course',
         'none' => 'No videos yet.',
         'none_hint' => 'Lessons appear here as soon as they have a video.',

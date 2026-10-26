@@ -24,12 +24,20 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
-- **Standalone Lessons page.** Published lessons that are not in any course now
-  have their own page at **Lessons** in the student header. They can be tagged
-  by topic (fuel, sensors, video, etc.) and filtered or searched. Each lesson
-  keeps its knowledge check — completing it counts the same as any lesson — but
-  has no course sidebar, no final quiz and no certificate. Admins set tags on
-  the lesson form under **Settings → Tags**.
+- **Standalone lessons on the Tutorials page.** Published lessons that are not
+  in any course now appear on the **Tutorials** page, between the standalone
+  tutorials and the course videos. They can be tagged by topic (fuel, sensors,
+  video, etc.) and filtered with topic pills. Each lesson keeps its knowledge
+  check — completing it counts the same as any lesson — but has no course
+  sidebar, no final quiz and no certificate. Admins set tags on the lesson form
+  under **Settings → Tags**.
+- **Course banners on lesson cards.** Admins can upload a banner image for each
+  course under **Settings → Course banner** on the course form. The banner
+  appears behind every lesson card for that course on the Tutorials page,
+  and each card shows its step number within the course.
+- **Wider student portal.** The student site's content area is wider (1280px,
+  up from 1152px), giving course cards, lesson content and the tutorials page
+  more room on large screens.
 - **Badges for students.** A student now earns a badge for their first finished
   lesson, their first certificate, finishing every course of a product, and a
   perfect score (passing a course's final quiz on the first try with every

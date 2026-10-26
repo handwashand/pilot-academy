@@ -23,7 +23,7 @@
             @if($course)
                 <a href="{{ route('academy.course', $course) }}" class="text-sm text-brand font-semibold"><span class="inline-block rtl:rotate-180">&larr;</span> {{ $course->translated('title') }}</a>
             @else
-                <a href="{{ route('academy.lessons') }}" class="text-sm text-brand font-semibold"><span class="inline-block rtl:rotate-180">&larr;</span> {{ __t('academy.lessons.title') }}</a>
+                <a href="{{ route('academy.tutorials') }}" class="text-sm text-brand font-semibold"><span class="inline-block rtl:rotate-180">&larr;</span> {{ __t('academy.tutorials.title') }}</a>
             @endif
 
             @if($course && (! $course->isPublished() || ! $lesson->isPublished()))
@@ -465,9 +465,9 @@
                 </div>
             @else
                 <div class="mt-8">
-                    <a href="{{ route('academy.lessons') }}"
+                    <a href="{{ route('academy.tutorials') }}"
                        class="inline-block rounded-lg border border-slate-300 px-5 py-2.5 font-semibold text-slate-600 hover:bg-white">
-                        <span class="inline-block rtl:rotate-180">&larr;</span> {{ __t('academy.lessons.back') }}
+                        <span class="inline-block rtl:rotate-180">&larr;</span> {{ __t('academy.tutorials.title') }}
                     </a>
                 </div>
             @endif

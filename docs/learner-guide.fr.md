@@ -4,7 +4,7 @@ Comment fonctionne Pilot Academy, de votre première leçon à votre certificat.
 
 ## Premiers pas
 
-La barre supérieure réunit quatre choses : **Cours**, tous les cours publiés avec une recherche et des filtres par niveau et par public ; **Études de cas** ; **Tutoriels**, toutes les vidéos des leçons réunies sous leur cours ; et **Webinaires**, les sessions en direct avec l’équipe Pilot et leurs enregistrements. Les tutoriels réunissent de courtes vidéos pratiques et toutes les vidéos des leçons : vous pouvez en regarder une sans commencer un cours. L’aide est dans le menu sous vos initiales et au bas de chaque page.
+La barre supérieure réunit quatre choses : **Cours**, tous les cours publiés avec une recherche et des filtres par niveau et par public ; **Études de cas** ; **Tutoriels**, vidéos pratiques autonomes, leçons autonomes par thème et toutes les vidéos des cours au même endroit ; et **Webinaires**, les sessions en direct avec l’équipe Pilot et leurs enregistrements. L’aide est dans le menu sous vos initiales et au bas de chaque page.
 
 **Vous pouvez commencer une leçon sans compte.** Ouvrez un cours depuis l'accueil et avancez. Votre progression reste alors uniquement dans ce navigateur.
 
@@ -38,9 +38,9 @@ Les études de cas sont des documents de référence : elles ne suivent pas la p
 
 ## Leçons autonomes
 
-Ouvrez **Leçons** dans la navigation de l'académie pour trouver des leçons qui ne font partie d'aucun cours.
+Les leçons autonomes se trouvent sur la page **Tutoriels**, entre les vidéos pratiques et les vidéos des cours. Ce sont des leçons qui ne font partie d'aucun cours.
 
-Chaque leçon peut être étiquetée par thème — carburant, capteurs, vidéo, etc. Utilisez les tags pour filtrer ou saisissez un terme dans la barre de recherche.
+Chaque leçon peut être étiquetée par thème — carburant, capteurs, vidéo, etc. Utilisez les tags pour filtrer.
 
 Une leçon autonome fonctionne comme les autres : regardez la vidéo, répondez au contrôle de connaissances et réussissez-le pour terminer. Les leçons autonomes n'ont pas de barre latérale de cours, d'examen final ni de certificat — elles servent à apprendre un seul sujet.
 

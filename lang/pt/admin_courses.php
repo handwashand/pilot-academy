@@ -18,6 +18,8 @@ return [
         'audience_help' => 'Exibido como selo no card do curso.',
         'sort_order' => 'Ordem',
         'sort_order_help' => 'Números menores aparecem primeiro.',
+        'thumbnail' => 'Banner do curso',
+        'thumbnail_help' => 'Exibido atrás de cada aula na página Tutoriais. Deixe vazio para o degradê padrão.',
         'status_help' => 'Só cursos publicados ficam visíveis para os alunos. Novos cursos começam como rascunho — use Publicar na lista de cursos quando estiver pronto.',
         'needs_a_lesson' => 'Adicione pelo menos uma aula publicada antes de publicar este curso.',
         'fix_first' => 'Corrija o que os alunos encontrariam antes de publicar: :problems.',

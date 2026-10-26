@@ -11,10 +11,10 @@ How Pilot Academy works, from your first lesson to your certificate.
 
 The top bar holds four things: **Courses**, every published course with a
 search box and filters for level and audience; **Case Studies**; **Tutorials**,
-every lesson video gathered under its course; and **Webinars**, live sessions
-with the Pilot team and their recordings. Tutorials holds both short how-to
-videos and every lesson video, so you can watch one without starting a course. Help is in the menu behind your
-initials, and at the foot of every page.
+standalone how-to videos, standalone lessons by topic and every course video in
+one place; and **Webinars**, live sessions with the Pilot team and their
+recordings. Help is in the menu behind your initials, and at the foot of every
+page.
 
 **You can start a lesson without an account.** Open a course from the home
 page and go. Your progress is then kept in this browser only — switch phone or
@@ -73,11 +73,12 @@ issue a certificate. Only published studies appear to partners.
 
 ## Standalone lessons
 
-Open **Lessons** in the academy navigation to find lessons that stand on their
-own and are not part of any course.
+Standalone lessons appear on the **Tutorials** page, between the how-to videos
+and the course videos. They are lessons that stand on their own and are not part
+of any course.
 
 Each lesson can be tagged by topic — fuel, sensors, video, and so on. Use the
-tag pills to filter by topic, or type in the search box.
+tag pills to filter by topic.
 
 A standalone lesson works the same way as any other: watch the video, take the
 knowledge check, and pass it to finish the lesson. Standalone lessons do not

@@ -18,6 +18,8 @@ return [
         'audience_help' => 'Se muestra como insignia en la tarjeta del curso.',
         'sort_order' => 'Orden',
         'sort_order_help' => 'Los números más bajos aparecen primero.',
+        'thumbnail' => 'Portada del curso',
+        'thumbnail_help' => 'Se muestra detrás de cada lección en la página Tutoriales. Déjalo vacío para el degradado predeterminado.',
         'status_help' => 'Solo los cursos publicados son visibles para los estudiantes. Los cursos nuevos empiezan como borrador; usa Publicar en la lista de cursos cuando esté listo.',
         'needs_a_lesson' => 'Añade al menos una lección publicada antes de publicar este curso.',
         'fix_first' => 'Corrige lo que encontrarían los estudiantes antes de publicar: :problems.',
