@@ -436,13 +436,17 @@ The lesson field is now labeled **Color tag** and offers only red, yellow and
 blue, with plain color names and no readiness meanings. Existing green lesson
 tags are converted to yellow by migration `2026_10_27_000002`; deploy with
 `php8.4 artisan migrate --force`. Updated all six UI translations and the
-changelog.
+changelog. The French lesson translation file also had unescaped apostrophes,
+so its strings now parse and the French label can load.
 
-### 2026-10-27 — Readiness color tags on lessons (**schema change**)
+### 2026-10-27 — Lesson readiness tags first added (**schema change**; superseded by the color-only update above)
 
 Owner's request: a lightweight way to mark lessons as ready, in progress, or not
 ready — color-coded, with an optional note, visible on the admin Lessons list
 and filterable.
+
+The readiness meanings and green option recorded here have since been replaced
+by the simple red, yellow and blue color tags described in the newer entry above.
 
 **One migration**, `2026_10_27_000001`: adds nullable `color_tag` (varchar 10)
 and `color_tag_note` (varchar 255) to `lessons`. **The deploy must run
