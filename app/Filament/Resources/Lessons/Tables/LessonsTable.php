@@ -55,13 +55,14 @@ class LessonsTable
 
                 TextColumn::make('color_tag')
                     ->label(__t('admin_lessons.table.color_tag'))
-                    ->formatStateUsing(fn (?string $state): ?string => filled($state) ? '●' : null)
-                    ->color(fn (?string $state): ?string => match ($state) {
-                        Lesson::COLOR_TAG_RED => 'danger',
-                        Lesson::COLOR_TAG_YELLOW => 'warning',
-                        Lesson::COLOR_TAG_BLUE => 'info',
+                    ->formatStateUsing(fn (?string $state): ?string => match ($state) {
+                        Lesson::COLOR_TAG_RED => '<span aria-hidden="true" style="display:inline-block;width:8px;height:8px;border-radius:50%;background-color:#dc2626"></span>',
+                        Lesson::COLOR_TAG_YELLOW => '<span aria-hidden="true" style="display:inline-block;width:8px;height:8px;border-radius:50%;background-color:#eab308"></span>',
+                        Lesson::COLOR_TAG_BLUE => '<span aria-hidden="true" style="display:inline-block;width:8px;height:8px;border-radius:50%;background-color:#2563eb"></span>',
                         default => null,
                     })
+                    ->html()
+                    ->alignCenter()
                     ->size('xs')
                     ->tooltip(fn (Lesson $record): ?string => filled($record->color_tag)
                         ? collect([

@@ -45,7 +45,7 @@ class LessonColorTagTest extends TestCase
             ->assertDontSee('Readiness');
     }
 
-    public function test_lesson_list_shows_a_small_color_dot_instead_of_a_text_selector(): void
+    public function test_lesson_list_shows_small_color_dots_instead_of_text_selectors(): void
     {
         $admin = User::create([
             'name' => 'Pilot Admin',
@@ -59,11 +59,25 @@ class LessonColorTagTest extends TestCase
             'content' => '<p>Body.</p>',
             'color_tag' => Lesson::COLOR_TAG_RED,
         ]);
+        Lesson::create([
+            'title' => 'Yellow tagged lesson',
+            'slug' => 'yellow-tagged-lesson',
+            'content' => '<p>Body.</p>',
+            'color_tag' => Lesson::COLOR_TAG_YELLOW,
+        ]);
+        Lesson::create([
+            'title' => 'Blue tagged lesson',
+            'slug' => 'blue-tagged-lesson',
+            'content' => '<p>Body.</p>',
+            'color_tag' => Lesson::COLOR_TAG_BLUE,
+        ]);
 
         Livewire::actingAs($admin)
             ->test(ListLessons::class)
             ->assertTableColumnStateSet('color_tag', Lesson::COLOR_TAG_RED, $lesson)
-            ->assertSee('text-danger-600')
+            ->assertSee('#dc2626')
+            ->assertSee('#eab308')
+            ->assertSee('#2563eb')
             ->assertSee('Red');
     }
 
