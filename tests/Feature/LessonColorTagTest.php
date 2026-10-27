@@ -3,9 +3,11 @@
 namespace Tests\Feature;
 
 use App\Filament\Resources\Lessons\LessonResource;
+use App\Filament\Resources\Lessons\Pages\ListLessons;
 use App\Models\Lesson;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class LessonColorTagTest extends TestCase
@@ -41,6 +43,28 @@ class LessonColorTagTest extends TestCase
             ->assertSee('Yellow')
             ->assertSee('Blue')
             ->assertDontSee('Readiness');
+    }
+
+    public function test_lesson_list_shows_a_small_color_dot_instead_of_a_text_selector(): void
+    {
+        $admin = User::create([
+            'name' => 'Pilot Admin',
+            'email' => 'color-dot-admin@pilot.local',
+            'password' => bcrypt('password'),
+            'role' => User::ROLE_ADMIN,
+        ]);
+        $lesson = Lesson::create([
+            'title' => 'Tagged lesson',
+            'slug' => 'tagged-lesson',
+            'content' => '<p>Body.</p>',
+            'color_tag' => Lesson::COLOR_TAG_RED,
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(ListLessons::class)
+            ->assertTableColumnStateSet('color_tag', Lesson::COLOR_TAG_RED, $lesson)
+            ->assertSee('text-danger-600')
+            ->assertSee('Red');
     }
 
     public function test_existing_green_color_tags_are_migrated_to_yellow(): void

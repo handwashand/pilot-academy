@@ -14,7 +14,6 @@ use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -54,6 +53,24 @@ class LessonsTable
                     ->sortable()
                     ->weight('bold'),
 
+                IconColumn::make('color_tag')
+                    ->hiddenLabel()
+                    ->icon(fn (?string $state): ?string => filled($state) ? 'heroicon-m-circle' : null)
+                    ->color(fn (?string $state): ?string => match ($state) {
+                        Lesson::COLOR_TAG_RED => 'danger',
+                        Lesson::COLOR_TAG_YELLOW => 'warning',
+                        Lesson::COLOR_TAG_BLUE => 'info',
+                        default => null,
+                    })
+                    ->size('xs')
+                    ->tooltip(fn (Lesson $record): ?string => filled($record->color_tag)
+                        ? collect([
+                            Lesson::colorTagLabels()[$record->color_tag] ?? null,
+                            $record->color_tag_note,
+                        ])->filter()->implode(' · ')
+                        : null)
+                    ->sortable(),
+
                 // Flagged where the work happens, not only on Content health.
                 TextColumn::make('attention')
                     ->label(__t('admin_common.attention'))
@@ -90,15 +107,6 @@ class LessonsTable
                         Lesson::STATUS_ARCHIVED => 'gray',
                         default => 'warning',
                     })
-                    ->sortable(),
-
-                SelectColumn::make('color_tag')
-                    ->label(__t('admin_lessons.table.color_tag'))
-                    ->options(Lesson::colorTagLabels())
-                    ->placeholder(__t('admin_lessons.form.color_tag_none'))
-                    ->selectablePlaceholder()
-                    ->tooltip(fn (Lesson $record): ?string => $record->color_tag_note)
-                    ->disabled(fn (Lesson $record): bool => ! auth()->user()->canManageLesson($record))
                     ->sortable(),
             ])
             ->filters([

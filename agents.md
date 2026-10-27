@@ -439,6 +439,14 @@ tags are converted to yellow by migration `2026_10_27_000002`; deploy with
 changelog. The French lesson translation file also had unescaped apostrophes,
 so its strings now parse and the French label can load.
 
+### 2026-10-27 — Lesson color tags display as a small dot
+
+The **Lessons** list now shows each color tag as a small colored dot beside its
+lesson title, instead of a text-valued inline selector. The color name and
+optional note are available on hover; admins change the tag in the lesson form.
+The list filter remains. The changelog was updated to describe the visible
+change.
+
 ### 2026-10-27 — Lesson readiness tags first added (**schema change**; superseded by the color-only update above)
 
 Owner's request: a lightweight way to mark lessons as ready, in progress, or not
