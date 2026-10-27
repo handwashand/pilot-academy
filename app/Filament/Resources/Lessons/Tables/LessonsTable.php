@@ -53,9 +53,9 @@ class LessonsTable
                     ->sortable()
                     ->weight('bold'),
 
-                IconColumn::make('color_tag')
-                    ->hiddenLabel()
-                    ->icon(fn (?string $state): ?string => filled($state) ? 'heroicon-m-circle' : null)
+                TextColumn::make('color_tag')
+                    ->label(__t('admin_lessons.table.color_tag'))
+                    ->formatStateUsing(fn (?string $state): ?string => filled($state) ? '●' : null)
                     ->color(fn (?string $state): ?string => match ($state) {
                         Lesson::COLOR_TAG_RED => 'danger',
                         Lesson::COLOR_TAG_YELLOW => 'warning',
