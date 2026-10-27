@@ -11,7 +11,7 @@ use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
@@ -210,10 +210,26 @@ class LessonsTable
                     BulkAction::make('tagColor')
                         ->label(__t('admin_lessons.table.bulk_color_tag'))
                         ->icon('heroicon-o-tag')
+                        ->modalWidth('xs')
                         ->schema([
-                            Select::make('color_tag')
+                            ToggleButtons::make('color_tag')
                                 ->label(__t('admin_lessons.form.color_tag'))
+                                ->hiddenLabel()
                                 ->options(Lesson::colorTagLabels())
+                                ->icons([
+                                    Lesson::COLOR_TAG_RED => 'heroicon-o-swatch',
+                                    Lesson::COLOR_TAG_YELLOW => 'heroicon-o-swatch',
+                                    Lesson::COLOR_TAG_BLUE => 'heroicon-o-swatch',
+                                ])
+                                ->colors([
+                                    Lesson::COLOR_TAG_RED => 'danger',
+                                    Lesson::COLOR_TAG_YELLOW => 'warning',
+                                    Lesson::COLOR_TAG_BLUE => 'info',
+                                ])
+                                ->tooltips(Lesson::colorTagLabels())
+                                ->inline()
+                                ->grouped()
+                                ->hiddenButtonLabels()
                                 ->required(),
                         ])
                         ->modalSubmitActionLabel(__t('admin_lessons.table.apply_color_tag'))

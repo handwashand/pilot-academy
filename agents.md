@@ -454,6 +454,14 @@ color to all of them without opening each lesson. The action checks edit
 permission for every selected record and reports how many lessons were tagged.
 Updated the six admin guides, six language files and changelog.
 
+### 2026-10-27 — Compact icon picker for bulk lesson color tags
+
+The **Tag selected lessons** dialog now uses a small grouped row of red, yellow
+and blue color icons instead of a text dropdown. Hover tooltips and screen-reader
+labels retain each color's name; the dialog keeps one apply action and the same
+per-lesson authorization. The six admin guides and changelog now describe the
+icon picker.
+
 ### 2026-10-27 — Lesson readiness tags first added (**schema change**; superseded by the color-only update above)
 
 Owner's request: a lightweight way to mark lessons as ready, in progress, or not

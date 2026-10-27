@@ -7,6 +7,7 @@ use App\Filament\Resources\Lessons\Pages\ListLessons;
 use App\Models\Lesson;
 use App\Models\User;
 use Filament\Actions\Testing\TestAction;
+use Filament\Forms\Components\ToggleButtons;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -118,6 +119,44 @@ class LessonColorTagTest extends TestCase
         $this->assertSame(Lesson::COLOR_TAG_YELLOW, $first->fresh()->color_tag);
         $this->assertSame(Lesson::COLOR_TAG_YELLOW, $second->fresh()->color_tag);
         $this->assertNull($unselected->fresh()->color_tag);
+    }
+
+    public function test_bulk_color_picker_uses_compact_icon_only_color_choices(): void
+    {
+        $admin = User::create([
+            'name' => 'Pilot Admin',
+            'email' => 'color-tag-picker-admin@pilot.local',
+            'password' => bcrypt('password'),
+            'role' => User::ROLE_ADMIN,
+        ]);
+        $lesson = Lesson::create([
+            'title' => 'Picker lesson',
+            'slug' => 'picker-lesson',
+            'content' => '<p>Body.</p>',
+        ]);
+
+        $page = Livewire::actingAs($admin)
+            ->test(ListLessons::class)
+            ->selectTableRecords([$lesson->id])
+            ->mountAction(TestAction::make('tagColor')->table()->bulk());
+
+        $page->assertFormFieldExists('color_tag', function (ToggleButtons $field): bool {
+            return $field->areButtonLabelsHidden()
+                && $field->isInline()
+                && $field->isRequired()
+                && $field->getOptions() === Lesson::colorTagLabels()
+                && $field->getTooltips() === Lesson::colorTagLabels()
+                && $field->getIcons() === [
+                    Lesson::COLOR_TAG_RED => 'heroicon-o-swatch',
+                    Lesson::COLOR_TAG_YELLOW => 'heroicon-o-swatch',
+                    Lesson::COLOR_TAG_BLUE => 'heroicon-o-swatch',
+                ]
+                && $field->getColors() === [
+                    Lesson::COLOR_TAG_RED => 'danger',
+                    Lesson::COLOR_TAG_YELLOW => 'warning',
+                    Lesson::COLOR_TAG_BLUE => 'info',
+                ];
+        });
     }
 
     public function test_existing_green_color_tags_are_migrated_to_yellow(): void

@@ -260,7 +260,8 @@ El curso está disponible para los estudiantes al momento. Conviene saber:
 
 > Para etiquetar varias lecciones con un color sin abrirlas una por una, marca
 > sus casillas en **Lecciones**, elige **Etiquetar lecciones seleccionadas**,
-> selecciona una **Etiqueta de color** y haz clic en **Aplicar etiqueta de color**.
+> selecciona uno de los iconos de color y haz clic en **Aplicar etiqueta de color**.
+> Pasa el cursor sobre un icono para ver el nombre del color.
 
 > **Las lecciones pasan la misma comprobación.** Publicar una lección en un curso
 > que ya está publicado rechaza una lección que los estudiantes no podrían terminar.
