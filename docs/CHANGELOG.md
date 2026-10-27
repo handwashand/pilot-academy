@@ -39,8 +39,9 @@ Add a new entry here whenever something visible to admins or students changes.
   up from 1152px), giving course cards, lesson content and the tutorials page
   more room on large screens.
 - **Color tags on lessons.** A small colored dot beside a lesson title on the
-  **Lessons** list marks its red, yellow or blue tag. Admins choose the color
-  and add an optional note in the edit form, and can filter the list by color.
+  **Lessons** list marks its red, yellow or blue tag. Admins can select multiple
+  lessons and apply a color to them together, choose a color and add an optional
+  note in an individual lesson's edit form, and filter the list by color.
   Students never see these internal tags.
 - **Popular lessons on the Tutorials page.** The Tutorials page now shows the
   20 most-completed lessons under a **Popular lessons** heading, so the page

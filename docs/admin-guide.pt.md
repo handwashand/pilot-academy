@@ -255,6 +255,10 @@ O curso fica disponível para os alunos na hora. Duas coisas a saber:
 > O que deixaria os alunos travados é ignorado em vez de publicado, e você é
 > informado de quais, pelo nome, com o motivo.
 
+> Para aplicar uma cor a várias aulas sem abrir uma por uma, marque as caixas
+> delas em **Aulas**, escolha **Etiquetar aulas selecionadas**, selecione uma
+> **Etiqueta de cor** e clique em **Aplicar etiqueta de cor**.
+
 > **As aulas passam pela mesma verificação.** Publicar uma aula em um curso que já
 > está no ar recusa uma aula que os alunos não conseguiriam concluir. Despublicar a
 > única aula publicada de um curso no ar avisa antes, porque os alunos encontrariam

@@ -447,6 +447,13 @@ optional note are available on hover; admins change the tag in the lesson form.
 The list filter remains. The changelog was updated to describe the visible
 change.
 
+### 2026-10-27 — Apply color tags to multiple lessons from the list
+
+Admins can select multiple lessons and use **Tag selected lessons** to apply one
+color to all of them without opening each lesson. The action checks edit
+permission for every selected record and reports how many lessons were tagged.
+Updated the six admin guides, six language files and changelog.
+
 ### 2026-10-27 — Lesson readiness tags first added (**schema change**; superseded by the color-only update above)
 
 Owner's request: a lightweight way to mark lessons as ready, in progress, or not
