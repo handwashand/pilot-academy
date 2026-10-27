@@ -420,6 +420,15 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-27 - Connected the Pilot Academy Sentry project
+
+Created the `pilot-academy` PHP project in Sentry organization `365-s3`, stored
+its DSN and project slug in the local `.env`, and left tracing at `0` for
+error-only reporting during setup. Verified through the PHP 8.4 Docker app that
+Laravel loads the DSN and that a labeled exception reaches Sentry as
+`PILOT-ACADEMY-1`. Production still needs the DSN and release settings in its
+server environment; the local `.env` is ignored and was not committed.
+
 ### 2026-10-27 — Sentry error tracking
 
 Added `sentry/sentry-laravel ^4.29` for automatic exception reporting. Errors
