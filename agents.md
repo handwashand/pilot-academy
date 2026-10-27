@@ -420,6 +420,34 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-27 — Sentry error tracking
+
+Added `sentry/sentry-laravel ^4.29` for automatic exception reporting. Errors
+and exceptions are sent to Sentry when a DSN is configured; without one, the
+package is inert. **No migration, no panel configuration, no queue worker.**
+
+**`bootstrap/app.php`:** `Integration::handles($exceptions)` wired into
+Laravel's exception handler — the recommended approach for Laravel 13.
+
+**`config/logging.php`:** a `sentry` channel added, so `LOG_STACK=sentry,single`
+can send log messages alongside exceptions if wanted.
+
+**`.env.example`:** `SENTRY_LARAVEL_DSN` (blank = disabled) and
+`SENTRY_TRACES_SAMPLE_RATE` (0 = error tracking only, 0–1 for performance
+sampling).
+
+**`DEPLOY.md`:** a new "Sentry error tracking (optional)" section with setup,
+rollback and performance-monitoring notes.
+
+**Docs.** Changelog entry under 2.2.0 Added.
+
+**Deploy:** `composer install` (already in the deploy) picks up the new package.
+Then paste the DSN into `.env` and `php8.4 artisan optimize`.
+
+**Verified (run):** Pint clean on `bootstrap/app.php` and `config/logging.php`.
+Docker image rebuilt successfully with Sentry auto-discovered. Full test suite:
+649 passed, 9,222 assertions.
+
 ### 2026-10-27 — French `admin_lessons.php` parse fix
 
 The French translation file `lang/fr/admin_lessons.php` had a PHP parse error

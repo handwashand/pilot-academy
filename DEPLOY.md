@@ -168,6 +168,26 @@ when none is saved on the page. Anyone who may use a provider is chosen under
 **Rollback:** switch the provider off on the page. The buttons disappear;
 saved translations and manual editing are untouched.
 
+## Sentry error tracking (optional)
+
+Create a Laravel project at [sentry.io](https://sentry.io), copy its DSN from
+**Settings → Client Keys**, and add it to `.env`:
+
+```bash
+SENTRY_LARAVEL_DSN=https://examplePublicKey@o0.ingest.sentry.io/0
+SENTRY_TRACES_SAMPLE_RATE=0
+```
+
+Then `php8.4 artisan optimize` so the cached config picks it up. Errors are
+reported automatically — no panel configuration needed.
+
+Set `SENTRY_TRACES_SAMPLE_RATE` to a value between `0` and `1` to enable
+performance monitoring (e.g. `0.2` samples 20% of requests). Leave it at `0`
+if you only want error tracking.
+
+**Rollback:** remove or blank `SENTRY_LARAVEL_DSN` and run `optimize` again.
+The package stays installed but sends nothing.
+
 ## Moving an existing SQLite database to PostgreSQL
 
 One-time cut-over for a server still on the old SQLite file. Full runbook with

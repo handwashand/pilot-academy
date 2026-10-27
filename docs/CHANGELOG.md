@@ -50,6 +50,10 @@ Add a new entry here whenever something visible to admins or students changes.
   has content even when there are no standalone lessons or course videos. Only
   lessons with at least one recorded completion appear there, and the page
   shows the total number of videos.
+- **Sentry error tracking.** Errors and exceptions are now reported to Sentry
+  automatically, so issues can be spotted and diagnosed before users report
+  them. An admin sets the DSN in the server's `.env` file — no panel
+  configuration needed.
 - **Badges for students.** A student now earns a badge for their first finished
   lesson, their first certificate, finishing every course of a product, and a
   perfect score (passing a course's final quiz on the first try with every
