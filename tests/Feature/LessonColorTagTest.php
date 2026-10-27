@@ -6,6 +6,7 @@ use App\Filament\Resources\Lessons\LessonResource;
 use App\Filament\Resources\Lessons\Pages\ListLessons;
 use App\Models\Lesson;
 use App\Models\User;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -79,6 +80,44 @@ class LessonColorTagTest extends TestCase
             ->assertSee('#eab308')
             ->assertSee('#2563eb')
             ->assertSee('Red');
+    }
+
+    public function test_admin_can_tag_multiple_lessons_from_the_lessons_list(): void
+    {
+        $admin = User::create([
+            'name' => 'Pilot Admin',
+            'email' => 'color-tag-bulk-admin@pilot.local',
+            'password' => bcrypt('password'),
+            'role' => User::ROLE_ADMIN,
+        ]);
+        $first = Lesson::create([
+            'title' => 'First selected lesson',
+            'slug' => 'first-selected-lesson',
+            'content' => '<p>Body.</p>',
+        ]);
+        $second = Lesson::create([
+            'title' => 'Second selected lesson',
+            'slug' => 'second-selected-lesson',
+            'content' => '<p>Body.</p>',
+            'color_tag' => Lesson::COLOR_TAG_RED,
+        ]);
+        $unselected = Lesson::create([
+            'title' => 'Unselected lesson',
+            'slug' => 'unselected-lesson',
+            'content' => '<p>Body.</p>',
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(ListLessons::class)
+            ->selectTableRecords([$first->id, $second->id])
+            ->callAction(
+                TestAction::make('tagColor')->table()->bulk(),
+                ['color_tag' => Lesson::COLOR_TAG_YELLOW],
+            );
+
+        $this->assertSame(Lesson::COLOR_TAG_YELLOW, $first->fresh()->color_tag);
+        $this->assertSame(Lesson::COLOR_TAG_YELLOW, $second->fresh()->color_tag);
+        $this->assertNull($unselected->fresh()->color_tag);
     }
 
     public function test_existing_green_color_tags_are_migrated_to_yellow(): void

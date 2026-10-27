@@ -11,6 +11,7 @@ use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
@@ -206,6 +207,29 @@ class LessonsTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
+                    BulkAction::make('tagColor')
+                        ->label(__t('admin_lessons.table.bulk_color_tag'))
+                        ->icon('heroicon-o-tag')
+                        ->schema([
+                            Select::make('color_tag')
+                                ->label(__t('admin_lessons.form.color_tag'))
+                                ->options(Lesson::colorTagLabels())
+                                ->required(),
+                        ])
+                        ->modalSubmitActionLabel(__t('admin_lessons.table.apply_color_tag'))
+                        ->authorizeIndividualRecords(fn (Lesson $record): bool => auth()->user()->canManageLesson($record))
+                        ->deselectRecordsAfterCompletion()
+                        ->action(function (Collection $records, array $data): void {
+                            foreach ($records as $record) {
+                                $record->update(['color_tag' => $data['color_tag']]);
+                            }
+
+                            Notification::make()
+                                ->title(__tc('admin_lessons.table.color_tag_applied', $records->count()))
+                                ->success()
+                                ->send();
+                        }),
+
                     BulkAction::make('publish')
                         ->label(__t('admin_common.publish'))
                         ->icon('heroicon-o-rocket-launch')
