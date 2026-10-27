@@ -9,6 +9,7 @@ use App\Models\User;
 use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\ToggleButtons;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\HtmlString;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -141,21 +142,23 @@ class LessonColorTagTest extends TestCase
             ->mountAction(TestAction::make('tagColor')->table()->bulk());
 
         $page->assertFormFieldExists('color_tag', function (ToggleButtons $field): bool {
+            $icons = [
+                Lesson::COLOR_TAG_RED => $field->getIcon(Lesson::COLOR_TAG_RED),
+                Lesson::COLOR_TAG_YELLOW => $field->getIcon(Lesson::COLOR_TAG_YELLOW),
+                Lesson::COLOR_TAG_BLUE => $field->getIcon(Lesson::COLOR_TAG_BLUE),
+            ];
+
             return $field->areButtonLabelsHidden()
                 && $field->isInline()
                 && $field->isRequired()
                 && $field->getOptions() === Lesson::colorTagLabels()
                 && $field->getTooltips() === Lesson::colorTagLabels()
-                && $field->getIcons() === [
-                    Lesson::COLOR_TAG_RED => 'heroicon-o-swatch',
-                    Lesson::COLOR_TAG_YELLOW => 'heroicon-o-swatch',
-                    Lesson::COLOR_TAG_BLUE => 'heroicon-o-swatch',
-                ]
-                && $field->getColors() === [
-                    Lesson::COLOR_TAG_RED => 'danger',
-                    Lesson::COLOR_TAG_YELLOW => 'warning',
-                    Lesson::COLOR_TAG_BLUE => 'info',
-                ];
+                && $icons[Lesson::COLOR_TAG_RED] instanceof HtmlString
+                && $icons[Lesson::COLOR_TAG_RED]->toHtml() === '<span aria-hidden="true" style="display:inline-block;width:10px;height:10px;border-radius:50%;background-color:#dc2626"></span>'
+                && $icons[Lesson::COLOR_TAG_YELLOW] instanceof HtmlString
+                && $icons[Lesson::COLOR_TAG_YELLOW]->toHtml() === '<span aria-hidden="true" style="display:inline-block;width:10px;height:10px;border-radius:50%;background-color:#eab308"></span>'
+                && $icons[Lesson::COLOR_TAG_BLUE] instanceof HtmlString
+                && $icons[Lesson::COLOR_TAG_BLUE]->toHtml() === '<span aria-hidden="true" style="display:inline-block;width:10px;height:10px;border-radius:50%;background-color:#2563eb"></span>';
         });
     }
 

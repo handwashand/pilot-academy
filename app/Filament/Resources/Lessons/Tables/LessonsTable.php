@@ -21,6 +21,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\HtmlString;
 
 class LessonsTable
 {
@@ -217,14 +218,9 @@ class LessonsTable
                                 ->hiddenLabel()
                                 ->options(Lesson::colorTagLabels())
                                 ->icons([
-                                    Lesson::COLOR_TAG_RED => 'heroicon-o-swatch',
-                                    Lesson::COLOR_TAG_YELLOW => 'heroicon-o-swatch',
-                                    Lesson::COLOR_TAG_BLUE => 'heroicon-o-swatch',
-                                ])
-                                ->colors([
-                                    Lesson::COLOR_TAG_RED => 'danger',
-                                    Lesson::COLOR_TAG_YELLOW => 'warning',
-                                    Lesson::COLOR_TAG_BLUE => 'info',
+                                    Lesson::COLOR_TAG_RED => new HtmlString('<span aria-hidden="true" style="display:inline-block;width:10px;height:10px;border-radius:50%;background-color:#dc2626"></span>'),
+                                    Lesson::COLOR_TAG_YELLOW => new HtmlString('<span aria-hidden="true" style="display:inline-block;width:10px;height:10px;border-radius:50%;background-color:#eab308"></span>'),
+                                    Lesson::COLOR_TAG_BLUE => new HtmlString('<span aria-hidden="true" style="display:inline-block;width:10px;height:10px;border-radius:50%;background-color:#2563eb"></span>'),
                                 ])
                                 ->tooltips(Lesson::colorTagLabels())
                                 ->inline()
