@@ -420,6 +420,54 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-10-27 — French `admin_lessons.php` parse fix
+
+The French translation file `lang/fr/admin_lessons.php` had a PHP parse error
+that blocked the entire test suite. The original file used Unicode curly right
+quotes (U+2019) for French apostrophes inside single-quoted strings. The Write
+tool converts these to ASCII `'` (U+0027), which broke every string containing
+a French elision (`l'`, `n'`, `d'`, `c'`, `qu'`, `s'`, `jusqu'`). Rewrote the
+entire file with all French apostrophes escaped as `\'`. Verified: `php -l`
+passes, key parity matches English exactly (67 form + 26 table = 93 keys),
+Pint clean.
+
+**Trap reinforced:** never use curly/typographic quotes in PHP string delimiters
+— tools and editors may normalise them to ASCII. Escape French apostrophes as
+`\'` inside single-quoted strings.
+
+### 2026-10-27 — One-click color tags on the Lessons list
+
+Owner's request: changing a lesson's color tag should be one click, not open the
+lesson and save. Replaced the `TextColumn` badge with a Filament `SelectColumn`
+for `color_tag` on the Lessons table. The dropdown shows the three color options
+(red, yellow, blue) plus "No tag", each with its translated label. Authorization
+via `->disabled(fn (Lesson $r) => ! auth()->user()?->canManageLesson($r))` so
+creators can only tag their own lessons. Saves directly to the database on
+selection — no form save needed.
+
+### 2026-10-27 — Popular lessons on the Tutorials page
+
+Owner's request: show the most popular lessons on the Tutorials page. Added a
+"Popular lessons" section showing the top 20 most-completed published lessons,
+ordered by completion count. Uses `Lesson::withCount('completions')` on a new
+`completions()` relationship (`hasMany(LessonUser)` where `completed_at` is not
+null). Section placed between standalone tutorials and course videos. Added
+`academy.tutorials.popular` key in all six languages. Shows lesson title, course
+name, duration, question count and completion count.
+
+### 2026-10-27 — Pre-deployment admin and learner checks
+
+Ran the full suite against PHPUnit's SQLite in-memory database: 649 tests and
+9,222 assertions passed, covering admin, creator and learner flows. Pint passed
+for all 254 files under `app` and `tests`. The local PostgreSQL database reports
+all migrations through `2026_10_27_000002` as applied. HTTP and browser smoke
+checks returned/rendered the learner home, course, lesson, Courses, Tutorials
+and Help pages, plus the admin login page. Authenticated browser verification
+opened the Lessons list, displayed the red/yellow/blue icon picker, and applied
+the selected red tag; the original local tag was restored afterwards. The
+learner lesson page also rendered its knowledge-check instructions and submit
+button. The temporary admin account was removed.
+
 ### 2026-10-27 — Tutorials page error with standalone lesson tags
 
 The Tutorials page called `isNotEmpty()` on `Lesson::standaloneTags()`, which

@@ -257,9 +257,11 @@ The course is live for students straight away. Two things to know:
 > appears. Anything students would get stuck on is skipped rather than
 > published, and you are told which ones by name, with the reason.
 
-> To color-tag several lessons without opening them one by one, select their
-> checkboxes in **Lessons**, choose **Tag selected lessons**, select one of the
-> color icons, then click **Apply color tag**. Hover over an icon to see its color.
+> To color-tag a single lesson, click the colored dot in its row on the
+> **Lessons** list and pick a color — the change saves immediately. To tag
+> several lessons at once, select their checkboxes, choose **Tag selected
+> lessons**, select one of the color icons, then click **Apply color tag**.
+> Hover over an icon to see its color.
 
 > **Lessons get the same check.** Publishing a lesson into a course that is
 > already live refuses a lesson students could not finish. Unpublishing the only

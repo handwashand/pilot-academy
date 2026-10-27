@@ -260,9 +260,11 @@ Le cours est aussitôt en ligne pour les apprenants. Deux choses à savoir :
 > groupées qui apparaît. Ce sur quoi les apprenants resteraient bloqués est ignoré
 > au lieu d’être publié, et on vous indique lesquels, par leur nom, avec la raison.
 
-> Pour attribuer une couleur à plusieurs leçons sans les ouvrir une par une,
-> cochez leurs cases dans **Leçons**, choisissez **Étiqueter les leçons sélectionnées**,
-> choisissez l’une des icônes de couleur, puis cliquez sur **Appliquer l’étiquette de couleur**.
+> Pour attribuer une couleur à une seule leçon, cliquez sur le point coloré dans
+> sa ligne dans la liste **Leçons** et choisissez une couleur — le changement
+> s’enregistre immédiatement. Pour en étiqueter plusieurs à la fois, cochez leurs
+> cases, choisissez **Étiqueter les leçons sélectionnées**, choisissez l’une des
+> icônes de couleur, puis cliquez sur **Appliquer l’étiquette de couleur**.
 > Survolez une icône pour voir le nom de la couleur.
 
 > **Les leçons passent le même contrôle.** Publier une leçon dans un cours déjà en
