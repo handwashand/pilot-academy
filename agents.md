@@ -286,6 +286,29 @@ working tree, because the owner reviews and commits them (owner's instruction,
 - Commit messages are a subject line, a blank line, then a body, with **no AI
   attribution** (no `Co-Authored-By` trailers).
 
+**6. Shared workflow and skills library — read first, contribute back.** The
+owner keeps a shared library at
+`C:\Users\gomat\OneDrive\Documents\Workflow and skills\` that every agent
+session, in every repository, is expected to use. Open its `README.md` at the
+start of every session. If a workflow or skill there matches the task, follow
+it — do not write your own procedure from scratch.
+- The master prompt is `AGENT-INSTRUCTIONS.md` in that folder. Read it before
+  the first task of a new session.
+- **This project's `AGENTS.md` always wins** where it conflicts with a generic
+  library workflow or skill. If you spot a conflict, note it in the library's
+  changelog rather than following the generic rule here.
+- **Contribute back twice:** (a) at the end of every task, and (b) immediately
+  after invoking any skill from the library during the session. Running the
+  contribution check is required; writing content is required only when the
+  check surfaced something new, outdated, or wrong.
+- Save: a stack-specific pattern worth reusing elsewhere, an integration that
+  worked, a step the skill was missing, a new technology this project uses
+  that no skill covers. Do not save project-internal invariants, secrets, or
+  anything that already lives in this file.
+- The `laravel-filament-app` skill in the library is this project's stack
+  skill. If you improved it or found it incomplete, update it there, not here.
+- Never write credentials, API keys, tokens, or private data into the library.
+
 ---
 
 ## Invariants — do not simplify these away
