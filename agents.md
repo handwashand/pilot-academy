@@ -443,6 +443,35 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-04 — New lessons no longer share an order number
+
+Reviewing the four-feature work found task 1 only half done. The owner's "1, 1,
+0, 0, 2, 2" was the Lessons list's **#** column, not the course count. The
+newest-first sort hid the problem on that list but did not fix it. The cause:
+the lesson form's **Order** field defaulted to `0`, and `Lesson::saved()`
+attached the home course with that `0`. `CourseLesson::creating` appends to
+the end of the course only when the order is `null`, so it never ran, and new
+lessons tied in the admin list and on the student course page.
+
+**Fix, no migration.** The form field has no default (`minValue(0)` added).
+`Lesson::creating` turns an empty order into max `course_lesson.sort_order` of
+the home course + 1, or `0` for a lesson with no course. `Lesson::saving` keeps
+the previous number when an edit empties the box, since the column is not
+nullable. A typed number still wins. Help text in all six `admin_lessons.php`
+says "leave empty to add it at the end". **Existing ties are not renumbered**:
+the owner can drag lessons into order on each course's Lessons tab, or ask for
+a one-off renumbering.
+
+**Verified (run):** `LessonOrderTest` (4 new: model numbering 1, 2, 3; a typed
+order kept; the create form starts empty and appends; emptying on edit keeps
+the old place), plus the shared-lesson, course-lesson, slug-clash, sort and
+translation suites. 58 passed, 6,890 assertions. Pint clean on the 9 changed
+files. Full suite: see the final report.
+
+**Also noted in review:** the four-feature work was committed on `develop`
+(`b9b39ef9`, `3257a813`, `a3c259ac`), not left uncommitted on a branch off
+`laravel` as standing instruction 5 says. This fix is left uncommitted.
+
 ### 2026-11-04 — Four admin improvements independently verified
 
 Reviewed the four-feature brief against commits `b9b39ef9` and `3257a813`,
