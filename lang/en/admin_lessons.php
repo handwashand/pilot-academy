@@ -10,7 +10,7 @@ return [
         'courses_help' => 'A lesson can be in more than one course. It is the same lesson in each: a change shows everywhere, and a student who finishes it in one course has it finished in all of them. The first course owns the lesson.',
         'course_not_yours' => 'You can only add lessons to a course for a product assigned to you.',
         'order' => 'Order',
-        'order_help' => 'Where it goes in its first course. Drag lessons on a course’s Lessons tab to order each course.',
+        'order_help' => 'Where it goes in its first course. Leave empty to add it at the end. Drag lessons on a course’s Lessons tab to order each course.',
         'tags' => 'Tags',
         'add_tag' => 'Add a tag',
         'tags_help' => 'Topic tags — used on the standalone Lessons page. Type and press Enter.',

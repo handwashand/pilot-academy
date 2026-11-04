@@ -367,6 +367,11 @@ class Lesson extends Model
                 $lesson->attributes['youtube_url'] = null;
                 $lesson->attributes['video_path'] = null;
             }
+
+            // An emptied Order box on edit keeps the place it had.
+            if ($lesson->exists && $lesson->sort_order === null) {
+                $lesson->sort_order = (int) $lesson->getOriginal('sort_order');
+            }
         });
 
         static::saved(function (Lesson $lesson): void {
@@ -393,6 +398,14 @@ class Lesson extends Model
         // Whose a lesson with no course is — see User::canManageLesson().
         static::creating(function (Lesson $lesson): void {
             $lesson->created_by ??= auth()->id();
+
+            // No order given: the end of its home course. A form default of 0
+            // used to give every new lesson the same place, so they tied.
+            if ($lesson->sort_order === null) {
+                $lesson->sort_order = $lesson->course_id
+                    ? (int) CourseLesson::query()->where('course_id', $lesson->course_id)->max('sort_order') + 1
+                    : 0;
+            }
         });
 
         // A deleted lesson is hidden, not removed, so its questions would stay

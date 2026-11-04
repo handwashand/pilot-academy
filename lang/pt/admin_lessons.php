@@ -7,7 +7,7 @@ return [
         'courses_help' => 'Uma aula pode estar em mais de um curso. É a mesma aula em cada um: uma alteração aparece em todos, e um aluno que a conclui em um curso a tem concluída em todos. O primeiro curso é o dono da aula. Deixe vazio para escrever a aula agora e escolher um curso depois: os alunos não a veem enquanto ela não estiver em um.',
         'course_not_yours' => 'Você só pode adicionar aulas a cursos de um produto atribuído a você.',
         'order' => 'Ordem',
-        'order_help' => 'A posição no primeiro curso. Arraste as aulas na aba Aulas de cada curso para ordená-lo.',
+        'order_help' => 'A posição no primeiro curso. Deixe vazio para adicioná-la no final. Arraste as aulas na aba Aulas de cada curso para ordená-lo.',
         'tags' => 'Tags',
         'add_tag' => 'Adicionar tag',
         'tags_help' => 'Tags temáticas — usadas na página Lições. Digite e pressione Enter.',

@@ -455,7 +455,7 @@ class LessonForm
                             TextInput::make('sort_order')
                                 ->label(__t('admin_lessons.form.order'))
                                 ->numeric()
-                                ->default(0)
+                                ->minValue(0)
                                 ->helperText(__t('admin_lessons.form.order_help')),
 
                             TagsInput::make('tags')
