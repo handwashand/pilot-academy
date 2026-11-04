@@ -2,15 +2,20 @@
 
 namespace App\Filament\Resources\Lessons\Tables;
 
+use App\Actions\AddLessonsToCourse;
 use App\Actions\FindContentProblems;
+use App\Filament\Resources\Courses\CourseResource;
 use App\Models\Course;
 use App\Models\CourseLesson;
 use App\Models\Lesson;
+use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
@@ -31,7 +36,7 @@ class LessonsTable
             // Newest first: the lesson just written is the one being worked on.
             // Filament adds the key sort itself, so equal timestamps stay stable.
             ->defaultSort('created_at', 'desc')
-            ->modifyQueryUsing(fn (Builder $query): Builder => $query->with(['contentTranslations', 'courses.contentTranslations']))
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->with(['contentTranslations', 'courses.contentTranslations', 'creator']))
             ->columns([
                 ImageColumn::make('cover')
                     ->label(__t('admin_lessons.table.cover'))
@@ -59,9 +64,11 @@ class LessonsTable
                 TextColumn::make('title')
                     ->label(__t('admin_common.title'))
                     ->formatStateUsing(fn (Lesson $record): string => (string) $record->translated('title'))
-                    ->searchable(query: fn (Builder $query, string $search): Builder => $query->whereTranslatedLike('title', $search))
+                    ->searchable(query: fn (Builder $query, string $search): Builder => $query->matching($search))
                     ->sortable()
                     ->weight('bold'),
+
+                static::creatorColumn(),
 
                 TextColumn::make('color_tag')
                     ->label(__t('admin_lessons.table.color_tag'))
@@ -128,30 +135,21 @@ class LessonsTable
                         FindContentProblems::forCurrentUser()->pluck('lesson_id')->filter()->unique()->values()->all(),
                     )),
 
-                // Removed from every course: students cannot reach these.
-                Filter::make('no_course')
-                    ->label(__t('admin_lessons.table.no_course'))
-                    ->query(fn (Builder $query): Builder => $query->whereDoesntHave('courses')),
+                static::noCourseFilter(),
 
-                SelectFilter::make('status')
-                    ->label(__t('admin_common.status'))
-                    ->options(Lesson::statusLabels()),
+                static::statusFilter(),
 
                 SelectFilter::make('color_tag')
                     ->label(__t('admin_lessons.table.color_tag'))
                     ->options(Lesson::colorTagLabels()),
 
-                SelectFilter::make('course')
-                    ->label(__t('admin_common.course'))
-                    ->relationship('courses', 'title', function ($query) {
-                        $user = auth()->user();
+                static::courseFilter(),
 
-                        return $user?->isCreator()
-                            ? $query->whereIn('product_id', $user->products()->pluck('products.id'))
-                            : $query;
-                    })
-                    ->searchable()
-                    ->preload(),
+                static::tagFilter(),
+
+                static::creatorFilter(),
+
+                static::addedFilter(),
             ])
             ->recordActions([
                 Action::make('publish')
@@ -250,6 +248,32 @@ class LessonsTable
                                 ->send();
                         }),
 
+                    // Find the lessons with the list's own search and filters,
+                    // then put them in a course in one go.
+                    BulkAction::make('addToCourse')
+                        ->label(__t('admin_lessons.table.add_to_course'))
+                        ->icon('heroicon-o-plus-circle')
+                        ->modalWidth('md')
+                        ->schema([
+                            Select::make('course_id')
+                                ->label(__t('admin_common.course'))
+                                ->options(fn (): array => CourseResource::getEloquentQuery()->orderBy('title')->pluck('title', 'id')->all())
+                                ->searchable()
+                                ->required(),
+                        ])
+                        ->modalSubmitActionLabel(__t('admin_lessons.table.add_to_course_submit'))
+                        ->authorizeIndividualRecords(fn (Lesson $record): bool => auth()->user()->canManageLesson($record))
+                        ->deselectRecordsAfterCompletion()
+                        ->action(function (Collection $records, array $data): void {
+                            $course = Course::query()->find($data['course_id']);
+
+                            if (! $course) {
+                                return;
+                            }
+
+                            static::reportAdded(app(AddLessonsToCourse::class)->handle($course, $records->modelKeys(), auth()->user()), $course);
+                        }),
+
                     BulkAction::make('publish')
                         ->label(__t('admin_common.publish'))
                         ->icon('heroicon-o-rocket-launch')
@@ -318,6 +342,116 @@ class LessonsTable
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    /**
+     * What happened when lessons were put in a course — shared by the Lessons
+     * list, the course's Browse lessons and the course form.
+     *
+     * @param  array{added: Collection, already: Collection, clashes: Collection}  $result
+     */
+    public static function reportAdded(array $result, Course $course): bool
+    {
+        if ($result['clashes']->isNotEmpty()) {
+            Notification::make()
+                ->title(__t('admin_courses.lessons_tab.slug_clash'))
+                ->body(__t('admin_courses.lessons_tab.slug_clash_body', ['lessons' => $result['clashes']->implode(', ')]))
+                ->danger()
+                ->persistent()
+                ->send();
+
+            return false;
+        }
+
+        Notification::make()
+            ->title(__tc('admin_lessons.table.added_to_course', $result['added']->count(), ['course' => $course->title]))
+            ->body($result['already']->isNotEmpty()
+                ? __tc('admin_lessons.table.already_in_course', $result['already']->count())
+                : null)
+            ->success()
+            ->send();
+
+        return true;
+    }
+
+    public static function creatorColumn(): TextColumn
+    {
+        return TextColumn::make('creator.name')
+            ->label(__t('admin_lessons.table.created_by'))
+            ->placeholder('—')
+            ->toggleable(isToggledHiddenByDefault: true);
+    }
+
+    // Removed from every course: students cannot reach these.
+    public static function noCourseFilter(): Filter
+    {
+        return Filter::make('no_course')
+            ->label(__t('admin_lessons.table.no_course'))
+            ->query(fn (Builder $query): Builder => $query->whereDoesntHave('courses'));
+    }
+
+    public static function statusFilter(): SelectFilter
+    {
+        return SelectFilter::make('status')
+            ->label(__t('admin_common.status'))
+            ->options(Lesson::statusLabels());
+    }
+
+    public static function courseFilter(): SelectFilter
+    {
+        return SelectFilter::make('course')
+            ->label(__t('admin_common.course'))
+            ->relationship('courses', 'title', function ($query) {
+                $user = auth()->user();
+
+                return $user?->isCreator()
+                    ? $query->whereIn('product_id', $user->products()->pluck('products.id'))
+                    : $query;
+            })
+            ->searchable()
+            ->preload();
+    }
+
+    public static function tagFilter(): SelectFilter
+    {
+        return SelectFilter::make('tag')
+            ->label(__t('admin_lessons.table.tag'))
+            ->options(fn (): array => Lesson::tagOptions())
+            ->searchable()
+            ->query(fn (Builder $query, array $data): Builder => filled($data['value'] ?? null)
+                ? $query->tagged($data['value'])
+                : $query);
+    }
+
+    // A creator only ever sees their own lessons and courses, so only their own name.
+    public static function creatorFilter(): SelectFilter
+    {
+        return SelectFilter::make('created_by')
+            ->label(__t('admin_lessons.table.created_by'))
+            ->options(function (): array {
+                $user = auth()->user();
+
+                return User::query()
+                    ->whereIn('role', [User::ROLE_ADMIN, User::ROLE_CREATOR])
+                    ->when($user?->isCreator(), fn (Builder $users): Builder => $users->whereKey($user->id))
+                    ->orderBy('name')
+                    ->pluck('name', 'id')
+                    ->all();
+            })
+            ->searchable();
+    }
+
+    public static function addedFilter(): Filter
+    {
+        return Filter::make('added')
+            ->label(__t('admin_lessons.table.added'))
+            ->schema([
+                DatePicker::make('from')->label(__t('admin_lessons.table.added_from')),
+                DatePicker::make('until')->label(__t('admin_lessons.table.added_until')),
+            ])
+            ->query(fn (Builder $query, array $data): Builder => $query
+                ->when($data['from'] ?? null, fn (Builder $q, $date): Builder => $q->whereDate('lessons.created_at', '>=', $date))
+                ->when($data['until'] ?? null, fn (Builder $q, $date): Builder => $q->whereDate('lessons.created_at', '<=', $date)));
     }
 
     /**

@@ -24,6 +24,21 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **Finding lessons and building courses is quicker.**
+  - **Pick lessons while creating a course.** The new-course form has a
+    **Lessons** box: click **Select**, search or filter the lesson table, tick
+    the lessons and confirm. They join the course in the order you ticked them.
+  - **Browse lessons** on a course's **Lessons** tab opens the same table, with
+    filters, for when typing a title is not enough. **Add existing lesson** is
+    still there and now also matches a lesson's address.
+  - **Add to course…** on the **Lessons** list: tick lessons and put them all in
+    one course at once. Lessons already in it are skipped and named.
+  - **Wider search** on the Lessons list and in the lesson table: title,
+    summary, tags and address, including translated titles and summaries.
+  - **New filters**: **Tag**, **Created by** and **Date added**, and a
+    **Created by** column you can switch on.
+  - Two lessons with the same address still cannot share a course; that now
+    also holds for two lessons picked together.
 - **Top creators on the dashboard.** Admins see a **Top creators** panel
   listing the people who write lessons, ranked by how many lessons they wrote
   — the most productive ten. Deleted lessons are left out, and only accounts

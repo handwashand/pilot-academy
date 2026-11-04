@@ -443,6 +443,74 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-04 — Finding lessons and putting them in courses
+
+Owner's request: easier lesson search in general, and easier course building.
+They asked for all four suggested options. **No migration, no new package.**
+
+**One rule for adding lessons to a course:** `App\Actions\AddLessonsToCourse`.
+- `handle()` checks `canManageCourse` and `canManageLesson` for each lesson,
+  skips lessons already in the course and keeps the picked order.
+- It attaches one at a time, so `CourseLesson::creating` appends each lesson to
+  the end of the course.
+- Nothing is added if any lesson clashes on slug.
+- `clashes()` is now also the **Add existing lesson** guard, replacing its
+  inline copy. It also catches two picked lessons sharing a slug, which the old
+  copy did not.
+
+**One picker:** `LessonPickerTable`, for Filament 5's
+`ModalTableSelect`/`TableSelect`.
+- It has its own `query()`: creators go through `manageableBy`, and
+  `exclude_course` leaves out lessons already in that course. The argument is
+  `#[Locked]` on Filament's component, so it cannot be tampered with.
+- **Not bound to the relationship.** `relationship()` would sync straight into
+  `course_lesson`, bypassing the home-course and order hooks. Plain ids are
+  used and then attached through the action.
+
+**Where it shows:**
+- **Course create form:** a **Lessons** section (create only).
+  `CreateCourse::mutateFormDataBeforeCreate` takes `lesson_ids` out of the
+  data, and `afterCreate` attaches them. A form rule refuses two picked lessons
+  with one slug before the course is created.
+- **Lessons tab:** a **Browse lessons** action holding an inline `TableSelect`.
+  An inline table rather than a modal one, so there is no modal inside a modal.
+- **Lessons list:** an **Add to course…** bulk action. The course options come
+  from `CourseResource::getEloquentQuery()`, which is already creator-scoped.
+  Ticked rows arrive in the list's order, not the order they were ticked.
+
+**Search and filters:**
+- `Lesson::scopeMatching` searches title and summary, through
+  `whereTranslatedLike`, plus slug and tags.
+- New filters **Tag**, **Created by** and **Date added**, built as static
+  methods on `LessonsTable` that the picker reuses. Plus a hideable
+  **Created by** column, using the new `Lesson::creator()` relation.
+- **Tags are matched in PHP, not SQL.** The json column stores non-ASCII tags as
+  `\u` escapes, which `LIKE` cannot see, and json has no containment operator
+  that works on both SQLite and PostgreSQL. A test pins a Cyrillic tag.
+
+**Strings:** `admin_courses.form.lessons(_help)`,
+`admin_courses.lessons_tab.browse*`, and nine `admin_lessons.table.*` keys, in
+all six languages. Arabic has six plural forms, Russian three. **Guides:** the
+English admin guide covers it in Step 1, the Lessons tab and the Lessons list.
+The five translations each gained one bullet covering all three, using their
+own labels and Filament's own **Select** label in each language.
+
+**Verified (run):** `LessonFindingTest` covers 10 cases, all passing:
+- search on summary, slug and tag
+- a Cyrillic tag filter
+- author and date filters
+- bulk add: list order kept, existing lessons skipped
+- a slug clash adds nothing
+- creator scoping, both directions
+- the picker hiding course lessons and other products' lessons
+- the create form attaching in picked order, and refusing a slug clash
+- Browse lessons
+
+Related suites: 88 passed. Pint clean on 182 files. Full mounted-source Docker
+suite: **676 passed, 9,434 assertions**.
+**Not run:** a browser walkthrough of the picker modal, or PostgreSQL. The
+query shapes are `LOWER … LIKE`, `whereDoesntHave` and `whereIn`, all portable.
+
 ### 2026-11-04 — New lessons no longer share an order number
 
 Reviewing the four-feature work found task 1 only half done. The owner's "1, 1,

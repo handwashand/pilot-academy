@@ -138,6 +138,13 @@ todas las lecciones de ese curso.
   La lista se abre con todas las lecciones que puedes añadir, cada una con el curso
   del que viene, y puedes escribir para acotarla. Las lecciones que ya están en este
   curso no aparecen, porque ya están aquí.
+- **Para encontrar lecciones con filtros**, haz clic en **Explorar lecciones**.
+  Se abre la tabla de lecciones: busca por título, resumen, etiquetas o
+  dirección, filtra por **Estado**, **Etiqueta**, **Curso**, **Creada por** o
+  **Fecha de alta**, marca las lecciones y haz clic en **Añadir a este curso**.
+  La misma tabla se abre con **Seleccionar** en el campo **Lecciones** al crear un
+  curso, y en la lista **Lecciones** puedes marcar las que encuentres y elegir
+  **Añadir al curso…**.
 - **Para sacar una lección de este curso**, haz clic en **Quitar del curso** en su
   fila. Sigue en sus otros cursos. Si se quita de su único curso, la lección no
   queda en ningún curso: los estudiantes dejan de verla y permanece en

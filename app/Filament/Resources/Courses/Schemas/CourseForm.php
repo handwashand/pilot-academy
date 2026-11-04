@@ -2,11 +2,15 @@
 
 namespace App\Filament\Resources\Courses\Schemas;
 
+use App\Actions\AddLessonsToCourse;
 use App\Actions\FindContentProblems;
+use App\Filament\Resources\Lessons\Tables\LessonPickerTable;
 use App\Models\Course;
+use App\Models\Lesson;
 use App\Services\Translator;
 use Closure;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\ModalTableSelect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -70,6 +74,35 @@ class CourseForm
                                     },
                                 ]),
                         ]),
+
+                    // Fill the course while creating it. After that the Lessons
+                    // tab does the same job, with ordering and removing.
+                    Section::make(__t('admin_nav.tabs.lessons'))
+                        ->visibleOn('create')
+                        ->schema([
+                            ModalTableSelect::make('lesson_ids')
+                                ->label(__t('admin_courses.form.lessons'))
+                                ->hiddenLabel()
+                                ->helperText(__t('admin_courses.form.lessons_help'))
+                                ->multiple()
+                                ->badge()
+                                ->tableConfiguration(LessonPickerTable::class)
+                                ->getOptionLabelsUsing(fn (array $values): array => Lesson::query()
+                                    ->whereIn('id', $values)
+                                    ->pluck('title', 'id')
+                                    ->all())
+                                // Two lessons with one slug cannot share a course.
+                                ->rules([
+                                    fn (): Closure => function (string $attribute, $value, Closure $fail): void {
+                                        $clashes = AddLessonsToCourse::clashes(new Course, Lesson::query()->whereIn('id', (array) $value)->get());
+
+                                        if ($clashes->isNotEmpty()) {
+                                            $fail(__t('admin_courses.lessons_tab.slug_clash_body', ['lessons' => $clashes->implode(', ')]));
+                                        }
+                                    },
+                                ]),
+                        ])
+                        ->columnSpanFull(),
 
                     Section::make(__t('admin_courses.form.final_section'))
                         ->description(__t('admin_courses.form.final_section_help'))

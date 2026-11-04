@@ -36,6 +36,8 @@ return [
         'certificate_template_help' => 'Fundo de página inteira A4 paisagem (≈3508×2480 px). Deixe vazio para usar o layout com moldura embutido. Nome, curso, data, número e QR são sobrepostos automaticamente.',
         'created_by_on' => 'Criado por :name em :date',
         'created_by_unknown' => 'Criado: desconhecido',
+        'lessons' => 'Aulas',
+        'lessons_help' => 'Opcional. Escolha aulas existentes para este curso; elas são adicionadas na ordem em que você as escolher. Pesquise e filtre por etiqueta, status, curso ou autor. Depois de criar, você pode reordená-las e adicionar mais na aba Aulas.',
     ],
 
     'table' => [
@@ -76,6 +78,9 @@ return [
         'attach_heading' => 'Adicionar uma aula existente a este curso',
         'attach_description' => 'A aula é compartilhada, não copiada: continua nos cursos em que já está, e qualquer alteração aparece em todos. Alunos que já a concluíram também a têm concluída aqui.',
         'attach_submit' => 'Adicionar a este curso',
+        'browse' => 'Procurar aulas',
+        'browse_heading' => 'Procurar aulas',
+        'browse_description' => 'Pesquise por título, resumo, etiquetas ou endereço, filtre a lista e marque as aulas a adicionar. Aulas que já estão neste curso não aparecem.',
         'from_course' => ':lesson  ·  de :course',
         'slug_clash' => 'Uma aula deste curso já usa o mesmo endereço web',
         'slug_clash_body' => 'Altere primeiro o slug de :lessons e depois adicione.',

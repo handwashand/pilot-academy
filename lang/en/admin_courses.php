@@ -40,6 +40,8 @@ return [
         'certificate_template_help' => 'Full-page A4 landscape background (≈3508×2480 px). Leave empty to use the built-in framed layout. Name, course, date, number and QR are overlaid automatically.',
         'created_by_on' => 'Created by :name on :date',
         'created_by_unknown' => 'Created by: unknown',
+        'lessons' => 'Lessons',
+        'lessons_help' => 'Optional. Pick existing lessons to put in this course; they are added in the order you pick them. Search and filter by tag, status, course or author. You can reorder and add more on the Lessons tab after creating.',
     ],
 
     'table' => [
@@ -80,6 +82,9 @@ return [
         'attach_heading' => 'Add an existing lesson to this course',
         'attach_description' => 'The lesson is shared, not copied: it stays in the courses it is already in, and a change to it shows in all of them. Students who already finished it have it finished here too.',
         'attach_submit' => 'Add to this course',
+        'browse' => 'Browse lessons',
+        'browse_heading' => 'Browse lessons',
+        'browse_description' => 'Search title, summary, tags or address, filter the list, and tick the lessons to add. Lessons already in this course are not shown.',
         'from_course' => ':lesson  ·  from :course',
         'slug_clash' => 'A lesson in this course already uses the same web address',
         'slug_clash_body' => 'Change the slug of :lessons first, then add it.',

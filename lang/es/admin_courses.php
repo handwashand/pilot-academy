@@ -36,6 +36,8 @@ return [
         'certificate_template_help' => 'Fondo a página completa A4 horizontal (≈3508×2480 px). Déjalo vacío para usar el diseño con marco integrado. El nombre, el curso, la fecha, el número y el QR se superponen automáticamente.',
         'created_by_on' => 'Creado por :name el :date',
         'created_by_unknown' => 'Creado: desconocido',
+        'lessons' => 'Lecciones',
+        'lessons_help' => 'Opcional. Elige lecciones existentes para este curso; se añaden en el orden en que las elijas. Busca y filtra por etiqueta, estado, curso o autor. Después de crearlo puedes reordenarlas y añadir más en la pestaña Lecciones.',
     ],
 
     'table' => [
@@ -76,6 +78,9 @@ return [
         'attach_heading' => 'Añadir una lección existente a este curso',
         'attach_description' => 'La lección se comparte, no se copia: sigue en los cursos donde ya está y cualquier cambio se ve en todos. Los estudiantes que ya la terminaron la tienen terminada aquí también.',
         'attach_submit' => 'Añadir a este curso',
+        'browse' => 'Explorar lecciones',
+        'browse_heading' => 'Explorar lecciones',
+        'browse_description' => 'Busca por título, resumen, etiquetas o dirección, filtra la lista y marca las lecciones que quieres añadir. Las lecciones que ya están en este curso no aparecen.',
         'from_course' => ':lesson  ·  de :course',
         'slug_clash' => 'Una lección de este curso ya usa la misma dirección web',
         'slug_clash_body' => 'Cambia primero el slug de :lessons y luego añádela.',

@@ -139,6 +139,13 @@ liste toutes les leçons de ce cours.
   La liste s’ouvre avec toutes les leçons que vous pouvez ajouter, chacune avec le
   cours dont elle vient, et vous pouvez taper pour la filtrer. Les leçons déjà dans
   ce cours n’y figurent pas, puisqu’elles y sont.
+- **Pour trouver des leçons avec des filtres**, cliquez sur **Parcourir les
+  leçons**. Le tableau des leçons s’ouvre : cherchez par titre, résumé,
+  étiquettes ou adresse, filtrez par **Statut**, **Étiquette**, **Cours**,
+  **Créée par** ou **Date d’ajout**, cochez les leçons et cliquez sur **Ajouter à
+  ce cours**. Le même tableau s’ouvre avec **Sélectionner** dans le champ
+  **Leçons** à la création d’un cours, et dans la liste **Leçons** vous pouvez
+  cocher celles trouvées et choisir **Ajouter au cours…**.
 - **Pour retirer une leçon de ce cours**, cliquez sur **Retirer du cours** sur sa
   ligne. Elle reste dans ses autres cours. Retirée de son seul cours, la leçon
   n’est plus dans aucun cours : les apprenants ne la voient plus, et elle reste

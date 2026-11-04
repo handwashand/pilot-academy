@@ -138,6 +138,12 @@ as aulas desse curso.
   A lista abre com todas as aulas que você pode adicionar, cada uma mostrando de
   qual curso vem, e você pode digitar para filtrar. As aulas que já estão neste
   curso não aparecem, porque já estão aqui.
+- **Para encontrar aulas com filtros**, clique em **Procurar aulas**. Abre-se a
+  tabela de aulas: pesquise por título, resumo, etiquetas ou endereço, filtre por
+  **Status**, **Etiqueta**, **Curso**, **Criada por** ou **Data de inclusão**,
+  marque as aulas e clique em **Adicionar a este curso**. A mesma tabela abre com
+  **Selecionar** no campo **Aulas** ao criar um curso, e na lista **Aulas** você
+  pode marcar as que encontrar e escolher **Adicionar ao curso…**.
 - **Para tirar uma aula deste curso**, clique em **Remover do curso** na linha dela.
   Ela continua nos outros cursos. Removida do seu único curso, a aula não fica em
   nenhum curso: os alunos deixam de vê-la, e ela permanece em **Conteúdo → Aulas**

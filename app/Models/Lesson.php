@@ -6,6 +6,7 @@ use App\Actions\NotifyContentOwners;
 use App\Models\Concerns\HasContentTranslations;
 use App\Models\Concerns\HasDuration;
 use App\Models\Concerns\HasPublishStatus;
+use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -430,6 +431,61 @@ class Lesson extends Model
      * those whose home course is in their products, and the course-less ones
      * they wrote themselves.
      */
+    /** Who wrote it — set on create, see booted(). */
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * The admin's lesson search: title and summary (originals and their
+     * translations), slug and tags. LOWER() because PostgreSQL's LIKE is
+     * case-sensitive.
+     */
+    public function scopeMatching(Builder $query, string $search): Builder
+    {
+        $needle = mb_strtolower(trim($search));
+
+        return $query->where(fn (Builder $lessons): Builder => $lessons
+            ->whereTranslatedLike('title', $search)
+            ->orWhere(fn (Builder $summary): Builder => $summary->whereTranslatedLike('summary', $search))
+            ->orWhereRaw('LOWER(lessons.slug) LIKE ?', ['%'.$needle.'%'])
+            ->orWhereIn('lessons.id', static::idsWithTag(fn (string $tag): bool => str_contains($tag, $needle))));
+    }
+
+    /** Lessons carrying this tag, whatever its case. */
+    public function scopeTagged(Builder $query, string $tag): Builder
+    {
+        $wanted = mb_strtolower($tag);
+
+        return $query->whereIn('lessons.id', static::idsWithTag(fn (string $t): bool => $t === $wanted));
+    }
+
+    /** Every tag in use, for the filters: lower-case key, first spelling seen. */
+    public static function tagOptions(): array
+    {
+        return static::query()->whereNotNull('tags')->pluck('tags')
+            ->flatten()
+            ->filter(fn ($tag): bool => filled($tag))
+            ->mapWithKeys(fn ($tag): array => [mb_strtolower((string) $tag) => (string) $tag])
+            ->sortKeys()
+            ->all();
+    }
+
+    /**
+     * Tags are matched in PHP, not SQL: the json column holds non-ASCII tags
+     * as \u escapes, which LIKE cannot see, and the json type has no portable
+     * containment operator across SQLite and PostgreSQL.
+     */
+    protected static function idsWithTag(Closure $match): array
+    {
+        return static::query()->whereNotNull('tags')->get(['id', 'tags'])
+            ->filter(fn (Lesson $lesson): bool => collect($lesson->tags)
+                ->contains(fn ($tag): bool => $match(mb_strtolower((string) $tag))))
+            ->pluck('id')
+            ->all();
+    }
+
     public function scopeManageableBy(Builder $query, User $user): Builder
     {
         if ($user->isAdmin()) {

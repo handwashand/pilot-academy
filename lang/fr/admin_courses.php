@@ -36,6 +36,8 @@ return [
         'certificate_template_help' => 'Fond pleine page A4 paysage (≈3508×2480 px). Laissez vide pour utiliser la mise en page encadrée intégrée. Le nom, le cours, la date, le numéro et le QR code sont ajoutés automatiquement.',
         'created_by_on' => 'Créé par :name le :date',
         'created_by_unknown' => 'Créé : inconnu',
+        'lessons' => 'Leçons',
+        'lessons_help' => 'Facultatif. Choisissez des leçons existantes pour ce cours ; elles sont ajoutées dans l\'ordre où vous les choisissez. Recherchez et filtrez par étiquette, statut, cours ou auteur. Après la création, vous pouvez les réordonner et en ajouter dans l\'onglet Leçons.',
     ],
 
     'table' => [
@@ -76,6 +78,9 @@ return [
         'attach_heading' => 'Ajouter une leçon existante à ce cours',
         'attach_description' => 'La leçon est partagée, pas copiée : elle reste dans ses cours actuels, et toute modification apparaît dans chacun. Les apprenants qui l’ont déjà terminée l’ont aussi terminée ici.',
         'attach_submit' => 'Ajouter à ce cours',
+        'browse' => 'Parcourir les leçons',
+        'browse_heading' => 'Parcourir les leçons',
+        'browse_description' => 'Recherchez par titre, résumé, étiquettes ou adresse, filtrez la liste et cochez les leçons à ajouter. Les leçons déjà dans ce cours ne sont pas affichées.',
         'from_course' => ':lesson  ·  de :course',
         'slug_clash' => 'Une leçon de ce cours utilise déjà la même adresse web',
         'slug_clash_body' => 'Modifiez d’abord le slug de :lessons, puis ajoutez-la.',

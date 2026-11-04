@@ -2,12 +2,16 @@
 
 namespace App\Filament\Resources\Courses\RelationManagers;
 
+use App\Actions\AddLessonsToCourse;
 use App\Filament\Resources\Lessons\LessonResource;
+use App\Filament\Resources\Lessons\Tables\LessonPickerTable;
+use App\Filament\Resources\Lessons\Tables\LessonsTable;
 use App\Models\Lesson;
 use Filament\Actions\Action;
 use Filament\Actions\AttachAction;
 use Filament\Actions\DetachAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\TableSelect;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
@@ -92,6 +96,37 @@ class LessonsRelationManager extends RelationManager
                     ->visible(fn (): bool => LessonResource::canCreate())
                     ->url(fn (): string => LessonResource::getUrl('create', ['course' => $this->getOwnerRecord()->getKey()])),
 
+                // The full lesson table, with the Lessons list's search and
+                // filters, for when typing a title is not enough to find them.
+                Action::make('browse')
+                    ->label(__t('admin_courses.lessons_tab.browse'))
+                    ->icon('heroicon-o-magnifying-glass')
+                    ->color('gray')
+                    ->modalHeading(__t('admin_courses.lessons_tab.browse_heading'))
+                    ->modalDescription(__t('admin_courses.lessons_tab.browse_description'))
+                    ->modalWidth('6xl')
+                    ->modalSubmitActionLabel(__t('admin_courses.lessons_tab.attach_submit'))
+                    ->visible(fn (): bool => (bool) auth()->user()?->canManageCourse($this->getOwnerRecord()))
+                    ->schema([
+                        TableSelect::make('lesson_ids')
+                            ->hiddenLabel()
+                            ->multiple()
+                            ->required()
+                            ->tableConfiguration(LessonPickerTable::class)
+                            ->tableArguments(fn (): array => ['exclude_course' => $this->getOwnerRecord()->getKey()]),
+                    ])
+                    ->action(function (array $data, Action $action): void {
+                        $course = $this->getOwnerRecord();
+                        $added = LessonsTable::reportAdded(
+                            app(AddLessonsToCourse::class)->handle($course, (array) $data['lesson_ids'], auth()->user()),
+                            $course,
+                        );
+
+                        if (! $added) {
+                            $action->halt();
+                        }
+                    }),
+
                 AttachAction::make()
                     ->label(__t('admin_courses.lessons_tab.attach'))
                     ->modalHeading(__t('admin_courses.lessons_tab.attach_heading'))
@@ -102,7 +137,7 @@ class LessonsRelationManager extends RelationManager
                     // which reads as "there is nothing to add". The lessons of
                     // every other course are there to choose from, so show them.
                     ->preloadRecordSelect()
-                    ->recordSelectSearchColumns(['title'])
+                    ->recordSelectSearchColumns(['title', 'slug'])
                     ->recordTitle(fn (Lesson $record): string => match (true) {
                         // Taken out of every course: its home is only who may
                         // edit it, so naming it would say the lesson is there.
@@ -144,16 +179,8 @@ class LessonsRelationManager extends RelationManager
                     // The student URL finds a lesson by its slug inside the
                     // course, so two lessons with one slug cannot share a course.
                     ->before(function (array $data, AttachAction $action): void {
-                        $course = $this->getOwnerRecord();
                         $adding = Lesson::query()->whereIn('id', (array) ($data['recordId'] ?? []))->withCount('courses')->get();
-                        $taken = $course->lessons()->pluck('lessons.slug')->all();
-
-                        // A lesson in no live course moves its home here (CourseLesson::created),
-                        // so a hidden lesson holding its slug at this home blocks it too.
-                        $clashes = $adding
-                            ->filter(fn (Lesson $lesson): bool => in_array($lesson->slug, $taken, true)
-                                || ($lesson->courses_count === 0 && Lesson::holdingSlugAtHome($course->getKey(), $lesson->slug, $lesson->getKey())))
-                            ->pluck('title');
+                        $clashes = AddLessonsToCourse::clashes($this->getOwnerRecord(), $adding);
 
                         if ($clashes->isNotEmpty()) {
                             Notification::make()

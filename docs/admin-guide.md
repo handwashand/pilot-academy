@@ -81,6 +81,10 @@ The path is always the same: **make a course → fill it with lessons → turn o
      filling in. If you leave the course duration empty, the academy adds up the
      durations of its lessons instead. If nothing has a duration, no time is shown.
    - The other fields (level) are optional.
+   - **Lessons** — optional. If the lessons already exist, click **Select** under
+     **Lessons** to open the lesson table, search or filter it, tick the ones you
+     want and confirm. They join the course in the order you ticked them, and you
+     can reorder them on the **Lessons** tab afterwards.
 4. Click **Create**.
 
 > New courses are saved as a **Draft**. Students cannot see a draft — you publish it yourself in Step 4, once the lessons are in place.
@@ -136,14 +140,25 @@ lists every lesson in that course.
   afterwards.
 - **To reuse a lesson that already exists**, click **Add existing lesson**. The
   list opens with every lesson you can add, each showing which course it comes
-  from, and you can type to narrow it. Lessons already in this course are not
-  listed, because they are here.
+  from, and you can type a title or address to narrow it. Lessons already in
+  this course are not listed, because they are here.
+- **To find lessons with filters**, click **Browse lessons**. It opens the
+  lesson table: search title, summary, tags or address, filter by **Status**,
+  **Tag**, **Course**, **Created by**, **Not in any course** or **Date added**,
+  tick the lessons and click **Add to this course**.
 - **To take a lesson out of this course**, click **Remove from course** on its
   row. It stays in its other courses. Removed from its only course, the lesson
   is in no course: students stop seeing it, and it stays under
   **Content → Lessons** with its questions and student progress. Find these with
   the **Not in any course** filter there, and put one back with **Add existing
   lesson** on any course — that course then owns it.
+
+> **Starting from the Lessons list instead?** Its search box looks in the title,
+> summary, tags and address of every lesson, and its filters include **Tag**,
+> **Created by** and **Date added**. Tick the lessons you found and choose
+> **Add to course…** from the bulk actions to put them all in one course; they
+> join in the order the list shows them. A **Created by** column can be switched
+> on from the list's column menu.
 
 > **Wrote the lesson somewhere else?** On the lesson's own form, the last
 > button in the **Lesson text** box's row of buttons, **Import a Markdown
