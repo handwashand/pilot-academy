@@ -491,7 +491,15 @@ in the Settings column through an infolist `TextEntry` with
 `created_by`: `replicate()` copies the original's value, so a copy would
 otherwise print the original author beside today's date.
 
-**Verified (run):** see the final report.
+**Verified (run):** full suite in Docker with the working tree mounted —
+**661 passed, 9,298 assertions** (the 649 before this work plus the 12 new
+tests in `AdminLessonsSortTest`, `FinalQuestionInlineTest`, `TopCreatorsTest`
+and `CourseAuditTest`). `pint --test app tests lang` clean over 433 files; the
+five new files first failed on `line_ending` (CRLF from the editor) and were
+fixed by running Pint on them. **Not run:** the migration against PostgreSQL —
+it is a nullable column with a foreign key, and the SQLite suite exercised it
+on every test; the panel was not opened in a browser (the list, the course edit
+page and the widget are rendered by their Livewire tests).
 
 ### 2026-10-27 - Connected the Pilot Academy Sentry project
 
