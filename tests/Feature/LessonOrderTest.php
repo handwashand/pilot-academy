@@ -83,6 +83,24 @@ class LessonOrderTest extends TestCase
         $this->assertSame(2, $this->pivotOrder($course, $second));
     }
 
+    public function test_the_renumbering_migration_breaks_ties_and_keeps_the_order(): void
+    {
+        $course = $this->course();
+        $a = Lesson::create(['course_id' => $course->id, 'title' => 'A', 'slug' => 'a', 'sort_order' => 0]);
+        $b = Lesson::create(['course_id' => $course->id, 'title' => 'B', 'slug' => 'b', 'sort_order' => 0]);
+        $c = Lesson::create(['course_id' => $course->id, 'title' => 'C', 'slug' => 'c', 'sort_order' => 2]);
+        $shared = Lesson::create(['course_id' => $course->id, 'title' => 'D', 'slug' => 'd', 'sort_order' => 1]);
+        $other = Course::create(['title' => 'Other', 'slug' => 'other', 'level' => 'beginner']);
+        $other->lessons()->attach($shared->id, ['sort_order' => 7]);
+
+        (require database_path('migrations/2026_11_04_000002_renumber_lesson_order.php'))->up();
+
+        $this->assertSame([1, 2, 3, 4], collect([$a, $b, $shared, $c])->map(fn (Lesson $l): int => $this->pivotOrder($course, $l))->all());
+        $this->assertSame([1, 2, 3, 4], collect([$a, $b, $shared, $c])->map(fn (Lesson $l): int => $l->fresh()->sort_order)->all());
+        // In another course it gets that course's own place, and its own number stays its home's.
+        $this->assertSame(1, $this->pivotOrder($other, $shared));
+    }
+
     public function test_emptying_the_order_on_edit_keeps_the_old_place(): void
     {
         $course = $this->course();

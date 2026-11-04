@@ -458,15 +458,23 @@ lessons tied in the admin list and on the student course page.
 the home course + 1, or `0` for a lesson with no course. `Lesson::saving` keeps
 the previous number when an edit empties the box, since the column is not
 nullable. A typed number still wins. Help text in all six `admin_lessons.php`
-says "leave empty to add it at the end". **Existing ties are not renumbered**:
-the owner can drag lessons into order on each course's Lessons tab, or ask for
-a one-off renumbering.
+says "leave empty to add it at the end".
 
-**Verified (run):** `LessonOrderTest` (4 new: model numbering 1, 2, 3; a typed
+**Existing ties renumbered** by data-only migration `2026_11_04_000002`. Each
+course's `course_lesson` rows become 1…n, ordered by current `sort_order`, then
+`lesson_id`. A lesson's own `lessons.sort_order` takes its place in its home
+course. PHP loop, no window functions, so it reads the same on SQLite and
+PostgreSQL. `down()` is a no-op on purpose: the old numbers were ties.
+**Deploy runs `php8.4 artisan migrate --force`** (already needed for
+`2026_11_04_000001`).
+
+**Verified (run):** `LessonOrderTest` (5: model numbering 1, 2, 3; a typed
 order kept; the create form starts empty and appends; emptying on edit keeps
-the old place), plus the shared-lesson, course-lesson, slug-clash, sort and
+the old place; the migration breaks ties, keeps order, and numbers a shared
+lesson separately per course — 34 passed with the shared/course-lesson
+suites after it was added), plus the shared-lesson, course-lesson, slug-clash, sort and
 translation suites. 58 passed, 6,890 assertions. Pint clean on the 9 changed
-files. Full suite: see the final report.
+files. Full mounted-source Docker suite: **665 passed, 9,313 assertions**.
 
 **Also noted in review:** the four-feature work was committed on `develop`
 (`b9b39ef9`, `3257a813`, `a3c259ac`), not left uncommitted on a branch off

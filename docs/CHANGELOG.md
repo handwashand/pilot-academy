@@ -303,8 +303,10 @@ Add a new entry here whenever something visible to admins or students changes.
   box is now empty to start with, and a lesson saved with it empty takes the
   next place in its course. Before, every new lesson was given order 0, so
   several lessons shared the same number and showed in no fixed order. Type a
-  number to choose a place yourself. Lessons that already share a number keep
-  it: drag them into order on the course's **Lessons** tab.
+  number to choose a place yourself. Lessons that already shared a number have
+  been renumbered 1, 2, 3… in each course, in the order they already showed;
+  where two were tied, the one created first comes first. Drag them on the
+  course's **Lessons** tab if you want a different order.
 - **A final question written in the panel is saved in the course's language.**
   **New final question** on a course's **Final questions** tab now writes the
   question in the language the course is written in, as the Excel upload
