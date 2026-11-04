@@ -443,6 +443,26 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-04 — Four admin improvements independently verified
+
+Reviewed the four-feature brief against commits `b9b39ef9` and `3257a813`,
+then traced the implementation, tests, translations, guides and migration. No
+functional defect was found. The inline final-question action already existed;
+the change correctly fixes its course-language and bank-order behavior without
+duplicating the action, and the existing Excel import/export path remains
+untouched.
+
+**Verified (run):** the five focused feature/regression test files passed — 20
+tests, 71 assertions — including the real Excel upload and example-download
+flows. The complete mounted-source Docker suite then matched the original
+record exactly: **661 passed, 9,298 assertions**. Pint passed over 433 files and
+`git diff --check d03ae38e..HEAD` was clean. **Not run:** the migration against
+PostgreSQL or a browser walkthrough; the local Compose services were stopped.
+The migration is conventional and the visible Filament paths are covered by
+Livewire render/action tests, but those two checks remain deployment confidence
+gaps. Before this required work-log note, `develop` was clean and two commits
+ahead of `laravel`; no application file was changed by this review.
+
 ### 2026-11-04 — Lessons order, inline final question language, top creators, course audit line
 
 Four items from the owner's list, on `feature/four-admin-improvements` off
