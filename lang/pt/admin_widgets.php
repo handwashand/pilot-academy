@@ -119,4 +119,12 @@ return [
         'times_opened' => 'Vezes aberto',
         'removed_course' => 'Curso removido',
     ],
+
+    'creators' => [
+        'heading' => 'Criadores mais ativos',
+        'description' => 'Criadores ordenados pelas lições que escreveram. As lições eliminadas não contam.',
+        'lessons' => 'Lições escritas',
+        'empty' => 'Ainda não há criadores',
+        'empty_description' => 'Quando alguém com a função de criador escrever uma lição, aparece aqui.',
+    ],
 ];

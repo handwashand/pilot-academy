@@ -24,6 +24,15 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **Top creators on the dashboard.** Admins see a **Top creators** panel
+  listing the people who write lessons, ranked by how many lessons they wrote
+  — the most productive ten. Deleted lessons are left out, and only accounts
+  with the creator role appear. Creators do not see this panel.
+- **Every course now records who created it.** The course form's **Settings**
+  column shows a line such as "Created by Claire Martin on 4 November 2026".
+  Courses that existed before this release have no recorded author and say
+  **Created by: unknown**; duplicating a course credits the person who made
+  the copy.
 - **Standalone lessons on the Tutorials page.** Published lessons that are not
   in any course now appear on the **Tutorials** page, between the standalone
   tutorials and the course videos. They can be tagged by topic (fuel, sensors,
@@ -227,6 +236,9 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Changed
 
+- **The Lessons list opens with the newest lesson first** instead of in sort
+  order, so the lesson just written is at the top. Click the **Courses** column
+  to sort the list by how many courses each lesson is in.
 - **Lesson tags are now simple colors.** The **Color tag** field offers red,
   yellow and blue, with no readiness meanings attached.
 - **A course description is a short summary on the home page.** A long
@@ -287,6 +299,12 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Fixed
 
+- **A final question written in the panel is saved in the course's language.**
+  **New final question** on a course's **Final questions** tab now writes the
+  question in the language the course is written in, as the Excel upload
+  already did. Before, it was stored as English, so a student reading a course
+  in another language met that question in English. New questions also land at
+  the end of the bank rather than at the top.
 - **The Tutorials page opens again.** A type mismatch in its standalone-lesson
   tag checks had caused an error page, even when there were no standalone
   lessons. The page now loads with or without tagged lessons, and uncompleted

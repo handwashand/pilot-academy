@@ -85,6 +85,8 @@ El camino es siempre el mismo: **crear un curso → llenarlo de lecciones → ac
 
 > Los cursos nuevos se guardan como **Borrador**. Los estudiantes no pueden ver un borrador: lo publicas tú en el paso 4, cuando las lecciones estén listas.
 
+> El curso recuerda quién lo creó. En la columna **Ajustes** aparece una línea como «Creado por Claire Martin el 4 de noviembre de 2026»; un curso creado antes de añadir esta línea dice **Creado: desconocido**. Al duplicar un curso, la copia se atribuye a quien la hizo.
+
 > De momento deja desactivado el bloque **Examen final y certificado**. Volvemos a él en el paso 3, cuando el curso tenga lecciones.
 
 ### Paso 2 · Añadir lecciones
@@ -345,6 +347,8 @@ y que sus lecciones y documentación relacionadas se abren correctamente.
 
 Abre el curso → pestaña **Preguntas del examen final**. Aquí puedes **Adjuntar pregunta de lección** (añadir una pregunta existente), **Añadir todas las preguntas de las lecciones** (el icono del signo más en un círculo: añadirlas todas a la vez) o **Nueva pregunta final** (escribir una pregunta de control que solo existe en el examen final). Pasa el ratón por un icono para ver su nombre.
 
+Una pregunta escrita aquí se guarda en el idioma del curso, igual que una subida, y se añade al final del banco. Nada más del curso cambia.
+
 **Para cargar muchas preguntas a la vez**, haz clic en **Subir desde Excel** (el icono de la tabla):
 
 1. Elige **Descargar archivo de ejemplo**. Es un archivo de Excel con una fila de encabezados y dos preguntas de ejemplo.
@@ -477,6 +481,7 @@ La pantalla de inicio tiene estos bloques:
 | **Actividad de estudiantes** | Estudiantes activos únicos como línea y lecciones terminadas como barras, por cada día del periodo elegido. Varias acciones de un estudiante en un día cuentan como un solo estudiante activo, así que la línea muestra alcance y no clics. |
 | **Cursos más abiertos** | Qué cursos abrieron los estudiantes con sesión iniciada en el periodo elegido, terminados o no. |
 | **Participación con recursos** | Acciones de estudiantes con sesión iniciada en casos prácticos, tutoriales y seminarios web, incluidas las entradas a seminarios y las aperturas de grabaciones. Las visitas anónimas no se registran. |
+| **Creadores más activos** | Quienes escriben las lecciones, ordenados por cuántas escribieron: los diez más productivos. Las lecciones eliminadas no cuentan, solo aparecen cuentas con el rol de creador, y los creadores no ven este panel. |
 
 > **Lecciones que más cuestan** suele indicar que una pregunta no está clara, no que
 > los estudiantes flojeen. Una lección necesita al menos tres intentos calificados

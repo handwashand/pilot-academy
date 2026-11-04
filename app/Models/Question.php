@@ -62,8 +62,9 @@ class Question extends Model
         // A lesson's own question is written in its lesson's language; a
         // course-only question (created straight from the final-quiz bank,
         // no lesson) has nothing to inherit, so it takes the site default.
-        // Explicitly setting language on create (FinalQuestionsRelationManager
-        // does, for a course-only question) always wins over both.
+        // A language set on create always wins over both — the bank's two
+        // creation paths (App\Actions\ImportFinalQuizQuestions and the
+        // relation manager's New final question) both set the course's.
         static::creating(function (Question $question): void {
             if (filled($question->language)) {
                 return;

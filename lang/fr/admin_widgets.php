@@ -119,4 +119,12 @@ return [
         'times_opened' => 'Ouvertures',
         'removed_course' => 'Cours supprimé',
     ],
+
+    'creators' => [
+        'heading' => 'Créateurs les plus actifs',
+        'description' => 'Créateurs classés selon le nombre de leçons écrites. Les leçons supprimées ne sont pas comptées.',
+        'lessons' => 'Leçons écrites',
+        'empty' => 'Pas encore de créateurs',
+        'empty_description' => 'Dès qu\'une personne ayant le rôle de créateur écrit une leçon, elle apparaît ici.',
+    ],
 ];

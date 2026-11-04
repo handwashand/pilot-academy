@@ -85,6 +85,8 @@ O caminho é sempre o mesmo: **criar um curso → preenchê-lo com aulas → ati
 
 > Os cursos novos são salvos como **Rascunho**. Os alunos não veem um rascunho — você mesmo o publica na etapa 4, quando as aulas estiverem prontas.
 
+> O curso registra quem o criou. A coluna **Configurações** mostra uma linha como "Criado por Claire Martin em 4 de novembro de 2026"; um curso criado antes disso mostra **Criado: desconhecido**. Ao duplicar um curso, a cópia é atribuída a quem a fez.
+
 > Por enquanto, deixe desativado o bloco **Teste final e certificado**. Voltamos a ele na etapa 3, quando o curso tiver aulas.
 
 ### Etapa 2 · Adicionar aulas
@@ -341,6 +343,8 @@ aulas e a documentação relacionadas abrem corretamente.
 
 Abra o curso → aba **Perguntas do teste final**. Aqui você pode **Anexar pergunta de aula** (adicionar uma pergunta existente), **Adicionar todas as perguntas das aulas** (o ícone de mais num círculo: adicionar todas de uma vez) ou **Nova pergunta final** (escrever uma pergunta de controle que só existe no teste final). Passe o mouse sobre um ícone para ver o nome.
 
+Uma pergunta escrita aqui é salva no idioma do curso, como uma pergunta enviada, e entra no fim do banco. Nada mais no curso muda.
+
 **Para carregar muitas perguntas de uma vez**, clique em **Enviar do Excel** (o ícone da tabela):
 
 1. Escolha **Baixar arquivo de exemplo**. É um arquivo do Excel com uma linha de cabeçalhos e duas perguntas de exemplo.
@@ -472,6 +476,7 @@ A tela inicial tem estes blocos:
 | **Atividade dos alunos** | Alunos ativos únicos como linha e aulas concluídas como barras, para cada dia do período escolhido. Várias ações de um aluno no mesmo dia contam como um aluno ativo, então a linha mostra alcance, não cliques. |
 | **Cursos mais abertos** | Quais cursos os alunos conectados abriram no período escolhido, concluídos ou não. |
 | **Engajamento com recursos** | Ações de alunos conectados em estudos de caso, tutoriais e webinars, incluindo entradas em webinars e aberturas de gravações. Visitas anônimas não são registradas. |
+| **Criadores mais ativos** | As pessoas que escrevem as aulas, ordenadas por quantas escreveram — as dez mais produtivas. Aulas eliminadas não contam, só contas com a função de criador aparecem, e os criadores não veem este painel. |
 
 > **Aulas mais difíceis para os alunos** costuma indicar que uma pergunta não está
 > clara, não que os alunos são fracos. Uma aula precisa de pelo menos três tentativas

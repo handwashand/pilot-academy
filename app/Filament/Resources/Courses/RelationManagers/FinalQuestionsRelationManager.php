@@ -157,7 +157,18 @@ class FinalQuestionsRelationManager extends RelationManager
 
                 CreateAction::make()
                     ->label(__t('admin_courses.final_tab.create'))
-                    ->modalHeading(__t('admin_courses.final_tab.create_heading')),
+                    ->modalHeading(__t('admin_courses.final_tab.create_heading'))
+                    // The same rule as the Excel import: a course-only question
+                    // is written in the course's language, which is the one
+                    // Translate quiz on this tab treats as the original.
+                    ->mutateDataUsing(fn (array $data): array => [
+                        ...$data,
+                        'language' => $this->getOwnerRecord()->contentLanguageCode(),
+                        // A pivot column, so Filament puts it on
+                        // course_final_questions and the new question lands
+                        // after the ones already in the bank.
+                        'sort_order' => (int) $this->getOwnerRecord()->finalQuestions()->max('course_final_questions.sort_order') + 1,
+                    ]),
 
                 // The whole final quiz from one file, for a bank too long to
                 // type in question by question — and the file to start from.

@@ -11,6 +11,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -192,6 +193,21 @@ class CourseForm
                                 ->visibility('public')
                                 ->maxSize(2048)
                                 ->helperText(__t('admin_courses.form.thumbnail_help')),
+
+                            // Audit information, never edited: who wrote the
+                            // course and when. Courses from before the column
+                            // existed say so instead of guessing.
+                            TextEntry::make('created_by_on')
+                                ->hiddenLabel()
+                                ->state(fn (?Course $record): ?string => $record?->creator
+                                    ? __t('admin_courses.form.created_by_on', [
+                                        'name' => $record->creator->name,
+                                        'date' => $record->created_at?->isoFormat('LL'),
+                                    ])
+                                    : ($record ? __t('admin_courses.form.created_by_unknown') : null))
+                                ->dehydrated(false)
+                                ->visible(fn (?Course $record): bool => (bool) $record)
+                                ->columnSpanFull(),
                         ]),
                 ])->columnSpan(['lg' => 1]),
             ]);

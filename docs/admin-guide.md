@@ -85,6 +85,8 @@ The path is always the same: **make a course → fill it with lessons → turn o
 
 > New courses are saved as a **Draft**. Students cannot see a draft — you publish it yourself in Step 4, once the lessons are in place.
 
+> The course records who made it. Its **Settings** column shows a line such as "Created by Claire Martin on 4 November 2026"; a course made before this was added reads **Created by: unknown**. Duplicating a course credits whoever made the copy.
+
 > Leave the **Final quiz & certificate** box off for now. We come back to it in Step 3, once the course has lessons.
 
 ### Step 2 · Add lessons
@@ -350,6 +352,8 @@ and that its related lessons and documentation open correctly.
 
 Open the course → **Final questions** tab. Here you can **Attach lesson question** (add one existing question), **Add all lesson questions** (the plus-circle icon: add them all at once), or **New final question** (write a control question that lives only in the final). Hover an icon to see its name.
 
+A question you write here is saved in the course's language, the same as an uploaded one, and joins the end of the bank. Nothing else about the course changes.
+
 **To load many questions at once**, click **Upload from Excel** (the table icon):
 
 1. Choose **Download example file**. It is an Excel file with a heading row and two example questions.
@@ -487,6 +491,7 @@ The home screen has these panels:
 | **Student activity** | Unique active students as a line and lessons finished as bars for each day in the selected period. Several actions by one student on one day count as one active student, so the line shows reach rather than clicks. |
 | **Most opened courses** | Which courses signed-in students opened in the selected period, finished or not. |
 | **Resource engagement** | Signed-in learner actions for case studies, tutorials and webinars, including webinar joins and recording opens. Anonymous visits are not recorded. |
+| **Top creators** | The people who write lessons, ranked by how many lessons they wrote — the ten most productive. Deleted lessons do not count, only accounts with the creator role are listed, and creators do not see this panel. |
 
 > **Lessons students struggle with** is usually telling you a question is
 > unclear, not that the students are weak. A lesson needs at least three graded

@@ -275,6 +275,15 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasLocale
         return $this->hasMany(ActivityEvent::class)->latest();
     }
 
+    /**
+     * The lessons this person wrote — what the dashboard's creator ranking
+     * counts. Deleted lessons drop out, since Lesson is soft-deleted.
+     */
+    public function createdLessons(): HasMany
+    {
+        return $this->hasMany(Lesson::class, 'created_by');
+    }
+
     public function quizAttempts(): HasMany
     {
         return $this->hasMany(QuizAttempt::class)->latest();

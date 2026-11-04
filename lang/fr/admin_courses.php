@@ -34,6 +34,8 @@ return [
         'max_attempts_help' => 'Laissez vide pour des tentatives illimitées.',
         'certificate_template' => 'Fond du certificat (facultatif)',
         'certificate_template_help' => 'Fond pleine page A4 paysage (≈3508×2480 px). Laissez vide pour utiliser la mise en page encadrée intégrée. Le nom, le cours, la date, le numéro et le QR code sont ajoutés automatiquement.',
+        'created_by_on' => 'Créé par :name le :date',
+        'created_by_unknown' => 'Créé : inconnu',
     ],
 
     'table' => [

@@ -34,6 +34,8 @@ return [
         'max_attempts_help' => 'Déjalo vacío para intentos ilimitados.',
         'certificate_template' => 'Fondo del certificado (opcional)',
         'certificate_template_help' => 'Fondo a página completa A4 horizontal (≈3508×2480 px). Déjalo vacío para usar el diseño con marco integrado. El nombre, el curso, la fecha, el número y el QR se superponen automáticamente.',
+        'created_by_on' => 'Creado por :name el :date',
+        'created_by_unknown' => 'Creado: desconocido',
     ],
 
     'table' => [

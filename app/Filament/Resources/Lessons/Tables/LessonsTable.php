@@ -28,7 +28,9 @@ class LessonsTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->defaultSort('sort_order')
+            // Newest first: the lesson just written is the one being worked on.
+            // Filament adds the key sort itself, so equal timestamps stay stable.
+            ->defaultSort('created_at', 'desc')
             ->modifyQueryUsing(fn (Builder $query): Builder => $query->with(['contentTranslations', 'courses.contentTranslations']))
             ->columns([
                 ImageColumn::make('cover')
@@ -42,7 +44,13 @@ class LessonsTable
                     ->label(__t('admin_common.courses'))
                     ->state(fn (Lesson $record): array => $record->courses->map(fn ($course): string => (string) $course->translated('title'))->all())
                     ->badge()
-                    ->placeholder(__t('admin_lessons.table.no_course')),
+                    ->placeholder(__t('admin_lessons.table.no_course'))
+                    // Orders by how many courses the lesson is in — what the
+                    // badges show — rather than by their text. The count goes
+                    // through the relation, so deleted courses are left out.
+                    ->sortable(query: fn (Builder $query, string $direction): Builder => $query
+                        ->withCount('courses')
+                        ->orderBy('courses_count', $direction)),
 
                 TextColumn::make('sort_order')
                     ->label('#')

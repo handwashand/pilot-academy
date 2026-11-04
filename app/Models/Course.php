@@ -23,6 +23,7 @@ class Course extends Model
 
     protected $fillable = [
         'product_id',
+        'created_by',
         'title',
         'language',
         'slug',
@@ -123,6 +124,16 @@ class Course extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    /**
+     * Who wrote this course — read-only audit information on the edit page.
+     * Null for anything created before the column existed, and for a creator
+     * whose account has since been deleted.
+     */
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     /**

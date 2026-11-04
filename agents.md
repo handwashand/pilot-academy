@@ -443,6 +443,56 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-04 — Lessons order, inline final question language, top creators, course audit line
+
+Four items from the owner's list, on `feature/four-admin-improvements` off
+`laravel`. **One migration** — `2026_11_04_000001_add_created_by_to_courses` —
+so this deploy must run `php8.4 artisan migrate --force`.
+
+**Lessons list opens newest first.** `LessonsTable` now uses
+`defaultSort('created_at', 'desc')` instead of `sort_order`. The **Courses**
+column is a badge list of course *titles*, not a count — the task brief had
+assumed a number — so it now sorts by how many courses a lesson is in, through
+`sortable(query: …)` with `withCount('courses')` and `orderBy('courses_count')`.
+That goes through the relation, so soft-deleted courses are left out, and the
+alias resolves in `ORDER BY` on PostgreSQL. No manual id tiebreaker: Filament
+appends the key sort itself in the same direction.
+
+**New final question was already built** (and already in the admin guide), so
+the real work was the bug inside it: it never set the question's language, and
+`Question::creating` falls back to `lesson?->language ?? defaultCode()` — a
+course-only question has no lesson. A question typed into a French course was
+stored as English, so students met it in English and **Translate quiz** treated
+English as its original. `CreateAction::mutateDataUsing()` now sets
+`language` to `$course->contentLanguageCode()` — the rule
+`ImportFinalQuizQuestions` already used — and appends to the bank by passing
+`sort_order`, which Filament routes to the pivot because
+`course_final_questions.sort_order` is a pivot column.
+
+*Testing note:* fill a repeater inside an action with `->set('mountedActions.0.data.options', …)`
+after `mountAction()`, not with `callAction(..., data: […])`. The repeater's
+`defaultItems` rows survive `fillForm()` and fail their own `required` rules.
+
+**Top creators** (`app/Filament/Widgets/TopCreators.php`) — a `TableWidget`
+over the new `User::createdLessons()` (`hasMany(Lesson::class, 'created_by')`),
+creators only, lessons only, ten rows. It uses `ReportsOnLearners` for its
+admin-only `canView()` but deliberately not `learners()`: this reports on
+staff, so the trait's "student progress" docblock is stretched and the class
+says why. Widgets are auto-discovered; no panel-provider entry needed.
+`limit(10)` only survives because the table is `paginated(false)` — a paginated
+table replaces the limit with its page size in `forPage()`.
+
+**Course audit line.** `courses.created_by` (nullable, `nullOnDelete`, **no
+backfill**), `Course::creator()`, stamped in
+`CreateCourse::mutateFormDataBeforeCreate()`. The edit page shows it read-only
+in the Settings column through an infolist `TextEntry` with
+`dehydrated(false)`; a course with no author reads
+`admin_courses.form.created_by_unknown`. `DuplicateCourse` also sets
+`created_by`: `replicate()` copies the original's value, so a copy would
+otherwise print the original author beside today's date.
+
+**Verified (run):** see the final report.
+
 ### 2026-10-27 - Connected the Pilot Academy Sentry project
 
 Created the `pilot-academy` PHP project in Sentry organization `365-s3`, stored

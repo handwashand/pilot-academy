@@ -56,6 +56,10 @@ class DuplicateCourse
         $copy->title = $course->title.' (copy)';
         $copy->slug = $this->uniqueSlug(Course::class, $course->slug);
         $copy->status = Course::STATUS_DRAFT;
+        // The copy is a new course: it was written today by whoever duplicated
+        // it, not by the original's author. replicate() would otherwise carry
+        // that author across and the edit page would print the wrong date.
+        $copy->created_by = auth()->id();
         $copy->save();
 
         return $copy;

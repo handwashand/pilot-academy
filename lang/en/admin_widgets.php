@@ -122,4 +122,12 @@ return [
         'times_opened' => 'Times opened',
         'removed_course' => 'Removed course',
     ],
+
+    'creators' => [
+        'heading' => 'Top creators',
+        'description' => 'Creators ranked by the lessons they wrote. Deleted lessons are not counted.',
+        'lessons' => 'Lessons written',
+        'empty' => 'No creators yet',
+        'empty_description' => 'Once someone with the creator role writes a lesson, they appear here.',
+    ],
 ];

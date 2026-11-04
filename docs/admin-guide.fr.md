@@ -85,6 +85,8 @@ Le parcours est toujours le même : **créer un cours → le remplir de leçons 
 
 > Les nouveaux cours sont enregistrés en **Brouillon**. Les apprenants ne voient pas un brouillon — vous le publiez vous-même à l’étape 4, une fois les leçons en place.
 
+> Le cours retient qui l’a créé. Sa colonne **Paramètres** affiche une ligne du type « Créé par Claire Martin le 4 novembre 2026 » ; un cours créé avant l’ajout de cette ligne indique **Créé : inconnu**. Quand vous dupliquez un cours, la copie est attribuée à la personne qui l’a faite.
+
 > Laissez pour l’instant le bloc **Quiz final et certificat** désactivé. Nous y revenons à l’étape 3, quand le cours aura des leçons.
 
 ### Étape 2 · Ajouter des leçons
@@ -347,6 +349,8 @@ difficulté, et que ses leçons et sa documentation liées s’ouvrent correctem
 
 Ouvrez le cours → onglet **Questions du quiz final**. Vous pouvez y **Joindre une question de leçon** (ajouter une question existante), **Ajouter toutes les questions des leçons** (l’icône plus dans un cercle : les ajouter toutes d’un coup) ou **Nouvelle question finale** (écrire une question de contrôle qui n’existe que dans le quiz final). Survolez une icône pour voir son nom.
 
+Une question écrite ici est enregistrée dans la langue du cours, comme une question importée, et s’ajoute à la fin de la banque. Rien d’autre ne change dans le cours.
+
 **Pour charger beaucoup de questions d’un coup**, cliquez sur **Importer depuis Excel** (l’icône du tableau) :
 
 1. Choisissez **Télécharger le fichier d’exemple**. C’est un fichier Excel avec une ligne d’en-têtes et deux questions d’exemple.
@@ -483,6 +487,7 @@ L’écran d’accueil comporte ces blocs :
 | **Activité des apprenants** | Les apprenants actifs uniques en courbe et les leçons terminées en barres, pour chaque jour de la période choisie. Plusieurs actions d’un même apprenant dans la journée comptent pour un seul apprenant actif, donc la courbe montre la portée et non les clics. |
 | **Cours les plus ouverts** | Les cours ouverts par les apprenants connectés sur la période choisie, terminés ou non. |
 | **Engagement avec les ressources** | Les actions des apprenants connectés sur les études de cas, tutoriels et webinaires, y compris la participation aux webinaires et l’ouverture des enregistrements. Les visites anonymes ne sont pas enregistrées. |
+| **Créateurs les plus actifs** | Les personnes qui écrivent les leçons, classées selon le nombre de leçons écrites — les dix plus productives. Les leçons supprimées ne comptent pas, seuls les comptes ayant le rôle de créateur sont listés, et les créateurs ne voient pas ce panneau. |
 
 > **Leçons qui posent problème** vous signale généralement qu’une question n’est pas
 > claire, pas que les apprenants sont faibles. Une leçon doit avoir au moins trois

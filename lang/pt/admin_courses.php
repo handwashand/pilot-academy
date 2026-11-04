@@ -34,6 +34,8 @@ return [
         'max_attempts_help' => 'Deixe vazio para tentativas ilimitadas.',
         'certificate_template' => 'Fundo do certificado (opcional)',
         'certificate_template_help' => 'Fundo de página inteira A4 paisagem (≈3508×2480 px). Deixe vazio para usar o layout com moldura embutido. Nome, curso, data, número e QR são sobrepostos automaticamente.',
+        'created_by_on' => 'Criado por :name em :date',
+        'created_by_unknown' => 'Criado: desconhecido',
     ],
 
     'table' => [
