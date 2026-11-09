@@ -60,7 +60,10 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasLocale
     /** Draft translations with ChatGPT or DeepSeek, which bill per use. */
     public const PERMISSION_AI_TRANSLATE = 'ai.translate';
 
-    /** Draft a course with ChatGPT or DeepSeek. Admins may; anyone else needs this. */
+    /**
+     * Draft a course with ChatGPT or DeepSeek. Not part of Admin or Creator:
+     * an admin ticks it on the account. Off until then.
+     */
     public const PERMISSION_AI_GENERATE = 'ai.generate_course';
 
     /** Download uploaded lesson videos. Admins always may; a learner only when given this. */
@@ -208,6 +211,16 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasLocale
         return $this->isCreator()
             && $lesson->course_id === null
             && (int) $lesson->created_by === (int) $this->id;
+    }
+
+    /**
+     * Generate course is off until an admin ticks it. Being an admin is not
+     * enough, the same as the Descript right. Creators can be given it too.
+     */
+    public function canGenerateCourses(): bool
+    {
+        return ($this->isAdmin() || $this->isCreator())
+            && $this->hasPermission(self::PERMISSION_AI_GENERATE);
     }
 
     /**

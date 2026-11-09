@@ -804,9 +804,10 @@ a model, then **Generate draft**. The course stays a draft until someone
 publishes it. A switched-off provider cannot be chosen. On this page, **Course
 generation** sets the default provider, an optional fallback, a daily limit and
 a monthly budget. Fallback sends the same notes to the other provider, and only
-when it is allowed here and ticked on Generate course. Anyone who is not an
-admin needs **Draft courses with ChatGPT or DeepSeek** under **People → Users →
-Extra permissions**.
+when it is allowed here and ticked on Generate course. **Generate course**
+stays hidden until an admin ticks **Draft courses with ChatGPT or DeepSeek**
+on that account, under **People → Users → Extra permissions**. Admins do not
+receive it automatically.
 
 ---
 

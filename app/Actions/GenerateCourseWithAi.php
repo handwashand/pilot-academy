@@ -92,16 +92,16 @@ class GenerateCourseWithAi
 
     private function authorize(User $user, ?int $productId): void
     {
+        if (! $user->canGenerateCourses()) {
+            throw new LlmException('You do not have permission to generate a course.', 403, 'forbidden');
+        }
+
         if ($user->isAdmin()) {
             if ($productId !== null && ! Product::query()->whereKey($productId)->exists()) {
                 throw new LlmException('Choose a product you own.', 422, 'product');
             }
 
             return;
-        }
-
-        if (! $user->isCreator() || ! $user->hasPermission(User::PERMISSION_AI_GENERATE)) {
-            throw new LlmException('You do not have permission to generate a course.', 403, 'forbidden');
         }
 
         if ($productId === null || ! $user->products()->whereKey($productId)->exists()) {

@@ -788,9 +788,10 @@ luego **Generar borrador**. El curso sigue en borrador hasta que alguien lo
 publique. Un proveedor apagado no se puede elegir. En esta página, **Generación
 de cursos** fija el proveedor predeterminado, una reserva opcional, un límite
 diario y un presupuesto mensual. La reserva envía las mismas notas al otro
-proveedor, y solo si aquí está permitida y se marca en Generar curso. Quien no
-sea administrador necesita **Generar borradores de cursos con ChatGPT o DeepSeek**
-en **Personas → Usuarios → Permisos adicionales**.
+proveedor, y solo si aquí está permitida y se marca en Generar curso. **Generar
+curso** permanece oculto hasta que un administrador marque **Generar borradores
+de cursos con ChatGPT o DeepSeek** en esa cuenta, en **Personas → Usuarios →
+Permisos adicionales**. Los administradores no lo reciben automáticamente.
 
 ---
 

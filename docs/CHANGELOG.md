@@ -33,9 +33,10 @@ Add a new entry here whenever something visible to admins or students changes.
   cannot return structured text is not listed. On **Integrations**, an admin
   can set a default provider, allow a fallback to the other provider, and set
   a daily limit and a monthly budget. Fallback runs only when it is allowed
-  and the person generating ticks it. Anyone who is not an admin needs
-  **Draft courses with ChatGPT or DeepSeek** under **People → Users → Extra
-  permissions**.
+  and the person generating ticks it. **Generate course** stays hidden until
+  an admin ticks **Draft courses with ChatGPT or DeepSeek** on that account,
+  under **People → Users → Extra permissions**. Admins do not receive it
+  automatically.
 
 - **Finding lessons and building courses is quicker.**
   - **Pick lessons while creating a course.** The new-course form has a

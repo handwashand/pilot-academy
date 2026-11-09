@@ -443,6 +443,12 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-09 — Generate course is an extra right, off by default
+
+`User::canGenerateCourses()` is the gate for the page and the action. Admin
+and Creator do not include it. An admin ticks **Draft courses with ChatGPT or
+DeepSeek** on the account. A plain admin gets 403 and no request is sent.
+
 ### 2026-11-09 — Course drafts through the existing ChatGPT and DeepSeek tokens
 
 **Content → Generate course** drafts a course from notes. It uses the token
@@ -456,7 +462,7 @@ provider and model. Fallback, a daily limit and a monthly budget live on
 `ai_generation_settings` and are edited on **Integrations**. Fallback runs
 only when the setting is on and the request ticks it, and only after the
 chosen provider fails to answer. Creators need `ai.generate_course` and a
-product they own. Admins do not need the extra right.
+product they own. The extra right is required for admins too (see the entry above).
 
 **One migration**, `2026_11_09_000001`, so this deploy runs
 `php8.4 artisan migrate --force`. Plan and the pieces still open:

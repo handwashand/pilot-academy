@@ -58,12 +58,10 @@ class GenerateCourse extends Page
         return __t('admin_pages.course_generation.subheading');
     }
 
-    /** Admins, and creators an admin has allowed to spend the providers. */
+    /** Off until an admin ticks Draft courses on that account. */
     public static function canAccess(): bool
     {
-        $user = auth()->user();
-
-        return (bool) ($user?->isAdmin() || ($user?->isCreator() && $user->hasPermission(User::PERMISSION_AI_GENERATE)));
+        return (bool) auth()->user()?->canGenerateCourses();
     }
 
     public static function shouldRegisterNavigation(): bool

@@ -274,6 +274,24 @@ class CourseGenerationTest extends TestCase
         Http::assertNothingSent();
     }
 
+    public function test_an_admin_does_not_have_course_generation_until_it_is_ticked(): void
+    {
+        $this->enable('chatgpt');
+        $admin = User::create([
+            'name' => 'Plain Admin',
+            'email' => 'plain-admin@pilot.local',
+            'password' => 'password',
+            'role' => User::ROLE_ADMIN,
+        ]);
+
+        $this->actingAs($admin);
+        $this->assertFalse(GenerateCourse::canAccess());
+        $this->get(GenerateCourse::getUrl())->assertForbidden();
+        $this->assertSame('forbidden', $this->capture(fn () => $this->generate($admin, 'chatgpt', 'gpt-4o-mini'))->errorCode);
+        $this->assertSame(0, Course::query()->count());
+        Http::assertNothingSent();
+    }
+
     public function test_a_creator_can_generate_only_for_a_product_they_own(): void
     {
         $this->enable('chatgpt');
@@ -448,11 +466,14 @@ class CourseGenerationTest extends TestCase
 
     private function admin(): User
     {
-        return User::create([
+        $admin = User::create([
             'name' => 'Pilot Admin',
             'email' => 'admin@pilot.local',
             'password' => 'password',
             'role' => User::ROLE_ADMIN,
         ]);
+        $admin->permissions()->create(['permission' => User::PERMISSION_AI_GENERATE]);
+
+        return $admin;
     }
 }
