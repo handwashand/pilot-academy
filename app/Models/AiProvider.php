@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Crypt;
 /**
  * A text-translation provider an admin has set up under Settings → Integrations.
  *
- * Only the two known providers exist, each with a fixed official address, so a
+ * Only the known providers exist, each with a fixed official address, so a
  * saved token can never be sent to a host an admin typed in.
  */
 class AiProvider extends Model
@@ -19,17 +19,20 @@ class AiProvider extends Model
 
     public const DEEPSEEK = 'deepseek';
 
+    public const CLAUDE = 'claude';
+
     public const DEEPL = 'deepl';
 
     public const DESCRIPT = 'descript';
 
     /**
      * Chat providers the course generator may use. DeepL and Descript are not
-     * chat models, so they stay out of this list.
+     * chat models, so they stay out of this list. Claude is generation only:
+     * it does not speak the translation client's protocol.
      *
      * @var array<int, string>
      */
-    public const GENERATION = [self::CHATGPT, self::DEEPSEEK];
+    public const GENERATION = [self::CHATGPT, self::DEEPSEEK, self::CLAUDE];
 
     /** @var array<string, array{label: string, url: string, model: string, model_options: array<string, string>, capabilities?: array<string, array<string, mixed>>}> */
     public const PROVIDERS = [
@@ -81,6 +84,23 @@ class AiProvider extends Model
                 'deepseek-chat' => ['text' => true, 'json' => true, 'documents' => false, 'web_search' => false, 'context_tokens' => 128000, 'max_output_tokens' => 8192, 'input_usd_per_million' => 0.14, 'output_usd_per_million' => 0.28],
                 // Reasoner does not accept a JSON response format.
                 'deepseek-reasoner' => ['text' => true, 'json' => false, 'documents' => false, 'web_search' => false, 'context_tokens' => 128000, 'max_output_tokens' => 8192, 'input_usd_per_million' => 0.55, 'output_usd_per_million' => 2.19],
+            ],
+        ],
+        // Messages API, not chat completions. Haiku's price is the short-prompt
+        // rate (at or under 100,000 input tokens).
+        self::CLAUDE => [
+            'label' => 'Claude',
+            'url' => 'https://api.anthropic.com/v1/messages',
+            'model' => 'claude-sonnet-5-5',
+            'model_options' => [
+                'claude-haiku-5-5' => 'Claude Haiku 5.5',
+                'claude-sonnet-5-5' => 'Claude Sonnet 5.5',
+                'claude-opus-5-5' => 'Claude Opus 5.5',
+            ],
+            'capabilities' => [
+                'claude-haiku-5-5' => ['text' => true, 'json' => true, 'documents' => false, 'web_search' => false, 'context_tokens' => 1000000, 'max_output_tokens' => 128000, 'input_usd_per_million' => 0.10, 'output_usd_per_million' => 0.50],
+                'claude-sonnet-5-5' => ['text' => true, 'json' => true, 'documents' => false, 'web_search' => false, 'context_tokens' => 1000000, 'max_output_tokens' => 128000, 'input_usd_per_million' => 2.00, 'output_usd_per_million' => 10.00],
+                'claude-opus-5-5' => ['text' => true, 'json' => true, 'documents' => false, 'web_search' => false, 'context_tokens' => 1000000, 'max_output_tokens' => 128000, 'input_usd_per_million' => 4.00, 'output_usd_per_million' => 20.00],
             ],
         ],
     ];

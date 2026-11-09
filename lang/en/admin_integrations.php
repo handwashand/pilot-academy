@@ -9,6 +9,8 @@ return [
         'text_help' => 'Drafts course, lesson and quiz translations in the Translate window. Admins can use these straight away; anyone else needs the right under People → Users → Extra permissions.',
         'video' => 'Video translation',
         'video_help' => 'Translates the speech in uploaded lesson videos. Everyone, admins included, needs the right under People → Users → Extra permissions.',
+        'course' => 'Course generation',
+        'course_help' => 'Optional. A Claude token offers Claude on Generate course. It stays off until the token is saved and the switch is on. Translate does not use it.',
     ],
     'status' => [
         'on' => 'On',
@@ -20,6 +22,7 @@ return [
         'deepl' => 'Drafts course and lesson text translations in the Translate window. The text of empty boxes is sent to DeepL only when someone presses the button and confirms. A key ending in :fx is a DeepL API Free key.',
         'chatgpt' => 'Drafts course and lesson text translations in the Translate window. Text is sent to ChatGPT only when someone presses the button and confirms.',
         'deepseek' => 'Drafts course and lesson text translations in the Translate window. Text is sent to DeepSeek only when someone presses the button and confirms.',
+        'claude' => 'Drafts a course from notes on Generate course. Notes are sent to Claude only when someone presses Generate draft. Claude is not used for Translate.',
     ],
     'enabled' => 'Enable :provider',
     'enabled_help' => 'Needs a token. Switching it off hides the buttons but keeps the token.',
@@ -35,7 +38,7 @@ return [
     'saved' => 'Integrations saved',
     'generation' => [
         'heading' => 'Course generation',
-        'help' => 'Uses the ChatGPT or DeepSeek token saved above. There is no separate key. Prices used for the budget are estimates.',
+        'help' => 'Uses a ChatGPT, DeepSeek or Claude token saved on this page. There is no separate key. Prices used for the budget are estimates.',
         'default_provider' => 'Default provider',
         'default_provider_help' => 'Pre-selected on Generate course. A provider that is off cannot be used until it is switched on.',
         'none' => 'No default',

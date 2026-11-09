@@ -114,6 +114,7 @@ class Integrations extends Page
             ->components([
                 $this->group('text', [AiProvider::DEEPL, AiProvider::CHATGPT, AiProvider::DEEPSEEK]),
                 $this->group('video', [AiProvider::DESCRIPT]),
+                $this->group('course', [AiProvider::CLAUDE]),
                 $this->generationSection(),
             ])
             ->statePath('data');

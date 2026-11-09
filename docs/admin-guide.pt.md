@@ -779,7 +779,7 @@ permitida aqui e marcada em Gerar curso. Cada rascunho vê dois cursos
 publicados, um par diferente à medida que mais rascunhos são feitos, e segue
 como eles são escritos. O texto deles não é copiado. Um criador só fornece
 cursos dos próprios produtos. **Gerar curso** fica oculto até um
-administrador marcar **Gerar rascunhos de cursos com ChatGPT ou DeepSeek**
+administrador marcar **Gerar rascunhos de cursos com ChatGPT, DeepSeek ou Claude**
 nessa conta, em **Pessoas → Usuários → Permissões extras**. Administradores
 não recebem isso automaticamente.
 

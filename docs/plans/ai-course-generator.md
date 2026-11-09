@@ -28,6 +28,9 @@ no separate client for translation.
 - Content → Generate course is the screen. It stays hidden until an admin
   ticks **Draft courses with ChatGPT or DeepSeek** on that account. Admins do
   not receive the right automatically. A creator also needs a product they own.
+- Claude is a third generation provider. Its token is saved on Integrations
+  and it speaks the Messages API (`https://api.anthropic.com/v1/messages`).
+  It is not a Translate engine. Models: Haiku 5.5, Sonnet 5.5, Opus 5.5.
 - Each draft is shown two published courses (`SampleCourseStyle`), a different
   pair as more drafts are made. The model is told to match their shape and
   tone and not to copy them. Drafts are left out. A creator only supplies

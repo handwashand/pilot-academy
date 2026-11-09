@@ -9,6 +9,8 @@ return [
         'text_help' => 'Gera rascunhos de tradução de cursos, aulas e testes na janela Traduzir. Administradores podem usar imediatamente; qualquer outra pessoa precisa da permissão em Pessoas → Usuários → Permissões extras.',
         'video' => 'Tradução de vídeo',
         'video_help' => 'Traduz a fala dos vídeos enviados às aulas. Todos, inclusive administradores, precisam da permissão em Pessoas → Usuários → Permissões extras.',
+        'course' => 'Geração de cursos',
+        'course_help' => 'Opcional. Um token do Claude oferece o Claude em Gerar curso. Fica desligado até o token ser salvo e o interruptor ligado. Traduzir não o usa.',
     ],
     'status' => [
         'on' => 'Ativado',
@@ -20,6 +22,7 @@ return [
         'deepl' => 'Gera rascunhos de tradução do texto de cursos e aulas na janela Traduzir. O texto dos campos vazios só é enviado ao DeepL quando alguém clica no botão e confirma. Uma chave terminada em :fx é uma chave DeepL API Free.',
         'chatgpt' => 'Gera rascunhos de tradução do texto de cursos e aulas na janela Traduzir. O texto só é enviado ao ChatGPT quando alguém clica no botão e confirma.',
         'deepseek' => 'Gera rascunhos de tradução do texto de cursos e aulas na janela Traduzir. O texto só é enviado ao DeepSeek quando alguém clica no botão e confirma.',
+        'claude' => 'Gera um curso a partir de notas em Gerar curso. As notas só vão ao Claude quando alguém clica em Gerar rascunho. Traduzir não usa o Claude.',
     ],
     'enabled' => 'Ativar o :provider',
     'enabled_help' => 'Precisa de um token. Desativar oculta os botões, mas mantém o token.',
@@ -35,7 +38,7 @@ return [
     'saved' => 'Integrações salvas',
     'generation' => [
         'heading' => 'Geração de cursos',
-        'help' => 'Usa o token do ChatGPT ou do DeepSeek salvo acima. Não há uma chave separada. Os preços do orçamento são estimativas.',
+        'help' => 'Usa um token do ChatGPT, do DeepSeek ou do Claude salvo nesta página. Não há uma chave separada. Os preços do orçamento são estimativas.',
         'default_provider' => 'Provedor padrão',
         'default_provider_help' => 'Já vem escolhido em Gerar curso. Um provedor desligado não pode ser usado até ser ativado.',
         'none' => 'Sem padrão',

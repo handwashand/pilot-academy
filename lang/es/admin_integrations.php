@@ -9,6 +9,8 @@ return [
         'text_help' => 'Genera borradores de traducción de cursos, lecciones y cuestionarios en la ventana Traducir. Los administradores pueden usarlos de inmediato; cualquier otra persona necesita el permiso en Personas → Usuarios → Permisos adicionales.',
         'video' => 'Traducción de vídeo',
         'video_help' => 'Traduce la voz de los vídeos subidos a las lecciones. Todos, administradores incluidos, necesitan el permiso en Personas → Usuarios → Permisos adicionales.',
+        'course' => 'Generación de cursos',
+        'course_help' => 'Opcional. Un token de Claude ofrece Claude en Generar curso. Sigue apagado hasta que el token esté guardado y el interruptor encendido. Traducir no lo usa.',
     ],
     'status' => [
         'on' => 'Activado',
@@ -20,6 +22,7 @@ return [
         'deepl' => 'Genera borradores de traducción del texto de cursos y lecciones en la ventana Traducir. El texto de los campos vacíos solo se envía a DeepL cuando alguien pulsa el botón y confirma. Una clave que termina en :fx es una clave de DeepL API Free.',
         'chatgpt' => 'Genera borradores de traducción del texto de cursos y lecciones en la ventana Traducir. El texto solo se envía a ChatGPT cuando alguien pulsa el botón y confirma.',
         'deepseek' => 'Genera borradores de traducción del texto de cursos y lecciones en la ventana Traducir. El texto solo se envía a DeepSeek cuando alguien pulsa el botón y confirma.',
+        'claude' => 'Genera un curso a partir de notas en Generar curso. Las notas se envían a Claude solo al pulsar Generar borrador. Traducir no usa Claude.',
     ],
     'enabled' => 'Activar :provider',
     'enabled_help' => 'Necesita un token. Desactivarlo oculta los botones pero conserva el token.',
@@ -35,7 +38,7 @@ return [
     'saved' => 'Integraciones guardadas',
     'generation' => [
         'heading' => 'Generación de cursos',
-        'help' => 'Usa el token de ChatGPT o DeepSeek guardado arriba. No hay una clave aparte. Los precios del presupuesto son estimaciones.',
+        'help' => 'Usa un token de ChatGPT, DeepSeek o Claude guardado en esta página. No hay una clave aparte. Los precios del presupuesto son estimaciones.',
         'default_provider' => 'Proveedor predeterminado',
         'default_provider_help' => 'Aparece elegido en Generar curso. Un proveedor apagado no se puede usar hasta que se active.',
         'none' => 'Sin predeterminado',

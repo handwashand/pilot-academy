@@ -5,12 +5,14 @@ namespace App\Services\Llm;
 use App\Models\AiProvider;
 use App\Models\AiUsage;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 /**
- * One chat-completions call for ChatGPT or DeepSeek. Both speak the same
- * protocol; the provider row supplies the address, the token and the model.
+ * One JSON completion for ChatGPT, DeepSeek or Claude. ChatGPT and DeepSeek
+ * speak chat completions. Claude speaks the Messages API at its own address.
+ * The provider row supplies the address, the token and the model.
  *
  * Translation keeps its own client (LlmTranslator). This one is for features
  * that need a JSON object and a usage record. The token and the message text
@@ -34,20 +36,9 @@ class ChatClient
         $maxTokens = min(8192, (int) ($capabilities['max_output_tokens'] ?? 4096));
 
         try {
-            $response = Http::withToken((string) $this->provider->api_key)
-                ->acceptJson()
-                ->asJson()
-                ->timeout(120)
-                ->post($this->provider->endpoint(), [
-                    'model' => $this->model,
-                    'temperature' => 0.2,
-                    'max_tokens' => $maxTokens,
-                    'response_format' => ['type' => 'json_object'],
-                    'messages' => [
-                        ['role' => 'system', 'content' => $system],
-                        ['role' => 'user', 'content' => $user],
-                    ],
-                ]);
+            $response = $this->provider->provider === AiProvider::CLAUDE
+                ? $this->postClaude($system, $user, $maxTokens)
+                : $this->postChatCompletions($system, $user, $maxTokens);
         } catch (ConnectionException) {
             Log::warning('AI provider unreachable', ['provider' => $this->provider->provider]);
 
@@ -70,9 +61,16 @@ class ChatClient
             );
         }
 
-        $content = (string) $response->json('choices.0.message.content');
-        $promptTokens = (int) $response->json('usage.prompt_tokens');
-        $completionTokens = (int) $response->json('usage.completion_tokens');
+        if ($this->provider->provider === AiProvider::CLAUDE) {
+            $content = $this->claudeText($response->json('content'));
+            $promptTokens = (int) $response->json('usage.input_tokens');
+            $completionTokens = (int) $response->json('usage.output_tokens');
+        } else {
+            $content = (string) $response->json('choices.0.message.content');
+            $promptTokens = (int) $response->json('usage.prompt_tokens');
+            $completionTokens = (int) $response->json('usage.completion_tokens');
+        }
+
         $reported = $response->json('usage') !== null;
 
         $usage = AiUsage::query()->create([
@@ -95,6 +93,60 @@ class ChatClient
             $usage->estimated_cost_usd,
             $usage->id,
         );
+    }
+
+    private function postChatCompletions(string $system, string $user, int $maxTokens): Response
+    {
+        return Http::withToken((string) $this->provider->api_key)
+            ->acceptJson()
+            ->asJson()
+            ->timeout(120)
+            ->post($this->provider->endpoint(), [
+                'model' => $this->model,
+                'temperature' => 0.2,
+                'max_tokens' => $maxTokens,
+                'response_format' => ['type' => 'json_object'],
+                'messages' => [
+                    ['role' => 'system', 'content' => $system],
+                    ['role' => 'user', 'content' => $user],
+                ],
+            ]);
+    }
+
+    private function postClaude(string $system, string $user, int $maxTokens): Response
+    {
+        return Http::withToken((string) $this->provider->api_key)
+            ->withHeaders(['anthropic-version' => '2026-10-21'])
+            ->acceptJson()
+            ->asJson()
+            ->timeout(120)
+            ->post($this->provider->endpoint(), [
+                'model' => $this->model,
+                'max_tokens' => $maxTokens,
+                'temperature' => 0.2,
+                'system' => $system,
+                'messages' => [
+                    ['role' => 'user', 'content' => $user],
+                ],
+                'output_config' => ['effort' => 'low'],
+            ]);
+    }
+
+    private function claudeText(mixed $blocks): string
+    {
+        if (! is_array($blocks)) {
+            return '';
+        }
+
+        $text = '';
+
+        foreach ($blocks as $block) {
+            if (is_array($block) && ($block['type'] ?? null) === 'text' && is_string($block['text'] ?? null)) {
+                $text .= $block['text'];
+            }
+        }
+
+        return $text;
     }
 
     /**

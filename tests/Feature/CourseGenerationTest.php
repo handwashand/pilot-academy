@@ -88,6 +88,42 @@ class CourseGenerationTest extends TestCase
         $this->assertSame('deepseek', AiContentRevision::query()->where('purpose', 'lesson')->value('provider'));
     }
 
+    public function test_claude_saves_the_same_structure_with_its_own_token(): void
+    {
+        $this->enable('claude', 'sk-ant-secret', 'claude-sonnet-5-5');
+        Http::fake([
+            'https://api.anthropic.com/*' => Http::response([
+                'content' => [
+                    ['type' => 'thinking', 'thinking' => 'private reasoning'],
+                    ['type' => 'text', 'text' => json_encode($this->payload())],
+                ],
+                'usage' => ['input_tokens' => 100, 'output_tokens' => 200],
+            ]),
+        ]);
+
+        $course = $this->generate($this->admin(), 'claude', 'claude-sonnet-5-5');
+
+        $this->assertDraft($course);
+        Http::assertSent(function (Request $request): bool {
+            $body = (string) json_encode($request->data());
+
+            return $request->url() === 'https://api.anthropic.com/v1/messages'
+                && $request->hasHeader('Authorization', 'Bearer sk-ant-secret')
+                && $request->hasHeader('anthropic-version', '2026-10-21')
+                && $request->data()['model'] === 'claude-sonnet-5-5'
+                && ! array_key_exists('response_format', $request->data())
+                && ! str_contains($body, 'sk-ant-secret')
+                && ! str_contains($body, 'private reasoning');
+        });
+        Http::assertNotSent(fn (Request $request): bool => str_contains($request->url(), 'openai.com') || str_contains($request->url(), 'deepseek.com'));
+
+        $usage = AiUsage::query()->sole();
+        $this->assertSame('claude', $usage->provider);
+        $this->assertSame('claude-sonnet-5-5', $usage->model);
+        $this->assertSame('0.002200', $usage->estimated_cost_usd);
+        $this->assertSame('claude', $course->revisions()->sole()->provider);
+    }
+
     public function test_a_disabled_provider_is_not_called(): void
     {
         $this->enable('chatgpt');

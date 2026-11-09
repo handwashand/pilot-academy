@@ -265,6 +265,11 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Changed
 
+- **Claude can draft a course when its token is saved.** On
+  **Settings → Integrations**, **Course generation** takes a Claude API token.
+  **Content → Generate course** then lists Claude next to ChatGPT and DeepSeek,
+  with Haiku, Sonnet and Opus. Claude is not used for Translate. It stays off
+  until the token is saved and the switch is on.
 - **Generate course follows courses already in the academy.** Each draft is
   shown two published courses, a different pair as more drafts are made, and
   matches how those courses are written. It does not copy their wording. A

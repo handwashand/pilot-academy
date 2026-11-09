@@ -813,7 +813,7 @@ publiés, une autre paire au fil des brouillons, et suit leur façon d’écrire
 Leur texte n’est pas copié. Un créateur ne fournit que les cours de ses
 propres produits. **Générer un cours** reste caché
 jusqu’à ce qu’un administrateur coche **Générer des brouillons de cours avec
-ChatGPT ou DeepSeek** sur ce compte, dans **Personnes → Utilisateurs →
+ChatGPT, DeepSeek ou Claude** sur ce compte, dans **Personnes → Utilisateurs →
 Permissions supplémentaires**. Les administrateurs ne le reçoivent pas
 d’eux-mêmes.
 

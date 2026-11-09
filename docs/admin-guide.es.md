@@ -793,7 +793,7 @@ borrador ve dos cursos publicados, un par distinto a medida que se hacen más
 borradores, y sigue cómo están escritos. No copia su texto. Un creador solo
 aporta cursos de sus propios productos. **Generar**
 curso** permanece oculto hasta que un administrador marque **Generar borradores
-de cursos con ChatGPT o DeepSeek** en esa cuenta, en **Personas → Usuarios →
+de cursos con ChatGPT, DeepSeek o Claude** en esa cuenta, en **Personas → Usuarios →
 Permisos adicionales**. Los administradores no lo reciben automáticamente.
 
 ---

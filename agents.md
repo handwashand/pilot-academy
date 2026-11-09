@@ -443,6 +443,12 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-09 — Claude can draft a course
+
+`AiProvider::CLAUDE` is a generation provider only. The token is saved on
+Integrations and sent to `https://api.anthropic.com/v1/messages`. Translate
+still uses ChatGPT and DeepSeek. Models are Haiku, Sonnet and Opus 5.5.
+
 ### 2026-11-09 — Generate course follows published courses
 
 `SampleCourseStyle` sends two published courses with each draft. The pair
