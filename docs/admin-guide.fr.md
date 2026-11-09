@@ -801,6 +801,17 @@ vides uniquement — sauf si vous cochez **Remplacer** —, rouvrez donc **Tradu
 pour une langue afin de relire le résultat. Le texte de tout le cours est envoyé
 plusieurs fois, cela coûte donc plus cher.
 
+**Contenu → Générer un cours** prépare un brouillon à partir de notes, avec
+ChatGPT ou DeepSeek et le jeton déjà enregistré sur cette page. Choisissez le
+fournisseur et un modèle, puis **Générer le brouillon**. Le cours reste un
+brouillon tant que personne ne le publie. Un fournisseur désactivé ne peut pas
+être choisi. Sur cette page, **Génération de cours** règle le fournisseur par
+défaut, un secours facultatif, une limite quotidienne et un budget mensuel. Le
+secours envoie les mêmes notes à l’autre fournisseur, et seulement s’il est
+autorisé ici et coché sur Générer un cours. Une personne qui n’est pas
+administrateur a besoin de **Générer des brouillons de cours avec ChatGPT ou
+DeepSeek** dans **Personnes → Utilisateurs → Permissions supplémentaires**.
+
 ---
 
 *Ce guide est également affiché dans le panneau d’administration, dans **Documentation → Guide**. Quand les fonctions d’administration changent, nous mettons à jour la section concernée de ce fichier.*

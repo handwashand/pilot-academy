@@ -24,6 +24,19 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **Draft a course from notes with ChatGPT or DeepSeek.**
+  **Content → Generate course** uses the token already saved under
+  **Settings → Integrations**. Pick the provider and a model that can return
+  structured text. The course is saved as a draft, with lessons and a knowledge
+  check, and students do not see it until it is published. There is no second
+  API key. A provider that is switched off cannot be chosen, and a model that
+  cannot return structured text is not listed. On **Integrations**, an admin
+  can set a default provider, allow a fallback to the other provider, and set
+  a daily limit and a monthly budget. Fallback runs only when it is allowed
+  and the person generating ticks it. Anyone who is not an admin needs
+  **Draft courses with ChatGPT or DeepSeek** under **People → Users → Extra
+  permissions**.
+
 - **Finding lessons and building courses is quicker.**
   - **Pick lessons while creating a course.** The new-course form has a
     **Lessons** box: click **Select**, search or filter the lesson table, tick

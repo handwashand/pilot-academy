@@ -75,6 +75,7 @@ class UserForm
                         User::PERMISSION_DESCRIPT_TRANSLATE => __t('admin_people.users.use_descript_translation'),
                         User::PERMISSION_DEEPL_TRANSLATE => __t('admin_people.users.use_deepl_translation'),
                         User::PERMISSION_AI_TRANSLATE => __t('admin_people.users.use_ai_translation'),
+                        User::PERMISSION_AI_GENERATE => __t('admin_people.users.use_ai_generation'),
                         User::PERMISSION_VIDEO_DOWNLOAD => __t('admin_people.users.download_videos'),
                         User::PERMISSION_RECYCLE_BIN => __t('admin_people.users.use_recycle_bin'),
                     ])

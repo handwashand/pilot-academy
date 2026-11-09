@@ -443,6 +443,30 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-09 — Course drafts through the existing ChatGPT and DeepSeek tokens
+
+**Content → Generate course** drafts a course from notes. It uses the token
+already stored on `ai_providers` (`ChatClient`), not a second key.
+`LlmTranslator` is unchanged. A model is offered only when
+`AiProvider::capabilitiesFor()` says it can return JSON, so DeepSeek Reasoner
+is missing from the list. The answer is checked, and a bad one is sent back
+to the **same** provider once, then dropped with nothing saved. The course is
+a draft; lessons carry a knowledge check. `ai_content_revisions` records the
+provider and model. Fallback, a daily limit and a monthly budget live on
+`ai_generation_settings` and are edited on **Integrations**. Fallback runs
+only when the setting is on and the request ticks it, and only after the
+chosen provider fails to answer. Creators need `ai.generate_course` and a
+product they own. Admins do not need the extra right.
+
+**One migration**, `2026_11_09_000001`, so this deploy runs
+`php8.4 artisan migrate --force`. Plan and the pieces still open:
+`docs/plans/ai-course-generator.md`.
+
+**Verified (run):** `CourseGenerationTest` 14 passed, plus `IntegrationsTest`,
+the panel-label scan and translation key parity: 34 passed, 5,778 assertions.
+Pint clean on the 14 PHP files. **Not run:** a browser walkthrough, or the
+migration on PostgreSQL. **Not a queue:** one web request, at most six lessons.
+
 ### 2026-11-04 — Finding lessons and putting them in courses
 
 Owner's request: easier lesson search in general, and easier course building.

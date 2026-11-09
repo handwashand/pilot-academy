@@ -129,6 +129,10 @@ return [
         'badge' => 'Webinars ainda em rascunho — os parceiros ainda não os veem',
     ],
 
+    'course_generation' => [
+        'nav' => 'Gerar curso',
+    ],
+
     'case_studies' => [
         'nav' => 'Estudos de caso',
         'one' => 'estudo de caso',

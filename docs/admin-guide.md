@@ -798,6 +798,16 @@ language and saves straight away, into empty boxes only — unless you tick
 **Replace** — so open **Translate** again for one language to read the result.
 It sends a whole course's text several times over, so it costs more.
 
+**Content → Generate course** drafts a whole course from notes, through ChatGPT
+or DeepSeek using the token already saved on this page. Choose the provider and
+a model, then **Generate draft**. The course stays a draft until someone
+publishes it. A switched-off provider cannot be chosen. On this page, **Course
+generation** sets the default provider, an optional fallback, a daily limit and
+a monthly budget. Fallback sends the same notes to the other provider, and only
+when it is allowed here and ticked on Generate course. Anyone who is not an
+admin needs **Draft courses with ChatGPT or DeepSeek** under **People → Users →
+Extra permissions**.
+
 ---
 
 *This guide is also shown inside the admin panel under **Docs → Guide**. When admin features change, we update this file section.*

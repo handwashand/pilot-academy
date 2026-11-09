@@ -26,6 +26,7 @@ return [
         'use_descript_translation' => 'Usar la traducción de vídeo de Descript',
         'use_deepl_translation' => 'Generar borradores de traducción con DeepL',
         'use_ai_translation' => 'Generar borradores de traducción con ChatGPT o DeepSeek',
+        'use_ai_generation' => 'Generar borradores de cursos con ChatGPT o DeepSeek',
         'download_videos' => 'Descargar los vídeos de las lecciones',
         'use_recycle_bin' => 'Abrir la papelera y restaurar contenido eliminado (solo administradores)',
         'lessons_done' => 'Lecciones hechas',

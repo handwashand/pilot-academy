@@ -33,4 +33,17 @@ return [
     'needs_token' => 'Adicione um token de API antes de ativar o :provider',
     'save' => 'Salvar',
     'saved' => 'Integrações salvas',
+    'generation' => [
+        'heading' => 'Geração de cursos',
+        'help' => 'Usa o token do ChatGPT ou do DeepSeek salvo acima. Não há uma chave separada. Os preços do orçamento são estimativas.',
+        'default_provider' => 'Provedor padrão',
+        'default_provider_help' => 'Já vem escolhido em Gerar curso. Um provedor desligado não pode ser usado até ser ativado.',
+        'none' => 'Sem padrão',
+        'fallback' => 'Permitir o outro provedor como reserva',
+        'fallback_help' => 'Somente quando isto está ligado e quem gera marca a opção. As notas então vão para o outro provedor. Um trabalho não troca de provedor sozinho.',
+        'daily_limit' => 'Gerações diárias por pessoa',
+        'daily_limit_help' => 'Deixe vazio se não houver limite. Conta cada resposta do provedor, inclusive uma que não pôde ser salva.',
+        'budget' => 'Orçamento mensal (USD)',
+        'budget_help' => 'Deixe vazio se não houver teto. Estimativa pelo preço dos tokens, não uma fatura do provedor.',
+    ],
 ];

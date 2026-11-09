@@ -33,4 +33,17 @@ return [
     'needs_token' => 'Add an API token before enabling :provider',
     'save' => 'Save',
     'saved' => 'Integrations saved',
+    'generation' => [
+        'heading' => 'Course generation',
+        'help' => 'Uses the ChatGPT or DeepSeek token saved above. There is no separate key. Prices used for the budget are estimates.',
+        'default_provider' => 'Default provider',
+        'default_provider_help' => 'Pre-selected on Generate course. A provider that is off cannot be used until it is switched on.',
+        'none' => 'No default',
+        'fallback' => 'Allow fallback to the other provider',
+        'fallback_help' => 'Only when this is on, and the person generating ticks it. The notes are then sent to the other provider. A job never switches provider on its own.',
+        'daily_limit' => 'Daily generations per person',
+        'daily_limit_help' => 'Leave empty for no limit. Counts each request the provider answered, including one that could not be saved.',
+        'budget' => 'Monthly budget (USD)',
+        'budget_help' => 'Leave empty for no cap. Estimated from token prices, not an invoice from the provider.',
+    ],
 ];

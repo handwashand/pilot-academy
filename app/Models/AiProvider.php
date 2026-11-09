@@ -23,7 +23,15 @@ class AiProvider extends Model
 
     public const DESCRIPT = 'descript';
 
-    /** @var array<string, array{label: string, url: string, model: string, model_options: array<string, string>}> */
+    /**
+     * Chat providers the course generator may use. DeepL and Descript are not
+     * chat models, so they stay out of this list.
+     *
+     * @var array<int, string>
+     */
+    public const GENERATION = [self::CHATGPT, self::DEEPSEEK];
+
+    /** @var array<string, array{label: string, url: string, model: string, model_options: array<string, string>, capabilities?: array<string, array<string, mixed>>}> */
     public const PROVIDERS = [
         // Descript translates the speech in lesson videos, not text; it has no
         // model setting either. Its token is used by DescriptClient.
@@ -51,6 +59,15 @@ class AiProvider extends Model
                 'gpt-4-turbo' => 'GPT-4 Turbo',
                 'gpt-3.5-turbo' => 'GPT-3.5 Turbo',
             ],
+            // Estimates for the generation budget, not an invoice. Input then
+            // output, US dollars per million tokens. Documents and web search
+            // stay off: the app reads source text itself.
+            'capabilities' => [
+                'gpt-4o-mini' => ['text' => true, 'json' => true, 'documents' => false, 'web_search' => false, 'context_tokens' => 128000, 'max_output_tokens' => 16384, 'input_usd_per_million' => 0.15, 'output_usd_per_million' => 0.60],
+                'gpt-4o' => ['text' => true, 'json' => true, 'documents' => false, 'web_search' => false, 'context_tokens' => 128000, 'max_output_tokens' => 16384, 'input_usd_per_million' => 2.50, 'output_usd_per_million' => 10.00],
+                'gpt-4-turbo' => ['text' => true, 'json' => true, 'documents' => false, 'web_search' => false, 'context_tokens' => 128000, 'max_output_tokens' => 4096, 'input_usd_per_million' => 10.00, 'output_usd_per_million' => 30.00],
+                'gpt-3.5-turbo' => ['text' => true, 'json' => true, 'documents' => false, 'web_search' => false, 'context_tokens' => 16385, 'max_output_tokens' => 4096, 'input_usd_per_million' => 0.50, 'output_usd_per_million' => 1.50],
+            ],
         ],
         self::DEEPSEEK => [
             'label' => 'DeepSeek',
@@ -59,6 +76,11 @@ class AiProvider extends Model
             'model_options' => [
                 'deepseek-chat' => 'DeepSeek Chat',
                 'deepseek-reasoner' => 'DeepSeek Reasoner',
+            ],
+            'capabilities' => [
+                'deepseek-chat' => ['text' => true, 'json' => true, 'documents' => false, 'web_search' => false, 'context_tokens' => 128000, 'max_output_tokens' => 8192, 'input_usd_per_million' => 0.14, 'output_usd_per_million' => 0.28],
+                // Reasoner does not accept a JSON response format.
+                'deepseek-reasoner' => ['text' => true, 'json' => false, 'documents' => false, 'web_search' => false, 'context_tokens' => 128000, 'max_output_tokens' => 8192, 'input_usd_per_million' => 0.55, 'output_usd_per_million' => 2.19],
             ],
         ],
     ];
@@ -160,5 +182,87 @@ class AiProvider extends Model
     public function modelName(): string
     {
         return filled($this->model) ? $this->model : self::PROVIDERS[$this->provider]['model'];
+    }
+
+    /**
+     * What the named model can do, or null when this app has no record of it.
+     * An unknown model is not offered for course generation.
+     *
+     * @return array<string, mixed>|null
+     */
+    public static function capabilitiesFor(string $provider, string $model): ?array
+    {
+        if (! isset(self::PROVIDERS[$provider])) {
+            return null;
+        }
+
+        $capabilities = self::PROVIDERS[$provider]['capabilities'][$model] ?? null;
+
+        return is_array($capabilities) ? $capabilities : null;
+    }
+
+    public static function modelSupportsJson(string $provider, string $model): bool
+    {
+        return (bool) (self::capabilitiesFor($provider, $model)['json'] ?? false);
+    }
+
+    /** Switched on, with a token, and at least one model that can return JSON. */
+    public static function availableForGeneration(string $provider): bool
+    {
+        return in_array($provider, self::GENERATION, true)
+            && self::usable($provider) !== null
+            && self::modelsForGeneration($provider) !== [];
+    }
+
+    /**
+     * Models an instructor may pick for course generation.
+     *
+     * @return array<string, string>
+     */
+    public static function modelsForGeneration(string $provider): array
+    {
+        if (! isset(self::PROVIDERS[$provider])) {
+            return [];
+        }
+
+        $options = self::PROVIDERS[$provider]['model_options'] ?? [];
+
+        return array_filter(
+            $options,
+            fn (string $label, string $model): bool => self::modelSupportsJson($provider, $model),
+            ARRAY_FILTER_USE_BOTH,
+        );
+    }
+
+    /** The saved model when it can return JSON, otherwise the first that can. */
+    public static function preferredGenerationModel(string $provider): ?string
+    {
+        $models = array_keys(self::modelsForGeneration($provider));
+
+        if ($models === []) {
+            return null;
+        }
+
+        $saved = self::for($provider)->modelName();
+
+        return in_array($saved, $models, true) ? $saved : $models[0];
+    }
+
+    /**
+     * Providers an instructor can generate with right now.
+     *
+     * @return array<string, string>
+     */
+    public static function generationChoices(): array
+    {
+        $choices = [];
+
+        foreach (self::GENERATION as $provider) {
+            if (self::availableForGeneration($provider)) {
+                $choices[$provider] = self::PROVIDERS[$provider]['label'];
+            }
+        }
+
+        return $choices;
     }
 }

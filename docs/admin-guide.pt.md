@@ -769,6 +769,16 @@ hora, só nas caixas vazias — a menos que você marque **Substituir** —, ent
 **Traduzir** de novo para um idioma e leia o resultado. O texto do curso inteiro é
 enviado várias vezes, por isso custa mais.
 
+**Conteúdo → Gerar curso** prepara um rascunho a partir de notas, com ChatGPT ou
+DeepSeek e o token já salvo nesta página. Escolha o provedor e um modelo, depois
+**Gerar rascunho**. O curso continua como rascunho até alguém publicá-lo. Um
+provedor desligado não pode ser escolhido. Nesta página, **Geração de cursos**
+define o provedor padrão, uma reserva opcional, um limite diário e um orçamento
+mensal. A reserva envia as mesmas notas ao outro provedor, e só quando está
+permitida aqui e marcada em Gerar curso. Quem não é administrador precisa de
+**Gerar rascunhos de cursos com ChatGPT ou DeepSeek** em **Pessoas → Usuários →
+Permissões extras**.
+
 ---
 
 *Este guia também aparece no painel de administração, em **Documentação → Guia**. Quando as funções de administração mudam, atualizamos a seção correspondente deste arquivo.*

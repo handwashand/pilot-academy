@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Clusters\Settings;
+use App\Models\AiGenerationSetting;
 use App\Models\AiProvider;
 use App\Services\DeepL\DeepLClient;
 use App\Services\Descript\DescriptClient;
@@ -94,6 +95,14 @@ class Integrations extends Page
             ];
         }
 
+        $generation = AiGenerationSetting::current();
+        $state['generation'] = [
+            'default_provider' => $generation->default_provider,
+            'fallback_enabled' => (bool) $generation->fallback_enabled,
+            'daily_generation_limit' => $generation->daily_generation_limit,
+            'monthly_budget_usd' => $generation->monthly_budget_usd,
+        ];
+
         $this->form->fill($state);
     }
 
@@ -105,6 +114,7 @@ class Integrations extends Page
             ->components([
                 $this->group('text', [AiProvider::DEEPL, AiProvider::CHATGPT, AiProvider::DEEPSEEK]),
                 $this->group('video', [AiProvider::DESCRIPT]),
+                $this->generationSection(),
             ])
             ->statePath('data');
     }
@@ -186,9 +196,75 @@ class Integrations extends Page
             $row->save();
         }
 
+        $this->saveGeneration($data['generation'] ?? null);
+
         $this->mount();
 
         Notification::make()->title(__t('admin_integrations.saved'))->success()->send();
+    }
+
+    private function generationSection(): Section
+    {
+        $providers = [];
+
+        foreach (AiProvider::GENERATION as $provider) {
+            $providers[$provider] = AiProvider::PROVIDERS[$provider]['label'];
+        }
+
+        return Section::make(fn (): string => __t('admin_integrations.generation.heading'))
+            ->description(fn (): string => __t('admin_integrations.generation.help'))
+            ->statePath('generation')
+            ->columns(2)
+            ->schema([
+                Select::make('default_provider')
+                    ->label(fn (): string => __t('admin_integrations.generation.default_provider'))
+                    ->helperText(fn (): string => __t('admin_integrations.generation.default_provider_help'))
+                    ->options($providers)
+                    ->native(false)
+                    ->placeholder(fn (): string => __t('admin_integrations.generation.none')),
+
+                Toggle::make('fallback_enabled')
+                    ->label(fn (): string => __t('admin_integrations.generation.fallback'))
+                    ->helperText(fn (): string => __t('admin_integrations.generation.fallback_help')),
+
+                TextInput::make('daily_generation_limit')
+                    ->label(fn (): string => __t('admin_integrations.generation.daily_limit'))
+                    ->helperText(fn (): string => __t('admin_integrations.generation.daily_limit_help'))
+                    ->numeric()
+                    ->rules(['nullable'])
+                    ->minValue(1)
+                    ->maxValue(500),
+
+                TextInput::make('monthly_budget_usd')
+                    ->label(fn (): string => __t('admin_integrations.generation.budget'))
+                    ->helperText(fn (): string => __t('admin_integrations.generation.budget_help'))
+                    ->numeric()
+                    ->rules(['nullable'])
+                    ->minValue(0)
+                    ->maxValue(100000)
+                    ->step(0.01),
+            ]);
+    }
+
+    /** @param  array<string, mixed>|null  $generation */
+    private function saveGeneration(?array $generation): void
+    {
+        if ($generation === null) {
+            return;
+        }
+
+        $provider = $generation['default_provider'] ?? null;
+        $limit = $generation['daily_generation_limit'] ?? null;
+        $budget = $generation['monthly_budget_usd'] ?? null;
+
+        AiGenerationSetting::current()->fill([
+            'default_provider' => in_array($provider, AiProvider::GENERATION, true) ? $provider : null,
+            'fallback_enabled' => (bool) ($generation['fallback_enabled'] ?? false),
+            'daily_generation_limit' => is_numeric($limit) && (int) $limit >= 1 ? (int) $limit : null,
+            'monthly_budget_usd' => is_numeric($budget) && (float) $budget >= 0
+                ? number_format((float) $budget, 2, '.', '')
+                : null,
+        ])->save();
     }
 
     private function providerSection(string $provider): Section

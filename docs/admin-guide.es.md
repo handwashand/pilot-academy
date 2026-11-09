@@ -782,6 +782,16 @@ cada idioma y guarda al momento, solo en las casillas vacías —salvo que marqu
 **Reemplazar**—, así que abre **Traducir** de nuevo para un idioma y lee el
 resultado. Envía el texto de todo el curso varias veces, por lo que cuesta más.
 
+**Contenido → Generar curso** prepara un borrador a partir de notas, con ChatGPT
+o DeepSeek y el token ya guardado en esta página. Elige el proveedor y un modelo,
+luego **Generar borrador**. El curso sigue en borrador hasta que alguien lo
+publique. Un proveedor apagado no se puede elegir. En esta página, **Generación
+de cursos** fija el proveedor predeterminado, una reserva opcional, un límite
+diario y un presupuesto mensual. La reserva envía las mismas notas al otro
+proveedor, y solo si aquí está permitida y se marca en Generar curso. Quien no
+sea administrador necesita **Generar borradores de cursos con ChatGPT o DeepSeek**
+en **Personas → Usuarios → Permisos adicionales**.
+
 ---
 
 *Esta guía también se muestra dentro del panel de administración en **Documentación → Guía**. Cuando cambian las funciones de administración, actualizamos la sección correspondiente de este archivo.*

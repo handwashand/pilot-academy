@@ -129,6 +129,10 @@ return [
         'badge' => 'Seminarios web aún en borrador: los socios todavía no los ven',
     ],
 
+    'course_generation' => [
+        'nav' => 'Generar curso',
+    ],
+
     'case_studies' => [
         'nav' => 'Casos prácticos',
         'one' => 'caso práctico',

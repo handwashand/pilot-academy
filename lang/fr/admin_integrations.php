@@ -33,4 +33,17 @@ return [
     'needs_token' => 'Ajoutez un jeton d’API avant d’activer :provider',
     'save' => 'Enregistrer',
     'saved' => 'Intégrations enregistrées',
+    'generation' => [
+        'heading' => 'Génération de cours',
+        'help' => 'Utilise le jeton ChatGPT ou DeepSeek enregistré ci-dessus. Il n\'y a pas de seconde clé. Les prix du budget sont des estimations.',
+        'default_provider' => 'Fournisseur par défaut',
+        'default_provider_help' => 'Présélectionné sur Générer un cours. Un fournisseur désactivé ne peut pas servir tant qu\'il n\'est pas activé.',
+        'none' => 'Aucun défaut',
+        'fallback' => 'Autoriser l\'autre fournisseur en secours',
+        'fallback_help' => 'Uniquement si ceci est activé et que la personne qui génère le coche. Les notes partent alors vers l\'autre fournisseur. Une tâche ne change pas de fournisseur toute seule.',
+        'daily_limit' => 'Générations par jour et par personne',
+        'daily_limit_help' => 'Laissez vide s\'il n\'y a pas de limite. Compte chaque réponse du fournisseur, y compris une réponse impossible à enregistrer.',
+        'budget' => 'Budget mensuel (USD)',
+        'budget_help' => 'Laissez vide s\'il n\'y a pas de plafond. Estimation d\'après le prix des jetons, pas une facture du fournisseur.',
+    ],
 ];

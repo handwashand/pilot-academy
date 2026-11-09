@@ -60,6 +60,9 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasLocale
     /** Draft translations with ChatGPT or DeepSeek, which bill per use. */
     public const PERMISSION_AI_TRANSLATE = 'ai.translate';
 
+    /** Draft a course with ChatGPT or DeepSeek. Admins may; anyone else needs this. */
+    public const PERMISSION_AI_GENERATE = 'ai.generate_course';
+
     /** Download uploaded lesson videos. Admins always may; a learner only when given this. */
     public const PERMISSION_VIDEO_DOWNLOAD = 'videos.download';
 
