@@ -152,7 +152,8 @@ class GenerateCourseWithAi
 
         $client = new ChatClient($row, $model);
         $system = $this->systemPrompt();
-        $reply = $client->completeJson($system, $this->userPrompt($brief), AiUsage::PURPOSE_COURSE, $user->id);
+        $examples = app(SampleCourseStyle::class)->for($user);
+        $reply = $client->completeJson($system, $this->userPrompt($brief, [], '', $examples), AiUsage::PURPOSE_COURSE, $user->id);
         $problems = $reply->data === null
             ? ['The answer was not a JSON object.']
             : $this->problems($reply->data);
@@ -160,7 +161,7 @@ class GenerateCourseWithAi
         if ($problems !== []) {
             $reply = $client->completeJson(
                 $system,
-                $this->userPrompt($brief, $problems, $reply->content),
+                $this->userPrompt($brief, $problems, $reply->content, $examples),
                 AiUsage::PURPOSE_COURSE,
                 $user->id,
             );
@@ -185,15 +186,18 @@ class GenerateCourseWithAi
             .'Keys: title, description, level (beginner, intermediate or advanced), audience (all, sales, technical or support), lessons. '
             .'Each lesson has title, summary, content (plain text, paragraphs separated by a blank line) and questions. '
             .'Each question has prompt and options. Each option has text and correct (true or false). '
-            .'Use 2 to 4 lessons, 1 to 3 questions each, and 3 or 4 options with exactly one correct.';
+            .'Use 2 to 4 lessons, 1 to 3 questions each, and 3 or 4 options with exactly one correct. '
+            .'When house examples are included, match their length, tone and how a lesson teaches a step. Do not copy their titles, names or facts.';
     }
 
     /**
      * @param  array<int, string>  $problems
      */
-    private function userPrompt(string $brief, array $problems = [], string $previous = ''): string
+    private function userPrompt(string $brief, array $problems = [], string $previous = '', string $examples = ''): string
     {
-        $prompt = "Notes:\n".$brief;
+        $prompt = $examples !== ''
+            ? "House examples, for shape and tone only:\n".$examples."\n\nNotes:\n".$brief
+            : "Notes:\n".$brief;
 
         if ($problems !== []) {
             $prompt .= "\n\nThe previous answer could not be saved:\n- ".implode("\n- ", $problems)

@@ -443,6 +443,13 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-09 — Generate course follows published courses
+
+`SampleCourseStyle` sends two published courses with each draft. The pair
+moves on by how many course drafts have been asked for, so the generator
+keeps seeing how courses are written. Drafts are left out. A creator only
+supplies courses in their own products. The model is told not to copy them.
+
 ### 2026-11-09 — Generate course is an extra right, off by default
 
 `User::canGenerateCourses()` is the gate for the page and the action. Admin

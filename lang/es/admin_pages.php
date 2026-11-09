@@ -134,7 +134,7 @@ return [
         'mode_full' => 'Curso completo',
         'mode_help' => 'Lecciones, texto y una comprobación de conocimientos. El curso sigue en borrador hasta que alguien lo publique.',
         'brief' => 'Notas',
-        'brief_help' => 'Qué debe enseñar el curso. Estas notas se envían al proveedor que elijas. Las direcciones de las notas no se abren.',
+        'brief_help' => 'Qué debe enseñar el curso. Estas notas se envían al proveedor que elijas. Las direcciones de las notas no se abren. Dos cursos publicados se muestran como modelo, un par distinto con el tiempo. Su texto no se copia.',
         'brief_short' => 'Escribe unas frases sobre lo que debe enseñar el curso.',
         'product' => 'Producto',
         'product_invalid' => 'Elige un producto que te pertenezca.',

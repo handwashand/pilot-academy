@@ -808,7 +808,10 @@ brouillon tant que personne ne le publie. Un fournisseur désactivé ne peut pas
 être choisi. Sur cette page, **Génération de cours** règle le fournisseur par
 défaut, un secours facultatif, une limite quotidienne et un budget mensuel. Le
 secours envoie les mêmes notes à l’autre fournisseur, et seulement s’il est
-autorisé ici et coché sur Générer un cours. **Générer un cours** reste caché
+autorisé ici et coché sur Générer un cours. Chaque brouillon voit deux cours
+publiés, une autre paire au fil des brouillons, et suit leur façon d’écrire.
+Leur texte n’est pas copié. Un créateur ne fournit que les cours de ses
+propres produits. **Générer un cours** reste caché
 jusqu’à ce qu’un administrateur coche **Générer des brouillons de cours avec
 ChatGPT ou DeepSeek** sur ce compte, dans **Personnes → Utilisateurs →
 Permissions supplémentaires**. Les administrateurs ne le reçoivent pas

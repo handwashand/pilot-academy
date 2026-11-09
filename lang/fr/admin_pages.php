@@ -134,7 +134,7 @@ return [
         'mode_full' => 'Cours complet',
         'mode_help' => 'Leçons, texte et un contrôle des connaissances. Le cours reste un brouillon tant que personne ne le publie.',
         'brief' => 'Notes',
-        'brief_help' => 'Ce que le cours doit enseigner. Ces notes sont envoyées au fournisseur choisi. Les adresses dans les notes ne sont pas ouvertes.',
+        'brief_help' => 'Ce que le cours doit enseigner. Ces notes sont envoyées au fournisseur choisi. Les adresses dans les notes ne sont pas ouvertes. Deux cours publiés servent de modèle, une autre paire avec le temps. Leur texte n\'est pas copié.',
         'brief_short' => 'Écrivez quelques phrases sur ce que le cours doit enseigner.',
         'product' => 'Produit',
         'product_invalid' => 'Choisissez un produit qui vous appartient.',

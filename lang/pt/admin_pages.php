@@ -134,7 +134,7 @@ return [
         'mode_full' => 'Curso completo',
         'mode_help' => 'Aulas, texto e uma verificação de conhecimento. O curso continua como rascunho até alguém publicá-lo.',
         'brief' => 'Notas',
-        'brief_help' => 'O que o curso deve ensinar. Essas notas são enviadas ao provedor escolhido. Endereços nas notas não são abertos.',
+        'brief_help' => 'O que o curso deve ensinar. Essas notas são enviadas ao provedor escolhido. Endereços nas notas não são abertos. Dois cursos publicados servem de modelo, um par diferente com o tempo. O texto deles não é copiado.',
         'brief_short' => 'Escreva algumas frases sobre o que o curso deve ensinar.',
         'product' => 'Produto',
         'product_invalid' => 'Escolha um produto que seja seu.',

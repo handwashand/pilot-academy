@@ -10,7 +10,10 @@ use App\Models\AiGenerationSetting;
 use App\Models\AiProvider;
 use App\Models\AiUsage;
 use App\Models\Course;
+use App\Models\Lesson;
+use App\Models\Option;
 use App\Models\Product;
+use App\Models\Question;
 use App\Models\User;
 use App\Services\Llm\LlmException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -318,6 +321,79 @@ class CourseGenerationTest extends TestCase
         $this->assertSame(1, Course::query()->count());
     }
 
+    public function test_a_draft_follows_published_courses_and_skips_unfinished_ones(): void
+    {
+        $this->enable('chatgpt');
+        $this->fake((array) $this->payload(), 'openai.com');
+        $this->styledCourse('Fuel sensor walkthrough', Course::STATUS_PUBLISHED, '<p>Open the housing.</p><script>alert(1)</script>');
+        $this->styledCourse('Unfinished internal draft', Course::STATUS_DRAFT, 'Do not send this draft.');
+
+        $this->generate($this->admin(), 'chatgpt', 'gpt-4o-mini');
+
+        Http::assertSent(function (Request $request): bool {
+            $body = (string) json_encode($request->data());
+
+            return str_contains($body, 'House examples')
+                && str_contains($body, 'Fuel sensor walkthrough')
+                && str_contains($body, 'Check the fitting first')
+                && str_contains($body, 'Open the housing.')
+                && ! str_contains($body, 'Unfinished internal draft')
+                && ! str_contains($body, '<script>')
+                && ! str_contains($body, 'alert(1)');
+        });
+    }
+
+    public function test_the_example_pair_moves_on_as_drafts_are_made(): void
+    {
+        $this->enable('chatgpt');
+        $this->fake((array) $this->payload(), 'openai.com');
+        $this->styledCourse('Alpha fitting course', Course::STATUS_PUBLISHED);
+        $this->styledCourse('Bravo fitting course', Course::STATUS_PUBLISHED);
+        $this->styledCourse('Charlie fitting course', Course::STATUS_PUBLISHED);
+
+        $admin = $this->admin();
+        $this->generate($admin, 'chatgpt', 'gpt-4o-mini');
+        $this->generate($admin, 'chatgpt', 'gpt-4o-mini');
+
+        $bodies = collect(Http::recorded())
+            ->map(fn (array $pair): string => (string) json_encode($pair[0]->data()))
+            ->values();
+
+        $this->assertTrue(str_contains($bodies[0], 'Alpha fitting course'));
+        $this->assertFalse(str_contains($bodies[0], 'Charlie fitting course'));
+        $this->assertTrue(str_contains($bodies[1], 'Charlie fitting course'));
+        $this->assertFalse(str_contains($bodies[1], 'Alpha fitting course'));
+    }
+
+    public function test_a_creator_is_not_shown_another_products_course(): void
+    {
+        $this->enable('chatgpt');
+        $this->fake((array) $this->payload(), 'openai.com');
+        $own = Product::create(['name' => 'Own', 'slug' => 'own-style']);
+        $other = Product::create(['name' => 'Other', 'slug' => 'other-style']);
+        $this->styledCourse('Own yard course', Course::STATUS_PUBLISHED, 'Own yard wording.', $own->id);
+        $this->styledCourse('Secret yard course', Course::STATUS_PUBLISHED, 'Secret yard wording.', $other->id);
+        $creator = User::create([
+            'name' => 'Creator',
+            'email' => 'style-creator@pilot.local',
+            'password' => 'password',
+            'role' => User::ROLE_CREATOR,
+        ]);
+        $creator->products()->attach($own);
+        $creator->permissions()->create(['permission' => User::PERMISSION_AI_GENERATE]);
+
+        $this->generate($creator, 'chatgpt', 'gpt-4o-mini', $own->id);
+
+        Http::assertSent(function (Request $request): bool {
+            $body = (string) json_encode($request->data());
+
+            return str_contains($body, 'Own yard course')
+                && str_contains($body, 'Own yard wording.')
+                && ! str_contains($body, 'Secret yard course')
+                && ! str_contains($body, 'Secret yard wording.');
+        });
+    }
+
     public function test_the_page_offers_only_a_connected_provider_and_saves(): void
     {
         $this->enable('deepseek', 'ds-token', 'deepseek-chat');
@@ -453,6 +529,36 @@ class CourseGenerationTest extends TestCase
                 ],
             ]],
         ];
+    }
+
+    private function styledCourse(string $title, string $status, string $content = 'Open the housing and read the gauge.', ?int $productId = null): Course
+    {
+        $course = Course::create([
+            'title' => $title,
+            'slug' => str($title)->slug()->toString(),
+            'level' => 'beginner',
+            'audience' => 'technical',
+            'description' => $title.' description',
+            'status' => $status,
+            'product_id' => $productId,
+        ]);
+        $lesson = Lesson::create([
+            'course_id' => $course->id,
+            'title' => 'Check the fitting first',
+            'slug' => str($title)->slug()->append('-lesson')->toString(),
+            'summary' => 'Read the gauge before leaving.',
+            'content' => $content,
+            'status' => Lesson::STATUS_PUBLISHED,
+        ]);
+        $question = Question::create([
+            'lesson_id' => $lesson->id,
+            'prompt' => 'What do you read first?',
+            'type' => Question::TYPE_SINGLE,
+        ]);
+        Option::create(['question_id' => $question->id, 'text' => 'The gauge', 'is_correct' => true, 'sort_order' => 1]);
+        Option::create(['question_id' => $question->id, 'text' => 'The invoice', 'is_correct' => false, 'sort_order' => 2]);
+
+        return $course;
     }
 
     private function enable(string $provider, string $key = 'sk-secret-token', ?string $model = null): void

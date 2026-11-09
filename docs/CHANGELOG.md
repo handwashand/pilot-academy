@@ -265,6 +265,11 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Changed
 
+- **Generate course follows courses already in the academy.** Each draft is
+  shown two published courses, a different pair as more drafts are made, and
+  matches how those courses are written. It does not copy their wording. A
+  creator only supplies courses from their own products. A draft that has not
+  been published is not used.
 - **The Lessons list opens with the newest lesson first** instead of in sort
   order, so the lesson just written is at the top. Click the **Courses** column
   to sort the list by how many courses each lesson is in.

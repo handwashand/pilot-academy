@@ -138,7 +138,7 @@ return [
         'mode_full' => 'Complete course',
         'mode_help' => 'Lessons, text and a knowledge check. The course stays a draft until someone publishes it.',
         'brief' => 'Notes',
-        'brief_help' => 'What the course should teach. These notes are sent to the provider you pick. Addresses in the notes are not opened.',
+        'brief_help' => 'What the course should teach. These notes are sent to the provider you pick. Addresses in the notes are not opened. Two published courses are shown as a pattern, a different pair over time. Their wording is not copied.',
         'brief_short' => 'Write a few sentences about what the course should teach.',
         'product' => 'Product',
         'product_invalid' => 'Choose a product you own.',

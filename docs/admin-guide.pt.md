@@ -775,7 +775,10 @@ DeepSeek e o token já salvo nesta página. Escolha o provedor e um modelo, depo
 provedor desligado não pode ser escolhido. Nesta página, **Geração de cursos**
 define o provedor padrão, uma reserva opcional, um limite diário e um orçamento
 mensal. A reserva envia as mesmas notas ao outro provedor, e só quando está
-permitida aqui e marcada em Gerar curso. **Gerar curso** fica oculto até um
+permitida aqui e marcada em Gerar curso. Cada rascunho vê dois cursos
+publicados, um par diferente à medida que mais rascunhos são feitos, e segue
+como eles são escritos. O texto deles não é copiado. Um criador só fornece
+cursos dos próprios produtos. **Gerar curso** fica oculto até um
 administrador marcar **Gerar rascunhos de cursos com ChatGPT ou DeepSeek**
 nessa conta, em **Pessoas → Usuários → Permissões extras**. Administradores
 não recebem isso automaticamente.

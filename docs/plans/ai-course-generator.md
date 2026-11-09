@@ -25,8 +25,13 @@ no separate client for translation.
   only when the setting is on **and** the request ticks it, and only after
   the chosen provider fails to answer (it is down, the token is rejected, or
   the account is out of credit). A bad JSON answer is not a reason to switch.
-- Content → Generate course is the screen. Admins may use it. A creator needs
-  **Draft courses with ChatGPT or DeepSeek** and a product they own.
+- Content → Generate course is the screen. It stays hidden until an admin
+  ticks **Draft courses with ChatGPT or DeepSeek** on that account. Admins do
+  not receive the right automatically. A creator also needs a product they own.
+- Each draft is shown two published courses (`SampleCourseStyle`), a different
+  pair as more drafts are made. The model is told to match their shape and
+  tone and not to copy them. Drafts are left out. A creator only supplies
+  courses from their own products.
 - Translation still goes through `LlmTranslator`. That client was not rewritten.
 
 Adding another chat provider later means one entry in `AiProvider::PROVIDERS`
