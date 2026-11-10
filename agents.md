@@ -496,6 +496,11 @@ screenshots, each with 3 questions of 4 options:
 - Nothing unrelated in a course.
 - Compare with existing lessons by their text, not their title.
 
+**Knowledge checks topped up:** the original Geofence lessons (75–78) and
+Fleet Analytics lessons (85–88) had 2 questions each. Each now has a third,
+taken from its own lesson text, with 4 options and one correct answer. All
+eight were re-read after saving. The lesson text was not changed.
+
 ### 2026-11-10 — Course built in production; course-creator guide
 
 Built **Green Fleet Operations Specialist & Intelligent Eco-Driving Analyst**
