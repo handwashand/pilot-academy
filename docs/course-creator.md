@@ -9,16 +9,22 @@ copy them into this file, a commit, a PR or the shared skills library.
 
 ## The rules
 
-1. **Teach PILOT, not the industry.** Every lesson teaches one PILOT screen,
-   setting or report, using the labels the software actually shows. Industry
-   context, such as why idling wastes fuel, gets a sentence or two at most.
+1. **Teach PILOT, not the industry, and put nothing unrelated in a course.**
+   Every lesson teaches one PILOT screen, setting or report, using the labels
+   the software actually shows. Industry context, such as why idling wastes
+   fuel, gets a sentence or two at most. Every lesson and every question must
+   belong to the course's own topic. A question about fuel does not go into a
+   geofence course, and a lesson from another module is not added because it
+   "might be useful". When unsure, leave it out and ask the owner.
 2. **Source everything from docs.pilot-gps.com.** Use the current guide
    version. Link the pages you used at the end of each lesson. Never describe a
    screen the docs do not show. If the docs are unclear, say so in the lesson
    or leave it out.
-3. **Reuse before you write.** Search the existing lessons first. A lesson
-   added to a second course is shared, not copied, so add it rather than
-   rewrite it.
+3. **Compare before you write.** Before creating a lesson, read the existing
+   lessons that are close to it: their text, not only their titles. A title
+   can hide other content. If one covers the topic, add it to the course
+   (lessons are shared, not copied). If one covers part of it, write only the
+   missing part and say what you left out.
 4. **Every course has a final quiz.** Turn on **Enable final quiz**, set the
    **Pass mark (%)** to **80** (the academy's standard), and fill the bank (see
    *Final questions*).
@@ -99,13 +105,30 @@ tab loads only once it is scrolled into view.
 
 ### 6. Final questions
 
-On the course's **Final questions** tab:
-1. **Add all lesson questions** brings in every lesson's knowledge check.
-2. **New final question**: add at least 6 to 8 *scenario* questions that join
-   several lessons ("A vehicle's fuel is above its norm. What next?").
-   **Single choice**, 4 options.
-3. Large banks can also go in through **Upload from Excel**: download the
+On the course's **Final questions** tab, keep the bank **short and curated**.
+Aim for about 8 to 15 questions, roughly one or two per lesson plus a few
+scenarios. A bank padded with every lesson question is too long, and repeats
+what students just answered.
+1. **Do not click Add all lesson questions** on a course that already has a
+   bank. It adds every question from every lesson in the course, not only the
+   new ones (on 2026-11-10 it took three banks from 20, 40 and 10 to 46, 69 and
+   57). To use a lesson's question, choose it with **Attach lesson question**.
+2. **New final question**: write *scenario* questions that join several
+   lessons ("A vehicle's fuel is above its norm. What next?"). **Single
+   choice**, 4 options.
+3. **Remove from bank** takes a question out of the final quiz only. **Delete**
+   destroys it, and a lesson question would vanish from its lesson too. Use
+   Delete only on course-only questions.
+4. Large banks can also go in through **Upload from Excel**: download the
    example file first.
+
+**Check every question you add or keep:**
+- 3 to 6 options;
+- exactly one marked **Correct** for single choice;
+- the correct answer in different positions;
+- wrong answers that are real PILOT terms, not jokes ("It deletes the
+  geofence");
+- not a duplicate of another question in the bank.
 
 Then, on the course form, turn on **Enable final quiz**, set **Pass mark (%)**
 to 80, and click **Save changes**.
@@ -122,7 +145,7 @@ to 80, and click **Save changes**.
 
 Work through every issue you recorded under *Open threads* (rule 7). Fix it,
 test it, commit and push it, and mark the entry as fixed. Then report what
-was fixed, and what needs a server change or a deploy.
+was fixed, and what needs a server change or a deploy. if there are any improvements needed, ask the user, user about it,the benefits and why its needed. build if he approves.
 
 ## Doing it with browser automation
 

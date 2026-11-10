@@ -458,6 +458,42 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-10 — Existing courses topped up; geofence and analytics banks cleaned
+
+Owner's request: review existing courses, and add lessons where needed after
+comparing with what exists. All work was done in production through the panel.
+
+**Lessons:** 12 new lessons (89–100), written from docs.pilot-gps.com with
+screenshots, each with 3 questions of 4 options:
+- **CFMA:** the Fuel tab, the Fuel Report (sensors), and Refuels/Drain
+  Offs/Fuel Movement. Refuel/drain *detection* was skipped because lesson 17
+  already covers it.
+- **Events:** creating a notification, notification types, delivery and the
+  list, Control Room event groups, processing an event, and event history.
+  Event search and algorithms were skipped (lessons 58 and 55).
+- **Geofence:** KML import/export, the Geozones Report with Trips with
+  geozones, and the Geozone Idling Report.
+- **CVTA:** the existing unassigned lesson 23 (DVR setup) was added before
+  "Connecting a Video Device".
+
+**Final banks:**
+- Geofence (7) and Fleet Analytics (9): every question had 2 options. In 9 the
+  correct answer was always first. Question 464 had two answers marked correct
+  on a single-choice question, so it could not be passed. All were rewritten to
+  3–4 options with one correct answer, and duplicates 468 and 485 were deleted
+  (both course-only).
+- **Add all lesson questions** bloated CFMA, CVTA and Events (from 20, 40 and
+  10 to 46, 69 and 57). Before that, those banks were course-only. The
+  lesson-sourced extras still need **Remove from bank**, which waits on the
+  owner's go-ahead, because the tool blocked an unshown bulk removal. Course 8
+  is bloated the same way (38).
+
+**Guide (`docs/course-creator.md`):**
+- Never click **Add all lesson questions** on an existing bank.
+- Keep banks curated (8–15 questions) and check every question.
+- Nothing unrelated in a course.
+- Compare with existing lessons by their text, not their title.
+
 ### 2026-11-10 — Course built in production; course-creator guide
 
 Built **Green Fleet Operations Specialist & Intelligent Eco-Driving Analyst**
