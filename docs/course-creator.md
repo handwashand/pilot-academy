@@ -24,11 +24,21 @@ copy them into this file, a commit, a PR or the shared skills library.
    *Final questions*).
 5. **Every question has 3 to 6 answer options** and exactly one correct
    answer, unless you deliberately choose **Multiple select**. Vary the position
-   of the correct answer. Don't always put it first.
+   of the correct answer. Don't always put it first. This is a rule for course
+   creators, not something the app checks: the app still accepts 2 options, so
+   applying it is your job.
 6. **The course stays a draft.** The owner reviews and publishes it.
-7. **Found something broken in production? Record it.** Add it to *Open
-   threads* in `AGENTS.md` and tell the owner. Fix it in code if the fix is
-   code. Do not work around it silently.
+7. **Record every production issue you see, then fix it once the course is
+   done.** While building, write each problem under *Open threads* in
+   `AGENTS.md` (what happened, where, the error) and keep going. Use a
+   workaround only to finish the course, and say what it was. When the course
+   is done:
+   - fix each recorded issue in code, on a branch off `laravel`, with a test;
+   - commit and push it, then tell the owner;
+   - for anything that is server configuration rather than code (such as
+     `.env`), say exactly what to change.
+
+   Never leave an issue only in your head or in a chat.
 
 ## Steps
 
@@ -106,8 +116,13 @@ to 80, and click **Save changes**.
 - The Lessons tab lists every lesson in order. The Final questions count is
   what you expect.
 - Report to the owner: the course link, the lessons (new and reused), the
-  question count, anything you could not confirm from the docs, and any
-  production problem you found.
+  question count, and anything you could not confirm from the docs.
+
+### 8. Fix what you found in production
+
+Work through every issue you recorded under *Open threads* (rule 7). Fix it,
+test it, commit and push it, and mark the entry as fixed. Then report what
+was fixed, and what needs a server change or a deploy.
 
 ## Doing it with browser automation
 

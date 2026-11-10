@@ -480,8 +480,11 @@ with `.playwright-mcp/`). The owner's rules recorded there:
 nesting depth, and `APP_DEBUG` is on. Lesson 80 was flattened to save under
 the old limit.
 
-**Not done:** enforcing 3 to 6 options in the app. The forms allow 2+ today,
-and the Excel example has a Yes/No question. This waits on the owner's answer.
+**Decided by the owner:** 3 to 6 answer options is a rule for course creators
+in `docs/course-creator.md`, **not enforced in the app**. Do not add
+validation for it. Production issues seen while building a course are
+recorded first, then fixed, committed and pushed once the course is done
+(guide rule 7 and step 8).
 
 ### 2026-11-09 — Claude can draft a course
 
