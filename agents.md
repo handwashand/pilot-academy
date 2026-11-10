@@ -393,6 +393,21 @@ Tidying those is a push, so it is the owner's call, not an agent's.
 
 ### Open threads
 
+- **Production problems found 2026-11-10, while building a course** (record new
+  ones here; see `docs/course-creator.md` rule 7):
+  - **Production runs code older than `laravel`.** The course form has no
+    Lessons picker (2026-11-04), so the 11-04 and later work is not deployed.
+    Deploy with `php8.4 artisan migrate --force` and `php8.4 artisan optimize`.
+  - **Rich text still fails at a nesting depth of 10** with
+    `MaxNestingDepthExceededException` on save: a list inside a list in a
+    lesson. The code fix (`config/livewire.php` set to 30, 2026-10-23) is on
+    `laravel`, so the deploy above fixes it. If it persists after the deploy,
+    the server has a stale config cache: run `php8.4 artisan optimize`.
+  - **`APP_DEBUG` is still `true` on the server.** The error page showed SQL
+    and cookie values. Set it to `false` in the server's `.env` (not code), then
+    run `php8.4 artisan optimize`.
+- **Course creation** follows `docs/course-creator.md`. Production credentials
+  for it live only in the git-ignored `course-creator.local.md`.
 - **PostgreSQL cut-over is done — production runs Postgres as of 2026-10-01.**
   The long-standing "it is written and rehearsed but not live" note is retired.
   What this changes for everyone working here: **SQLite leniency no longer
@@ -442,6 +457,31 @@ Newest first.
 ## Work log
 
 Newest first. Add to this every time.
+
+### 2026-11-10 — Course built in production; course-creator guide
+
+Built **Green Fleet Operations Specialist & Intelligent Eco-Driving Analyst**
+in production (course 8, a draft) through the panel with Playwright.
+- **Lessons:** 3 reused (Building Reports, Adding an Ignition Sensor, Creating a
+  Fuel Sensor from CAN Bus Data), plus 6 new lessons (79–84) on Eco Driving
+  rules, weights, reports, idling, speeding and fuel norms. They were written
+  from docs.pilot-gps.com, with docs screenshots uploaded into the lesson text.
+- **Final quiz:** on at 80%, with 38 questions. 8 are new scenario questions
+  and 30 come from the lessons.
+
+**New:** `docs/course-creator.md` (rules and steps, committed) and
+`course-creator.local.md` (credentials and production notes, git-ignored along
+with `.playwright-mcp/`). The owner's rules recorded there:
+- always add final questions;
+- 3 to 6 answer options per question;
+- record any production problem found.
+
+**Production problems found:** see *Open threads*. A save failed on rich-text
+nesting depth, and `APP_DEBUG` is on. Lesson 80 was flattened to save under
+the old limit.
+
+**Not done:** enforcing 3 to 6 options in the app. The forms allow 2+ today,
+and the Excel example has a Yes/No question. This waits on the owner's answer.
 
 ### 2026-11-09 — Claude can draft a course
 
