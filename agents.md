@@ -483,10 +483,12 @@ screenshots, each with 3 questions of 4 options:
   3–4 options with one correct answer, and duplicates 468 and 485 were deleted
   (both course-only).
 - **Add all lesson questions** bloated CFMA, CVTA and Events (from 20, 40 and
-  10 to 46, 69 and 57). Before that, those banks were course-only. The
-  lesson-sourced extras still need **Remove from bank**, which waits on the
-  owner's go-ahead, because the tool blocked an unshown bulk removal. Course 8
-  is bloated the same way (38).
+  10 to 46, 69 and 57). Before that, those banks were course-only. With the
+  owner's go-ahead, the extras were taken out with **Remove from bank**,
+  keeping one question per new lesson. Course 8 was trimmed the same way. The
+  banks are now CFMA 23, CVTA 41, Events 16, Geofence 12, Fleet Analytics 9
+  and Green Fleet 14. The removed questions are still in their lessons
+  (checked on lessons 17, 23, 58 and 80).
 
 **Guide (`docs/course-creator.md`):**
 - Never click **Add all lesson questions** on an existing bank.
