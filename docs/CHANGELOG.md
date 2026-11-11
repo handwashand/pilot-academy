@@ -349,6 +349,13 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Fixed
 
+- **A tidier dashboard.** It is laid out in two columns instead of one long
+  stack, so it is about half as long: student activity beside the learner
+  journey, most opened courses beside resource engagement, certificates beside
+  top creators. **Active students**, **Lesson completions** and **Certificates
+  issued** now show a small trend line for the selected period, and the figures
+  at the top appear straight away. **Certificates issued by course** lists only
+  courses that issued one.
 - **The # column on the Lessons list shows a lesson's real place in its
   course.** It used to show a number that stayed 0 for many lessons and did not
   change when you reordered a course's **Lessons** tab. It now reads the order

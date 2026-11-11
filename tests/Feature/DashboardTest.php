@@ -11,6 +11,7 @@ use App\Filament\Resources\Lessons\Pages\ListLessons;
 use App\Filament\Resources\Users\Pages\CreateUser;
 use App\Filament\Resources\Users\Pages\EditUser;
 use App\Filament\Widgets\ActivityOverTime;
+use App\Filament\Widgets\CertificatesByCourse;
 use App\Filament\Widgets\CompletionsByCompany;
 use App\Filament\Widgets\CreatorContentOverview;
 use App\Filament\Widgets\HardestLessons;
@@ -257,14 +258,15 @@ class DashboardTest extends TestCase
 
     public function test_certificates_by_course_lists_only_courses_that_issued_one(): void
     {
-        $courses = Course::query()->take(2)->get();
-        $courses->each->update(['final_quiz_enabled' => true]);
-        $this->certificateFor($this->learner(), 'PA-C', 90, $courses->first());
+        $issued = Course::first();
+        $issued->update(['final_quiz_enabled' => true]);
+        $none = Course::create(['title' => 'Nothing issued', 'slug' => 'nothing-issued', 'level' => 'beginner', 'final_quiz_enabled' => true]);
+        $this->certificateFor($this->learner(), 'PA-C', 90, $issued);
 
         Livewire::actingAs($this->admin())
-            ->test(\App\Filament\Widgets\CertificatesByCourse::class)
-            ->assertCanSeeTableRecords([$courses->first()])
-            ->assertCanNotSeeTableRecords([$courses->last()]);
+            ->test(CertificatesByCourse::class)
+            ->assertCanSeeTableRecords([$issued])
+            ->assertCanNotSeeTableRecords([$none]);
     }
 
     // --- Partner engagement ----------------------------------------------

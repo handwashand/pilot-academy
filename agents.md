@@ -458,6 +458,51 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-11 — Dashboard laid out as a grid, with trend sparklines
+
+The owner found the dashboard cumbersome. Every widget was
+`columnSpan = 'full'`, and `Dashboard` set no column count, so 11 lazily
+loaded widgets stacked into a column of about 5,200px. Some chart cards on
+production also stayed blank while loading.
+
+**Changes (no migration):**
+- `Dashboard::getColumns()` is `['default' => 1, 'lg' => 2]`.
+- Widgets are paired and re-sorted:
+  1. the stats, full width;
+  2. Student activity beside Learner journey;
+  3. Students who have gone quiet, full width;
+  4. Lessons students struggle with, full width;
+  5. Most opened courses beside Resource engagement;
+  6. Certificates by course beside Top creators;
+  7. Partner engagement, full width.
+- Charts share a `maxHeight` of 260px.
+- **The stats** are not lazy (`$isLazy = false`). Active students, Lesson
+  completions and Certificates issued (now the first row) carry sparklines.
+  `chartColor('info')` colours only the line, which keeps the two-colour rule
+  and the grey description text.
+- **The trend** comes from `UsesDashboardFilters::trendOf()`: at most 30 steps
+  over the filtered period, distinct keys per step, folded in PHP so it reads
+  the same on SQLite and PostgreSQL.
+- **Certificates by course** keeps only courses with an unrevoked learner
+  certificate, and has an empty state (`admin_widgets.certificates.empty`, in
+  six languages).
+- **MostOpenedCourses** goes back to half width. The 2026-09-30 reason for
+  full width (dead space beside it) no longer applies, because it now has a
+  partner.
+
+**Verified (run):**
+- Two new `DashboardTest` tests: the trend shape and colour (totals carry no
+  trend), and the certificates list hiding courses with none. `DashboardTest`
+  43 passed.
+- With the role, remind, top creators, translation and cover suites: 106
+  passed. Pint is clean over `app`, `tests` and `lang`.
+- In the seeded preview at 1440px: the page is about 2,800px tall (against
+  about 5,200px on production), and all 7 charts render.
+
+**Not run:** the full suite in one go (two attempts ran past their time limit
+while preview containers shared the machine), and the dashboard with real
+production data.
+
 ### 2026-11-11 — Automatic numbered lesson covers; cover themes per course (**schema change**)
 
 The owner's request: a lesson card with no cover gets a designed cover showing
