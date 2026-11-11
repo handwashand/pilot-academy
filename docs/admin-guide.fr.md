@@ -81,6 +81,10 @@ Le parcours est toujours le même : **créer un cours → le remplir de leçons 
      de la remplir. Si vous laissez la durée du cours vide, l’académie additionne
      les durées de ses leçons. Si rien n’a de durée, aucun temps n’est affiché.
    - Les autres champs (niveau) sont facultatifs.
+   - **Motif de couverture** et **Couleur de couverture** — facultatifs. Les
+     cartes des leçons sans couverture propre sont dessinées dans ce style, avec
+     le numéro de la leçon dans le cours, calculé automatiquement. Une couverture
+     ajoutée à une leçon est toujours affichée telle quelle.
 4. Cliquez sur **Créer**.
 
 > Les nouveaux cours sont enregistrés en **Brouillon**. Les apprenants ne voient pas un brouillon — vous le publiez vous-même à l’étape 4, une fois les leçons en place.

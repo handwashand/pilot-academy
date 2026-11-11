@@ -155,19 +155,7 @@
             @php($isDone = in_array($lesson->id, $completed, true))
             <a href="{{ route('academy.lesson', [$course, $lesson]) }}"
                class="group bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition">
-                <div class="h-28 relative flex items-center justify-center bg-gradient-to-br from-brand to-navy overflow-hidden">
-                    @if($lesson->image_url)
-                        <img src="{{ $lesson->image_url }}" alt="{{ $lesson->translated('title') }}" class="absolute inset-0 w-full h-full object-cover">
-                    @else
-                        <span class="text-white/90 text-4xl font-extrabold">{{ $i + 1 }}</span>
-                    @endif
-                    @if($isDone)
-                        <span class="absolute top-3 end-3 w-7 h-7 rounded-full bg-ok text-white flex items-center justify-center text-sm shadow">
-                            <span aria-hidden="true">✓</span>
-                            <span class="vh">{{ __t('academy.common.completed') }}</span>
-                        </span>
-                    @endif
-                </div>
+                @include('academy.partials.lesson-cover', ['lesson' => $lesson, 'course' => $course, 'number' => $i + 1, 'isDone' => $isDone])
                 <div class="p-5">
                     <h3 class="font-bold text-navy group-hover:text-brand transition">{{ $lesson->translated('title') }}</h3>
                     <p class="text-sm text-slate-500 mt-1 line-clamp-2">{{ $lesson->translated('summary') }}</p>

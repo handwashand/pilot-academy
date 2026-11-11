@@ -45,6 +45,7 @@ return [
 
     'common' => [
         'all_courses' => 'كل الدورات',
+        'lesson_number' => 'الدرس :number',
         'course' => 'الدورة',
         'for_audience' => 'لـ :audience',
         'audience' => [

@@ -86,6 +86,31 @@
         .prose-lesson iframe { max-width: 100%; }
         .prose-lesson table { display: block; max-width: 100%; overflow-x: auto; }
 
+        /* The lesson card cover (partials/lesson-cover). Colours and pattern
+           come from the course's cover theme through --cover-* variables; a
+           soft glow sits behind the number so it reads on every pattern. */
+        .lesson-cover {
+            position: relative; height: 7rem; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, var(--cover-from, #1463ff), var(--cover-to, #0a2540));
+        }
+        .lesson-cover__image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .lesson-cover__image--banner { opacity: .35; }
+        .lesson-cover__pattern {
+            position: absolute; inset: 0;
+            background: radial-gradient(circle at center, rgba(0, 0, 0, .28), transparent 42%), var(--cover-pattern);
+        }
+        .lesson-cover__number {
+            position: relative; color: #fff; font-size: 2.75rem; font-weight: 800; line-height: 1;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, .35);
+        }
+        .lesson-cover__chip {
+            position: absolute; top: .75rem; inset-inline-start: .75rem;
+            padding: .2rem .55rem; border-radius: 999px;
+            background: rgba(255, 255, 255, .92); color: #0a2540;
+            font-size: .6875rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+        }
+
         /* Transcripts are plain text with real line breaks. Tailwind's
            `whitespace-pre-line` is not in the committed bundle. */
         .transcript { white-space: pre-line; }

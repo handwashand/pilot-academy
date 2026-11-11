@@ -1,21 +1,24 @@
 {{--
     One cover for every lesson card.
     - A cover the creator added is shown as it is, nothing drawn over it.
-    - Otherwise the cover is made automatically: brand gradient, a soft dot
-      pattern, and the lesson's place in its course with a "Lesson 3" chip.
-      The number comes from the course order, never typed. A course banner,
-      when there is one, sits faded under it.
+    - Otherwise the cover is made automatically from the course's theme (the
+      cover pattern and colour chosen on the course), with the lesson's place
+      in its course and a "Lesson 3" chip. The number comes from the course
+      order, never typed. A course banner, when there is one, sits faded under.
     Styles are the .lesson-cover rules in partials/head, because these
     utilities are not all in the committed CSS bundle.
 
-    Expects: $lesson; optional $number (null for a lesson in no course),
-    $isDone, and $courseBanner (the course's banner image address).
+    Expects: $lesson; optional $course (null for a lesson in no course),
+    $number (null when there is no place to show) and $isDone.
 --}}
 @php
+    $coverCourse = $course ?? null;
     $coverNumber = $number ?? null;
-    $coverBanner = $courseBanner ?? null;
+    $coverTheme = $coverCourse ? $coverCourse->coverTheme() : \App\Models\Course::coverThemeFor(null, null);
+    $coverBanner = $coverCourse?->thumbnailUrl;
 @endphp
-<div class="lesson-cover">
+<div class="lesson-cover"
+     style="--cover-from: {{ $coverTheme['from'] }}; --cover-to: {{ $coverTheme['to'] }}; --cover-pattern: url('{{ $coverTheme['pattern'] }}');">
     @if($lesson->image_url)
         <img src="{{ $lesson->image_url }}" alt="" class="lesson-cover__image">
     @else

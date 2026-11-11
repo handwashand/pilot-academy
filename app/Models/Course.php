@@ -32,6 +32,8 @@ class Course extends Model
         'level',
         'audience',
         'thumbnail',
+        'cover_pattern',
+        'cover_color',
         'duration_minutes',
         'status',
         'sort_order',
@@ -78,6 +80,62 @@ class Course extends Model
     public function getAudienceLabelAttribute(): ?string
     {
         return $this->audience ? (self::audienceLabels()[$this->audience] ?? $this->audience) : null;
+    }
+
+    /**
+     * Patterns for the automatic lesson cover: tiling SVGs in
+     * public/img/patterns, drawn white at low opacity so any colour works.
+     */
+    public const COVER_PATTERNS = [
+        'dots', 'grid', 'diagonal', 'waves', 'hexagons', 'chevrons',
+        'route', 'contour', 'radar', 'pins', 'transit', 'pulse',
+        'circuit', 'cubes', 'fields', 'snow', 'drops', 'tread',
+    ];
+
+    /** Cover colours: a 135° gradient, light end then dark end. Pilot blue is the brand pair. */
+    public const COVER_COLORS = [
+        'pilot' => ['#1463ff', '#0a2540'],
+        'amber' => ['#d97706', '#7c2d12'],
+        'teal' => ['#0d9488', '#134e4a'],
+        'green' => ['#16a34a', '#14532d'],
+        'violet' => ['#7c3aed', '#2e1065'],
+        'slate' => ['#475569', '#0f172a'],
+    ];
+
+    /** @return array<string, string> */
+    public static function coverPatternLabels(): array
+    {
+        return collect(self::COVER_PATTERNS)
+            ->mapWithKeys(fn (string $pattern): array => [$pattern => __t("labels.cover_pattern.{$pattern}")])
+            ->all();
+    }
+
+    /** @return array<string, string> */
+    public static function coverColorLabels(): array
+    {
+        return collect(array_keys(self::COVER_COLORS))
+            ->mapWithKeys(fn (string $color): array => [$color => __t("labels.cover_color.{$color}")])
+            ->all();
+    }
+
+    /**
+     * What a lesson cover without its own image is drawn with. Unknown or
+     * empty values fall back to dots on Pilot blue, so old courses look right.
+     *
+     * @return array{pattern: string, from: string, to: string}
+     */
+    public static function coverThemeFor(?string $pattern, ?string $color): array
+    {
+        $pattern = in_array($pattern, self::COVER_PATTERNS, true) ? $pattern : 'dots';
+        [$from, $to] = self::COVER_COLORS[$color] ?? self::COVER_COLORS['pilot'];
+
+        return ['pattern' => asset("img/patterns/{$pattern}.svg"), 'from' => $from, 'to' => $to];
+    }
+
+    /** @return array{pattern: string, from: string, to: string} */
+    public function coverTheme(): array
+    {
+        return self::coverThemeFor($this->cover_pattern, $this->cover_color);
     }
 
     public function getThumbnailUrlAttribute(): ?string

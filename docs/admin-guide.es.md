@@ -81,6 +81,10 @@ El camino es siempre el mismo: **crear un curso → llenarlo de lecciones → ac
      rellenarla. Si dejas vacía la duración del curso, la academia suma
      las duraciones de sus lecciones. Si nada tiene duración, no se muestra ningún tiempo.
    - Los demás campos (nivel) son opcionales.
+   - **Patrón de portada** y **Color de portada**: opcionales. Las tarjetas de
+     las lecciones sin portada propia se dibujan con este estilo y con el número
+     de la lección en el curso, que se pone solo. La portada añadida a una
+     lección siempre se muestra tal cual.
 4. Haz clic en **Crear**.
 
 > Los cursos nuevos se guardan como **Borrador**. Los estudiantes no pueden ver un borrador: lo publicas tú en el paso 4, cuando las lecciones estén listas.

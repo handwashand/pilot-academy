@@ -75,22 +75,7 @@
                         @endphp
                         <a href="{{ route('academy.standalone.lesson', $lesson) }}"
                            class="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-                            <div class="relative flex h-28 items-center justify-center overflow-hidden bg-gradient-to-br from-brand to-navy">
-                                @if($lesson->image_url)
-                                    <img src="{{ $lesson->image_url }}" alt="" class="absolute inset-0 h-full w-full object-cover">
-                                @endif
-                                <span aria-hidden="true" class="relative flex h-11 w-11 items-center justify-center rounded-full bg-white/90">
-                                    <svg class="h-5 w-5 text-navy" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                                    </svg>
-                                </span>
-                                @if($isDone)
-                                    <span class="absolute end-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-ok text-sm text-white shadow">
-                                        <span aria-hidden="true">✓</span>
-                                        <span class="vh">{{ __t('academy.common.completed') }}</span>
-                                    </span>
-                                @endif
-                            </div>
+                            @include('academy.partials.lesson-cover', ['lesson' => $lesson, 'course' => null, 'number' => null, 'isDone' => $isDone])
 
                             <div class="p-5">
                                 <h3 class="font-bold text-navy transition group-hover:text-brand">{{ $lesson->translated('title') }}</h3>
@@ -134,22 +119,7 @@
                     @if($firstCourse)
                         <a href="{{ route('academy.lesson', [$firstCourse, $lesson]) }}"
                            class="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-                            <div class="relative flex h-28 items-center justify-center overflow-hidden bg-gradient-to-br from-brand to-navy">
-                                @if($lesson->image_url)
-                                    <img src="{{ $lesson->image_url }}" alt="" class="absolute inset-0 h-full w-full object-cover">
-                                @endif
-                                <span aria-hidden="true" class="relative flex h-11 w-11 items-center justify-center rounded-full bg-white/90">
-                                    <svg class="h-5 w-5 text-navy" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                                    </svg>
-                                </span>
-                                @if($isDone)
-                                    <span class="absolute end-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-ok text-sm text-white shadow">
-                                        <span aria-hidden="true">✓</span>
-                                        <span class="vh">{{ __t('academy.common.completed') }}</span>
-                                    </span>
-                                @endif
-                            </div>
+                            @include('academy.partials.lesson-cover', ['lesson' => $lesson, 'course' => $firstCourse, 'number' => null, 'isDone' => $isDone])
 
                             <div class="p-5">
                                 <h3 class="font-bold text-navy transition group-hover:text-brand">{{ $lesson->translated('title') }}</h3>
@@ -187,22 +157,7 @@
                     @endphp
                     <a href="{{ route('academy.lesson', [$course, $lesson]) }}"
                        class="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-                        <div class="relative flex h-28 items-center justify-center overflow-hidden bg-gradient-to-br from-brand to-navy">
-                            @if($lesson->image_url)
-                                <img src="{{ $lesson->image_url }}" alt="" class="absolute inset-0 h-full w-full object-cover">
-                            @elseif($course->thumbnailUrl)
-                                <img src="{{ $course->thumbnailUrl }}" alt="" class="absolute inset-0 h-full w-full object-cover opacity-60">
-                            @endif
-                            <span aria-hidden="true" class="relative flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-sm font-bold text-navy">
-                                {{ $loop->iteration }}
-                            </span>
-                            @if($isDone)
-                                <span class="absolute end-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-ok text-sm text-white shadow">
-                                    <span aria-hidden="true">✓</span>
-                                    <span class="vh">{{ __t('academy.common.completed') }}</span>
-                                </span>
-                            @endif
-                        </div>
+                        @include('academy.partials.lesson-cover', ['lesson' => $lesson, 'course' => $course, 'number' => $loop->iteration, 'isDone' => $isDone])
 
                         <div class="p-5">
                             <h3 class="font-bold text-navy transition group-hover:text-brand">{{ $lesson->translated('title') }}</h3>

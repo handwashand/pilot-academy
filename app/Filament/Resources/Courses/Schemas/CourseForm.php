@@ -227,6 +227,31 @@ class CourseForm
                                 ->maxSize(2048)
                                 ->helperText(__t('admin_courses.form.thumbnail_help')),
 
+                            // The automatic cover for lessons without their own:
+                            // each option shows a swatch of what it looks like.
+                            Select::make('cover_pattern')
+                                ->label(__t('admin_courses.form.cover_pattern'))
+                                ->options(fn (): array => collect(Course::coverPatternLabels())
+                                    ->mapWithKeys(fn (string $label, string $pattern): array => [
+                                        $pattern => static::coverSwatch(Course::coverThemeFor($pattern, 'pilot'), $label),
+                                    ])->all())
+                                ->allowHtml()
+                                ->native(false)
+                                ->placeholder(__t('labels.cover_pattern.dots'))
+                                ->in(Course::COVER_PATTERNS),
+
+                            Select::make('cover_color')
+                                ->label(__t('admin_courses.form.cover_color'))
+                                ->options(fn (): array => collect(Course::coverColorLabels())
+                                    ->mapWithKeys(fn (string $label, string $color): array => [
+                                        $color => static::coverSwatch(Course::coverThemeFor('dots', $color), $label),
+                                    ])->all())
+                                ->allowHtml()
+                                ->native(false)
+                                ->placeholder(__t('labels.cover_color.pilot'))
+                                ->in(array_keys(Course::COVER_COLORS))
+                                ->helperText(__t('admin_courses.form.cover_help')),
+
                             // Audit information, never edited: who wrote the
                             // course and when. Courses from before the column
                             // existed say so instead of guessing.
@@ -271,5 +296,21 @@ class CourseForm
             })
             ->required()
             ->helperText(__t('admin_courses.form.written_in_help'));
+    }
+
+    /**
+     * A picker option: a small cover swatch, then the name. Inline styles,
+     * because the panel theme does not scan this folder for utilities. The
+     * values come from Course::coverThemeFor(), never from user input.
+     *
+     * @param  array{pattern: string, from: string, to: string}  $theme
+     */
+    public static function coverSwatch(array $theme, string $label): string
+    {
+        return '<span style="display:inline-flex;align-items:center;gap:.6rem">'
+            .'<span style="flex:none;width:72px;height:34px;border-radius:6px;'
+            // Centred, so a large tile (route, transit) shows its motif, not a corner.
+            .'background:url('.e($theme['pattern']).') center,linear-gradient(135deg,'.e($theme['from']).','.e($theme['to']).')"></span>'
+            .e($label).'</span>';
     }
 }

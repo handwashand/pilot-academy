@@ -44,6 +44,7 @@ return [
 
     'common' => [
         'all_courses' => 'All courses',
+        'lesson_number' => 'Lesson :number',
         'course' => 'Course',
         'for_audience' => 'For :audience',
         'audience' => [

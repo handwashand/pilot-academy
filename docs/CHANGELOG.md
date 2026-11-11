@@ -24,6 +24,17 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **Lesson cards draw their own cover, numbered.** A lesson without a cover now
+  gets one automatically on the course page, the home page and Tutorials: the
+  course's colour and pattern, with **Lesson 1**, **Lesson 2**… taken from the
+  lesson's place in the course. Reorder the course and the numbers follow. A
+  cover you added to a lesson is always shown as it is.
+- **Pick a cover style per course.** The course form has **Cover pattern** (18
+  patterns, among them route, map pins, GPS signal, transit lines, fuel drops
+  and tyre tread) and **Cover colour** (Pilot blue, amber, teal, green, violet,
+  slate). Each option shows a preview. Courses without a choice use dots on
+  Pilot blue.
+
 - **Draft a course from notes with ChatGPT or DeepSeek.**
   **Content → Generate course** uses the token already saved under
   **Settings → Integrations**. Pick the provider and a model that can return

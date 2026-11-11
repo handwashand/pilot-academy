@@ -81,6 +81,10 @@ O caminho é sempre o mesmo: **criar um curso → preenchê-lo com aulas → ati
      preenchê-la. Se você deixar a duração do curso vazia, a academia soma as
      durações das aulas. Se nada tiver duração, nenhum tempo é exibido.
    - Os demais campos (nível) são opcionais.
+   - **Padrão da capa** e **Cor da capa** — opcionais. Os cartões das aulas sem
+     capa própria são desenhados nesse estilo, com o número da aula no curso,
+     calculado automaticamente. Uma capa adicionada a uma aula é sempre
+     exibida como está.
 4. Clique em **Criar**.
 
 > Os cursos novos são salvos como **Rascunho**. Os alunos não veem um rascunho — você mesmo o publica na etapa 4, quando as aulas estiverem prontas.

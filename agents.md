@@ -458,6 +458,54 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-11 — Automatic numbered lesson covers; cover themes per course (**schema change**)
+
+The owner's request: a lesson card with no cover gets a designed cover showing
+its number, while a cover the creator added is kept untouched. Creators also
+choose a pattern and a colour per course.
+
+**One migration**, `2026_11_11_000001`: nullable `courses.cover_pattern` and
+`cover_color`. There is no backfill, because an empty value means dots on
+Pilot blue. The deploy runs `php8.4 artisan migrate --force`.
+
+- **Patterns are tiling SVGs** in `public/img/patterns/`, 18 of them, white at
+  low opacity so any colour works. They are on-topic for the industry: route,
+  map pins, GPS signal, transit lines, telemetry pulse, circuit, cargo boxes,
+  fields, snowflakes, fuel drops and tyre tread, plus basics. Being static
+  files, they need no build.
+  - Weights were evened out after a design critique: tread, hexagons and
+    diagonal lighter; contour and dots stronger; radar redrawn as true arcs.
+    Amber was darkened to `#d97706` for white-number contrast.
+- **`Course::COVER_PATTERNS` / `COVER_COLORS` / `coverThemeFor()`** are the
+  single definition. An unknown value falls back to the default, and the form
+  validates with `in()`.
+- **The course form** has two pickers (`allowHtml` Select), and each option
+  shows a swatch rendered by `CourseForm::coverSwatch()` with inline styles.
+- **`academy/partials/lesson-cover.blade.php`** draws every lesson card cover:
+  the course page, home, and Tutorials (standalone, popular and per-course).
+  - A lesson's own image is shown as is.
+  - Otherwise it draws the theme gradient, the pattern, a centre glow, the
+    number and a "Lesson N" chip (`academy.common.lesson_number`, in six
+    languages). The course banner sits faded at 35% under it.
+  - Styles are the `.lesson-cover*` rules in `partials/head`, because several
+    of the utilities are not in the committed bundle.
+- **Numbers** are the card's position in the course list, so they follow
+  reordering. Standalone and popular cards show the book icon, not a number.
+
+**Verified (run):** `LessonCoverTest` has 5 tests: fallback, files and labels
+in six languages, form save and rejection, theme and number on the course page,
+and a creator cover kept with no chip. Together with the learner, Tutorials,
+courses, translation-parity, audit, home, tidy-lists and order suites, 72
+passed. Pint is clean.
+
+In a seeded preview container (SQLite):
+- The course page renders teal/route covers numbered 1–8 at 1280px and 375px,
+  with no sideways scroll.
+- The course form's pattern picker lists the swatches.
+
+**Not run:** the full suite after this change (the earlier full run was
+stopped), and PostgreSQL.
+
 ### 2026-11-11 — Lessons list # shows the real place; fuel courses split
 
 **The # column** on the Lessons list read `lessons.sort_order`, which had

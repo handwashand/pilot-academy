@@ -33,6 +33,7 @@ return [
 
     'common' => [
         'all_courses' => 'Tous les cours',
+        'lesson_number' => 'Leçon :number',
         'course' => 'Cours',
         'for_audience' => 'Pour :audience',
         'audience' => [
