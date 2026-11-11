@@ -458,6 +458,45 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-11 — November content plan: checked, marked, and the gaps written
+
+The owner's content plan is the **Content Plan** tab of the shared Google
+sheet "Pilot Telematics Academy Management" (link with the owner). It is
+editable by link, and no sign-in is needed. Of the 29 rows with an ETA of
+November 2026, the existing lessons were compared against production by their
+text. Done rows are marked like this:
+- the **Lesson** cell (column D) is filled **light green 2**, so they are
+  told apart from the owner's own bright green;
+- **Action** (column I) is set to **Added**.
+
+**Already in production (13 rows):**
+- lessons 4, 18, 17, 30/31, 93, 98, 99/100, 25/26;
+- row 59 ("Fuel in history and reports"): lessons 7, 90 and 91;
+- row 64 ("Your first notification: overspeeding"): lessons 92 and 93.
+
+**Written in production (11 lessons, 101–111):**
+- From docs.pilot-gps.com, with docs screenshots, 3 questions of 4 options,
+  and YouTube links from the docs or the Pilot Telematics channel where one
+  fits.
+- **CFMA:** 101 checking a fuel sensor, and 102 troubleshooting.
+- **Mastering Sensors:** 103, pulse fuel-consumption sensors. It is placed
+  before the final exam lesson.
+- **Events:** 104, webhook notifications and the Account ID.
+- **New draft course 10, "Report Builder: Custom Reports in PILOT":** lessons
+  105–110. The final quiz is on at 80%, with 8 questions: one per lesson plus
+  2 scenarios.
+- **No course:** 111, PILOT Extensions. It is published, so it shows on
+  Tutorials, like the other integration lessons.
+
+**Not done (rows left as progress):**
+- 53, sensor template import/export: the docs only cover command templates,
+  and lesson 33 covers sensor templates.
+- 55, FLS or CAN: there is no docs page.
+- 62, composite sensors: the docs give one sentence.
+- 70, "Update to the current UI": it is not a lesson topic.
+- Row 49, Webhook, has an ETA of November 2025, which is probably a typo. It
+  was left alone.
+
 ### 2026-11-10 — Existing courses topped up; geofence and analytics banks cleaned
 
 Owner's request: review existing courses, and add lessons where needed after
