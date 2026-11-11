@@ -338,6 +338,11 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Fixed
 
+- **The # column on the Lessons list shows a lesson's real place in its
+  course.** It used to show a number that stayed 0 for many lessons and did not
+  change when you reordered a course's **Lessons** tab. It now reads the order
+  from the course itself; hover the number to see which course. A lesson in no
+  course shows a dash instead of 0.
 - **New lessons go to the end of their course.** The lesson form's **Order**
   box is now empty to start with, and a lesson saved with it empty takes the
   next place in its course. Before, every new lesson was given order 0, so

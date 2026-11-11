@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Filament\Resources\Lessons\Pages\CreateLesson;
 use App\Filament\Resources\Lessons\Pages\EditLesson;
+use App\Filament\Resources\Lessons\Pages\ListLessons;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\User;
@@ -113,5 +114,23 @@ class LessonOrderTest extends TestCase
             ->assertHasNoFormErrors();
 
         $this->assertSame(4, $lesson->fresh()->sort_order);
+    }
+
+    public function test_the_lessons_list_shows_the_place_in_the_course_and_a_dash_for_none(): void
+    {
+        $course = $this->course();
+        $first = Lesson::create(['course_id' => $course->id, 'title' => 'First', 'slug' => 'first']);
+        $second = Lesson::create(['course_id' => $course->id, 'title' => 'Second', 'slug' => 'second']);
+        $loose = Lesson::create(['title' => 'Loose', 'slug' => 'loose']);
+
+        // Reordering the course's Lessons tab writes only course_lesson.
+        DB::table('course_lesson')->where('lesson_id', $first->id)->update(['sort_order' => 2]);
+        DB::table('course_lesson')->where('lesson_id', $second->id)->update(['sort_order' => 1]);
+
+        Livewire::actingAs($this->admin())
+            ->test(ListLessons::class)
+            ->assertTableColumnStateSet('sort_order', 2, $first)
+            ->assertTableColumnStateSet('sort_order', 1, $second)
+            ->assertTableColumnStateSet('sort_order', null, $loose);
     }
 }

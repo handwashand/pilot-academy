@@ -458,6 +458,30 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-11 — Lessons list # shows the real place; fuel courses split
+
+**The # column** on the Lessons list read `lessons.sort_order`, which had
+two problems:
+- it is 0 for every lesson created before the 11-04 fix;
+- it is never updated when a course's Lessons tab is reordered, because
+  `reorderTable` writes only `course_lesson`.
+
+It now shows the `course_lesson.sort_order` of the lesson's home course (or
+the first course it is in). Hovering it gives the course title, and a lesson in
+no course shows a dash. Sorting still uses `lessons.sort_order`.
+`LessonOrderTest` covers it. The deploy's 11-04 renumbering migration fixes the
+ties in the data.
+
+**Verified (run):** `LessonOrderTest`, `AdminLessonsSortTest` and
+`LessonFindingTest` all passed (18 tests). Pint is clean on both files.
+
+**Fuel courses (in production; the owner chose the layout):**
+- CFMA (3) stays the basic course, with lessons 18, 17, 89 and 19.
+- New draft course 11, **Certified Fuel Telemetry Specialist** (advanced),
+  holds lessons 90, 91, 101 (diagnosing) and 102 (troubleshooting).
+- Questions 490 and 493 moved from CFMA's bank (now 21 questions) to course
+  11's bank of 8: one or two per lesson, plus 2 scenarios.
+
 ### 2026-11-11 — November content plan: checked, marked, and the gaps written
 
 The owner's content plan is the **Content Plan** tab of the shared Google

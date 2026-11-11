@@ -57,8 +57,14 @@ class LessonsTable
                         ->withCount('courses')
                         ->orderBy('courses_count', $direction)),
 
+                // The lesson's place in its course, read from course_lesson: the
+                // lessons.sort_order copy is not updated when a course's Lessons
+                // tab is reordered, and a lesson in no course has no place at all.
                 TextColumn::make('sort_order')
                     ->label('#')
+                    ->state(fn (Lesson $record): ?int => static::placeInCourse($record)?->pivot->sort_order)
+                    ->placeholder('—')
+                    ->tooltip(fn (Lesson $record): ?string => static::placeInCourse($record)?->translated('title'))
                     ->sortable(),
 
                 TextColumn::make('title')
@@ -372,6 +378,12 @@ class LessonsTable
             ->send();
 
         return true;
+    }
+
+    /** The course whose order the # column shows: the lesson's home course, else the first it is in. */
+    protected static function placeInCourse(Lesson $lesson): ?Course
+    {
+        return $lesson->courses->firstWhere('id', $lesson->course_id) ?? $lesson->courses->first();
     }
 
     public static function creatorColumn(): TextColumn
