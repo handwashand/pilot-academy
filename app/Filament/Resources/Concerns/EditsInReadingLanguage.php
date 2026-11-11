@@ -29,6 +29,16 @@ trait EditsInReadingLanguage
         return (string) $this->getRecord()->translated('title');
     }
 
+    /**
+     * The page heading is the record's name alone. "Edit …" in front of a long
+     * lesson title wrapped onto two lines and crowded the header buttons; the
+     * breadcrumb and the browser tab still say Edit.
+     */
+    public function getHeading(): string|Htmlable|null
+    {
+        return $this->getRecordTitle();
+    }
+
     /** @param  array<string, mixed>  $data */
     protected function mutateFormDataBeforeSave(array $data): array
     {

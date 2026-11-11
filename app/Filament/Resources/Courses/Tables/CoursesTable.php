@@ -60,7 +60,9 @@ class CoursesTable
                     ->badge()
                     ->color('info')
                     ->placeholder('—')
-                    ->sortable(),
+                    ->sortable()
+                    // Hidden until asked for, so the list fits without scrolling sideways.
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('level')
                     ->label(__t('admin_common.level'))
@@ -98,7 +100,8 @@ class CoursesTable
                 TextColumn::make('updated_at')
                     ->label(__t('admin_common.updated'))
                     ->since()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Filter::make('needs_attention')

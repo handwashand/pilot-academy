@@ -42,7 +42,9 @@ class LessonsTable
                     ->label(__t('admin_lessons.table.cover'))
                     ->disk('public')
                     ->height(36)
-                    ->state(fn ($record) => $record->media_item_id ? $record->mediaItem?->path : $record->image_path),
+                    ->state(fn ($record) => $record->media_item_id ? $record->mediaItem?->path : $record->image_path)
+                    // Few lessons have a cover; hidden until asked for, so titles have room.
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 // Titles in the admin's panel language where translated.
                 TextColumn::make('courses.title')

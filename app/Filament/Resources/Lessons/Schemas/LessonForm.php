@@ -63,7 +63,8 @@ class LessonForm
                                 ->minItems(0)
                                 ->maxItems(5)
                                 ->addActionLabel(__t('admin_lessons.form.add_video'))
-                                ->itemLabel(fn (array $state): ?string => (($state['type'] ?? 'youtube') === 'upload' ? __t('admin_lessons.form.uploaded_video') : __t('admin_lessons.form.youtube_video')))
+                                // Name each video by its link or file, so several are told apart.
+                                ->itemLabel(fn (array $state): ?string => static::videoLabel($state))
                                 ->collapsible()
                                 ->collapsed()
                                 ->columns(1)
@@ -508,5 +509,32 @@ class LessonForm
                         ]),
                 ])->columnSpan(['lg' => 1]),
             ]);
+    }
+
+    /**
+     * A video row's heading: its YouTube link, or the uploaded file's name.
+     * Falls back to the plain "YouTube video" / "Uploaded video" while empty.
+     *
+     * @param  array<string, mixed>  $state
+     */
+    public static function videoLabel(array $state): string
+    {
+        if (($state['type'] ?? 'youtube') !== 'upload') {
+            return filled($state['youtube_url'] ?? null)
+                ? __t('admin_lessons.form.youtube_video').' · '.$state['youtube_url']
+                : __t('admin_lessons.form.youtube_video');
+        }
+
+        // A saved file is a path; a file just picked is still an upload object.
+        $file = collect((array) ($state['video_path'] ?? []))->first();
+        $name = match (true) {
+            is_string($file) => basename($file),
+            is_object($file) && method_exists($file, 'getClientOriginalName') => $file->getClientOriginalName(),
+            default => null,
+        };
+
+        return $name
+            ? __t('admin_lessons.form.uploaded_video').' · '.$name
+            : __t('admin_lessons.form.uploaded_video');
     }
 }
