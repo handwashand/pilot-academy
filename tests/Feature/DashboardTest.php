@@ -234,6 +234,39 @@ class DashboardTest extends TestCase
         $this->assertSame(1, $stats['Certificates issued']);
     }
 
+    public function test_the_moving_figures_carry_a_trend_and_the_totals_do_not(): void
+    {
+        $learner = $this->learner();
+        ActivityEvent::record($learner, ActivityEvent::TYPE_LOGIN);
+        Course::first()->update(['final_quiz_enabled' => true]);
+        $this->certificateFor($learner, 'PA-T', 90);
+
+        $widget = new StudentProgressOverview;
+        $stats = collect((fn (): array => $this->getStats())->call($widget))
+            ->keyBy(fn ($stat): string => $stat->getLabel());
+
+        // 30 steps over the default 30-day period, today's in the last one.
+        $active = $stats['Active students']->getChart();
+        $this->assertCount(30, $active);
+        $this->assertSame(1, end($active));
+        $this->assertSame(1, array_sum($stats['Certificates issued']->getChart()));
+        $this->assertSame('info', $stats['Active students']->getChartColor());
+
+        $this->assertNull($stats['Students']->getChart());
+    }
+
+    public function test_certificates_by_course_lists_only_courses_that_issued_one(): void
+    {
+        $courses = Course::query()->take(2)->get();
+        $courses->each->update(['final_quiz_enabled' => true]);
+        $this->certificateFor($this->learner(), 'PA-C', 90, $courses->first());
+
+        Livewire::actingAs($this->admin())
+            ->test(\App\Filament\Widgets\CertificatesByCourse::class)
+            ->assertCanSeeTableRecords([$courses->first()])
+            ->assertCanNotSeeTableRecords([$courses->last()]);
+    }
+
     // --- Partner engagement ----------------------------------------------
 
     public function test_a_company_with_no_students_reports_zero_engagement(): void

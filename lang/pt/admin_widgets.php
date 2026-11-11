@@ -50,6 +50,7 @@ return [
 
     'certificates' => [
         'heading' => 'Certificados emitidos por curso',
+        'empty' => 'Nenhum certificado emitido ainda',
     ],
 
     'stalled' => [

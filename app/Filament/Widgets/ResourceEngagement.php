@@ -12,11 +12,11 @@ class ResourceEngagement extends ChartWidget
     use ReportsOnLearners;
     use UsesDashboardFilters;
 
-    protected static ?int $sort = 8;
+    protected static ?int $sort = 7;
 
-    protected int|string|array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 1;
 
-    protected ?string $maxHeight = '280px';
+    protected ?string $maxHeight = '260px';
 
     public function getHeading(): ?string
     {

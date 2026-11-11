@@ -61,6 +61,42 @@ trait UsesDashboardFilters
         return $rows;
     }
 
+    /**
+     * A small trend for a stat card: counts per step across the filtered
+     * period, at most 30 steps (a long period is grouped into longer steps).
+     * Each item is [date, key]; a key counted once per step, so passing a user
+     * id gives distinct people. Folded in PHP to stay portable across SQLite
+     * and PostgreSQL, like ActivityOverTime.
+     *
+     * @param  iterable<array{0: \DateTimeInterface|string|null, 1: int|string}>  $items
+     * @return list<int>
+     */
+    protected function trendOf(iterable $items): array
+    {
+        $start = $this->dashboardStart()->startOfDay();
+        $days = max(1, (int) $start->diffInDays($this->dashboardEnd()->startOfDay()) + 1);
+        $steps = min($days, 30);
+        $perStep = $days / $steps;
+
+        $buckets = array_fill(0, $steps, []);
+
+        foreach ($items as [$date, $key]) {
+            if ($date === null) {
+                continue;
+            }
+
+            $day = (int) $start->diffInDays(CarbonImmutable::parse($date)->startOfDay(), false);
+
+            if ($day < 0 || $day >= $days) {
+                continue;
+            }
+
+            $buckets[min($steps - 1, (int) floor($day / $perStep))][$key] = true;
+        }
+
+        return array_map('count', $buckets);
+    }
+
     protected function dashboardStart(): CarbonImmutable
     {
         return $this->filterDate('start_date', now()->subDays(29)->startOfDay(), false);

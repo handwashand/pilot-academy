@@ -14,11 +14,11 @@ class LearnerJourney extends ChartWidget
     use ReportsOnLearners;
     use UsesDashboardFilters;
 
-    protected static ?int $sort = 5;
+    protected static ?int $sort = 3;
 
-    protected int|string|array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 1;
 
-    protected ?string $maxHeight = '300px';
+    protected ?string $maxHeight = '260px';
 
     public function getHeading(): ?string
     {

@@ -50,6 +50,7 @@ return [
 
     'certificates' => [
         'heading' => 'Certificats délivrés par cours',
+        'empty' => 'Aucun certificat délivré pour le moment',
     ],
 
     'stalled' => [

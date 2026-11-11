@@ -22,7 +22,7 @@ class TopCreators extends TableWidget
 
     protected static ?int $sort = 9;
 
-    protected int|string|array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 1;
 
     public function table(Table $table): Table
     {

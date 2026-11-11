@@ -10,9 +10,9 @@ use Illuminate\Database\Eloquent\Builder;
 
 class CertificatesByCourse extends TableWidget
 {
-    protected static ?int $sort = 3;
+    protected static ?int $sort = 8;
 
-    protected int|string|array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 1;
 
     /** Learner data — creators have no business seeing it. */
     public static function canView(): bool
@@ -34,7 +34,13 @@ class CertificatesByCourse extends TableWidget
                             ->whereNull('revoked_at')
                             ->whereHas('user', fn (Builder $user) => $user->learners()),
                     ])
+                    // Only courses that issued one: a column of zeros said nothing.
+                    ->whereHas('certificates', fn (Builder $q) => $q
+                        ->whereNull('revoked_at')
+                        ->whereHas('user', fn (Builder $user) => $user->learners()))
             )
+            ->emptyStateHeading(__t('admin_widgets.certificates.empty'))
+            ->emptyStateIcon('heroicon-o-academic-cap')
             ->defaultSort('issued_count', 'desc')
             ->columns([
                 TextColumn::make('title')

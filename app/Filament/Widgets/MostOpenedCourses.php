@@ -20,10 +20,15 @@ class MostOpenedCourses extends ChartWidget
     use ReportsOnLearners;
     use UsesDashboardFilters;
 
-    protected static ?int $sort = 7;
+    protected static ?int $sort = 6;
 
-    /** Full width like every other chart; half left dead space beside it. */
-    protected int|string|array $columnSpan = 'full';
+    /**
+     * Half the grid, paired with Resource engagement. It was full width when
+     * it sat alone at half and left dead space; it has a partner now.
+     */
+    protected int|string|array $columnSpan = 1;
+
+    protected ?string $maxHeight = '260px';
 
     public function getHeading(): ?string
     {

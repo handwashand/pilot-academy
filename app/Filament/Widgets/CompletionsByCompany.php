@@ -21,7 +21,7 @@ class CompletionsByCompany extends TableWidget
     use ReportsOnLearners;
     use UsesDashboardFilters;
 
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 10;
 
     protected int|string|array $columnSpan = 'full';
 

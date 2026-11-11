@@ -16,6 +16,16 @@ class Dashboard extends BaseDashboard
 {
     use HasFiltersForm;
 
+    /**
+     * Two columns from a laptop up: charts and short tables sit side by side,
+     * wide tables and the figures span both. One full-width column made the
+     * page five screens long.
+     */
+    public function getColumns(): int|array
+    {
+        return ['default' => 1, 'lg' => 2];
+    }
+
     public function filtersForm(Schema $schema): Schema
     {
         if (! auth()->user()?->isAdmin()) {

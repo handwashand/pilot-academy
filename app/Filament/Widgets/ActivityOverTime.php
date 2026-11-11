@@ -18,7 +18,7 @@ class ActivityOverTime extends ChartWidget
     use ReportsOnLearners;
     use UsesDashboardFilters;
 
-    protected static ?int $sort = 6;
+    protected static ?int $sort = 2;
 
     public function getHeading(): ?string
     {
@@ -30,9 +30,10 @@ class ActivityOverTime extends ChartWidget
         return __t('admin_widgets.activity.description');
     }
 
-    protected int|string|array $columnSpan = 'full';
+    // Half the grid, beside the learner journey; charts share one height.
+    protected int|string|array $columnSpan = 1;
 
-    protected ?string $maxHeight = '320px';
+    protected ?string $maxHeight = '260px';
 
     protected function getType(): string
     {

@@ -53,6 +53,7 @@ return [
 
     'certificates' => [
         'heading' => 'الشهادات الصادرة حسب الدورة',
+        'empty' => 'لم تصدر أي شهادة بعد',
     ],
 
     'stalled' => [

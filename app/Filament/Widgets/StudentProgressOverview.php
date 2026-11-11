@@ -21,6 +21,9 @@ class StudentProgressOverview extends StatsOverviewWidget
 
     protected int|string|array $columnSpan = 'full';
 
+    /** The first thing on the page: drawn with it, not after a loading skeleton. */
+    protected static bool $isLazy = false;
+
     protected function getColumns(): int
     {
         return 3;
@@ -67,20 +70,46 @@ class StudentProgressOverview extends StatsOverviewWidget
         // own percentage, and the certificates line prints the average score.
         // The dashboard has two colours — blue for ordinary numbers, amber for
         // what wants attention. Grey is not a third; it is plain text.
+        //
+        // The three figures that move day to day carry a small blue trend for
+        // the selected period, first row together so both rows stay even.
+        // chartColor() colours only the line, so the text under stays grey.
         return [
-            Stat::make(__t('admin_widgets.overview.students'), $students)
-                ->description(__t('admin_widgets.overview.students_help'))
-                ->descriptionIcon('heroicon-m-user-group'),
-
             Stat::make(__t('admin_widgets.overview.active'), $active)
                 ->description(__t('admin_widgets.overview.active_help', [
                     'percent' => $engagement,
                 ]))
-                ->descriptionIcon('heroicon-m-arrow-trending-up'),
+                ->descriptionIcon('heroicon-m-arrow-trending-up')
+                ->chart($this->activeTrend())
+                ->chartColor('info'),
 
             Stat::make(__t('admin_widgets.overview.completions'), $completions)
                 ->description(__t('admin_widgets.overview.completions_help'))
-                ->descriptionIcon('heroicon-m-check-circle'),
+                ->descriptionIcon('heroicon-m-check-circle')
+                ->chart($this->trendOf(
+                    $this->scopeToLearners($this->completedLessonRows(), 'lesson_user.user_id')
+                        ->get(['lesson_user.completed_at', 'lesson_user.user_id', 'lesson_user.lesson_id'])
+                        ->map(fn (object $row): array => [$row->completed_at, $row->user_id.'-'.$row->lesson_id]),
+                ))
+                ->chartColor('info'),
+
+            Stat::make(__t('admin_widgets.overview.certificates'), $certificates)
+                // Staff pick up real certificates when previewing a final quiz,
+                // so this counts learners only — see ReportsOnLearners.
+                ->description($averageScore === null
+                    ? __t('admin_widgets.overview.no_passes')
+                    : __t('admin_widgets.overview.average_score', ['score' => round((float) $averageScore)]))
+                ->descriptionIcon('heroicon-m-academic-cap')
+                ->chart($this->trendOf(
+                    $this->scopeToLearners($this->filteredCertificates())
+                        ->get(['id', 'issued_at'])
+                        ->map(fn (Certificate $certificate): array => [$certificate->issued_at, $certificate->id]),
+                ))
+                ->chartColor('info'),
+
+            Stat::make(__t('admin_widgets.overview.students'), $students)
+                ->description(__t('admin_widgets.overview.students_help'))
+                ->descriptionIcon('heroicon-m-user-group'),
 
             Stat::make(__t('admin_widgets.overview.published_courses'), $publishedCourses)
                 ->description(__t('admin_widgets.overview.published_courses_help', ['count' => $totalCourses]))
@@ -94,15 +123,20 @@ class StudentProgressOverview extends StatsOverviewWidget
                 ->count())
                 ->description(__t('admin_widgets.overview.published_lessons_help'))
                 ->descriptionIcon('heroicon-m-book-open'),
-
-            Stat::make(__t('admin_widgets.overview.certificates'), $certificates)
-                // Staff pick up real certificates when previewing a final quiz,
-                // so this counts learners only — see ReportsOnLearners.
-                ->description($averageScore === null
-                    ? __t('admin_widgets.overview.no_passes')
-                    : __t('admin_widgets.overview.average_score', ['score' => round((float) $averageScore)]))
-                ->descriptionIcon('heroicon-m-academic-cap'),
         ];
+    }
+
+    /** Distinct learners active per step of the period — the same events the Active students figure counts. */
+    private function activeTrend(): array
+    {
+        return $this->trendOf(
+            $this->scopeToLearners(
+                $this->filterActivity(ActivityEvent::query())
+                    ->whereIn('type', ActivityEvent::LEARNER_ACTIVITY_TYPES),
+            )
+                ->get(['user_id', 'created_at'])
+                ->map(fn (ActivityEvent $event): array => [$event->created_at, $event->user_id]),
+        );
     }
 
     private function filteredCertificates(): Builder
