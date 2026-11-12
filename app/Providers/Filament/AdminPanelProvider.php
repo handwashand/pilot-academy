@@ -59,7 +59,8 @@ class AdminPanelProvider extends PanelProvider
                 // student would meet it.
                 'studentSite' => Action::make('studentSite')
                     ->label(fn (): string => __t('admin_nav.account.student_site'))
-                    ->icon(Heroicon::OutlinedAcademicCap)
+                    // Leaving the panel; the graduation cap is Certificates.
+                    ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
                     ->url(fn (): string => route('academy.home')),
             ])
             ->colors([

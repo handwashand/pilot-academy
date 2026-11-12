@@ -27,7 +27,8 @@ class QuizAttemptResource extends Resource
 
     protected static ?string $model = QuizAttempt::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
+    // A list of attempts. The clipboard-check is the Translate quiz button's.
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
 
     protected static ?int $navigationSort = 3;
 

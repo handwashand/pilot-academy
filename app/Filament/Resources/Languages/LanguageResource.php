@@ -32,7 +32,8 @@ class LanguageResource extends Resource
 
     protected static ?string $cluster = Settings::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedLanguage;
+    // A globe, not 文A: that icon is Translations and every Translate button.
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedGlobeAlt;
 
     protected static ?int $navigationSort = 10;
 

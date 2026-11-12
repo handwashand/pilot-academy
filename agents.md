@@ -458,6 +458,30 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-12 — Panel icons: one meaning each
+
+All the panel's icons were audited: 24 sidebar items, the account menu,
+actions and widgets. Three pairs shared an icon, and the owner approved all
+three fixes:
+- **Languages** is now a globe (`OutlinedGlobeAlt`). 文A stays with
+  Translations and every Translate button.
+- **Quiz attempts** is now a list (`OutlinedClipboardDocumentList`). The
+  clipboard-check belongs to the Translate quiz button, by the 2026-10-23
+  choice.
+- **Student site** in the account menu is now an "open" arrow
+  (`OutlinedArrowTopRightOnSquare`). The graduation cap stays with
+  Certificates.
+
+Sparkles were kept for both AI actions, Generate course and Translate with an
+engine, because there it carries one meaning: "AI".
+
+**Verified (run):** the account menu, localization, quiz-attempt,
+Settings-cluster, guide-menu, changelog and panel-translation suites passed
+(62 tests). Pint is clean. In a seeded preview, the sidebar shows the list
+icon on Quiz attempts and the account menu shows the arrow on Student site.
+The Languages tab needs `languages.manage`, which the seeded admin lacks, so
+its globe was not seen on screen.
+
 ### 2026-11-12 — What's new recorded as a library skill
 
 The owner asked for the What's new page and its logic to be kept as a reusable

@@ -349,6 +349,11 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Fixed
 
+- **Clearer icons.** Each icon in the panel now means one thing:
+  **Languages** has a globe (the 文A icon is for Translations and Translate),
+  **Quiz attempts** has a list, so it no longer looks like the Translate quiz
+  button, and **Student site** in your account menu has an "open" arrow instead
+  of the certificates cap.
 - **Generate course moved out of the sidebar.** It is now a small sparkle icon
   at the top of **Courses**, beside **New course**, named when you hover it.
   Only accounts allowed to draft courses see it.
