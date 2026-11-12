@@ -4,8 +4,8 @@ namespace Tests\Feature;
 
 use App\Actions\GenerateCourseWithAi;
 use App\Filament\Pages\GenerateCourse;
-use App\Filament\Resources\Courses\Pages\ListCourses;
 use App\Filament\Pages\Integrations;
+use App\Filament\Resources\Courses\Pages\ListCourses;
 use App\Models\AiContentRevision;
 use App\Models\AiGenerationSetting;
 use App\Models\AiProvider;
