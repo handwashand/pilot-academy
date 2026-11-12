@@ -458,6 +458,31 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-12 — No scrollbars in the panel
+
+The owner asked to remove the dashboard's scrollbar and the space at the right
+end of the sidebar. Measured at 1440px:
+- **The sidebar gap** is Filament's `scrollbar-gutter: stable` on
+  `.fi-sidebar-nav`. It keeps a 15px strip even when the menu fits, so the
+  rows sat 14px from the left edge and 30px from the right.
+- **The scrollbar** was the browser's page bar. It took 15px and narrowed the
+  top bar with it.
+
+`theme.css` sets `scrollbar-gutter: auto` and hides the bar on the sidebar
+nav, and hides the page bar (`scrollbar-width: none` and
+`::-webkit-scrollbar`). Scrolling by wheel, trackpad and keyboard is
+unchanged. This is panel-only; the student site keeps its scrollbar. Rebuilt
+with `npm run build`.
+
+**Verified (run):**
+- In the preview, the rows are now 14.4px from both sidebar edges, and the
+  document is the full 1440px.
+- `ChangelogPageTest` and `DashboardTest`: 65 passed.
+
+**Noticed, not changed:** lazy dashboard widgets below the fold show as empty
+white cards until they are scrolled into view. A loading placeholder would
+read better.
+
 ### 2026-11-12 — Panel icons: one meaning each
 
 All the panel's icons were audited: 24 sidebar items, the account menu,

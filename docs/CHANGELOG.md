@@ -349,6 +349,10 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Fixed
 
+- **No more scrollbars in the panel.** The bar down the right of the page is
+  gone, and the menu on the left no longer keeps an empty strip for one, so
+  the rows have the same margin on both sides. Pages and the menu still scroll
+  with the mouse wheel, the trackpad or the keyboard.
 - **Clearer icons.** Each icon in the panel now means one thing:
   **Languages** has a globe (the 文A icon is for Translations and Translate),
   **Quiz attempts** has a list, so it no longer looks like the Translate quiz

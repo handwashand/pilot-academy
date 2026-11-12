@@ -128,6 +128,27 @@ html {
 .fi-sidebar-nav {
     padding-top: 1rem;         /* was 32px */
     padding-bottom: 1rem;
+    /* Filament reserves a scrollbar strip here even when the menu fits
+       (`scrollbar-gutter: stable`), which left the rows 30px from the right
+       edge but 14px from the left. No strip, and no visible bar: the menu
+       still scrolls by wheel, trackpad and keyboard when a window is short. */
+    scrollbar-gutter: auto;
+    scrollbar-width: none;
+}
+.fi-sidebar-nav::-webkit-scrollbar {
+    display: none;
+}
+
+/*
+ * No page scrollbar beside the panel (owner's request, 2026-11-12). It took a
+ * 15px column down the right of every page and pulled the top bar in with it.
+ * The page still scrolls the same way; only the bar is gone.
+ */
+html {
+    scrollbar-width: none;
+}
+html::-webkit-scrollbar {
+    display: none;
 }
 
 /* The groups are spaced by their own list, not by the nav. */
