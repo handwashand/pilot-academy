@@ -773,7 +773,8 @@ hora, só nas caixas vazias — a menos que você marque **Substituir** —, ent
 **Traduzir** de novo para um idioma e leia o resultado. O texto do curso inteiro é
 enviado várias vezes, por isso custa mais.
 
-**Conteúdo → Gerar curso** prepara um rascunho a partir de notas, com ChatGPT ou
+O pequeno ícone de brilho no topo de **Cursos** (**Gerar curso** ao passar o
+mouse; não fica no menu lateral) prepara um rascunho a partir de notas, com ChatGPT ou
 DeepSeek e o token já salvo nesta página. Escolha o provedor e um modelo, depois
 **Gerar rascunho**. O curso continua como rascunho até alguém publicá-lo. Um
 provedor desligado não pode ser escolhido. Nesta página, **Geração de cursos**

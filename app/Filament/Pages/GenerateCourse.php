@@ -64,9 +64,14 @@ class GenerateCourse extends Page
         return (bool) auth()->user()?->canGenerateCourses();
     }
 
+    /**
+     * Not in the sidebar: the owner wanted the generator kept out of the way.
+     * It is reached from a small sparkle icon on the Courses list
+     * (ListCourses::getHeaderActions), shown only to those who canAccess().
+     */
     public static function shouldRegisterNavigation(): bool
     {
-        return static::canAccess();
+        return false;
     }
 
     public function mount(): void

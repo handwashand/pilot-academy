@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Actions\GenerateCourseWithAi;
 use App\Filament\Pages\GenerateCourse;
+use App\Filament\Resources\Courses\Pages\ListCourses;
 use App\Filament\Pages\Integrations;
 use App\Models\AiContentRevision;
 use App\Models\AiGenerationSetting;
@@ -329,6 +330,26 @@ class CourseGenerationTest extends TestCase
         $this->assertSame('forbidden', $this->capture(fn () => $this->generate($admin, 'chatgpt', 'gpt-4o-mini'))->errorCode);
         $this->assertSame(0, Course::query()->count());
         Http::assertNothingSent();
+    }
+
+    public function test_the_generator_is_a_small_icon_on_courses_not_a_sidebar_item(): void
+    {
+        $this->assertFalse(GenerateCourse::shouldRegisterNavigation());
+
+        Livewire::actingAs($this->admin())
+            ->test(ListCourses::class)
+            ->assertActionVisible('generateCourse');
+
+        $plain = User::create([
+            'name' => 'Plain Admin',
+            'email' => 'plain-admin@pilot.local',
+            'password' => 'password',
+            'role' => User::ROLE_ADMIN,
+        ]);
+
+        Livewire::actingAs($plain)
+            ->test(ListCourses::class)
+            ->assertActionHidden('generateCourse');
     }
 
     public function test_a_creator_can_generate_only_for_a_product_they_own(): void

@@ -458,6 +458,19 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-12 — What's new recorded as a library skill
+
+The owner asked for the What's new page and its logic to be kept as a reusable
+skill. It is now in the shared library:
+- `workflows/whats-new-changelog-page.md`, with the file format, steps,
+  checks and rollback;
+- `skills/whats-new-changelog-page/SKILL.md`;
+- an entry in the library README index.
+
+It was written from the code as it stands: `Changelog.php`, its view, the PDF
+controller and view, the top-bar shortcut, the theme rules and
+`ChangelogPageTest`. No application code changed.
+
 ### 2026-11-11 — Dashboard laid out as a grid, with trend sparklines
 
 The owner found the dashboard cumbersome. Every widget was

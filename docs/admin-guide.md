@@ -803,7 +803,8 @@ language and saves straight away, into empty boxes only — unless you tick
 **Replace** — so open **Translate** again for one language to read the result.
 It sends a whole course's text several times over, so it costs more.
 
-**Content → Generate course** drafts a whole course from notes, through ChatGPT,
+The small sparkle icon at the top of **Courses** (**Generate course** on hover;
+it is not in the sidebar) drafts a whole course from notes, through ChatGPT,
 DeepSeek or Claude using a token saved on this page. Claude has its own card
 under **Course generation** and is not offered in **Translate**. Choose the provider and
 a model, then **Generate draft**. The course stays a draft until someone

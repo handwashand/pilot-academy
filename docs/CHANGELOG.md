@@ -349,6 +349,9 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Fixed
 
+- **Generate course moved out of the sidebar.** It is now a small sparkle icon
+  at the top of **Courses**, beside **New course**, named when you hover it.
+  Only accounts allowed to draft courses see it.
 - **A tidier dashboard.** It is laid out in two columns instead of one long
   stack, so it is about half as long: student activity beside the learner
   journey, most opened courses beside resource engagement, certificates beside

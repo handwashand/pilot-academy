@@ -805,7 +805,8 @@ vides uniquement — sauf si vous cochez **Remplacer** —, rouvrez donc **Tradu
 pour une langue afin de relire le résultat. Le texte de tout le cours est envoyé
 plusieurs fois, cela coûte donc plus cher.
 
-**Contenu → Générer un cours** prépare un brouillon à partir de notes, avec
+La petite icône étincelles en haut de **Cours** (**Générer un cours** au survol ;
+elle n’est pas dans le menu latéral) prépare un brouillon à partir de notes, avec
 ChatGPT ou DeepSeek et le jeton déjà enregistré sur cette page. Choisissez le
 fournisseur et un modèle, puis **Générer le brouillon**. Le cours reste un
 brouillon tant que personne ne le publie. Un fournisseur désactivé ne peut pas

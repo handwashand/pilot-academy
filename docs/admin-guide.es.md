@@ -786,7 +786,8 @@ cada idioma y guarda al momento, solo en las casillas vacías —salvo que marqu
 **Reemplazar**—, así que abre **Traducir** de nuevo para un idioma y lee el
 resultado. Envía el texto de todo el curso varias veces, por lo que cuesta más.
 
-**Contenido → Generar curso** prepara un borrador a partir de notas, con ChatGPT
+El pequeño icono de destellos arriba en **Cursos** (**Generar curso** al pasar
+el ratón; no está en el menú lateral) prepara un borrador a partir de notas, con ChatGPT
 o DeepSeek y el token ya guardado en esta página. Elige el proveedor y un modelo,
 luego **Generar borrador**. El curso sigue en borrador hasta que alguien lo
 publique. Un proveedor apagado no se puede elegir. En esta página, **Generación
