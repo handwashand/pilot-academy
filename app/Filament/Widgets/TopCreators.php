@@ -24,6 +24,9 @@ class TopCreators extends TableWidget
 
     protected int|string|array $columnSpan = 1;
 
+    // The loading card is about as tall as the table, so nothing jumps when it arrives.
+    protected ?string $placeholderHeight = '24rem';
+
     public function table(Table $table): Table
     {
         return $table

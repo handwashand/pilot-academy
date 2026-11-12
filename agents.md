@@ -479,9 +479,34 @@ with `npm run build`.
   document is the full 1440px.
 - `ChangelogPageTest` and `DashboardTest`: 65 passed.
 
-**Noticed, not changed:** lazy dashboard widgets below the fold show as empty
-white cards until they are scrolled into view. A loading placeholder would
-read better.
+**Follow-up, same day (owner said yes):** the loading cards are no longer
+blank. See the next entry.
+
+### 2026-11-12 — Loading skeleton for lazy dashboard widgets
+
+Filament draws a lazy widget as `.fi-loading-section`
+(`filament::components.loading-section`): an empty `fi-section`, 8rem tall
+by default. It read as a broken card. This is probably the "blank chart cards"
+seen on production on 2026-11-11.
+
+- **`theme.css`:** `::before` draws a heading bar, a subtitle bar and a body
+  block. `::after` is a shimmer, which is switched off under
+  `prefers-reduced-motion`. Colours are custom properties, with a `.dark` set.
+  It applies to every lazy card in the panel, not only the dashboard.
+- **Each lazy widget sets `$placeholderHeight`** (from Filament's
+  `CanBeLazy`), so the page does not jump when the content replaces it:
+  `27rem` for the four charts and `24rem` for the five tables.
+
+**Verified (run):**
+- In the preview at 1440px, all nine placeholders render in light and dark,
+  and every one is replaced once scrolled into view (0 left).
+- Pint is clean on `app/Filament/Widgets`.
+- Dashboard, changelog, top creators, remind and creator-role tests: 103
+  passed.
+
+**Seen, not caused here:** the browser console logs a bare `Object` error
+every few seconds on the dashboard. The 2026-09-15 entry saw the same thing
+before this work.
 
 ### 2026-11-12 — Panel icons: one meaning each
 

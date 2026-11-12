@@ -28,6 +28,9 @@ class HardestLessons extends TableWidget
 
     protected int|string|array $columnSpan = 'full';
 
+    // The loading card is about as tall as the table, so nothing jumps when it arrives.
+    protected ?string $placeholderHeight = '24rem';
+
     /** Below this, a fail rate is noise rather than a signal. */
     private const MIN_ATTEMPTS = 3;
 

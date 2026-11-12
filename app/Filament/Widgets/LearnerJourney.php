@@ -20,6 +20,9 @@ class LearnerJourney extends ChartWidget
 
     protected ?string $maxHeight = '260px';
 
+    // The loading card is about as tall as the chart, so nothing jumps when it arrives.
+    protected ?string $placeholderHeight = '27rem';
+
     public function getHeading(): ?string
     {
         return __t('admin_widgets.journey.heading');

@@ -35,6 +35,9 @@ class StalledLearners extends TableWidget
 
     protected int|string|array $columnSpan = 'full';
 
+    // The loading card is about as tall as the table, so nothing jumps when it arrives.
+    protected ?string $placeholderHeight = '24rem';
+
     /** How long without a completed lesson counts as having gone quiet. */
     private const QUIET_DAYS = 14;
 

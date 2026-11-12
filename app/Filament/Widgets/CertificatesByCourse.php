@@ -14,6 +14,9 @@ class CertificatesByCourse extends TableWidget
 
     protected int|string|array $columnSpan = 1;
 
+    // The loading card is about as tall as the table, so nothing jumps when it arrives.
+    protected ?string $placeholderHeight = '24rem';
+
     /** Learner data — creators have no business seeing it. */
     public static function canView(): bool
     {

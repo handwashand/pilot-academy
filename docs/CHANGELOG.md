@@ -353,6 +353,11 @@ Add a new entry here whenever something visible to admins or students changes.
   gone, and the menu on the left no longer keeps an empty strip for one, so
   the rows have the same margin on both sides. Pages and the menu still scroll
   with the mouse wheel, the trackpad or the keyboard.
+- **Dashboard cards show that they are loading.** Charts and tables further
+  down the dashboard load when you scroll to them. Until then they showed as
+  empty white boxes, which looked broken. They now show a faint outline with
+  a soft shimmer, at about the size of the card that replaces it, so the page
+  no longer jumps.
 - **Clearer icons.** Each icon in the panel now means one thing:
   **Languages** has a globe (the 文A icon is for Translations and Translate),
   **Quiz attempts** has a list, so it no longer looks like the Translate quiz

@@ -35,6 +35,9 @@ class ActivityOverTime extends ChartWidget
 
     protected ?string $maxHeight = '260px';
 
+    // The loading card is about as tall as the chart, so nothing jumps when it arrives.
+    protected ?string $placeholderHeight = '27rem';
+
     protected function getType(): string
     {
         return 'line';
