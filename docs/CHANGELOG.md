@@ -282,6 +282,10 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Changed
 
+- **A shorter home page for students.** Each course now shows three lesson
+  cards, starting at the student's next unfinished lesson, with a **See all
+  lessons** link to the course page. The page was very long on a phone and
+  grew with every course published.
 - **Claude can draft a course when its token is saved.** On
   **Settings → Integrations**, **Course generation** takes a Claude API token.
   **Content → Generate course** then lists Claude next to ChatGPT and DeepSeek,

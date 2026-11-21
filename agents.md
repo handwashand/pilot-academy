@@ -458,6 +458,30 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-21 — Home page: three lesson cards per course
+
+The owner chose 3 per course. The signed-in home page rendered every lesson
+of every course: about 110KB of HTML and 16,000px on a phone in production.
+
+**What changed (`academy/home.blade.php`):**
+- Each course shows three cards, starting at the student's first unfinished
+  lesson, or its last three once everything is done.
+- Card numbers keep the lesson's real place in the course.
+- "See all lessons (N)" (`academy.home.see_all_lessons`, in six languages,
+  worded to avoid plurals) links to the course page when there are more than
+  three.
+- Visitors are unchanged.
+
+**Verified (run):**
+- `HomeLessonWindowTest` (3 tests) plus the home, learner, smoke, translation,
+  cover, progress and publishing suites: 93 passed. Pint is clean.
+- In a seeded preview signed in as a learner: 3 cards and the link (44px)
+  at 375px, no sideways scroll, and the page is 2,239px tall for one course.
+
+**Not code:** every production page, even `/up`, has about 1.2s before its
+first byte. Check that `php8.4 artisan optimize` runs on deploy and that
+OPcache is on.
+
 ### 2026-11-21 — New certificate design and Settings → Certificate; four new courses; two phone fixes
 
 The owner was away for this work and asked for it to be committed on

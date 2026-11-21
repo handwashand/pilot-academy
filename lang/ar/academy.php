@@ -85,6 +85,7 @@ return [
     ],
 
     'home' => [
+        'see_all_lessons' => 'عرض كل الدروس (:count)',
         'welcome' => 'أهلًا بك، :name',
         'welcome_start' => 'ابدأ بالدرس الأول أدناه — يُحفظ تقدّمك في حسابك.',
         'welcome_back' => 'أهلًا بعودتك، :name',

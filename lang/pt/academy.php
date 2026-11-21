@@ -69,6 +69,7 @@ return [
     ],
 
     'home' => [
+        'see_all_lessons' => 'Ver todas as aulas (:count)',
         'welcome' => 'Boas-vindas, :name',
         'welcome_start' => 'Comece pela primeira aula abaixo — seu progresso fica salvo na sua conta.',
         'welcome_back' => 'Que bom ver você de novo, :name',

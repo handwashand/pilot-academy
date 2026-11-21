@@ -223,10 +223,19 @@
                 </div>
             </div>
 
-            {{-- Visitors see the course and its lesson count; the lessons are on the course page. --}}
+            {{-- Visitors see the course and its lesson count; the lessons are on the course page.
+                 Students see three cards per course, starting at their first unfinished
+                 lesson (the last three once all are done), so the page stays short on a
+                 phone however many lessons a course has. The full list is on the course page. --}}
             @auth
+            @php
+                $lessons = $course->publishedLessons->values();
+                $firstOpen = $lessons->search(fn ($l) => ! in_array($l->id, $completed, true));
+                $start = $firstOpen === false ? max(0, $lessons->count() - 3) : min($firstOpen, max(0, $lessons->count() - 3));
+                $shown = $lessons->slice($start, 3);
+            @endphp
             <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                @foreach($course->publishedLessons as $i => $lesson)
+                @foreach($shown as $i => $lesson)
                     @php($isDone = in_array($lesson->id, $completed, true))
                     <a href="{{ route('academy.lesson', [$course, $lesson]) }}"
                        class="group bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition">
@@ -248,6 +257,11 @@
                     </a>
                 @endforeach
             </div>
+            @if($lessons->count() > 3)
+                <a href="{{ route('academy.course', $course) }}" class="mt-3 inline-flex items-center min-h-11 font-semibold text-brand hover:underline">
+                    {{ __t('academy.home.see_all_lessons', ['count' => $lessons->count()]) }} <span aria-hidden="true" class="ms-1 rtl:rotate-180">&rarr;</span>
+                </a>
+            @endif
             @endauth
         </section>
     @empty
