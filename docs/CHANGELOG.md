@@ -282,6 +282,11 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Changed
 
+- **The Lessons list is quicker to work through.** Tabs across the top jump to
+  **All**, **Drafts**, **Not in any course** or any one course, with counts. The
+  filters are always on screen and apply as you pick. It shows 50 lessons a page
+  (25, 100 or all are one click away), and opening a lesson and coming back
+  keeps your search, filters and sort.
 - **A shorter home page for students.** Each course now shows three lesson
   cards, starting at the student's next unfinished lesson, with a **See all
   lessons** link to the course page. The page was very long on a phone and

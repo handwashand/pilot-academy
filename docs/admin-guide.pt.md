@@ -148,6 +148,7 @@ as aulas desse curso.
   marque as aulas e clique em **Adicionar a este curso**. A mesma tabela abre com
   **Selecionar** no campo **Aulas** ao criar um curso, e na lista **Aulas** você
   pode marcar as que encontrar e escolher **Adicionar ao curso…**.
+- Abas acima da lista de aulas levam direto a **Todas**, **Rascunhos**, **Em nenhum curso** ou a um curso, com a contagem. Os filtros ficam sempre visíveis acima da tabela e se aplicam ao escolher. A lista mostra 50 aulas por página e mantém a busca, os filtros e a ordenação ao abrir uma aula e voltar.
 - **Para tirar uma aula deste curso**, clique em **Remover do curso** na linha dela.
   Ela continua nos outros cursos. Removida do seu único curso, a aula não fica em
   nenhum curso: os alunos deixam de vê-la, e ela permanece em **Conteúdo → Aulas**

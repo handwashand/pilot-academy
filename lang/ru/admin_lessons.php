@@ -73,6 +73,12 @@ return [
         'color_tag_note_help' => 'Краткая заметка о причине метки.',
     ],
 
+    // Tabs above the Lessons list (ListLessons::getTabs).
+    'tabs' => [
+        'all' => 'Все',
+        'drafts' => 'Черновики',
+    ],
+
     'table' => [
         'cover' => 'Обложка',
         'quiz_questions' => 'Вопросы',

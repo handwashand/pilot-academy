@@ -76,6 +76,12 @@ return [
         'color_tag_note_help' => 'A short note about why this tag is set.',
     ],
 
+    // Tabs above the Lessons list (ListLessons::getTabs).
+    'tabs' => [
+        'all' => 'All',
+        'drafts' => 'Drafts',
+    ],
+
     'table' => [
         'cover' => 'Cover',
         'quiz_questions' => 'Quiz Qs',

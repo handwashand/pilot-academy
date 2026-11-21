@@ -164,6 +164,12 @@ lists every lesson in that course.
 > **Add to course…** from the bulk actions to put them all in one course; they
 > join in the order the list shows them. A **Created by** column can be switched
 > on from the list's column menu.
+>
+> Tabs across the top of the list jump straight to **All**, **Drafts**, **Not in
+> any course** or one course, each with its count. The filters are always shown
+> above the table and apply as soon as you pick. The list shows 50 lessons a
+> page (25, 100 or all from the page-size menu), and it keeps your search,
+> filters and sort when you open a lesson and come back.
 
 > **Wrote the lesson somewhere else?** On the lesson's own form, the last
 > button in the **Lesson text** box's row of buttons, **Import a Markdown

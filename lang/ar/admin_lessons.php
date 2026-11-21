@@ -76,6 +76,12 @@ return [
         'color_tag_note_help' => 'ملاحظة قصيرة عن سبب هذه العلامة.',
     ],
 
+    // Tabs above the Lessons list (ListLessons::getTabs).
+    'tabs' => [
+        'all' => 'الكل',
+        'drafts' => 'المسودات',
+    ],
+
     'table' => [
         'cover' => 'الغلاف',
         'quiz_questions' => 'أسئلة الاختبار',

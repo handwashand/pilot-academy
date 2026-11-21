@@ -150,6 +150,7 @@ liste toutes les leçons de ce cours.
   ce cours**. Le même tableau s’ouvre avec **Sélectionner** dans le champ
   **Leçons** à la création d’un cours, et dans la liste **Leçons** vous pouvez
   cocher celles trouvées et choisir **Ajouter au cours…**.
+- Des onglets au-dessus de la liste des leçons mènent directement à **Toutes**, **Brouillons**, **Dans aucun cours** ou à un cours, avec leur nombre. Les filtres sont toujours affichés au-dessus du tableau et s’appliquent dès le choix. La liste affiche 50 leçons par page et garde la recherche, les filtres et le tri quand vous ouvrez une leçon puis revenez.
 - **Pour retirer une leçon de ce cours**, cliquez sur **Retirer du cours** sur sa
   ligne. Elle reste dans ses autres cours. Retirée de son seul cours, la leçon
   n’est plus dans aucun cours : les apprenants ne la voient plus, et elle reste

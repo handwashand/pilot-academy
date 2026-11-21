@@ -458,6 +458,49 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-21 — Lessons list: tabs, 50 per page, visible filters, remembered state
+
+The owner chose options A, B and C for the admin Lessons list, which has
+about 140 lessons in production.
+
+**A. Bigger pages, remembered state (`LessonsTable`):**
+- 50 rows by default, with 25, 100 or all.
+- `persistSearchInSession`, `persistFiltersInSession` and
+  `persistSortInSession`.
+
+**B. Tabs (`ListLessons::getTabs`):**
+- Tabs for All, Drafts, Not in any course, then one per course in course
+  order.
+- Courses come from `CourseResource::getEloquentQuery()` and lessons from
+  `LessonResource::getEloquentQuery()`, so creators get only their own.
+- Per-course counts are **one grouped query** on `course_lesson`, not one
+  per tab.
+- Labels are `admin_lessons.tabs.*`, in six languages.
+
+**C. Filters (`FiltersLayout::AboveContent`):** four columns, and
+`deferFilters(false)`, so there is no Apply button.
+
+**Not done:** option D, grouping by course, was declined. A shared lesson
+would show only under its home course.
+
+**Verified (run):**
+- `LessonsListTabsTest` (6 tests): tab order and counts, a course tab
+  including a shared lesson, the drafts and no-course tabs, creator scoping,
+  a filter applying with no Apply button, and 50 per page.
+- With the finding, sort, order, creator and translation suites: 72 passed.
+  Pint is clean.
+- In a seeded preview with 68 lessons:
+  - the tabs and counts render;
+  - 50 rows show;
+  - the filters sit above the table;
+  - a search survives opening a lesson and coming back.
+
+**Production (same day, owner's go-ahead):**
+- Courses 12–19 and lessons 124–147 were published.
+- The course order was set to Introduction, Sensors, CFMA, CVTA, Geofence,
+  16–19, then the drafts. Before, every course had `sort_order` 0 except the
+  introduction (1), so the introduction sorted last.
+
 ### 2026-11-21 — Home page: three lesson cards per course
 
 The owner chose 3 per course. The signed-in home page rendered every lesson

@@ -73,6 +73,12 @@ return [
         'color_tag_note_help' => 'Uma nota breve sobre esta etiqueta.',
     ],
 
+    // Tabs above the Lessons list (ListLessons::getTabs).
+    'tabs' => [
+        'all' => 'Todas',
+        'drafts' => 'Rascunhos',
+    ],
+
     'table' => [
         'cover' => 'Capa',
         'quiz_questions' => 'Perguntas',

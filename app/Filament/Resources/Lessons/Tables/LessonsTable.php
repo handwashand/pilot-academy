@@ -21,6 +21,7 @@ use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -36,6 +37,18 @@ class LessonsTable
             // Newest first: the lesson just written is the one being worked on.
             // Filament adds the key sort itself, so equal timestamps stay stable.
             ->defaultSort('created_at', 'desc')
+            // Fewer page turns with 140+ lessons, and coming back from a lesson
+            // keeps the search, filters and sort instead of starting over.
+            ->paginated([25, 50, 100, 'all'])
+            ->defaultPaginationPageOption(50)
+            ->persistSearchInSession()
+            ->persistFiltersInSession()
+            ->persistSortInSession()
+            // Filters sit above the table rather than behind the funnel button.
+            ->filtersLayout(FiltersLayout::AboveContent)
+            ->filtersFormColumns(4)
+            // Always on screen, so they apply as you pick, without an Apply button.
+            ->deferFilters(false)
             ->modifyQueryUsing(fn (Builder $query): Builder => $query->with(['contentTranslations', 'courses.contentTranslations', 'creator']))
             ->columns([
                 ImageColumn::make('cover')
