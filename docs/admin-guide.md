@@ -386,7 +386,9 @@ The questions are added to the bank as course-only questions, written in the cou
 
 ### Upload your own certificate background
 
-Open the course → **Final quiz & certificate** → **Certificate background**. Upload a full-page image (A4, landscape). The name, course, date, number, and QR code are placed on top automatically. Leave it empty to use the built-in framed design.
+Open the course → **Final quiz & certificate** → **Certificate background**. Upload a full-page image (A4, landscape). The name, course, date, number, and QR code are placed on top automatically. Leave it empty to use the standard certificate.
+
+**The standard certificate** is the one every course prints unless it has its own background. Admins change it under **Settings → General → Certificate**: upload an A4 landscape image and save, and every course without its own background uses it from the next certificate on. Remove the image and save to go back to the built-in design. Already issued certificates keep their PDF until you press **Regenerate PDF**.
 
 ### Build a course from an existing one
 

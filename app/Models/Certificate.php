@@ -4,9 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class Certificate extends Model
 {
+    /** Folder on the public disk holding the standard background (Settings → Certificate). */
+    public const STANDARD_DIR = 'certificate-templates/standard';
+
+    /** The standard background's path on the public disk, or null to use the built-in layout. */
+    public static function standardTemplate(): ?string
+    {
+        return collect(Storage::disk('public')->files(self::STANDARD_DIR))
+            ->first(fn (string $file): bool => (bool) preg_match('/\.(png|jpe?g)$/i', $file));
+    }
+
     protected $fillable = [
         'user_id',
         'course_id',

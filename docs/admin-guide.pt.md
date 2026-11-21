@@ -367,7 +367,9 @@ As perguntas são adicionadas ao banco como perguntas só do curso, no idioma do
 
 ### Enviar o seu próprio fundo de certificado
 
-Abra o curso → **Teste final e certificado** → **Fundo do certificado (opcional)**. Envie uma imagem de página inteira (A4, paisagem). O nome, o curso, a data, o número e o código QR são colocados por cima automaticamente. Deixe vazio para usar o design com moldura embutido.
+Abra o curso → **Teste final e certificado** → **Fundo do certificado (opcional)**. Envie uma imagem de página inteira (A4, paisagem). O nome, o curso, a data, o número e o código QR são colocados por cima automaticamente. Deixe vazio para usar o certificado padrão.
+
+**O certificado padrão** é o que cada curso imprime quando não tem fundo próprio. Os administradores o alteram em **Configurações → Geral → Certificado**: envie uma imagem A4 paisagem e salve. Remova a imagem e salve para voltar ao design embutido. Certificados já emitidos mantêm o PDF até você clicar em **Gerar PDF novamente**.
 
 ### Criar um curso a partir de outro
 

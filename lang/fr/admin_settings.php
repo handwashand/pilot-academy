@@ -43,6 +43,14 @@ return [
         ],
     ],
 
+    // Settings → Certificate (App\Filament\Pages\SettingsCertificate).
+    'certificate' => [
+        'nav' => 'Certificat',
+        'subheading' => 'Le certificat standard utilisé par tous les cours. Téléversez un fond pour remplacer le modèle intégré ; un cours avec son propre fond le garde. Retirez l\'image pour revenir au modèle intégré.',
+        'background' => 'Fond standard du certificat',
+        'background_help' => 'Fond pleine page A4 paysage (≈3508×2480 px). Laissez vide pour utiliser la mise en page encadrée intégrée. Le nom, le cours, la date, le numéro et le QR code sont ajoutés automatiquement.',
+    ],
+
     'overlay' => [
         'profile' => 'Profil',
         'photo' => 'Photo',

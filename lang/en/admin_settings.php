@@ -46,6 +46,14 @@ return [
         ],
     ],
 
+    // Settings → Certificate (App\Filament\Pages\SettingsCertificate).
+    'certificate' => [
+        'nav' => 'Certificate',
+        'subheading' => 'The standard certificate every course uses. Upload a background to replace the built-in design; a course with its own background keeps it. Remove the upload to go back to the built-in design.',
+        'background' => 'Standard certificate background',
+        'background_help' => 'Full-page A4 landscape background (≈3508×2480 px). Leave empty to use the built-in framed layout. Name, course, date, number and QR are overlaid automatically.',
+    ],
+
     // Settings → Profile (App\Filament\Pages\SettingsProfile), one of the
     // tabs in the Settings cluster.
     'overlay' => [

@@ -24,6 +24,12 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **A new certificate design, and one standard you can change yourself.** Certificates
+  now have a cleaner framed layout with the Pilot Academy logo, a seal showing the
+  final score, and the verification QR code. Admins can replace this standard design
+  without any code change under **Settings → General → Certificate**: upload an A4 landscape
+  image and every course without its own background uses it. A course with its own
+  **Certificate background** still uses that one.
 - **Lesson cards draw their own cover, numbered.** A lesson without a cover now
   gets one automatically on the course page, the home page and Tutorials: the
   course's colour and pattern, with **Lesson 1**, **Lesson 2**… taken from the
@@ -349,6 +355,11 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Fixed
 
+- **Lesson pages fit a phone screen.** A lesson containing a table made the
+  whole page slightly wider than a phone, so it slid sideways. Long words and
+  web addresses in lesson text now wrap too.
+- **The search box is full height on a phone.** On the home page it had shrunk
+  to half the height of the Search button; it is now easy to tap.
 - **No more scrollbars in the panel.** The bar down the right of the page is
   gone, and the menu on the left no longer keeps an empty strip for one, so
   the rows have the same margin on both sides. Pages and the menu still scroll

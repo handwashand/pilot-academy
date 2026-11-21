@@ -18,8 +18,9 @@
     @endphp
 
     <div class="{{ $course ? 'grid lg:grid-cols-[1fr_280px] gap-6 lg:gap-8' : '' }}">
-        {{-- Main column --}}
-        <div>
+        {{-- Main column. min-w-0: a grid item otherwise grows to its widest
+             content (a lesson table), which pushed phones 46px sideways. --}}
+        <div class="min-w-0">
             @if($course)
                 <a href="{{ route('academy.course', $course) }}" class="text-sm text-brand font-semibold"><span class="inline-block rtl:rotate-180">&larr;</span> {{ $course->translated('title') }}</a>
             @else

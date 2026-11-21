@@ -372,7 +372,9 @@ Las preguntas se añaden al banco como preguntas solo del curso, en el idioma de
 
 ### Subir tu propio fondo de certificado
 
-Abre el curso → **Examen final y certificado** → **Fondo del certificado (opcional)**. Sube una imagen a página completa (A4, horizontal). El nombre, el curso, la fecha, el número y el código QR se colocan encima automáticamente. Déjalo vacío para usar el diseño con marco incorporado.
+Abre el curso → **Examen final y certificado** → **Fondo del certificado (opcional)**. Sube una imagen a página completa (A4, horizontal). El nombre, el curso, la fecha, el número y el código QR se colocan encima automáticamente. Déjalo vacío para usar el certificado estándar.
+
+**El certificado estándar** es el que imprime cada curso sin fondo propio. Los administradores lo cambian en **Ajustes → General → Certificado**: sube una imagen A4 horizontal y guarda. Quita la imagen y guarda para volver al diseño incorporado. Los certificados ya emitidos conservan su PDF hasta que pulses **Regenerar PDF**.
 
 ### Crear un curso a partir de otro
 

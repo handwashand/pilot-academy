@@ -85,6 +85,9 @@
         .prose-lesson img, .prose-lesson video { max-width: 100%; height: auto; border-radius: 8px; }
         .prose-lesson iframe { max-width: 100%; }
         .prose-lesson table { display: block; max-width: 100%; overflow-x: auto; }
+        /* A long URL or code word must wrap, not widen the page on a phone. */
+        .prose-lesson { overflow-wrap: anywhere; }
+        .prose-lesson pre { max-width: 100%; overflow-x: auto; }
 
         /* The lesson card cover (partials/lesson-cover). Colours and pattern
            come from the course's cover theme through --cover-* variables; a

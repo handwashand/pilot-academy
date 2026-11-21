@@ -66,11 +66,14 @@ class IssueCertificate
         $qrSvg = QrCode::format('svg')->size(220)->margin(0)->errorCorrection('M')
             ->generate($certificate->verifyUrl());
 
+        // The course's own background, else the standard one from Settings →
+        // Certificate, else none: the built-in layout is drawn.
         $background = null;
-        if ($certificate->course->certificate_template
-            && Storage::disk('public')->exists($certificate->course->certificate_template)
-        ) {
-            $background = Storage::disk('public')->path($certificate->course->certificate_template);
+        foreach ([$certificate->course->certificate_template, Certificate::standardTemplate()] as $template) {
+            if ($template && Storage::disk('public')->exists($template)) {
+                $background = Storage::disk('public')->path($template);
+                break;
+            }
         }
 
         // Deliberately the blue lockup, not the amber one used everywhere else:

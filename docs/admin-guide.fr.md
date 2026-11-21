@@ -374,7 +374,9 @@ Les questions sont ajoutées à la banque comme questions propres au cours, dans
 
 ### Importer votre propre fond de certificat
 
-Ouvrez le cours → **Quiz final et certificat** → **Fond du certificat (facultatif)**. Importez une image pleine page (A4, paysage). Le nom, le cours, la date, le numéro et le QR code sont placés par-dessus automatiquement. Laissez vide pour utiliser le modèle encadré intégré.
+Ouvrez le cours → **Quiz final et certificat** → **Fond du certificat (facultatif)**. Importez une image pleine page (A4, paysage). Le nom, le cours, la date, le numéro et le QR code sont placés par-dessus automatiquement. Laissez vide pour utiliser le certificat standard.
+
+**Le certificat standard** est celui que chaque cours imprime s’il n’a pas son propre fond. Les administrateurs le changent dans **Paramètres → Général → Certificat** : importez une image A4 paysage et enregistrez. Retirez l’image et enregistrez pour revenir au modèle intégré. Les certificats déjà délivrés gardent leur PDF jusqu’à ce que vous cliquiez sur **Régénérer le PDF**.
 
 ### Créer un cours à partir d’un cours existant
 

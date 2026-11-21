@@ -458,6 +458,164 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-21 — New certificate design and Settings → Certificate; four new courses; two phone fixes
+
+The owner was away for this work and asked for it to be committed on
+`develop` only (an explicit exception to standing instruction 5 for this
+task). It is not pushed.
+
+**Certificate.**
+- `certificates/pdf.blade.php` is redesigned:
+  - a navy frame with an amber hairline and blue corner brackets;
+  - the existing blue lockup, unchanged, centred at the top;
+  - a seal showing the score and the year;
+  - the QR code.
+- Brand colours only. There are no new strings: the seal's "PILOT ACADEMY" is
+  the brand name and is not translated.
+- **Settings → General → Certificate** (`SettingsCertificate`, admins only)
+  uploads the standard background, so the owner can swap the standard with no
+  code change. It is stored as the only file in
+  `Certificate::STANDARD_DIR`, so no table or migration is needed.
+- `IssueCertificate::renderPdf` uses the first that exists:
+  1. the course's own upload;
+  2. the standard upload;
+  3. the built-in layout.
+- Strings (`admin_settings.certificate.*`) are in six languages. The course
+  help text now points to the standard. Guides in six languages and the
+  changelog were updated.
+- `StandardCertificateTest` has 6 tests. Rendered PDFs were checked by eye in
+  English and with a long Russian course title.
+
+**Phone fixes (found in the production review).**
+- The lesson page was 46px wider than a 375px phone. Its grid column grew to
+  the width of a lesson table. Fixed with `min-w-0` on the main column, plus
+  `overflow-wrap: anywhere` and scrolling `pre` in `.prose-lesson`.
+- The home search box was 22px tall: `flex-1` in the stacked layout let it
+  shrink. Fixed with `min-h-11`, which is already in the bundle.
+- Both were checked in a local preview at 375px: the page is exactly 375px
+  wide with a 12-column table, and the search box is 44px.
+
+**Courses (production, all drafts, final quiz at 80%).** All are written from
+docs.pilot-gps.com, with docs screenshots linked. Each lesson has 4 questions
+of 4 options.
+
+| Course | Lessons | Final questions |
+| --- | --- | --- |
+| 16 Mobile Fleet Specialist: PILOT on the Go | 125–130 | 10 |
+| 17 Driver Identity & Accountability | 131–136 | 11 |
+| 18 Fleet Maintenance & Cost Control | 137–142 | 9 |
+| 19 Routes, Bus Lines & Passenger Operations | 143–147 | 9 |
+
+- Lessons 42 and 43 (media files, dashcam panel) were published in CVTA, and
+  questions 229 and 231 were added to its bank.
+- The builder (session scratchpad, `cbuild.js`) should wait for the redirect
+  after Create, not sleep a fixed time. A slow create looked like a failure
+  twice, though the lesson existed.
+
+**Production review.** No 500s, no console errors, and no sideways scroll on
+the admin or student pages checked, apart from the lesson page fixed above.
+The Courses and Lessons menu badges count drafts, as designed.
+- **Not done, needs the owner:** reorder the published courses so the
+  introduction comes first. "Start here" currently opens the Geofence course.
+  The tool permission refused the production write.
+- **Noted:**
+  - The home page HTML takes about 5.6s on production.
+  - The signed-in home page lists every lesson card of every course: 16,000px
+    on a phone.
+  - The review script clicked "Final quiz — start" on the Geofence course
+    with the admin account.
+
+### 2026-11-21 — The three missing content-plan lessons written (drafts)
+
+The videos were found on the PILOT YouTube channel. Only the scheduler video
+is embedded in docs.pilot-gps.com: the docs are a Dr.Explain site with no
+page list, so the site was crawled from `index.html` (743 pages, 22 with a
+video). Titles were read through YouTube's oEmbed.
+- **122** Speed Limits in Geofences and the Speed Report (`ecrxGB-cqsI`),
+  in course 7.
+- **123** Speed Limit Notification in a Geofence (`wrP64n0YX6o`), in
+  course 7. The docs have no page for this. It is built from the
+  notification docs: Speed plus Geofences "In", joined with AND.
+- **124** Report Scheduler (`ORzhSIM_AR4`), in course 15. Its questions 691
+  and 692 were added to that final bank (now 13).
+
+Each lesson has 4 questions of 4 options. Questions 683 and 687 are meant for
+course 7's bank, but they wait until lessons 122 and 123 are published,
+because course 7 is live.
+
+**Lessons in no course:** only 112 (Working Hours Notifications, a draft).
+Ids 9–16 and 44–52 are deleted. Drafts inside courses: 42, 43, 53, 54, 55,
+121, 122, 123 and 124.
+
+### 2026-11-20 — October/November content plan: four new courses in production
+
+Every production lesson (ids 1–135) was read and compared with the October
+and November rows of the content plan. Most rows were already covered by
+lessons 112–121, which someone else had added. Only three rows are really
+missing: speed limits in geofences (video #21), the speed limit notification
+in a geofence (#20), and the report scheduler (#29). Their YouTube links are
+needed from the owner, because YouTube refuses automated search.
+
+**Duplicates: the owner chose to keep both in every pair:**
+- 1/60, 2/120, 5/56: short intros in Platform basics, rich lessons elsewhere;
+- 78/114: toll roads;
+- 32/57 and 33/121: these complement each other.
+
+**Done in production (no deletions):**
+- Lessons 56, 57 and 121 were added to Mastering Sensors (4).
+- Lesson 114 got its own slug (`toll-roads-gates-scheduler-and-reports`),
+  because it clashed with lesson 78, and was added to the Geofence course (7).
+  It is still a draft.
+- Four new draft courses, each with the final quiz switched on at 80%:
+  - **12 Partner Admin Panel:** 60, 61, 120, 64, 27, 68, 69, 24, 26, 25.
+  - **13 PILOT Task Management (PTM):** 115, 74, 72, 113, 71, 65, 70.
+  - **14 Integrations & Tools:** 67, 117, 66, 21, 20, 63, 62, 111.
+  - **15 Reports in Practice:** 118, 73, 119, 116.
+- Leading spaces were trimmed from the titles of lessons 62, 63, 66, 67 and 72.
+
+**Final banks (2026-11-21):** questions were attached with **Attach lesson
+question**:
+- 12: 11 questions;
+- 13: 12 questions;
+- 14: 12 questions;
+- 15: 11 questions.
+
+All are single-answer, with 3–4 options, taken from each course's lessons.
+Questions with only 2 options (330, 365, 405, 420) and demo-trivia questions
+were left out.
+
+**Wrong content found: lesson 66**, "Understanding and Using Command
+Templates". It is published, but its text, its 8 questions and its YouTube
+playlist teach command templates in **Sibelius** (music-notation software),
+not PILOT. It was taken out of course 14, then **rewritten** on the owner's request.
+
+**Lesson 66 rewritten:** "Command Templates: Save, Share and Reuse Commands".
+- It was written from docs.pilot-gps.com: `command_templates` and its six
+  subpages, covering create, variable parameters, apply and delete, the object
+  menu, several devices, user access, JSON export and import, and notification
+  triggers.
+- It has 6 docs screenshots (linked from docs.pilot-gps.com, not uploaded),
+  PILOT's own video `youtu.be/-0TPeyYRN7E`, and 8 new questions with 4
+  options each. The right answer is spread across positions.
+- The Sibelius questions (362–369) were replaced.
+- It is back in course 14. Its slug is unchanged.
+
+**Published on the owner's request:** lessons 64, 73, 113, 114, 116, 117, 118,
+119 and 120. Lesson 114 is now live in the published Geofence course; a
+student URL returned 200.
+
+**Still open:**
+- Lessons 64, 73, 113, 114, 116, 117, 118, 119 and 120 are drafts.
+- The three missing lessons.
+- Marking the sheet.
+
+**How it was done:** the Playwright plugin would not connect, so it was done
+with puppeteer-core and the installed Chrome, from the session scratchpad.
+Lessons were attached through the Lessons tab's `attach` action, through
+Livewire. That tab loads lazily: calling it before it has rendered returns a
+500 ("$table must not be accessed before initialization"), so scroll it into
+view first.
+
 ### 2026-11-12 — No scrollbars in the panel
 
 The owner asked to remove the dashboard's scrollbar and the space at the right

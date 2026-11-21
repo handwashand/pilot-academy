@@ -40,7 +40,7 @@ return [
         'unlimited' => 'Unlimited',
         'max_attempts_help' => 'Leave empty for unlimited attempts.',
         'certificate_template' => 'Certificate background (optional)',
-        'certificate_template_help' => 'Full-page A4 landscape background (≈3508×2480 px). Leave empty to use the built-in framed layout. Name, course, date, number and QR are overlaid automatically.',
+        'certificate_template_help' => 'Full-page A4 landscape background (≈3508×2480 px). Leave empty to use the standard certificate (Settings → General → Certificate). Name, course, date, number and QR are overlaid automatically.',
         'created_by_on' => 'Created by :name on :date',
         'created_by_unknown' => 'Created by: unknown',
         'lessons' => 'Lessons',
