@@ -32,8 +32,19 @@
     @else
         <div class="mb-8 rounded-2xl bg-gradient-to-br from-brand to-navy text-white p-7 sm:p-9">
             <h1 class="text-2xl sm:text-3xl font-extrabold mb-1">{{ __t('academy.home.hero_title') }}</h1>
-            <p class="text-white mb-5">{{ __t('academy.home.hero_intro') }}</p>
-            <form method="POST" action="{{ route('academy.name') }}" class="flex flex-col sm:flex-row gap-3 max-w-md">
+            <p class="text-white mb-3">{{ __t('academy.home.hero_intro') }}</p>
+            @php
+                $heroLessons = $courses->flatMap(fn ($c) => $c->publishedLessons->pluck('id'))->unique()->count();
+            @endphp
+            {{-- What is on offer, at a glance, before anyone types a name. --}}
+            <p class="hero-stats mb-5">
+                <span>{{ __tc('academy.home.hero_courses', $courses->count()) }}</span>
+                <span aria-hidden="true">·</span>
+                <span>{{ __tc('academy.common.lessons', $heroLessons) }}</span>
+                <span aria-hidden="true">·</span>
+                <span>{{ __t('academy.home.hero_certificates') }}</span>
+            </p>
+            <form method="POST" action="{{ route('academy.name') }}" class="flex flex-col sm:flex-row gap-3 max-w-xl">
                 @csrf
                 {{-- bg-white is load-bearing: Tailwind's preflight makes form
                      controls transparent, so without it the dark text sits
@@ -44,9 +55,10 @@
                      this reads correctly before CI rebuilds it. --}}
                 <input type="text" name="name" required placeholder="{{ __t('academy.home.your_name') }}" aria-label="{{ __t('academy.home.your_name') }}"
                        class="flex-1 rounded-lg bg-white px-4 py-2.5 text-slate-800 focus:ring-2 focus:ring-white">
-                <button class="rounded-lg bg-white text-navy font-semibold px-5 py-2.5 hover:bg-slate-100 focus:ring-2 focus:ring-white">
+                <button class="rounded-lg bg-white text-navy font-semibold px-5 py-2.5 whitespace-nowrap hover:bg-slate-100 focus:ring-2 focus:ring-white">
                     {{ __t('academy.home.start_learning') }}
                 </button>
+                <a href="{{ route('academy.courses') }}" class="hero-browse">{{ __t('academy.home.browse_courses') }}</a>
             </form>
             {{-- Full white, not white/70: over the brand blue that was 3.2:1.
                  The hierarchy comes from the smaller size instead. --}}

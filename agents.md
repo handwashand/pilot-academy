@@ -458,6 +458,31 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-22 — Visitor hero stats and Browse courses; one cover style
+
+Items 2 and 4 of the home page review.
+
+- **Hero (`academy/home.blade.php`, visitors only):** a line under the intro
+  with the course count, the lesson count (unique published lessons, so a
+  shared lesson counts once) and "certificates on completion", plus a
+  **Browse courses** outline button to `/courses` beside Start learning.
+  Keys `academy.home.{hero_courses,hero_certificates,browse_courses}`, six
+  languages. Styles `.hero-stats` and `.hero-browse` are inline in
+  `partials/head` (`border-white` is not in the bundle). Start learning
+  got `whitespace-nowrap`: it wrapped to two lines at 1280px.
+- **One cover style (production content):** the 8 Pilot Monitoring lessons
+  (ids 1–8) had media-library "01, 02…" covers; `media_item_id` was cleared
+  so they use the generated numbered covers. The media items are kept.
+  **Saving those lessons on production 500s** (the legacy `video_path`
+  FileUpload bug fixed on `laravel` 2026-10-23, not deployed). The script
+  first set each `video_sources.N.video_path` to `{key: path}`; videos were
+  checked intact afterwards.
+
+**Verified (run):** `HomeCourseCardTest` (new hero test) with the
+translation, next-step, lesson-window and smoke suites: 50 passed. Preview
+at 390px and 1280px: no sideways scroll, button 44px on a phone. Production
+home has no media-library covers left.
+
 ### 2026-11-22 — Home page course cards: cover, one button, no visitor progress
 
 The owner asked for a nicer, more appealing home page (item 3 of the review).

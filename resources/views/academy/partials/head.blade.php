@@ -141,6 +141,14 @@
             box-shadow: 0 4px 12px rgba(20, 99, 255, .25); transition: background .15s, transform .15s;
         }
         .course-card__cta:hover { background: #0a2540; transform: translateY(-1px); }
+        /* Visitor hero: what is on offer, and a way to look before signing in. */
+        .hero-stats { display: flex; flex-wrap: wrap; gap: .25rem .6rem; font-size: .875rem; font-weight: 600; color: #fff; opacity: .95; }
+        .hero-browse {
+            display: inline-flex; align-items: center; justify-content: center; min-height: 2.75rem; padding: 0 1.25rem;
+            border-radius: .5rem; border: 1.5px solid rgba(255, 255, 255, .85); color: #fff; font-weight: 600; white-space: nowrap;
+            transition: background .15s;
+        }
+        .hero-browse:hover, .hero-browse:focus-visible { background: rgba(255, 255, 255, .14); }
         @media (min-width: 640px) {
             .course-card { flex-direction: row; }
             .course-card__cover { width: 13rem; height: auto; min-height: 11rem; }

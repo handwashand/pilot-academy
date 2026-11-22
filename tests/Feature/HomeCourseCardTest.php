@@ -47,6 +47,17 @@ class HomeCourseCardTest extends TestCase
         $this->assertStringNotContainsString('aria-label="'.e(__t('academy.common.course_progress_aria', ['course' => $this->course->title, 'done' => 0, 'total' => $this->course->publishedLessons()->count()])), $html);
     }
 
+    public function test_the_visitor_hero_shows_what_is_on_offer_and_links_to_the_courses(): void
+    {
+        $lessons = $this->course->publishedLessons()->count();
+
+        $this->get('/')->assertOk()
+            ->assertSee(__tc('academy.home.hero_courses', 1))
+            ->assertSee(__tc('academy.common.lessons', $lessons))
+            ->assertSee(__t('academy.home.hero_certificates'))
+            ->assertSee('href="'.route('academy.courses').'" class="hero-browse"', false);
+    }
+
     public function test_a_student_part_way_through_continues_at_the_first_unfinished_lesson(): void
     {
         $learner = $this->learner();
