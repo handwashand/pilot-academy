@@ -82,6 +82,9 @@ return [
 
     'home' => [
         'see_all_lessons' => 'See all lessons (:count)',
+        'start_course' => 'Start course',
+        'continue_course' => 'Continue',
+        'review_course' => 'Review course',
         'welcome' => 'Welcome, :name',
         'welcome_start' => 'Start with the first lesson below — your progress is saved to your account.',
         'welcome_back' => 'Welcome back, :name',

@@ -284,6 +284,8 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Changed
 
+- **Course cards on the home page look like courses.** Each course now has a cover in its own colours and pattern (or its banner, if it has one) with its lesson count, and one clear button: **Start course**, **Continue** (straight to the first unfinished lesson) or **Review course**. Visitors no longer see an empty progress bar.
+
 - **Certificates: Preview, and a shorter row.** Each certificate now has one **Preview** button, which opens the PDF in a new tab. Download, Resend email, Regenerate PDF, Edit name and Revoke moved into the **⋮** menu at the end of the row.
 
 - **The Lessons list is quicker to work through.** Tabs across the top jump to

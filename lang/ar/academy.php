@@ -86,6 +86,9 @@ return [
 
     'home' => [
         'see_all_lessons' => 'عرض كل الدروس (:count)',
+        'start_course' => 'ابدأ الدورة',
+        'continue_course' => 'تابع',
+        'review_course' => 'راجع الدورة',
         'welcome' => 'أهلًا بك، :name',
         'welcome_start' => 'ابدأ بالدرس الأول أدناه — يُحفظ تقدّمك في حسابك.',
         'welcome_back' => 'أهلًا بعودتك، :name',

@@ -114,6 +114,38 @@
             font-size: .6875rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
         }
 
+        /* The home page course card: a cover panel in the course's own theme
+           (a band on a phone, a side column from 640px), then the text. Inline
+           for the same reason as .lesson-cover. */
+        .course-card { display: flex; flex-direction: column; overflow: hidden; }
+        .course-card__cover {
+            position: relative; flex-shrink: 0; height: 6.5rem; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, var(--cover-from, #1463ff), var(--cover-to, #0a2540));
+        }
+        .course-card__cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .course-card__icon {
+            position: relative; display: flex; align-items: center; justify-content: center;
+            width: 3.25rem; height: 3.25rem; border-radius: 999px;
+            background: rgba(255, 255, 255, .95); color: #0a2540; box-shadow: 0 6px 18px rgba(0, 0, 0, .25);
+        }
+        .course-card__count {
+            position: absolute; bottom: .75rem; inset-inline-start: .75rem;
+            padding: .2rem .6rem; border-radius: 999px; background: rgba(10, 37, 64, .72); color: #fff;
+            font-size: .75rem; font-weight: 700;
+        }
+        .course-card__body { padding: 1.25rem 1.5rem 1.5rem; min-width: 0; flex: 1; }
+        .course-card__cta {
+            display: inline-flex; align-items: center; gap: .4rem; min-height: 2.75rem; padding: 0 1.25rem;
+            border-radius: .75rem; background: #1463ff; color: #fff; font-weight: 700;
+            box-shadow: 0 4px 12px rgba(20, 99, 255, .25); transition: background .15s, transform .15s;
+        }
+        .course-card__cta:hover { background: #0a2540; transform: translateY(-1px); }
+        @media (min-width: 640px) {
+            .course-card { flex-direction: row; }
+            .course-card__cover { width: 13rem; height: auto; min-height: 11rem; }
+        }
+
         /* Transcripts are plain text with real line breaks. Tailwind's
            `whitespace-pre-line` is not in the committed bundle. */
         .transcript { white-space: pre-line; }

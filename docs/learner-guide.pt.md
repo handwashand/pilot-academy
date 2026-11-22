@@ -24,6 +24,8 @@ O cartão no topo da página inicial sempre mostra o próximo passo: começar, c
 
 A busca encontra cursos e aulas pelo nome, e também palavras faladas em um vídeo quando há transcrição.
 
+Cada curso na página inicial tem um botão: **Começar o curso** antes de iniciar, **Continuar** para abrir a primeira aula que você não terminou e **Revisar o curso** quando todas as aulas estiverem concluídas.
+
 ## Usar estudos de caso
 
 Abra **Estudos de caso** na navegação da academia para encontrar guias práticos de implantação do Pilot. No celular, o botão pode aparecer como **CS**.

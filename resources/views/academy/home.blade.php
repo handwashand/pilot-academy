@@ -185,12 +185,37 @@
             $total = $course->published_lessons_count;
             $done = $course->publishedLessons->whereIn('id', $completed)->count();
             $pct = $total > 0 ? round($done / $total * 100) : 0;
+            // One button that says where the student is: start, carry on at the
+            // first unfinished lesson, or look back once everything is done.
+            $firstOpenLesson = $course->publishedLessons->first(fn ($l) => ! in_array($l->id, $completed, true));
+            if ($done === 0) {
+                [$ctaLabel, $ctaUrl] = [__t('academy.home.start_course'), route('academy.course', $course)];
+            } elseif ($firstOpenLesson) {
+                [$ctaLabel, $ctaUrl] = [__t('academy.home.continue_course'), route('academy.lesson', [$course, $firstOpenLesson])];
+            } else {
+                [$ctaLabel, $ctaUrl] = [__t('academy.home.review_course'), route('academy.course', $course)];
+            }
+            $theme = $course->coverTheme();
         @endphp
 
         <section class="mb-10">
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 mb-6">
-                <div class="flex items-start justify-between gap-4 flex-wrap">
-                    <div>
+            <div class="course-card bg-white rounded-2xl border border-slate-200 shadow-sm mb-6">
+                <a href="{{ route('academy.course', $course) }}" tabindex="-1" aria-hidden="true" class="course-card__cover"
+                   style="--cover-from: {{ $theme['from'] }}; --cover-to: {{ $theme['to'] }};">
+                    @if($course->thumbnail_url)
+                        <img src="{{ $course->thumbnail_url }}" alt="">
+                    @else
+                        <span class="lesson-cover__pattern" style="--cover-pattern: url('{{ $theme['pattern'] }}');"></span>
+                        <span class="course-card__icon">
+                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
+                            </svg>
+                        </span>
+                    @endif
+                    <span class="course-card__count">{{ __tc('academy.common.lessons', $total) }}</span>
+                </a>
+                <div class="course-card__body flex items-start justify-between gap-4 flex-wrap">
+                    <div class="min-w-0 flex-1">
                         <div class="flex items-center gap-2 mb-1">
                             <span class="text-xs font-semibold uppercase tracking-wide text-brand">{{ __t('academy.common.course') }}</span>
                             @if($course->audience_label)
@@ -199,19 +224,16 @@
                         </div>
                         <h2 class="text-xl font-extrabold text-navy"><a href="{{ route('academy.course', $course) }}" class="hover:text-brand transition">{{ $course->translated('title') }}</a></h2>
                         <p class="text-slate-500 mt-1 max-w-2xl line-clamp-3">{{ $course->translated('description') }}</p>
-                        <div class="mt-2 flex flex-wrap items-center gap-2 text-sm text-slate-500">
-                            <span>{{ __tc('academy.common.lessons', $total) }}</span>
-                            @if($course->durationLabel())
-                                <span aria-hidden="true">·</span>
-                                <span>{{ $course->durationLabel() }}</span>
-                            @endif
-                        </div>
-                        @guest
-                            <a href="{{ route('academy.course', $course) }}" class="mt-3 inline-flex items-center min-h-11 font-semibold text-brand hover:underline">
-                                {{ __t('academy.tutorials.open_course') }} <span aria-hidden="true" class="ms-1 rtl:rotate-180">&rarr;</span>
-                            </a>
-                        @endguest
+                        {{-- The lesson count is on the cover; only the duration is repeated here. --}}
+                        @if($course->durationLabel())
+                            <p class="mt-2 text-sm text-slate-500">{{ $course->durationLabel() }}</p>
+                        @endif
+                        <a href="{{ $ctaUrl }}" class="course-card__cta mt-4">
+                            {{ $ctaLabel }} <span aria-hidden="true" class="rtl:rotate-180">&rarr;</span>
+                        </a>
                     </div>
+                    {{-- Progress means nothing to a visitor, who has none. --}}
+                    @auth
                     <div class="text-end">
                         <div class="text-sm text-slate-500 mb-1">{{ __t('academy.common.lessons_done', ['done' => $done, 'total' => $total]) }}</div>
                         <div class="w-44 h-2 rounded-full bg-slate-100 overflow-hidden"
@@ -220,6 +242,7 @@
                             <div class="h-full bg-ok" style="width: {{ $pct }}%"></div>
                         </div>
                     </div>
+                    @endauth
                 </div>
             </div>
 

@@ -71,6 +71,9 @@ return [
 
     'home' => [
         'see_all_lessons' => 'Все уроки (:count)',
+        'start_course' => 'Начать курс',
+        'continue_course' => 'Продолжить',
+        'review_course' => 'Повторить курс',
         'welcome' => 'Добро пожаловать, :name',
         'welcome_start' => 'Начните с первого урока ниже — прогресс сохраняется в вашем аккаунте.',
         'welcome_back' => 'С возвращением, :name',

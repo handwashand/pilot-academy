@@ -458,6 +458,31 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-22 — Home page course cards: cover, one button, no visitor progress
+
+The owner asked for a nicer, more appealing home page (item 3 of the review).
+
+- **`academy/home.blade.php`:** the course card is now `.course-card`: a
+  cover panel in the course's theme (`Course::coverTheme()`, the same
+  gradient and pattern as the lesson covers), or the course banner if set,
+  with a lesson-count chip. It is a band on a phone and a 13rem side column
+  from 640px.
+- **One button** (`.course-card__cta`): **Start course** (nothing done →
+  course page), **Continue** (→ the first unfinished lesson) or **Review
+  course** (all done → course page). Labels `academy.home.{start,continue,
+  review}_course`, six languages.
+- **Visitors** no longer get a "0 / N lessons" bar; it is inside `@auth`.
+  The lesson count moved to the cover, so the text line shows only the
+  duration.
+- **Styles are inline** in `partials/head` (`.course-card*`), like
+  `.lesson-cover`, so no bundle rebuild is needed.
+
+**Verified (run):** `HomeCourseCardTest` (3: visitor gets Start and no bar,
+part-way gets Continue to lesson 2, finished gets Review) with the home,
+learner, smoke, translation, cover, publishing and progress suites: 98
+passed. In a seeded preview at 1280px and 390px, as a visitor and a learner:
+the cover, chip and button render, with no sideways scroll.
+
 ### 2026-11-22 — Certificates: Preview, a row menu, and Delete as a right
 
 The owner found the Certificates row too long and asked for a preview

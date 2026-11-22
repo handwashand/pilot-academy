@@ -24,6 +24,8 @@ La carte en haut de l'accueil indique toujours la prochaine étape : commencer, 
 
 La recherche trouve les cours et les leçons par nom, ainsi que les mots prononcés dans une vidéo lorsqu'une transcription existe.
 
+Chaque cours de la page d’accueil a un bouton : **Commencer le cours** avant de débuter, **Continuer** pour ouvrir la première leçon non terminée, et **Revoir le cours** une fois toutes les leçons terminées.
+
 ## Utiliser les études de cas
 
 Ouvrez **Études de cas** dans la navigation de l'académie pour trouver des guides pratiques de déploiement de Pilot. Sur un téléphone, le bouton peut afficher **CS**.

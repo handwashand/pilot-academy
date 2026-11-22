@@ -24,6 +24,8 @@ La tarjeta superior de la página principal siempre muestra tu siguiente paso: e
 
 La búsqueda encuentra cursos y lecciones por nombre, y también palabras dichas en un video si tiene transcripción.
 
+Cada curso de la página de inicio tiene un botón: **Empezar el curso** antes de comenzar, **Continuar** para abrir la primera lección que no has terminado y **Repasar el curso** cuando terminas todas las lecciones.
+
 ## Usar casos prácticos
 
 Abre **Casos prácticos** en la navegación de la academia para encontrar guías prácticas de implementación de Pilot. En un teléfono, el botón puede mostrarse como **CS**.
