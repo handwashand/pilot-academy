@@ -4,6 +4,10 @@
 
 return [
     'certificates' => [
+        'preview' => 'Aperçu',
+        'delete' => 'Supprimer',
+        'delete_description' => 'Le certificat et son PDF seront supprimés définitivement. Son lien public ne le vérifiera plus, et l\'apprenant pourra repasser le quiz final pour en obtenir un nouveau. Pour garder une trace, révoquez-le plutôt.',
+        'deleted' => 'Certificat supprimé',
         'export' => 'Exporter en CSV',
         'resend' => 'Renvoyer l’e-mail',
         'resend_description' => 'Envoyer le certificat par e-mail à :email.',

@@ -630,6 +630,8 @@ Abre la dirección de tu sitio + `/certificates/` + el número del certificado (
 | Se emitió un certificado por error | **Certificados** → **Revocar**. La comprobación pública muestra «Revocado». ¿Cambias de idea? **Restaurar**. |
 | El PDF está vacío o no se descarga | **Certificados** → **Regenerar PDF** y luego **Descargar** de nuevo. |
 | El nombre de un certificado está mal | **Certificados** → la fila → **Editar nombre**. El PDF se reimprime con el mismo número. Usa **Reenviar correo** si el estudiante debe recibir la copia corregida. |
+| Quieres ver un certificado | **Certificados** → **Vista previa** abre el PDF en una pestaña nueva. Las demás acciones están en el menú **⋮** al final de la fila. |
+| Un certificado debe desaparecer por completo | **Certificados** → **⋮** → **Eliminar**. Borra el certificado y su PDF para siempre, y el estudiante puede volver a hacer el examen final. Solo lo ven los administradores con **Eliminar certificados para siempre**. Para conservar un registro, revócalo. |
 | Los correos de certificados nunca llegan | **Ajustes → Correo** indica si la academia envía correo de verdad. Comprueba con **Enviar correo de prueba**. Los ajustes en sí están en el archivo `.env` del servidor. |
 | Necesitas una lista para un informe | **Certificados** → **Exportar CSV** (ábrelo en Excel o Google Sheets). |
 | Necesitas el progreso de todos, no solo los certificados | **Usuarios** → **Exportar progreso de estudiantes**. Una fila por estudiante: lecciones hechas, certificados, última actividad. |

@@ -458,6 +458,40 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-22 — Certificates: Preview, a row menu, and Delete as a right
+
+The owner found the Certificates row too long and asked for a preview
+instead of download, and for "super admins" to delete certificates.
+
+- **`CertificatesTable`:** **Preview** (the PDF's public-disk URL, new tab)
+  is the one visible row action. Download, Resend, Regenerate, Edit name,
+  Revoke/Restore and Delete sit in Filament's `ActionGroup` (⋮).
+- **There is no super-admin role.** The owner chose a per-account right:
+  `User::PERMISSION_CERTIFICATES_DELETE` (`certificates.delete`), checked by
+  `canDeleteCertificates()` (admin **and** the right), ticked under
+  People → Users like the Recycle bin right.
+- **Delete removes for good** (owner's choice): the record and its PDF. The
+  public check page then shows "not found" (it answers 200, not 404), and
+  the student can take the final quiz again. Certificates are not soft
+  deleted, so nothing goes to the Recycle bin. Revoke is unchanged.
+- Strings in six languages; the six admin guides each gained two rows in the
+  "what to do when" table; changelog under 2.2.0.
+
+**Verified (run):** `CertificateActionsTest` (4: preview URL and new tab,
+delete hidden without the right, delete with the right removes record and
+PDF, the right does nothing for a creator), plus the name-fix, standard
+certificate, translation, recycle-bin and guide suites: 69 passed, then 12.
+Pint clean over `app tests lang`. **Not run:** the page in a browser.
+
+**Production content the same day:** courses 11, 10, 8, 9 and 6 published;
+lessons 122, 123 and 112 published (112 into course 6), questions 683, 687
+(course 7) and 568 (course 6) added to final banks; toll lessons 114 merged
+into 78 and 114 deleted; typed "1." numbers removed from questions in
+lessons 55, 59, 60, 61, 64, 65, 68, 69, 73 and 112; a third option added to
+the five yes/no questions (263, 277, 330, 405, 420). A scan of all 275
+final-bank entries found none with fewer than 3 options. Production still
+runs the old nesting limit of 10, so 78's nested gate list was flattened.
+
 ### 2026-11-21 — Lessons list: tabs, 50 per page, visible filters, remembered state
 
 The owner chose options A, B and C for the admin Lessons list, which has

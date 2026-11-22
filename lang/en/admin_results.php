@@ -7,6 +7,10 @@
 
 return [
     'certificates' => [
+        'preview' => 'Preview',
+        'delete' => 'Delete',
+        'delete_description' => 'This removes the certificate and its PDF for good. Its public link will stop verifying, and the student can take the final quiz again to earn a new one. To keep a record, revoke it instead.',
+        'deleted' => 'Certificate deleted',
         'export' => 'Export CSV',
         'resend' => 'Resend email',
         'resend_description' => 'Email the certificate to :email.',

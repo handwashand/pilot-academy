@@ -29,6 +29,7 @@ return [
         'use_ai_generation' => 'Generar borradores de cursos con ChatGPT, DeepSeek o Claude',
         'download_videos' => 'Descargar los vídeos de las lecciones',
         'use_recycle_bin' => 'Abrir la papelera y restaurar contenido eliminado (solo administradores)',
+        'delete_certificates' => 'Eliminar certificados para siempre (solo administradores)',
         'lessons_done' => 'Lecciones hechas',
         'last_login' => 'Último acceso',
         'export' => 'Exportar progreso de estudiantes',

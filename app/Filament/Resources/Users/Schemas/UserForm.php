@@ -78,6 +78,7 @@ class UserForm
                         User::PERMISSION_AI_GENERATE => __t('admin_people.users.use_ai_generation'),
                         User::PERMISSION_VIDEO_DOWNLOAD => __t('admin_people.users.download_videos'),
                         User::PERMISSION_RECYCLE_BIN => __t('admin_people.users.use_recycle_bin'),
+                        User::PERMISSION_CERTIFICATES_DELETE => __t('admin_people.users.delete_certificates'),
                     ])
                     ->helperText(__t('admin_people.users.permissions_help'))
                     ->dehydrated(false)

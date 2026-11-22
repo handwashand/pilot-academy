@@ -29,6 +29,7 @@ return [
         'use_ai_generation' => 'Gerar rascunhos de cursos com ChatGPT, DeepSeek ou Claude',
         'download_videos' => 'Baixar os vídeos das aulas',
         'use_recycle_bin' => 'Abrir a lixeira e restaurar conteúdo excluído (somente administradores)',
+        'delete_certificates' => 'Excluir certificados para sempre (somente administradores)',
         'lessons_done' => 'Aulas concluídas',
         'last_login' => 'Último acesso',
         'export' => 'Exportar progresso dos alunos',

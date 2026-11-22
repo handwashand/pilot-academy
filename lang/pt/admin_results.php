@@ -4,6 +4,10 @@
 
 return [
     'certificates' => [
+        'preview' => 'Visualizar',
+        'delete' => 'Excluir',
+        'delete_description' => 'Isto exclui o certificado e seu PDF para sempre. O link público deixará de verificá-lo, e o aluno poderá refazer o quiz final para obter um novo. Para manter um registro, revogue-o.',
+        'deleted' => 'Certificado excluído',
         'export' => 'Exportar CSV',
         'resend' => 'Reenviar e-mail',
         'resend_description' => 'Enviar o certificado por e-mail para :email.',

@@ -33,6 +33,7 @@ return [
         'use_ai_generation' => 'توليد مسودات الدورات عبر ChatGPT أو DeepSeek أو Claude',
         'download_videos' => 'تنزيل فيديوهات الدروس',
         'use_recycle_bin' => 'فتح سلة المحذوفات واستعادة المحتوى المحذوف (للمسؤولين فقط)',
+        'delete_certificates' => 'حذف الشهادات نهائيًا (للمسؤولين فقط)',
         'lessons_done' => 'الدروس المنجزة',
         'last_login' => 'آخر تسجيل دخول',
         'export' => 'تصدير تقدّم المتعلّمين',

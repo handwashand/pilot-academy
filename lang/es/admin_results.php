@@ -4,6 +4,10 @@
 
 return [
     'certificates' => [
+        'preview' => 'Vista previa',
+        'delete' => 'Eliminar',
+        'delete_description' => 'Esto elimina el certificado y su PDF para siempre. Su enlace público dejará de verificarlo y el estudiante podrá volver a hacer el examen final para obtener uno nuevo. Para conservar un registro, revóquelo.',
+        'deleted' => 'Certificado eliminado',
         'export' => 'Exportar CSV',
         'resend' => 'Reenviar correo',
         'resend_description' => 'Enviar el certificado por correo a :email.',

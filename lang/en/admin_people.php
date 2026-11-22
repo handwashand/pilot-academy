@@ -33,6 +33,7 @@ return [
         'use_ai_generation' => 'Draft courses with ChatGPT, DeepSeek or Claude',
         'download_videos' => 'Download lesson videos',
         'use_recycle_bin' => 'Open the recycle bin and restore deleted content (admins only)',
+        'delete_certificates' => 'Delete certificates for good (admins only)',
         'lessons_done' => 'Lessons done',
         'last_login' => 'Last login',
         'export' => 'Export learner progress',

@@ -54,7 +54,7 @@ doing: building the training (**Content**), looking after the people taking it
 | **Content → Content health** | Everything broken for students right now, each with a link to fix it. A red number beside it means something needs fixing. |
 | **People → Users** | Everyone with an account, and their role. See each student's progress and certificates. |
 | **People → Partners** | The organisations that integrate and resell the Pilot system. Group students and see how many are certified. |
-| **Results → Certificates** | Every certificate that was issued. Download, resend, correct the name, or revoke them. |
+| **Results → Certificates** | Every certificate that was issued. Preview, download, resend, correct the name, revoke, or (with the right) delete them. |
 | **Results → Final quiz health** | Whether the final quiz is too easy, too hard, or about right. Admins only. |
 | **Results → Quiz attempts** | Every student's quiz attempts. Give one student another attempt when they have run out. Admins only. |
 | **Results → Student feedback** | What students said about every course, in one list. Admins only. |
@@ -655,6 +655,8 @@ Open your site address + `/certificates/` + the certificate number (or scan the 
 | A certificate was issued by mistake | **Certificates** → **Revoke**. Public check shows "Revoked". Changed your mind? **Restore**. |
 | The PDF is empty or won't download | **Certificates** → **Regenerate PDF**, then **Download** again. |
 | The name on a certificate is wrong | **Certificates** → the row → **Edit name**. The PDF is reprinted with the same number. Use **Resend email** if the student should get the corrected copy. |
+| You want to see a certificate | **Certificates** → **Preview** opens the PDF in a new tab. Download, Resend email, Regenerate PDF, Edit name and Revoke are in the **⋮** menu at the end of the row. |
+| A certificate must go completely | **Certificates** → **⋮** → **Delete**. It removes the certificate and its PDF for good: the public check finds nothing, and the student can take the final quiz again. Only admins given **Delete certificates for good** under **People → Users** see it. To keep a record, use **Revoke**. |
 | Certificate emails never arrive | **Settings → Mail** says whether the academy is really sending email. **Send test email** to check. The settings themselves live in the server’s `.env`. |
 | You need a list for a report | **Certificates** → **Export CSV** (open in Excel or Google Sheets). |
 | You need everyone's progress, not just certificates | **Users** → **Export learner progress**. One row per student: lessons done, certificates, last activity. |

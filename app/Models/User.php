@@ -72,6 +72,9 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasLocale
     /** Open Settings → Recycle bin and restore deleted content. Admins only, and only when given this. */
     public const PERMISSION_RECYCLE_BIN = 'recycle_bin.manage';
 
+    /** Delete a certificate for good (record and PDF). Admins only, and only when given this. */
+    public const PERMISSION_CERTIFICATES_DELETE = 'certificates.delete';
+
     /** New accounts are partners until an admin says otherwise. */
     protected $attributes = [
         'role' => self::ROLE_LEARNER,
@@ -230,6 +233,15 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasLocale
     public function canUseRecycleBin(): bool
     {
         return $this->isAdmin() && $this->hasPermission(self::PERMISSION_RECYCLE_BIN);
+    }
+
+    /**
+     * Deleting a certificate removes a public claim for good, so it is a
+     * per-account right on top of being an admin. Revoke stays for everyone.
+     */
+    public function canDeleteCertificates(): bool
+    {
+        return $this->isAdmin() && $this->hasPermission(self::PERMISSION_CERTIFICATES_DELETE);
     }
 
     public function canManageCaseStudy(?CaseStudy $caseStudy): bool

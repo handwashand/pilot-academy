@@ -643,6 +643,8 @@ Ouvrez l’adresse de votre site + `/certificates/` + le numéro du certificat (
 | Un certificat a été délivré par erreur | **Certificats** → **Révoquer**. La vérification publique affiche « Révoqué ». Vous changez d’avis ? **Restaurer**. |
 | Le PDF est vide ou ne se télécharge pas | **Certificats** → **Régénérer le PDF**, puis **Télécharger** de nouveau. |
 | Le nom sur un certificat est faux | **Certificats** → la ligne → **Modifier le nom**. Le PDF est réimprimé avec le même numéro. Utilisez **Renvoyer l’e-mail** si l’apprenant doit recevoir la copie corrigée. |
+| Vous voulez voir un certificat | **Certificats** → **Aperçu** ouvre le PDF dans un nouvel onglet. Les autres actions sont dans le menu **⋮** en bout de ligne. |
+| Un certificat doit disparaître complètement | **Certificats** → **⋮** → **Supprimer**. Le certificat et son PDF sont supprimés définitivement, et l’apprenant peut repasser le quiz final. Seuls les administrateurs ayant **Supprimer définitivement des certificats** le voient. Pour garder une trace, révoquez-le. |
 | Les e-mails de certificat n’arrivent jamais | **Paramètres → E-mail** indique si l’académie envoie vraiment des e-mails. Vérifiez avec **Envoyer un e-mail de test**. Les réglages eux-mêmes se trouvent dans le fichier `.env` du serveur. |
 | Il vous faut une liste pour un rapport | **Certificats** → **Exporter en CSV** (ouvrez-le dans Excel ou Google Sheets). |
 | Il vous faut la progression de tous, pas seulement les certificats | **Utilisateurs** → **Exporter la progression des apprenants**. Une ligne par apprenant : leçons faites, certificats, dernière activité. |

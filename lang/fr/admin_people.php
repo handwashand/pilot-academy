@@ -29,6 +29,7 @@ return [
         'use_ai_generation' => 'Générer des brouillons de cours avec ChatGPT, DeepSeek ou Claude',
         'download_videos' => 'Télécharger les vidéos des leçons',
         'use_recycle_bin' => 'Ouvrir la corbeille et restaurer le contenu supprimé (administrateurs uniquement)',
+        'delete_certificates' => 'Supprimer définitivement des certificats (administrateurs uniquement)',
         'lessons_done' => 'Leçons terminées',
         'last_login' => 'Dernière connexion',
         'export' => 'Exporter la progression des apprenants',

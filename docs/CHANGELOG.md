@@ -10,6 +10,8 @@ Add a new entry here whenever something visible to admins or students changes.
 
        ## <Month> <Year>   starts a release and adds a card to the page.
        ### Added | Changed | Fixed | Known limitations
+
+- **Delete a certificate for good.** Admins given **Delete certificates for good** under **People → Users** can delete a certificate from the **⋮** menu on **Certificates**. It removes the certificate and its PDF; the public check then finds nothing, and the student can take the final quiz again. The right is off for everyone until an admin ticks it. **Revoke** still keeps the record.
                            sets the category of the items under it — that is
                            what the filter pills and the coloured dots read.
                            "Limitations" and "Known issues" mean the same thing.
@@ -281,6 +283,8 @@ Add a new entry here whenever something visible to admins or students changes.
   written.
 
 ### Changed
+
+- **Certificates: Preview, and a shorter row.** Each certificate now has one **Preview** button, which opens the PDF in a new tab. Download, Resend email, Regenerate PDF, Edit name and Revoke moved into the **⋮** menu at the end of the row.
 
 - **The Lessons list is quicker to work through.** Tabs across the top jump to
   **All**, **Drafts**, **Not in any course** or any one course, with counts. The
