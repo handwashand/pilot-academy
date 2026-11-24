@@ -372,6 +372,8 @@ Abra o curso → **Teste final e certificado** → **Fundo do certificado (opcio
 
 **O certificado padrão** é o que cada curso imprime quando não tem fundo próprio. Os administradores o alteram em **Configurações → Geral → Certificado**: envie uma imagem A4 paisagem e salve. Remova a imagem e salve para voltar ao design embutido. Certificados já emitidos mantêm o PDF até você clicar em **Gerar PDF novamente**.
 
+O design embutido é emitido pela **Pilot Telematics**: traz o logotipo original da PILOT, a linha “Emitido pela Pilot Telematics (PTY) LTD através da PILOT Academy”, o curso concluído, quantas aulas ele tem e a nota final. Não mostra o tempo de estudo. Para incluir uma assinatura, preencha **Signatário** na mesma página: **Nome do signatário**, **Cargo** e, se quiser, uma **Imagem da assinatura** (um PNG com fundo transparente). Sem nome, nenhuma assinatura é impressa.
+
 ### Criar um curso a partir de outro
 
 Se o próximo curso for muito parecido com um que você já tem, não comece do zero.

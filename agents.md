@@ -458,6 +458,38 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-24 — Refined course certificate; the all-courses certificate dropped
+
+The owner asked for certificates that read as professional and carry the
+Pilot Telematics name and original logo. Options were drawn on a design
+canvas first (a private Claude Artifact, "All-courses certificate options").
+
+- **Logo:** `public/img/pilot-telematics-logo-blue.png` is the original blue
+  PILOT lockup restored **byte for byte** from `7b8957c6^` (same git blob
+  hash), before "ACADEMY" was added. No artwork was redrawn. The PDF uses it
+  instead of the ACADEMY lockup; the email and site are unchanged.
+- **`certificates/pdf.blade.php`:** an issuer line (`mail.certificate_pdf.issuer`),
+  the achievement as one sentence (`achievement_course`: the course, its
+  lesson count, the score), a signatory block, the seal, ID, verify URL and
+  QR, and a footer "Issued by Pilot Telematics (PTY) LTD through PILOT
+  Academy" (legal name from `docs/privacy-policy.md`). **No study time**,
+  on the owner's word.
+- **Signatory** (Settings → General → Certificate): name and title in
+  `Certificate::SIGNATORY_FILE` on the **private local disk**, the signature
+  PNG as the only file in `Certificate::SIGNATURE_DIR` on the public disk,
+  like the background. `Certificate::signatory()` returns null when no name
+  is set, and then nothing is printed. No table, no migration.
+- **The all-courses certificate was built halfway, then dropped** by the
+  owner ("many more courses will be added"). Its action, migration
+  (`2026_11_24_000003`), model scopes, dashboard guards and strings were
+  removed; the owner committed parts of it and of the removal along the way
+  (`e1371ae2` to `e68b9ce8`). Nothing of it remains, and it never reached a
+  database.
+
+**Verified (run):** see the report for `CertificateDesignTest` (company and
+achievement lines, no duration, the original logo embedded unchanged, the
+signatory saved from Settings and printed, an empty name prints nothing).
+
 ### 2026-11-24 — Who can use each AI token (**schema change**); the translate error reproduced
 
 The owner chose: when adding a token, **Just me / All admins / Everyone with

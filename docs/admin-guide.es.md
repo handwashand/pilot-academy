@@ -377,6 +377,8 @@ Abre el curso → **Examen final y certificado** → **Fondo del certificado (op
 
 **El certificado estándar** es el que imprime cada curso sin fondo propio. Los administradores lo cambian en **Ajustes → General → Certificado**: sube una imagen A4 horizontal y guarda. Quita la imagen y guarda para volver al diseño incorporado. Los certificados ya emitidos conservan su PDF hasta que pulses **Regenerar PDF**.
 
+El diseño incorporado lo emite **Pilot Telematics**: lleva el logotipo original de PILOT, la línea «Emitido por Pilot Telematics (PTY) LTD a través de PILOT Academy», el curso completado, cuántas lecciones tiene y la nota final. No muestra el tiempo de estudio. Para añadir una firma, rellena **Firmante** en la misma página: **Nombre del firmante**, **Cargo** y, si quieres, una **Imagen de la firma** (un PNG con fondo transparente). Sin nombre, no se imprime la firma.
+
 ### Crear un curso a partir de otro
 
 Si el siguiente curso se parece mucho a uno que ya tienes, no empieces desde una

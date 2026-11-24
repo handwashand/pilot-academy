@@ -396,6 +396,8 @@ Open the course → **Final quiz & certificate** → **Certificate background**.
 
 **The standard certificate** is the one every course prints unless it has its own background. Admins change it under **Settings → General → Certificate**: upload an A4 landscape image and save, and every course without its own background uses it from the next certificate on. Remove the image and save to go back to the built-in design. Already issued certificates keep their PDF until you press **Regenerate PDF**.
 
+The built-in design is issued by **Pilot Telematics**: it carries the original PILOT logo, the line "Issued by Pilot Telematics (PTY) LTD through PILOT Academy", and says which course was completed, how many lessons it has and the final score. It does not show study time. To add a signature, fill in **Signatory** on the same page: **Signatory name**, **Title** and, if you like, a **Signature image** (a PNG with a transparent background). With no name, no signature block is printed.
+
 ### Build a course from an existing one
 
 If the next course is much like one you already have, do not start from an empty

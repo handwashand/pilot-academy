@@ -379,6 +379,8 @@ Ouvrez le cours → **Quiz final et certificat** → **Fond du certificat (facul
 
 **Le certificat standard** est celui que chaque cours imprime s’il n’a pas son propre fond. Les administrateurs le changent dans **Paramètres → Général → Certificat** : importez une image A4 paysage et enregistrez. Retirez l’image et enregistrez pour revenir au modèle intégré. Les certificats déjà délivrés gardent leur PDF jusqu’à ce que vous cliquiez sur **Régénérer le PDF**.
 
+Le modèle intégré est délivré par **Pilot Telematics** : il porte le logo PILOT d’origine, la mention « Délivré par Pilot Telematics (PTY) LTD via PILOT Academy », le cours suivi, son nombre de leçons et le score final. Il n’indique pas la durée d’étude. Pour ajouter une signature, remplissez **Signataire** sur la même page : **Nom du signataire**, **Fonction** et, si vous le souhaitez, une **Image de la signature** (un PNG à fond transparent). Sans nom, aucune signature n’est imprimée.
+
 ### Créer un cours à partir d’un cours existant
 
 Si le prochain cours ressemble beaucoup à un cours que vous avez déjà, ne partez
