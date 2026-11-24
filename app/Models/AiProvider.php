@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Crypt;
 
 /**
@@ -12,6 +13,11 @@ use Illuminate\Support\Facades\Crypt;
  *
  * Only the known providers exist, each with a fixed official address, so a
  * saved token can never be sent to a host an admin typed in.
+ *
+ * Each provider has one shared row (switch, model, and an optional token for
+ * all admins or for everyone with the right) and any number of personal rows,
+ * one per admin, holding only that admin's own token. withToken() is the one
+ * place that decides which token a person gets.
  */
 class AiProvider extends Model
 {
@@ -117,7 +123,24 @@ class AiProvider extends Model
         ],
     ];
 
-    protected $fillable = ['provider', 'enabled', 'api_key', 'model'];
+    /** A personal token: only the admin who added it uses it. */
+    public const SCOPE_PERSONAL = 'personal';
+
+    /** A shared token every admin may use. */
+    public const SCOPE_ADMINS = 'admins';
+
+    /** A shared token for admins and anyone holding the provider's right (the original behaviour). */
+    public const SCOPE_EVERYONE = 'everyone';
+
+    /**
+     * Descript continues jobs from a background command with no one signed in,
+     * so it could not tell whose personal token a job was started with.
+     *
+     * @var array<int, string>
+     */
+    public const SHARED_ONLY = [self::DESCRIPT];
+
+    protected $fillable = ['provider', 'user_id', 'scope', 'added_by', 'enabled', 'api_key', 'model'];
 
     /** Never serialised, so it cannot reach a response or a log by accident. */
     protected $hidden = ['api_key'];
@@ -153,34 +176,77 @@ class AiProvider extends Model
         );
     }
 
-    /** The saved row, or an empty unsaved one. */
-    public static function for(string $provider): self
+    public function addedBy(): BelongsTo
     {
-        return static::firstOrNew(['provider' => $provider]);
+        return $this->belongsTo(User::class, 'added_by');
     }
 
     /**
-     * The row if an admin saved a token for it, switched on or off; otherwise
-     * null. Descript and DeepL use this: a saved token overrides the server's
-     * .env, and its switch decides, so switching off here really is off.
+     * The provider's shared row, or an empty unsaved one. It holds the switch
+     * and the model for everyone, and the shared token when there is one.
      */
-    public static function withToken(string $provider): ?self
+    public static function for(string $provider): self
     {
-        $row = static::where('provider', $provider)->first();
-
-        return $row && filled($row->api_key) ? $row : null;
+        return static::firstOrNew(['provider' => $provider, 'user_id' => null]);
     }
 
-    /** The provider if it is switched on and has a token; otherwise null. */
-    public static function usable(string $provider): ?self
+    /** The person's own row for a provider, or an empty unsaved one. */
+    public static function personalFor(string $provider, User $user): self
+    {
+        return static::firstOrNew(['provider' => $provider, 'user_id' => $user->id], ['scope' => self::SCOPE_PERSONAL]);
+    }
+
+    /** Whether a shared token's reach includes this person. No one signed in is the system itself (a background command). */
+    public function sharedWith(?User $user): bool
+    {
+        return $this->scope !== self::SCOPE_ADMINS || $user === null || $user->isAdmin();
+    }
+
+    /**
+     * The token row this person would use, switched on or off: their own token
+     * first, then the shared one if its reach includes them. Null when neither
+     * exists. A personal row comes back carrying the provider's switch and
+     * model (only in memory; it is never saved like that), because those are
+     * set once for everyone.
+     *
+     * Descript and DeepL use this directly: a saved token overrides the
+     * server's .env, and the switch here decides.
+     */
+    public static function withToken(string $provider, ?User $user = null): ?self
     {
         if (! isset(self::PROVIDERS[$provider])) {
             return null;
         }
 
-        $row = static::where('provider', $provider)->first();
+        $user ??= auth()->user();
+        $shared = static::query()->where('provider', $provider)->whereNull('user_id')->first();
 
-        return $row && $row->enabled && filled($row->api_key) ? $row : null;
+        if ($user && ! in_array($provider, self::SHARED_ONLY, true)) {
+            $own = static::query()->where('provider', $provider)->where('user_id', $user->id)->first();
+
+            if ($own && filled($own->api_key)) {
+                $own->enabled = (bool) $shared?->enabled;
+                $own->model = $shared?->model;
+
+                return $own;
+            }
+        }
+
+        return $shared && filled($shared->api_key) && $shared->sharedWith($user) ? $shared : null;
+    }
+
+    /** The token row this person may use right now: switched on and holding a token. */
+    public static function usable(string $provider, ?User $user = null): ?self
+    {
+        $row = static::withToken($provider, $user);
+
+        return $row && $row->enabled ? $row : null;
+    }
+
+    /** The token's last four characters, the only part ever shown. */
+    public function tokenEnding(): ?string
+    {
+        return filled($this->api_key) ? mb_substr((string) $this->api_key, -4) : null;
     }
 
     /**
@@ -263,10 +329,10 @@ class AiProvider extends Model
     }
 
     /** Switched on, with a token, and at least one model that can return JSON. */
-    public static function availableForGeneration(string $provider): bool
+    public static function availableForGeneration(string $provider, ?User $user = null): bool
     {
         return in_array($provider, self::GENERATION, true)
-            && self::usable($provider) !== null
+            && self::usable($provider, $user) !== null
             && self::modelsForGeneration($provider) !== [];
     }
 
@@ -309,12 +375,12 @@ class AiProvider extends Model
      *
      * @return array<string, string>
      */
-    public static function generationChoices(): array
+    public static function generationChoices(?User $user = null): array
     {
         $choices = [];
 
         foreach (self::GENERATION as $provider) {
-            if (self::availableForGeneration($provider)) {
+            if (self::availableForGeneration($provider, $user)) {
                 $choices[$provider] = self::PROVIDERS[$provider]['label'];
             }
         }

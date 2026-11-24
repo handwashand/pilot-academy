@@ -458,6 +458,43 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-24 — Current AI models; two broken providers fixed; tokens cleared on a refused save
+
+The owner asked to update the Integrations models. Each provider's own
+pages were checked on 2026-11-24 (OpenAI pricing and model compare, DeepSeek
+pricing and changelog, Anthropic API overview), which found two providers
+broken in production code, not just stale lists:
+
+- **DeepSeek retired `deepseek-chat` / `deepseek-reasoner` on 2026-07-24.**
+  The default is now `deepseek-flash`; `deepseek-v4-pro` is offered too.
+  Prices are the **peak** rate, so the budget never under-counts. Data-only
+  migration `2026_11_24_000001` moves saved DeepSeek rows to
+  `deepseek-flash` and clears saved `gpt-4-turbo` / `gpt-3.5-turbo` (OpenAI
+  no longer prices them) back to the default. **Deploy runs migrate.**
+- **Claude drafting sent `temperature`**, which API version `2026-10-21`
+  refuses on every model. Removed. Authorization `Bearer` with an API key is
+  valid (checked in Anthropic's docs) and stays. Claude Fable 5.2 added.
+- **ChatGPT:** GPT-6 Luna, GPT-6.2 Sol and GPT-6.2 Astra added (1,050,000
+  context, 128,000 output, per OpenAI's compare page). GPT-6.1 Terra was
+  left out: its specs were not on the compare page. They are reasoning
+  models, flagged `'reasoning' => true`. **`AiProvider::chatOptions()` is the
+  one place that decides the request shape**, used by both `ChatClient` and
+  `LlmTranslator`: reasoning models get `max_completion_tokens` (at least
+  32,000, since reasoning counts against it), `reasoning_effort: low`, and no
+  `temperature`; other models keep `temperature` and `max_tokens`. The
+  default stays `gpt-4o-mini`, the only one proven against the live API.
+- **Integrations:** when a save is refused (a provider on with no token),
+  every typed `api_key` is cleared from the Livewire state before returning.
+
+**Verified (run):** course-generation, integrations, DeepL, course and quiz
+translation suites: 76 passed. New tests: reasoning-model request shape,
+classic-model shape, the migration, refused-save clearing, and translation
+with a reasoning model. Pint clean on the 9 files. Production Integrations
+page checked read-only: no token value in the page or its Livewire data.
+**Not run:** any real request to OpenAI, DeepSeek or Anthropic. The GPT-6 and
+DeepSeek models are unproven live; if `temperature` turns out to be
+accepted, nothing breaks.
+
 ### 2026-11-22 — Visitor hero stats and Browse courses; one cover style
 
 Items 2 and 4 of the home page review.

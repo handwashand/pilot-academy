@@ -53,8 +53,8 @@ class GenerateCourseWithAi
 
         $this->guardLimits($user);
 
-        if (! AiProvider::availableForGeneration($provider) || ! AiProvider::modelSupportsJson($provider, $model)) {
-            $code = AiProvider::usable($provider) === null ? 'unavailable' : 'unsupported_capability';
+        if (! AiProvider::availableForGeneration($provider, $user) || ! AiProvider::modelSupportsJson($provider, $model)) {
+            $code = AiProvider::usable($provider, $user) === null ? 'unavailable' : 'unsupported_capability';
 
             throw new LlmException('That provider cannot generate a course.', 422, $code);
         }
@@ -63,7 +63,7 @@ class GenerateCourseWithAi
 
         if ($allowFallback && AiGenerationSetting::current()->fallback_enabled) {
             foreach (AiProvider::GENERATION as $other) {
-                if ($other !== $provider && AiProvider::availableForGeneration($other)) {
+                if ($other !== $provider && AiProvider::availableForGeneration($other, $user)) {
                     $fallbackModel = AiProvider::preferredGenerationModel($other);
 
                     if ($fallbackModel !== null) {
@@ -144,7 +144,7 @@ class GenerateCourseWithAi
 
     private function generate(User $user, string $provider, string $model, string $brief, ?int $productId): Course
     {
-        $row = AiProvider::usable($provider);
+        $row = AiProvider::usable($provider, $user);
 
         if ($row === null) {
             throw new LlmException('That provider cannot generate a course.', 422, 'unavailable');

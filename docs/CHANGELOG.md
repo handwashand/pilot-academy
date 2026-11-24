@@ -284,6 +284,7 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Changed
 
+- **Current AI models under Settings → Integrations.** ChatGPT now offers GPT-6 Luna, GPT-6.2 Sol and GPT-6.2 Astra beside GPT-4o mini and GPT-4o; GPT-4 Turbo and GPT-3.5 Turbo are gone, as OpenAI no longer offers them. DeepSeek offers DeepSeek Flash and DeepSeek V4 Pro. Claude adds Claude Fable 5.2, its most capable model. A model saved before that a provider has since retired moves to a current one by itself.
 - **A warmer welcome for visitors.** The welcome box on the home page now says how many courses and lessons there are and that each course ends with a certificate, and has a **Browse courses** button beside **Start learning**.
 - **Course cards on the home page look like courses.** Each course now has a cover in its own colours and pattern (or its banner, if it has one) with its lesson count, and one clear button: **Start course**, **Continue** (straight to the first unfinished lesson) or **Review course**. Visitors no longer see an empty progress bar.
 
@@ -371,6 +372,9 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Fixed
 
+- **Translating with DeepSeek works again.** DeepSeek retired the model names the academy used on 24 July 2026, so its drafts failed. It now uses DeepSeek Flash.
+- **Drafting a course with Claude works.** Every request was refused because it sent a setting Claude no longer accepts.
+- **Tokens stay out of the page.** If saving the Integrations page was refused, tokens typed into other cards could stay in the page's data until a reload. They are cleared now.
 - **Lesson pages fit a phone screen.** A lesson containing a table made the
   whole page slightly wider than a phone, so it slid sideways. Long words and
   web addresses in lesson text now wrap too.
