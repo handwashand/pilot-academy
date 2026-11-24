@@ -284,6 +284,7 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Changed
 
+- **Choose who can use each AI token.** When you add a token under Settings → Integrations, pick **Just me**, **All admins** or **Everyone with the right**. Your own token is used for you before the shared one. Each card shows the last four characters of a token, who can use it and who added it. Tokens saved before stay available to everyone with the right, as they were.
 - **Current AI models under Settings → Integrations.** ChatGPT now offers GPT-6 Luna, GPT-6.2 Sol and GPT-6.2 Astra beside GPT-4o mini and GPT-4o; GPT-4 Turbo and GPT-3.5 Turbo are gone, as OpenAI no longer offers them. DeepSeek offers DeepSeek Flash and DeepSeek V4 Pro. Claude adds Claude Fable 5.2, its most capable model. A model saved before that a provider has since retired moves to a current one by itself.
 - **A warmer welcome for visitors.** The welcome box on the home page now says how many courses and lessons there are and that each course ends with a certificate, and has a **Browse courses** button beside **Start learning**.
 - **Course cards on the home page look like courses.** Each course now has a cover in its own colours and pattern (or its banner, if it has one) with its lesson count, and one clear button: **Start course**, **Continue** (straight to the first unfinished lesson) or **Review course**. Visitors no longer see an empty progress bar.

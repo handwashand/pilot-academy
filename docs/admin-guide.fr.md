@@ -790,6 +790,8 @@ n’est pas restauré ou retiré de la base de données.
 
 La page **Paramètres → Général → Intégrations** regroupe les services sous **Traduction de texte** (DeepL, ChatGPT, DeepSeek) et **Traduction vidéo** (Descript), et chaque carte indique son état : **Activé**, **Désactivé — jeton enregistré** ou **Non connecté**.
 
+En collant un jeton, choisissez **Qui peut utiliser ce jeton** : **Moi seulement** (vous seul ; il est utilisé pour vous à la place du jeton partagé et disparaît avec votre compte), **Tous les administrateurs** ou **Toutes les personnes ayant le droit**. Chaque fournisseur a un **Jeton partagé**, et chaque administrateur peut ajouter **Votre propre jeton**. La carte n’affiche que les quatre derniers caractères du jeton, qui peut l’utiliser et qui l’a ajouté. L’interrupteur et le modèle sont communs à tous. Descript n’a pas **Moi seulement**.
+
 Un administrateur ajoute le jeton d’API de chaque fournisseur dans **Paramètres →
 Intégrations** et l’active. Les administrateurs peuvent s’en servir tout de suite ;
 les autres ont besoin du droit correspondant (**Générer des brouillons de traduction

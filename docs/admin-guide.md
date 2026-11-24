@@ -805,6 +805,21 @@ provider that is on. After a confirmation the Translate window opens with the
 empty boxes drafted; read and correct them, then **Save translations**. Nothing
 is saved before that, and text already written is never replaced.
 
+When you paste a token, **Who can use this token** decides where it goes:
+
+| Choice | Who it serves |
+| --- | --- |
+| **Just me** | Only you. It is used for you instead of the shared token, and goes when your account is deleted. Other admins never see it. |
+| **All admins** | Every admin. Creators with the right do not get it. |
+| **Everyone with the right** | Admins, and anyone given the matching right. |
+
+A provider has one **Shared token** (all admins, or everyone with the right),
+and each admin may add **Your own token** beside it. The card shows each
+token's last four characters, who can use it and who added it, never the token
+itself. The switch and the model are set once for everyone, your own token
+included. Descript has no **Just me**: its translations carry on in the
+background with nobody signed in.
+
 On a **course**, **Translate** asks for the provider in its first step, next to
 what to translate (**This course** or **The whole course**, with every lesson
 and quiz) and the language. One language goes to a review step before saving.

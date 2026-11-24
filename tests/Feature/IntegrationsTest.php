@@ -205,7 +205,7 @@ class IntegrationsTest extends TestCase
 
         Livewire::actingAs($this->admin())
             ->test(Integrations::class)
-            ->fillForm(['deepseek' => ['enabled' => false, 'clear_key' => true]])
+            ->fillForm(['deepseek' => ['enabled' => false, 'clear_shared' => true]])
             ->call('save');
 
         $this->assertNull(AiProvider::for('deepseek')->api_key);

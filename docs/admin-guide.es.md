@@ -772,6 +772,8 @@ se restaure o se elimine de la base de datos.
 
 La página **Ajustes → General → Integraciones** agrupa los servicios en **Traducción de texto** (DeepL, ChatGPT, DeepSeek) y **Traducción de vídeo** (Descript), y cada tarjeta muestra su estado: **Activado**, **Desactivado — token guardado** o **Sin conectar**.
 
+Al pegar un token, elige **Quién puede usar este token**: **Solo yo** (solo tú; se usa para ti en lugar del compartido y se elimina con tu cuenta), **Todos los administradores** o **Todos los que tienen el permiso**. Cada proveedor tiene un **Token compartido** y cada administrador puede añadir **Tu propio token**. La tarjeta muestra solo los cuatro últimos caracteres del token, quién puede usarlo y quién lo añadió. El interruptor y el modelo son comunes para todos. Descript no tiene **Solo yo**.
+
 Un administrador añade el token de API de cada proveedor en **Ajustes →
 Integraciones** y lo activa. Los administradores pueden usarlos de inmediato; los
 demás necesitan el permiso correspondiente (**Generar borradores de traducción con
