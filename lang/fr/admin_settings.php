@@ -49,6 +49,13 @@ return [
         'subheading' => 'Le certificat standard utilisé par tous les cours. Téléversez un fond pour remplacer le modèle intégré ; un cours avec son propre fond le garde. Retirez l\'image pour revenir au modèle intégré.',
         'background' => 'Fond standard du certificat',
         'background_help' => 'Fond pleine page A4 paysage (≈3508×2480 px). Laissez vide pour utiliser la mise en page encadrée intégrée. Le nom, le cours, la date, le numéro et le QR code sont ajoutés automatiquement.',
+        'signatory' => 'Signataire',
+        'signatory_help' => 'Imprimé sur chaque certificat. Laissez le nom vide pour n’imprimer aucune signature.',
+        'signatory_name' => 'Nom du signataire',
+        'signatory_title' => 'Fonction',
+        'signatory_title_placeholder' => 'Responsable de la formation, Pilot Telematics',
+        'signature' => 'Image de la signature',
+        'signature_help' => 'Un PNG à fond transparent, d’environ 600×200 px. Facultatif.',
     ],
 
     'overlay' => [

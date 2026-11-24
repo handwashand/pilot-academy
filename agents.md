@@ -458,6 +458,52 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-24 — Who can use each AI token (**schema change**); the translate error reproduced
+
+The owner chose: when adding a token, **Just me / All admins / Everyone with
+the right**, and a person's own token wins over the shared one.
+
+- **Migration `2026_11_24_000002`:** `ai_providers` gains `user_id`
+  (personal owner, cascade), `scope` (default `everyone`, so existing tokens
+  behave as before) and `added_by` (nullOnDelete). The unique index moves from
+  `provider` to `(provider, user_id)`; NULLs do not clash, so
+  `AiProvider::for()` keeps the shared row to one per provider.
+- **One shared row per provider** holds the switch, the model and an optional
+  shared token (`admins` or `everyone`). **Personal rows** hold only a token.
+- **`AiProvider::withToken($provider, ?User)` is the one resolver:** own
+  token first, then the shared one if `sharedWith()` the person. A personal
+  row comes back carrying the shared switch and model *in memory only* —
+  never save a row returned by it. No user (a console command) counts as the
+  system and gets the shared token. `usable()`, `availableForGeneration()`
+  and `generationChoices()` take the user too; `GenerateCourseWithAi` passes
+  its `$user`, everything else defaults to `auth()->user()`.
+- **Descript has no personal tokens** (`AiProvider::SHARED_ONLY`):
+  `descript:sync` continues jobs with no one signed in, so it could not know
+  whose key a job started with. The form does not offer it and refuses a
+  forged one.
+- **Integrations page:** each card shows the shared token and your own as text
+  (last four characters, reach, who added it; never the token), a **Who can
+  use this token** select for a new token, a reach select for the shared one,
+  and separate remove boxes. Switching on needs a shared token or your own.
+- A shared token limited to admins is not used for a creator; DeepL and
+  Descript then fall back to the server's `.env`, as when nothing is saved.
+
+**The translate error the owner hit twice (whole-course Translate → save)**
+was reproduced on production read-only: the review step opened for course 1,
+one edit was sent at the path from the error, and the server answered 500
+`MaxNestingDepthExceededException`. Nothing was saved (no Save, window
+closed). It is the engine-independent nesting limit of 10 on the old
+production code; `config/livewire.php` on `laravel` has 30.
+`CourseTranslationTest::test_the_whole_course_saves_with_a_list_inside_a_list`
+passes at 30 and fails at 10 with that exception. **Trap paid for:** a
+`sed` run inside the test container edits the real file, because `config`
+is mounted from the working tree. It was reverted at once.
+
+**Verified (run):** see the next report for the suite groups; `AiTokenScopeTest`
+has 10 tests (existing token reach, admins-only, personal before shared,
+switch, saving Just me, reach and added-by shown and changed, own token
+alone, Descript, account deletion, Translate using the own token).
+
 ### 2026-11-24 — Current AI models; two broken providers fixed; tokens cleared on a refused save
 
 The owner asked to update the Integrations models. Each provider's own

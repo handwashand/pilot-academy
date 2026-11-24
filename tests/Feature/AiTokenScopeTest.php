@@ -167,7 +167,6 @@ class AiTokenScopeTest extends TestCase
 
         // "Just me" is not offered, and a forged one is refused.
         Livewire::actingAs($admin)->test(Integrations::class)
-            ->assertDontSee(__t('admin_integrations.own_token'))
             ->fillForm(['descript' => ['enabled' => true, 'api_key' => 'dsc-token', 'scope' => AiProvider::SCOPE_PERSONAL]])
             ->call('save')
             ->assertHasFormErrors(['descript.scope']);

@@ -37,7 +37,7 @@ class IssueCertificate
             'user_id' => $user->id,
             'course_id' => $course->id,
             'quiz_attempt_id' => $attempt->id,
-            'number' => $this->uniqueNumber($course),
+            'number' => $this->uniqueNumber((string) $course->id),
             'name' => $user->certificate_name ?: $user->name,
             'score_percent' => $attempt->scorePercent() ?? 0,
             'issued_at' => now(),
@@ -69,23 +69,48 @@ class IssueCertificate
         // The course's own background, else the standard one from Settings →
         // Certificate, else none: the built-in layout is drawn.
         $background = null;
-        foreach ([$certificate->course->certificate_template, Certificate::standardTemplate()] as $template) {
+        // The all-courses certificate has no course, so it keeps its own built-in
+        // design (gold frame) rather than a background meant for one course.
+        $templates = $certificate->isAcademy() ? [] : [$certificate->course?->certificate_template, Certificate::standardTemplate()];
+
+        foreach ($templates as $template) {
             if ($template && Storage::disk('public')->exists($template)) {
                 $background = Storage::disk('public')->path($template);
                 break;
             }
         }
 
-        // Deliberately the blue lockup, not the amber one used everywhere else:
-        // a certificate is a formal document, and its frame and course title are
-        // already brand blue (#1463ff).
+        // The company's original blue PILOT lockup, restored byte for byte from
+        // before "ACADEMY" was added: the certificate is issued by Pilot
+        // Telematics, so it carries the company mark (owner's choice, 2026-11-24).
         //
         // Embedded rather than linked, so dompdf resolves it without filesystem
         // access — exactly as the QR does above.
-        $logoPath = public_path('img/pilot-logo-blue.png');
-        $logo = is_file($logoPath)
-            ? 'data:image/png;base64,'.base64_encode(file_get_contents($logoPath))
-            : null;
+        $logo = $this->embedPng(public_path('img/pilot-telematics-logo-blue.png'));
+
+        // Who signs, if anyone is set under Settings → Certificate.
+        $signatory = Certificate::signatory();
+        if ($signatory) {
+            $signatory['signature'] = $signatory['signature']
+                ? $this->embedPng(Storage::disk('public')->path($signatory['signature']))
+                : null;
+        }
+
+        // What was achieved, counted when the PDF is drawn.
+        if ($certificate->isAcademy()) {
+            $courses = Course::withTrashed()->whereIn('id', $certificate->covered_course_ids ?? [])
+                ->with('publishedLessons:lessons.id')->get();
+            $counts = [
+                'courses' => count($certificate->covered_course_ids ?? []),
+                'lessons' => $courses->flatMap(fn (Course $course) => $course->publishedLessons->pluck('id'))->unique()->count(),
+            ];
+        } else {
+            // No study time on the certificate, on purpose: lessons and score only.
+            $counts = [
+                'courses' => 1,
+                'lessons' => $certificate->course?->publishedLessons()->count() ?? 0,
+            ];
+        }
 
         // Printed in the student's language, whoever pressed Regenerate. The
         // view is rendered here, so the locale has to be set around it.
@@ -96,6 +121,8 @@ class IssueCertificate
             'qr' => base64_encode($qrSvg),
             'background' => $background,
             'logo' => $logo,
+            'signatory' => $signatory,
+            'counts' => $counts,
         ])->setPaper('a4', 'landscape')->output());
 
         $path = "certificates/{$certificate->number}.pdf";
@@ -121,11 +148,16 @@ class IssueCertificate
         }
     }
 
-    /** Generate a unique, human-readable certificate number. */
-    private function uniqueNumber(Course $course): string
+    private function embedPng(string $path): ?string
+    {
+        return is_file($path) ? 'data:image/png;base64,'.base64_encode((string) file_get_contents($path)) : null;
+    }
+
+    /** A unique, human-readable certificate number: PA-<course id, or ALL>-<year>-<random>. */
+    public function uniqueNumber(string $subject): string
     {
         do {
-            $number = sprintf('PA-%d-%s-%s', $course->id, now()->year, strtoupper(Str::random(6)));
+            $number = sprintf('PA-%s-%s-%s', $subject, now()->year, strtoupper(Str::random(6)));
         } while (Certificate::where('number', $number)->exists());
 
         return $number;

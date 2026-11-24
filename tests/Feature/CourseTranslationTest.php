@@ -48,6 +48,30 @@ class CourseTranslationTest extends TestCase
         });
     }
 
+    /** The dotted path to the text node holding $text in a rich-editor state, or null. */
+    private function pathTo(mixed $node, string $text, string $prefix = ''): ?string
+    {
+        if (is_object($node)) {
+            $node = (array) $node;
+        }
+
+        if (! is_array($node)) {
+            return null;
+        }
+
+        if (($node['text'] ?? null) === $text) {
+            return ltrim($prefix.'.text', '.');
+        }
+
+        foreach ($node as $key => $child) {
+            if ($found = $this->pathTo($child, $text, $prefix.'.'.$key)) {
+                return $found;
+            }
+        }
+
+        return null;
+    }
+
     private function admin(string ...$rights): User
     {
         $admin = User::firstOrCreate(['email' => 'admin@pilot.local'], [
@@ -178,6 +202,38 @@ class CourseTranslationTest extends TestCase
         $this->assertSame('Démarrage rapide', $course->fresh()->translated('title', 'fr'));
         $this->assertSame('Première leçon', $lesson->fresh()->translated('title', 'fr'));
         $this->assertSame($course->title, $course->fresh()->translated('title', 'es'), 'Another language is untouched.');
+    }
+
+    /**
+     * Production, 2026-11-24: saving the whole-course window failed with
+     * MaxNestingDepthExceededException when a lesson had a list inside a list.
+     * The editor sends each change by its full path, well past ten levels.
+     */
+    public function test_the_whole_course_saves_with_a_list_inside_a_list(): void
+    {
+        $course = Course::first();
+        $lesson = $course->lessons()->first();
+        $lesson->update(['content' => '<ul><li><p>One</p><ul><li><p>Two</p></li></ul></li></ul>']);
+        // A draft already in the box, as after DeepL, ChatGPT or DeepSeek filled it.
+        $lesson->setTranslation('content', 'fr', '<ul><li><p>Un</p><ul><li><p>Two</p></li></ul></li></ul>');
+
+        $component = Livewire::actingAs($this->admin())
+            ->test(EditCourse::class, ['record' => $course->getRouteKey()])
+            ->mountAction('translateWholeCourse')
+            ->setActionData(['scope' => 'whole', 'language' => 'fr', 'engine' => 'manual'])
+            ->goToNextWizardStep();
+
+        // The editor's own path to "Two", exactly as the browser sends it.
+        $root = "mountedActions.0.data.lesson_{$lesson->id}.content";
+        $path = $this->pathTo($component->get($root), 'Two');
+        $this->assertNotNull($path);
+        $this->assertGreaterThan(10, substr_count("{$root}.{$path}", '.') + 1, 'The path must be deeper than the old limit.');
+
+        $component->set("{$root}.{$path}", 'Deux')
+            ->callMountedAction()
+            ->assertHasNoActionErrors();
+
+        $this->assertStringContainsString('Deux', (string) $lesson->fresh()->translated('content', 'fr'));
     }
 
     public function test_drafting_the_whole_course_sends_all_empty_boxes_together_and_stores_nothing(): void

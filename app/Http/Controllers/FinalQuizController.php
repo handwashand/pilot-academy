@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\AwardBadges;
+use App\Actions\IssueAcademyCertificate;
 use App\Actions\IssueCertificate;
 use App\Models\Certificate;
 use App\Models\Course;
@@ -108,6 +109,7 @@ class FinalQuizController extends Controller
         }
 
         app(AwardBadges::class)->handle($user);
+        app(IssueAcademyCertificate::class)->handle($user);
 
         return redirect()->route('academy.final.show', $course)->with('final_result', [
             'passed' => $passed,

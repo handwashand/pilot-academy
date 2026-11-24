@@ -301,6 +301,22 @@ class Course extends Model
     }
 
     /**
+     * The academy's rule for "finished this course", used by the product badge
+     * and the all-courses certificate: every published lesson done, plus a
+     * valid certificate when the course has a final quiz. Reads the loaded
+     * `publishedLessons` (load them first), so a list of courses costs no
+     * query per course.
+     *
+     * @param  array<int, int>  $completedLessonIds
+     * @param  array<int, int>  $certifiedCourseIds  courses with an unrevoked course certificate
+     */
+    public function isFinishedWith(array $completedLessonIds, array $certifiedCourseIds): bool
+    {
+        return $this->publishedLessons->pluck('id')->map(fn ($id): int => (int) $id)->diff($completedLessonIds)->isEmpty()
+            && (! $this->final_quiz_enabled || in_array((int) $this->id, $certifiedCourseIds, true));
+    }
+
+    /**
      * Final-quiz attempts this user has left, or null for unlimited. Only
      * submitted attempts count — one still in progress has not been used yet.
      * Shared by the final quiz page and the home page, so the two never

@@ -49,6 +49,13 @@ return [
         'subheading' => 'O certificado padrão usado por todos os cursos. Envie um fundo para substituir o design integrado; um curso com fundo próprio o mantém. Remova a imagem para voltar ao design integrado.',
         'background' => 'Fundo padrão do certificado',
         'background_help' => 'Fundo de página inteira A4 paisagem (≈3508×2480 px). Deixe vazio para usar o layout com moldura embutido. Nome, curso, data, número e QR são sobrepostos automaticamente.',
+        'signatory' => 'Signatário',
+        'signatory_help' => 'Impresso em todo certificado. Deixe o nome vazio para não imprimir a assinatura.',
+        'signatory_name' => 'Nome do signatário',
+        'signatory_title' => 'Cargo',
+        'signatory_title_placeholder' => 'Responsável pelo treinamento, Pilot Telematics',
+        'signature' => 'Imagem da assinatura',
+        'signature_help' => 'Um PNG com fundo transparente, de cerca de 600×200 px. Opcional.',
     ],
 
     'overlay' => [

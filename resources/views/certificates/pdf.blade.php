@@ -4,8 +4,12 @@
     <meta charset="utf-8">
     <style>
         /* dompdf: absolute positioning in mm on an A4 landscape page (297x210).
-           Brand palette only — navy #0a2540, Pilot blue #1463ff, amber #FFB900
-           (the mark's own colour). */
+           Brand palette only — navy #0a2540, Pilot blue #1463ff, amber #FFB900.
+           A course certificate has a navy frame with an amber hairline; the
+           all-courses certificate swaps them (amber frame, navy hairline).
+           Layout chosen on the design canvas, 2026-11-24: issuer and original
+           PILOT logo, recipient, precise achievement, signatory, seal, ID + QR.
+           No study time (hours) is printed: the owner asked for it to be left out. */
         @page { margin: 0; }
         html, body { margin: 0; padding: 0; }
         body { font-family: 'DejaVu Serif', 'Times New Roman', serif; color: #0a2540; }
@@ -13,72 +17,73 @@
         .page { position: relative; width: 297mm; height: 210mm; overflow: hidden; background: #fbfaf6; }
         .bg { position: absolute; top: 0; left: 0; width: 297mm; height: 210mm; }
 
-        /* Frame: a navy band, an amber hairline inside it, and blue corner brackets. */
-        .band { position: absolute; top: 7mm; left: 7mm; width: 279mm; height: 192mm;
-                border: 2.6mm solid #0a2540; }
-        .hair { position: absolute; top: 12.5mm; left: 12.5mm; width: 271mm; height: 184mm;
-                border: 0.35mm solid #FFB900; }
-        .corner { position: absolute; width: 12mm; height: 12mm; border-color: #1463ff; border-style: solid; }
-        .c-tl { top: 16mm; left: 16mm; border-width: 0.9mm 0 0 0.9mm; }
-        .c-tr { top: 16mm; left: 268mm; border-width: 0.9mm 0.9mm 0 0; }
-        .c-bl { top: 181mm; left: 16mm; border-width: 0 0 0.9mm 0.9mm; }
-        .c-br { top: 181mm; left: 268mm; border-width: 0 0.9mm 0.9mm 0; }
+        .band { position: absolute; top: 7mm; left: 7mm; width: 279mm; height: 192mm; border: 2.4mm solid #0a2540; }
+        .hair { position: absolute; top: 12.2mm; left: 12.2mm; width: 271.4mm; height: 184.4mm; border: 0.35mm solid #FFB900; }
+        .academy .band { border: 2.8mm solid #FFB900; }
+        .academy .hair { border: 0.4mm solid #0a2540; }
 
-        /* 1920x604 lockup, kept to ratio: 54mm wide is 17mm tall. Centred. */
-        .logo { position: absolute; top: 22mm; left: 121.5mm; width: 54mm; height: 17mm; }
+        /* 1920x604 lockup, kept to ratio: 46mm wide is 14.5mm tall. Centred. */
+        .logo { position: absolute; top: 19mm; left: 125.5mm; width: 46mm; height: 14.5mm; }
 
         .center { position: absolute; left: 30mm; width: 237mm; text-align: center; }
+        .sans { font-family: 'DejaVu Sans', sans-serif; }
 
-        /* The title sits under the logo, not beside it: a long translation —
-           Russian "СЕРТИФИКАТ О ПРОХОЖДЕНИИ КУРСА" — must have the full width. */
-        .eyebrow { top: 47mm; font-family: 'DejaVu Sans', sans-serif; font-size: 15pt; font-weight: bold;
-                   letter-spacing: 4pt; text-transform: uppercase; color: #0a2540; }
-        .rule { position: absolute; height: 0.5mm; background: #FFB900; }
-        .rule-l { top: 59mm; left: 108.5mm; width: 30mm; }
-        .rule-r { top: 59mm; left: 158.5mm; width: 30mm; }
-        .dot { position: absolute; top: 57.9mm; left: 146.9mm; width: 2.6mm; height: 2.6mm;
-               background: #1463ff; border-radius: 1.3mm; }
+        .issuer { top: 36.5mm; font-size: 7.5pt; letter-spacing: 2.5pt; text-transform: uppercase; color: #475569; }
+        /* The title has the full width: a long translation must fit on one line. */
+        .title { top: 44mm; font-size: 25pt; font-weight: bold; color: #0a2540; }
 
-        .lead { font-size: 12pt; font-style: italic; color: #64748b; }
-        .lead-1 { top: 67mm; }
-        .name { top: 75mm; font-size: 36pt; font-weight: bold; color: #0a2540; }
-        .name-rule { position: absolute; top: 95mm; left: 78.5mm; width: 140mm; height: 0.3mm; background: #0a2540; }
-        .lead-2 { top: 100mm; }
-        .course { top: 108mm; font-size: 21pt; font-weight: bold; color: #1463ff; }
+        .pill { position: absolute; top: 57mm; left: 108.5mm; width: 80mm; padding: 1.3mm 0; text-align: center;
+                background: #0a2540; color: #FFB900; border-radius: 4mm;
+                font-size: 7.5pt; font-weight: bold; letter-spacing: 2pt; text-transform: uppercase; }
 
-        /* Bottom row: details left, seal centre, QR right. */
-        .meta { position: absolute; top: 158mm; left: 26mm; width: 85mm;
-                font-family: 'DejaVu Sans', sans-serif; font-size: 9pt; color: #64748b; }
-        .meta .label { font-size: 7pt; letter-spacing: 1.5pt; text-transform: uppercase; color: #94a3b8; }
-        .meta .value { font-size: 11pt; font-weight: bold; color: #0a2540; margin-bottom: 2.5mm; }
-        .meta .url { font-size: 7pt; color: #94a3b8; }
+        .lead { font-size: 12pt; font-style: italic; color: #475569; }
+        .lead-1 { top: 60mm; }
+        .academy .lead-1 { top: 66mm; }
+        .name { top: 67mm; font-size: 32pt; font-weight: bold; color: #0a2540; }
+        .academy .name { top: 73mm; }
+        .name-rule { position: absolute; top: 86mm; left: 83.5mm; width: 130mm; height: 0.4mm; background: #FFB900; }
+        .academy .name-rule { top: 92mm; }
+        .achievement { position: absolute; top: 91mm; left: 53.5mm; width: 190mm; text-align: center;
+                       font-size: 12.5pt; line-height: 1.5; color: #334155; }
+        .academy .achievement { top: 97mm; }
+        .achievement strong { color: #1463ff; }
 
-        .seal-o { position: absolute; top: 146mm; left: 129.5mm; width: 38mm; height: 38mm;
-                  border-radius: 19mm; background: #0a2540; }
-        .seal-i { position: absolute; top: 148.5mm; left: 132mm; width: 31.6mm; height: 31.6mm;
-                  border-radius: 16mm; border: 0.4mm solid #FFB900; }
-        .seal-t { position: absolute; left: 129.5mm; width: 38mm; text-align: center;
-                  font-family: 'DejaVu Sans', sans-serif; color: #ffffff; }
-        .seal-1 { top: 155mm; font-size: 6.5pt; letter-spacing: 1.5pt; }
-        .seal-2 { top: 160mm; font-size: 14pt; font-weight: bold; color: #FFB900; }
-        .seal-3 { top: 169mm; font-size: 6.5pt; letter-spacing: 1.5pt; }
+        /* Bottom row: signatory left, seal centre, ID and QR right. */
+        .sign { position: absolute; top: 146mm; left: 26mm; width: 75mm; }
+        .sign-image { height: 13mm; }
+        .sign-space { height: 13mm; }
+        .sign-line { width: 62mm; height: 0.3mm; background: #0a2540; margin-top: 1mm; }
+        .sign-name { margin-top: 2mm; font-size: 10.5pt; font-weight: bold; color: #0a2540; }
+        .sign-title { font-size: 8.5pt; color: #475569; }
 
-        .qr { position: absolute; top: 152mm; left: 237mm; width: 30mm; height: 30mm; }
-        .qr-caption { position: absolute; top: 183mm; left: 230mm; width: 44mm; text-align: center;
-                      font-family: 'DejaVu Sans', sans-serif; font-size: 7pt; color: #94a3b8; }
+        .seal-o { position: absolute; top: 143mm; left: 130.5mm; width: 36mm; height: 36mm; border-radius: 18mm; background: #0a2540; }
+        .seal-i { position: absolute; top: 145.4mm; left: 132.9mm; width: 30.4mm; height: 30.4mm; border-radius: 15.2mm; border: 0.4mm solid #FFB900; }
+        .seal-t { position: absolute; left: 130.5mm; width: 36mm; text-align: center; color: #ffffff; }
+        .seal-1 { top: 152mm; font-size: 6pt; letter-spacing: 1.5pt; }
+        .seal-2 { top: 156.5mm; font-size: 14pt; font-weight: bold; color: #FFB900; }
+        .seal-3 { top: 166mm; font-size: 6pt; letter-spacing: 1.5pt; }
+
+        .meta { position: absolute; top: 149mm; left: 175mm; width: 58mm; text-align: right; font-size: 8pt; color: #64748b; }
+        .meta .label { font-size: 6.5pt; letter-spacing: 1.2pt; text-transform: uppercase; color: #64748b; }
+        .meta .value { font-size: 10pt; font-weight: bold; color: #0a2540; margin-bottom: 2mm; }
+        .meta .url { font-size: 6.5pt; color: #64748b; }
+        .qr { position: absolute; top: 148mm; left: 238mm; width: 28mm; height: 28mm; }
+        .qr-caption { position: absolute; top: 177mm; left: 232mm; width: 40mm; text-align: center; font-size: 6.5pt; color: #64748b; }
+
+        .issued-by { top: 186.5mm; font-size: 7pt; color: #64748b; }
     </style>
 </head>
 <body>
-    <div class="page">
+    @php
+        $isAcademy = $certificate->isAcademy();
+        $lessons = __tc('academy.common.lessons', $counts['lessons']);
+    @endphp
+    <div class="page {{ $isAcademy ? 'academy' : '' }}">
         @if($background)
             <img class="bg" src="{{ $background }}">
         @else
             <div class="band"></div>
             <div class="hair"></div>
-            <div class="corner c-tl"></div>
-            <div class="corner c-tr"></div>
-            <div class="corner c-bl"></div>
-            <div class="corner c-br"></div>
         @endif
 
         {{-- A custom background is expected to carry its own branding, so the
@@ -89,18 +94,63 @@
 
         {{-- Rendered inside the student's locale (IssueCertificate::renderPdf):
              the wording, the course title where translated, and the date. --}}
-        <div class="center eyebrow">{{ __t('mail.certificate_pdf.title') }}</div>
-        <div class="rule rule-l"></div>
-        <div class="dot"></div>
-        <div class="rule rule-r"></div>
+        <div class="center sans issuer">{{ __t('mail.certificate_pdf.issuer') }}</div>
+        <div class="center title">{{ __t($isAcademy ? 'mail.certificate_pdf.title_academy' : 'mail.certificate_pdf.title') }}</div>
+
+        @if($isAcademy)
+            <div class="pill sans">{{ __t('mail.certificate_pdf.academy_badge') }}</div>
+        @endif
 
         <div class="center lead lead-1">{{ __t('mail.certificate_pdf.certifies') }}</div>
         <div class="center name">{{ $certificate->name }}</div>
         <div class="name-rule"></div>
-        <div class="center lead lead-2">{{ __t('mail.certificate_pdf.completed') }}</div>
-        <div class="center course">{{ $certificate->course->translated('title', app()->getLocale()) }}</div>
 
-        <div class="meta">
+        {{-- Built from escaped pieces: only the <strong> around the title is markup. --}}
+        <div class="achievement">
+            @if($isAcademy)
+                {!! __t('mail.certificate_pdf.achievement_academy', [
+                    'academy' => '<strong>'.e(__t('mail.certificate_pdf.academy_name')).'</strong>',
+                    'courses' => e(__tc('academy.home.hero_courses', $counts['courses'])),
+                    'lessons' => e($lessons),
+                ]) !!}
+            @else
+                {{-- No study time on purpose (owner, 2026-11-24): lessons and score only. --}}
+                {!! __t('mail.certificate_pdf.achievement_course', [
+                    'course' => '<strong>'.e($certificate->title()).'</strong>',
+                    'lessons' => e($lessons),
+                    'score' => (int) $certificate->score_percent,
+                ]) !!}
+            @endif
+        </div>
+
+        {{-- Set under Settings → Certificate; with nobody set, nothing is printed here. --}}
+        @if($signatory)
+            <div class="sign sans">
+                @if($signatory['signature'])
+                    <img class="sign-image" src="{{ $signatory['signature'] }}">
+                @else
+                    <div class="sign-space"></div>
+                @endif
+                <div class="sign-line"></div>
+                <div class="sign-name">{{ $signatory['name'] }}</div>
+                @if($signatory['title'] !== '')
+                    <div class="sign-title">{{ $signatory['title'] }}</div>
+                @endif
+            </div>
+        @endif
+
+        <div class="seal-o"></div>
+        <div class="seal-i"></div>
+        <div class="seal-t sans seal-1">PILOT ACADEMY</div>
+        @if($isAcademy)
+            <div class="seal-t sans seal-2">{{ $counts['courses'] }}/{{ $counts['courses'] }}</div>
+            <div class="seal-t sans seal-3">{{ __t('mail.certificate_pdf.all_courses') }}</div>
+        @else
+            <div class="seal-t sans seal-2">{{ $certificate->score_percent !== null ? $certificate->score_percent.'%' : '✓' }}</div>
+            <div class="seal-t sans seal-3">{{ $certificate->issued_at->format('Y') }}</div>
+        @endif
+
+        <div class="meta sans">
             <div class="label">{{ __t('mail.certificate_pdf.number') }}</div>
             <div class="value">{{ $certificate->number }}</div>
             <div class="label">{{ __t('mail.certificate_pdf.issued') }}</div>
@@ -108,18 +158,10 @@
             <div class="url">{{ route('certificates.verify', $certificate->number) }}</div>
         </div>
 
-        <div class="seal-o"></div>
-        <div class="seal-i"></div>
-        <div class="seal-t seal-1">PILOT ACADEMY</div>
-        @if($certificate->score_percent !== null)
-            <div class="seal-t seal-2">{{ $certificate->score_percent }}%</div>
-        @else
-            <div class="seal-t seal-2">&#10003;</div>
-        @endif
-        <div class="seal-t seal-3">{{ $certificate->issued_at->format('Y') }}</div>
-
         <img class="qr" src="data:image/svg+xml;base64,{{ $qr }}">
-        <div class="qr-caption">{{ __t('mail.certificate_pdf.scan') }}</div>
+        <div class="qr-caption sans">{{ __t('mail.certificate_pdf.scan') }}</div>
+
+        <div class="center sans issued-by">{{ __t('mail.certificate_pdf.issued_by') }}</div>
     </div>
 </body>
 </html>

@@ -31,7 +31,7 @@ class AwardBadges
     public function handle(User $user): array
     {
         $completed = $user->completedLessons()->pluck('lessons.id')->map(fn ($id): int => (int) $id)->all();
-        $certified = $user->certificates()->whereNull('revoked_at')->pluck('course_id')->map(fn ($id): int => (int) $id)->unique()->all();
+        $certified = $user->certificates()->forCourses()->whereNull('revoked_at')->pluck('course_id')->map(fn ($id): int => (int) $id)->unique()->all();
 
         $earned = [];
 
@@ -93,8 +93,7 @@ class AwardBadges
                 continue;
             }
 
-            $allFinished = $courses->every(fn ($course): bool => $course->publishedLessons->pluck('id')->diff($completed)->isEmpty()
-                && (! $course->final_quiz_enabled || in_array((int) $course->id, $certified, true)));
+            $allFinished = $courses->every(fn ($course): bool => $course->isFinishedWith($completed, $certified));
 
             if ($allFinished) {
                 $done[] = (int) $product->id;
