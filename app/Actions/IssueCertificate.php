@@ -69,11 +69,7 @@ class IssueCertificate
         // The course's own background, else the standard one from Settings →
         // Certificate, else none: the built-in layout is drawn.
         $background = null;
-        // The all-courses certificate has no course, so it keeps its own built-in
-        // design (gold frame) rather than a background meant for one course.
-        $templates = $certificate->isAcademy() ? [] : [$certificate->course?->certificate_template, Certificate::standardTemplate()];
-
-        foreach ($templates as $template) {
+        foreach ([$certificate->course->certificate_template, Certificate::standardTemplate()] as $template) {
             if ($template && Storage::disk('public')->exists($template)) {
                 $background = Storage::disk('public')->path($template);
                 break;
@@ -96,21 +92,9 @@ class IssueCertificate
                 : null;
         }
 
-        // What was achieved, counted when the PDF is drawn.
-        if ($certificate->isAcademy()) {
-            $courses = Course::withTrashed()->whereIn('id', $certificate->covered_course_ids ?? [])
-                ->with('publishedLessons:lessons.id')->get();
-            $counts = [
-                'courses' => count($certificate->covered_course_ids ?? []),
-                'lessons' => $courses->flatMap(fn (Course $course) => $course->publishedLessons->pluck('id'))->unique()->count(),
-            ];
-        } else {
-            // No study time on the certificate, on purpose: lessons and score only.
-            $counts = [
-                'courses' => 1,
-                'lessons' => $certificate->course?->publishedLessons()->count() ?? 0,
-            ];
-        }
+        // What was achieved, counted when the PDF is drawn. No study time on
+        // purpose (owner, 2026-11-24): lessons and score only.
+        $lessons = $certificate->course->publishedLessons()->count();
 
         // Printed in the student's language, whoever pressed Regenerate. The
         // view is rendered here, so the locale has to be set around it.
@@ -122,7 +106,7 @@ class IssueCertificate
             'background' => $background,
             'logo' => $logo,
             'signatory' => $signatory,
-            'counts' => $counts,
+            'lessons' => $lessons,
         ])->setPaper('a4', 'landscape')->output());
 
         $path = "certificates/{$certificate->number}.pdf";
