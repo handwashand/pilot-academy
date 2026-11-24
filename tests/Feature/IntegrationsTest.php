@@ -222,6 +222,40 @@ class IntegrationsTest extends TestCase
         $this->assertFalse((bool) AiProvider::for('chatgpt')->enabled);
     }
 
+    public function test_typed_tokens_leave_the_page_when_a_save_is_refused(): void
+    {
+        Livewire::actingAs($this->admin())
+            ->test(Integrations::class)
+            ->fillForm([
+                'deepl' => ['enabled' => true, 'api_key' => 'deepl-typed-secret'],
+                'chatgpt' => ['enabled' => true, 'api_key' => ''],
+                'deepseek' => ['enabled' => true, 'api_key' => 'ds-typed-secret'],
+            ])
+            ->call('save')
+            ->assertSet('data.deepl.api_key', '')
+            ->assertSet('data.deepseek.api_key', '')
+            ->assertDontSee('deepl-typed-secret')
+            ->assertDontSee('ds-typed-secret');
+
+        // DeepL came before the refused card, so it was saved.
+        $this->assertSame('deepl-typed-secret', AiProvider::for('deepl')->api_key);
+    }
+
+    public function test_translating_with_a_reasoning_model_sends_no_temperature(): void
+    {
+        $this->enable('chatgpt', 'sk-secret-token');
+        AiProvider::for('chatgpt')->update(['model' => 'gpt-6.2-sol']);
+
+        Livewire::actingAs($this->admin(User::PERMISSION_AI_TRANSLATE))
+            ->test(EditLesson::class, ['record' => Course::first()->lessons()->first()->getRouteKey()])
+            ->callAction('translateWithChatgpt')
+            ->assertHasNoActionErrors();
+
+        Http::assertSent(fn (Request $request): bool => $request->data()['model'] === 'gpt-6.2-sol'
+            && $request->data()['reasoning_effort'] === 'low'
+            && ! array_key_exists('temperature', $request->data()));
+    }
+
     public function test_the_token_is_not_serialised(): void
     {
         $this->enable('chatgpt');

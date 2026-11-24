@@ -84,7 +84,7 @@ class LlmTranslator
                 ->timeout(90)
                 ->post($this->provider->endpoint(), [
                     'model' => $this->provider->modelName(),
-                    'temperature' => 0,
+                    ...AiProvider::chatOptions($this->provider->provider, $this->provider->modelName(), 0),
                     'response_format' => ['type' => 'json_object'],
                     'messages' => [
                         ['role' => 'system', 'content' => $system],

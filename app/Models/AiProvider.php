@@ -56,34 +56,44 @@ class AiProvider extends Model
             'label' => 'ChatGPT',
             'url' => 'https://api.openai.com/v1/chat/completions',
             'model' => 'gpt-4o-mini',
+            // Checked against OpenAI's pricing and model pages on 2026-11-24.
+            // GPT-4 Turbo and GPT-3.5 Turbo were dropped: OpenAI no longer
+            // prices them.
             'model_options' => [
+                'gpt-6-luna' => 'GPT-6 Luna',
+                'gpt-6.2-sol' => 'GPT-6.2 Sol',
+                'gpt-6.2-astra' => 'GPT-6.2 Astra',
                 'gpt-4o-mini' => 'GPT-4o mini',
                 'gpt-4o' => 'GPT-4o',
-                'gpt-4-turbo' => 'GPT-4 Turbo',
-                'gpt-3.5-turbo' => 'GPT-3.5 Turbo',
             ],
             // Estimates for the generation budget, not an invoice. Input then
             // output, US dollars per million tokens. Documents and web search
-            // stay off: the app reads source text itself.
+            // stay off: the app reads source text itself. GPT-6 prices are the
+            // rate up to 272,000 input tokens; OpenAI charges more above it.
+            // A reasoning model is called differently (see chatOptions()).
             'capabilities' => [
+                'gpt-6-luna' => ['text' => true, 'json' => true, 'reasoning' => true, 'documents' => false, 'web_search' => false, 'context_tokens' => 1050000, 'max_output_tokens' => 128000, 'input_usd_per_million' => 0.10, 'output_usd_per_million' => 0.50],
+                'gpt-6.2-sol' => ['text' => true, 'json' => true, 'reasoning' => true, 'documents' => false, 'web_search' => false, 'context_tokens' => 1050000, 'max_output_tokens' => 128000, 'input_usd_per_million' => 2.00, 'output_usd_per_million' => 10.00],
+                'gpt-6.2-astra' => ['text' => true, 'json' => true, 'reasoning' => true, 'documents' => false, 'web_search' => false, 'context_tokens' => 1050000, 'max_output_tokens' => 128000, 'input_usd_per_million' => 8.00, 'output_usd_per_million' => 40.00],
                 'gpt-4o-mini' => ['text' => true, 'json' => true, 'documents' => false, 'web_search' => false, 'context_tokens' => 128000, 'max_output_tokens' => 16384, 'input_usd_per_million' => 0.15, 'output_usd_per_million' => 0.60],
                 'gpt-4o' => ['text' => true, 'json' => true, 'documents' => false, 'web_search' => false, 'context_tokens' => 128000, 'max_output_tokens' => 16384, 'input_usd_per_million' => 2.50, 'output_usd_per_million' => 10.00],
-                'gpt-4-turbo' => ['text' => true, 'json' => true, 'documents' => false, 'web_search' => false, 'context_tokens' => 128000, 'max_output_tokens' => 4096, 'input_usd_per_million' => 10.00, 'output_usd_per_million' => 30.00],
-                'gpt-3.5-turbo' => ['text' => true, 'json' => true, 'documents' => false, 'web_search' => false, 'context_tokens' => 16385, 'max_output_tokens' => 4096, 'input_usd_per_million' => 0.50, 'output_usd_per_million' => 1.50],
             ],
         ],
         self::DEEPSEEK => [
             'label' => 'DeepSeek',
             'url' => 'https://api.deepseek.com/chat/completions',
-            'model' => 'deepseek-chat',
+            // deepseek-chat and deepseek-reasoner were retired on 2026-07-24;
+            // migration 2026_11_24_000001 moves saved rows to deepseek-flash.
+            'model' => 'deepseek-flash',
             'model_options' => [
-                'deepseek-chat' => 'DeepSeek Chat',
-                'deepseek-reasoner' => 'DeepSeek Reasoner',
+                'deepseek-flash' => 'DeepSeek Flash',
+                'deepseek-v4-pro' => 'DeepSeek V4 Pro',
             ],
+            // Peak-hour prices, the higher of DeepSeek's two rates, so the
+            // budget is never under-counted.
             'capabilities' => [
-                'deepseek-chat' => ['text' => true, 'json' => true, 'documents' => false, 'web_search' => false, 'context_tokens' => 128000, 'max_output_tokens' => 8192, 'input_usd_per_million' => 0.14, 'output_usd_per_million' => 0.28],
-                // Reasoner does not accept a JSON response format.
-                'deepseek-reasoner' => ['text' => true, 'json' => false, 'documents' => false, 'web_search' => false, 'context_tokens' => 128000, 'max_output_tokens' => 8192, 'input_usd_per_million' => 0.55, 'output_usd_per_million' => 2.19],
+                'deepseek-flash' => ['text' => true, 'json' => true, 'documents' => false, 'web_search' => false, 'context_tokens' => 1000000, 'max_output_tokens' => 384000, 'input_usd_per_million' => 0.30, 'output_usd_per_million' => 1.20],
+                'deepseek-v4-pro' => ['text' => true, 'json' => true, 'documents' => false, 'web_search' => false, 'context_tokens' => 1000000, 'max_output_tokens' => 384000, 'input_usd_per_million' => 1.32, 'output_usd_per_million' => 3.96],
             ],
         ],
         // Messages API, not chat completions. Haiku's price is the short-prompt
@@ -96,11 +106,13 @@ class AiProvider extends Model
                 'claude-haiku-5-5' => 'Claude Haiku 5.5',
                 'claude-sonnet-5-5' => 'Claude Sonnet 5.5',
                 'claude-opus-5-5' => 'Claude Opus 5.5',
+                'claude-fable-5-2' => 'Claude Fable 5.2',
             ],
             'capabilities' => [
                 'claude-haiku-5-5' => ['text' => true, 'json' => true, 'documents' => false, 'web_search' => false, 'context_tokens' => 1000000, 'max_output_tokens' => 128000, 'input_usd_per_million' => 0.10, 'output_usd_per_million' => 0.50],
                 'claude-sonnet-5-5' => ['text' => true, 'json' => true, 'documents' => false, 'web_search' => false, 'context_tokens' => 1000000, 'max_output_tokens' => 128000, 'input_usd_per_million' => 2.00, 'output_usd_per_million' => 10.00],
                 'claude-opus-5-5' => ['text' => true, 'json' => true, 'documents' => false, 'web_search' => false, 'context_tokens' => 1000000, 'max_output_tokens' => 128000, 'input_usd_per_million' => 4.00, 'output_usd_per_million' => 20.00],
+                'claude-fable-5-2' => ['text' => true, 'json' => true, 'documents' => false, 'web_search' => false, 'context_tokens' => 1000000, 'max_output_tokens' => 128000, 'input_usd_per_million' => 8.00, 'output_usd_per_million' => 40.00],
             ],
         ],
     ];
@@ -219,6 +231,30 @@ class AiProvider extends Model
         $capabilities = self::PROVIDERS[$provider]['capabilities'][$model] ?? null;
 
         return is_array($capabilities) ? $capabilities : null;
+    }
+
+    /**
+     * The chat-completions settings for one request, shared by translation and
+     * course drafting. OpenAI's reasoning models take max_completion_tokens
+     * (max_tokens is deprecated and refused by them), a reasoning effort, and
+     * no temperature. Everything else keeps the classic fields.
+     *
+     * @return array<string, mixed>
+     */
+    public static function chatOptions(string $provider, string $model, float $temperature, ?int $maxTokens = null): array
+    {
+        if (self::capabilitiesFor($provider, $model)['reasoning'] ?? false) {
+            // Reasoning counts against the limit, so leave it room.
+            return array_filter([
+                'reasoning_effort' => 'low',
+                'max_completion_tokens' => $maxTokens === null ? null : max($maxTokens, 32000),
+            ], fn ($value): bool => $value !== null);
+        }
+
+        return array_filter([
+            'temperature' => $temperature,
+            'max_tokens' => $maxTokens,
+        ], fn ($value): bool => $value !== null);
     }
 
     public static function modelSupportsJson(string $provider, string $model): bool

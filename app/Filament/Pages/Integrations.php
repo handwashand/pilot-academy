@@ -191,6 +191,12 @@ class Integrations extends Page
                     ->danger()
                     ->send();
 
+                // Typed tokens must not linger in the page data the browser
+                // keeps; whatever was saved above stays saved.
+                foreach (array_keys(AiProvider::PROVIDERS) as $key) {
+                    $this->data[$key]['api_key'] = '';
+                }
+
                 return;
             }
 

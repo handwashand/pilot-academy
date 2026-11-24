@@ -70,22 +70,65 @@ class CourseGenerationTest extends TestCase
         $this->get(route('academy.course', $course))->assertNotFound();
     }
 
+    public function test_an_openai_reasoning_model_gets_completion_tokens_and_no_temperature(): void
+    {
+        $this->enable('chatgpt', 'sk-secret-token', 'gpt-6-luna');
+        $this->fake((array) $this->payload(), 'openai.com');
+
+        $this->assertDraft($this->generate($this->admin(), 'chatgpt', 'gpt-6-luna'));
+
+        Http::assertSent(function (Request $request): bool {
+            $data = $request->data();
+
+            return $data['model'] === 'gpt-6-luna'
+                && $data['reasoning_effort'] === 'low'
+                && $data['max_completion_tokens'] >= 32000
+                && ! array_key_exists('max_tokens', $data)
+                && ! array_key_exists('temperature', $data);
+        });
+        $this->assertSame('0.000110', AiUsage::query()->sole()->estimated_cost_usd);
+    }
+
+    public function test_a_classic_model_keeps_temperature_and_max_tokens(): void
+    {
+        $this->enable('chatgpt', 'sk-secret-token', 'gpt-4o-mini');
+        $this->fake((array) $this->payload(), 'openai.com');
+
+        $this->generate($this->admin(), 'chatgpt', 'gpt-4o-mini');
+
+        Http::assertSent(fn (Request $request): bool => $request->data()['temperature'] === 0.2
+            && is_int($request->data()['max_tokens'])
+            && ! array_key_exists('reasoning_effort', $request->data()));
+    }
+
+    public function test_saved_retired_models_move_to_current_ones(): void
+    {
+        $this->enable('deepseek', 'ds-token', 'deepseek-reasoner');
+        $this->enable('chatgpt', 'sk-secret-token', 'gpt-3.5-turbo');
+
+        (require database_path('migrations/2026_11_24_000001_move_retired_ai_models.php'))->up();
+
+        $this->assertSame('deepseek-flash', AiProvider::for('deepseek')->model);
+        $this->assertNull(AiProvider::for('chatgpt')->model);
+        $this->assertSame('gpt-4o-mini', AiProvider::for('chatgpt')->modelName());
+    }
+
     public function test_deepseek_saves_the_same_structure_with_its_own_token(): void
     {
-        $this->enable('deepseek', 'ds-token', 'deepseek-chat');
+        $this->enable('deepseek', 'ds-token', 'deepseek-flash');
         $this->fake((array) $this->payload(), 'deepseek.com');
 
-        $course = $this->generate($this->admin(), 'deepseek', 'deepseek-chat');
+        $course = $this->generate($this->admin(), 'deepseek', 'deepseek-flash');
 
         $this->assertDraft($course);
         Http::assertSent(fn (Request $request): bool => $request->url() === 'https://api.deepseek.com/chat/completions'
             && $request->hasHeader('Authorization', 'Bearer ds-token')
-            && $request->data()['model'] === 'deepseek-chat');
+            && $request->data()['model'] === 'deepseek-flash');
         Http::assertNotSent(fn (Request $request): bool => str_contains($request->url(), 'openai.com'));
 
         $usage = AiUsage::query()->sole();
         $this->assertSame('deepseek', $usage->provider);
-        $this->assertSame('0.000070', $usage->estimated_cost_usd);
+        $this->assertSame('0.000270', $usage->estimated_cost_usd);
         $this->assertSame('deepseek', AiContentRevision::query()->where('purpose', 'lesson')->value('provider'));
     }
 
@@ -113,6 +156,7 @@ class CourseGenerationTest extends TestCase
                 && $request->hasHeader('anthropic-version', '2026-10-21')
                 && $request->data()['model'] === 'claude-sonnet-5-5'
                 && ! array_key_exists('response_format', $request->data())
+                && ! array_key_exists('temperature', $request->data())
                 && ! str_contains($body, 'sk-ant-secret')
                 && ! str_contains($body, 'private reasoning');
         });
@@ -203,7 +247,7 @@ class CourseGenerationTest extends TestCase
             ]),
         ]);
 
-        $exception = $this->capture(fn () => $this->generate($this->admin(), 'deepseek', 'deepseek-chat'));
+        $exception = $this->capture(fn () => $this->generate($this->admin(), 'deepseek', 'deepseek-flash'));
 
         $this->assertSame('invalid_response', $exception->errorCode);
         $this->assertSame(0, Course::query()->count());
@@ -238,7 +282,7 @@ class CourseGenerationTest extends TestCase
         });
 
         $first = $this->generate($admin, 'chatgpt', 'gpt-4o-mini');
-        $second = $this->generate($admin, 'deepseek', 'deepseek-chat');
+        $second = $this->generate($admin, 'deepseek', 'deepseek-flash');
 
         $this->assertSame('Fuel sensors', $first->fresh()->title);
         $this->assertSame(2, $first->fresh()->lessons()->count());
@@ -303,7 +347,7 @@ class CourseGenerationTest extends TestCase
         AiUsage::query()->create([
             'user_id' => $admin->id,
             'provider' => 'deepseek',
-            'model' => 'deepseek-chat',
+            'model' => 'deepseek-flash',
             'purpose' => AiUsage::PURPOSE_COURSE,
             'prompt_tokens' => 1,
             'completion_tokens' => 1,
@@ -453,7 +497,7 @@ class CourseGenerationTest extends TestCase
 
     public function test_the_page_offers_only_a_connected_provider_and_saves(): void
     {
-        $this->enable('deepseek', 'ds-token', 'deepseek-chat');
+        $this->enable('deepseek', 'ds-token', 'deepseek-flash');
         $this->fake((array) $this->payload(), 'deepseek.com');
 
         Livewire::actingAs($this->admin())
@@ -462,7 +506,7 @@ class CourseGenerationTest extends TestCase
             ->assertSee('DeepSeek')
             ->fillForm([
                 'provider' => 'deepseek',
-                'model' => 'deepseek-chat',
+                'model' => 'deepseek-flash',
                 'mode' => 'full',
                 'brief' => self::BRIEF,
             ])

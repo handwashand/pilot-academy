@@ -103,8 +103,7 @@ class ChatClient
             ->timeout(120)
             ->post($this->provider->endpoint(), [
                 'model' => $this->model,
-                'temperature' => 0.2,
-                'max_tokens' => $maxTokens,
+                ...AiProvider::chatOptions($this->provider->provider, $this->model, 0.2, $maxTokens),
                 'response_format' => ['type' => 'json_object'],
                 'messages' => [
                     ['role' => 'system', 'content' => $system],
@@ -122,8 +121,9 @@ class ChatClient
             ->timeout(120)
             ->post($this->provider->endpoint(), [
                 'model' => $this->model,
+                // No temperature: API version 2026-10-21 refuses it on every
+                // Claude model. Effort sets how much it thinks.
                 'max_tokens' => $maxTokens,
-                'temperature' => 0.2,
                 'system' => $system,
                 'messages' => [
                     ['role' => 'user', 'content' => $user],
