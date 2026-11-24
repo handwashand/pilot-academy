@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Actions\AwardBadges;
-use App\Actions\IssueAcademyCertificate;
 use App\Filament\Pages\AdminGuide;
 use App\Models\ActivityEvent;
 use App\Models\Course;
@@ -1054,7 +1053,6 @@ class AcademyController extends Controller
             ]);
 
             app(AwardBadges::class)->handle($user);
-            app(IssueAcademyCertificate::class)->handle($user);
 
             return;
         }

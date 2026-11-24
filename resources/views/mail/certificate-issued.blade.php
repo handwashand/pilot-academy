@@ -5,11 +5,7 @@
 
 # {{ __t('mail.certificate_issued.heading', ['name' => $certificate->name]) }}
 
-@if($certificate->isAcademy())
-{{ __t('mail.certificate_issued.passed_academy') }}
-@else
 {{ __t('mail.certificate_issued.passed', ['course' => $courseTitle, 'score' => $certificate->score_percent]) }}
-@endif
 
 {{ __t('mail.certificate_issued.attached', ['number' => $certificate->number]) }}
 

@@ -61,9 +61,9 @@ class CertificateIssued extends Mailable
         ];
     }
 
-    /** What it certifies in the student's language: the course, or every course of the academy. */
+    /** The course title in the student's language, where one has been written. */
     private function courseTitle(): string
     {
-        return app(Translator::class)->inLocale($this->locale ?? app()->getLocale(), fn (): string => $this->certificate->title($this->locale));
+        return (string) $this->certificate->course->translated('title', $this->locale);
     }
 }
