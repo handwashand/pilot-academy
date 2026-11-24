@@ -48,17 +48,9 @@ class Certificate extends Model
         ];
     }
 
-    /** A certificate for one course, earned by passing its final quiz. */
-    public const KIND_COURSE = 'course';
-
-    /** The all-courses certificate: every published course finished. No course, no score. */
-    public const KIND_ACADEMY = 'academy';
-
     protected $fillable = [
         'user_id',
         'course_id',
-        'kind',
-        'covered_course_ids',
         'quiz_attempt_id',
         'number',
         'name',
@@ -71,36 +63,7 @@ class Certificate extends Model
     protected $casts = [
         'issued_at' => 'datetime',
         'revoked_at' => 'datetime',
-        'covered_course_ids' => 'array',
     ];
-
-    /**
-     * Course certificates only. Anything that reads a certificate as "this
-     * student passed this course" (dashboards, quiz health, completion) goes
-     * through this, so an all-courses certificate is never counted as one.
-     */
-    public function scopeForCourses(Builder $query): Builder
-    {
-        return $query->where('kind', self::KIND_COURSE);
-    }
-
-    public function scopeForAcademy(Builder $query): Builder
-    {
-        return $query->where('kind', self::KIND_ACADEMY);
-    }
-
-    public function isAcademy(): bool
-    {
-        return $this->kind === self::KIND_ACADEMY;
-    }
-
-    /** What it certifies, in the given (or current) language: the course, or the whole academy. */
-    public function title(?string $locale = null): string
-    {
-        return $this->isAcademy()
-            ? __t('mail.certificate_pdf.academy_title')
-            : (string) $this->course?->translated('title', $locale ?? app()->getLocale());
-    }
 
     public function user(): BelongsTo
     {
