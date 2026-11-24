@@ -13,6 +13,7 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
@@ -91,7 +92,10 @@ class Integrations extends Page
                 'enabled' => (bool) $row->enabled,
                 'model' => $row->model,
                 'api_key' => '',
-                'clear_key' => false,
+                'scope' => AiProvider::SCOPE_EVERYONE,
+                'shared_scope' => $row->scope ?? AiProvider::SCOPE_EVERYONE,
+                'clear_shared' => false,
+                'clear_own' => false,
             ];
         }
 
@@ -171,21 +175,39 @@ class Integrations extends Page
     public function save(): void
     {
         $data = $this->form->getState();
+        $user = auth()->user();
 
         foreach (array_keys(AiProvider::PROVIDERS) as $provider) {
             $input = $data[$provider] ?? [];
             $row = AiProvider::for($provider);
+            $own = AiProvider::personalFor($provider, $user);
+            $token = trim((string) ($input['api_key'] ?? ''));
+            $scope = $this->scopeFor($provider, $input['scope'] ?? null);
 
-            if (! empty($input['clear_key'])) {
+            if (! empty($input['clear_shared'])) {
                 $row->api_key = null;
-            } elseif (filled($input['api_key'] ?? null)) {
-                $row->api_key = trim((string) $input['api_key']);
+            }
+
+            if (! empty($input['clear_own']) && $own->exists) {
+                $own->delete();
+                $own = AiProvider::personalFor($provider, $user);
+            }
+
+            // A new token goes where its owner chose: their own row, or the shared one.
+            if ($token !== '' && $scope === AiProvider::SCOPE_PERSONAL) {
+                $own->fill(['api_key' => $token, 'scope' => AiProvider::SCOPE_PERSONAL, 'added_by' => $user->id])->save();
+            } elseif ($token !== '') {
+                $row->fill(['api_key' => $token, 'scope' => $scope, 'added_by' => $user->id]);
+            } elseif (filled($row->api_key)) {
+                $row->scope = $this->scopeFor($provider, $input['shared_scope'] ?? null, shared: true);
             }
 
             $row->enabled = (bool) ($input['enabled'] ?? false);
             $row->model = filled($input['model'] ?? null) ? trim((string) $input['model']) : null;
 
-            if ($row->enabled && blank($row->api_key)) {
+            // Switching on needs a token someone can use: a shared one, or the
+            // admin's own (then only they will see the buttons).
+            if ($row->enabled && blank($row->api_key) && blank($own->api_key)) {
                 Notification::make()
                     ->title(__t('admin_integrations.needs_token', ['provider' => $row->label()]))
                     ->danger()
@@ -208,6 +230,54 @@ class Integrations extends Page
         $this->mount();
 
         Notification::make()->title(__t('admin_integrations.saved'))->success()->send();
+    }
+
+    /**
+     * A reach from the form, checked here because it arrives from the browser.
+     * Descript has no personal tokens, and a shared row is never personal.
+     */
+    private function scopeFor(string $provider, mixed $scope, bool $shared = false): string
+    {
+        $allowed = array_keys($this->scopeOptions($provider, $shared));
+
+        return in_array($scope, $allowed, true) ? $scope : AiProvider::SCOPE_EVERYONE;
+    }
+
+    /** @return array<string, string> */
+    private function scopeOptions(string $provider, bool $shared = false): array
+    {
+        $scopes = [AiProvider::SCOPE_PERSONAL, AiProvider::SCOPE_ADMINS, AiProvider::SCOPE_EVERYONE];
+
+        if ($shared || in_array($provider, AiProvider::SHARED_ONLY, true)) {
+            $scopes = array_slice($scopes, 1);
+        }
+
+        return collect($scopes)->mapWithKeys(fn (string $scope): array => [$scope => __t("admin_integrations.scopes.{$scope}")])->all();
+    }
+
+    /** One line about the shared token: its ending, its reach and who added it. Never the token. */
+    private function sharedTokenLine(string $provider): string
+    {
+        $row = AiProvider::for($provider);
+
+        if (blank($row->api_key)) {
+            return __t('admin_integrations.shared_none');
+        }
+
+        return __t('admin_integrations.shared_value', [
+            'ending' => $row->tokenEnding(),
+            'scope' => __t('admin_integrations.scopes.'.($row->scope ?? AiProvider::SCOPE_EVERYONE)),
+            'name' => $row->addedBy?->name ?? __t('admin_integrations.added_by_unknown'),
+        ]);
+    }
+
+    private function ownTokenLine(string $provider): string
+    {
+        $own = AiProvider::personalFor($provider, auth()->user());
+
+        return filled($own->api_key)
+            ? __t('admin_integrations.own_value', ['ending' => $own->tokenEnding()])
+            : __t('admin_integrations.own_none');
     }
 
     private function generationSection(): Section
@@ -278,6 +348,9 @@ class Integrations extends Page
     {
         $label = AiProvider::PROVIDERS[$provider]['label'];
         $saved = AiProvider::withToken($provider) !== null;
+        $sharedSaved = filled(AiProvider::for($provider)->api_key);
+        $ownSaved = ! in_array($provider, AiProvider::SHARED_ONLY, true)
+            && filled(AiProvider::personalFor($provider, auth()->user())->api_key);
         $on = $this->isOn($provider);
 
         return Section::make($label)
@@ -299,6 +372,31 @@ class Integrations extends Page
                     // What it does, on demand: the card itself stays short.
                     ->hintIcon(Heroicon::OutlinedInformationCircle, tooltip: fn (): string => __t("admin_integrations.description.{$provider}")),
 
+                // What is saved, as lines of text: never the token, only its last four characters.
+                TextEntry::make('shared_token')
+                    ->label(fn (): string => __t('admin_integrations.shared_token'))
+                    ->state(fn (): string => $this->sharedTokenLine($provider)),
+
+                Select::make('shared_scope')
+                    ->label(fn (): string => __t('admin_integrations.shared_scope'))
+                    ->options(fn (): array => $this->scopeOptions($provider, shared: true))
+                    ->native(false)
+                    ->selectablePlaceholder(false)
+                    ->visible($sharedSaved),
+
+                Checkbox::make('clear_shared')
+                    ->label(fn (): string => __t('admin_integrations.clear_shared'))
+                    ->visible($sharedSaved),
+
+                TextEntry::make('own_token')
+                    ->label(fn (): string => __t('admin_integrations.own_token'))
+                    ->state(fn (): string => $this->ownTokenLine($provider))
+                    ->visible(! in_array($provider, AiProvider::SHARED_ONLY, true)),
+
+                Checkbox::make('clear_own')
+                    ->label(fn (): string => __t('admin_integrations.clear_own'))
+                    ->visible($ownSaved),
+
                 TextInput::make('api_key')
                     ->label(fn (): string => __t('admin_integrations.token'))
                     ->password()
@@ -306,9 +404,12 @@ class Integrations extends Page
                     ->maxLength(300)
                     ->placeholder(fn (): string => $saved ? __t('admin_integrations.token_saved') : __t('admin_integrations.token_empty')),
 
-                Checkbox::make('clear_key')
-                    ->label(fn (): string => __t('admin_integrations.clear_token'))
-                    ->visible($saved),
+                Select::make('scope')
+                    ->label(fn (): string => __t('admin_integrations.scope'))
+                    ->helperText(fn (): string => __t('admin_integrations.scope_help'))
+                    ->options(fn (): array => $this->scopeOptions($provider))
+                    ->native(false)
+                    ->selectablePlaceholder(false),
 
                 Select::make('model')
                     ->visible(AiProvider::PROVIDERS[$provider]['model'] !== '')
