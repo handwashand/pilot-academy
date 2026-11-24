@@ -5,11 +5,9 @@
     <style>
         /* dompdf: absolute positioning in mm on an A4 landscape page (297x210).
            Brand palette only — navy #0a2540, Pilot blue #1463ff, amber #FFB900.
-           A course certificate has a navy frame with an amber hairline; the
-           all-courses certificate swaps them (amber frame, navy hairline).
-           Layout chosen on the design canvas, 2026-11-24: issuer and original
-           PILOT logo, recipient, precise achievement, signatory, seal, ID + QR.
-           No study time (hours) is printed: the owner asked for it to be left out. */
+           Layout chosen on the design canvas, 2026-11-24: issuer and the
+           original PILOT logo, recipient, precise achievement, signatory, seal,
+           ID + QR. No study time (hours) is printed: the owner left it out. */
         @page { margin: 0; }
         html, body { margin: 0; padding: 0; }
         body { font-family: 'DejaVu Serif', 'Times New Roman', serif; color: #0a2540; }
@@ -17,10 +15,9 @@
         .page { position: relative; width: 297mm; height: 210mm; overflow: hidden; background: #fbfaf6; }
         .bg { position: absolute; top: 0; left: 0; width: 297mm; height: 210mm; }
 
+        /* Frame: a navy band and an amber hairline inside it. */
         .band { position: absolute; top: 7mm; left: 7mm; width: 279mm; height: 192mm; border: 2.4mm solid #0a2540; }
         .hair { position: absolute; top: 12.2mm; left: 12.2mm; width: 271.4mm; height: 184.4mm; border: 0.35mm solid #FFB900; }
-        .academy .band { border: 2.8mm solid #FFB900; }
-        .academy .hair { border: 0.4mm solid #0a2540; }
 
         /* 1920x604 lockup, kept to ratio: 46mm wide is 14.5mm tall. Centred. */
         .logo { position: absolute; top: 19mm; left: 125.5mm; width: 46mm; height: 14.5mm; }
@@ -32,20 +29,12 @@
         /* The title has the full width: a long translation must fit on one line. */
         .title { top: 44mm; font-size: 25pt; font-weight: bold; color: #0a2540; }
 
-        .pill { position: absolute; top: 57mm; left: 108.5mm; width: 80mm; padding: 1.3mm 0; text-align: center;
-                background: #0a2540; color: #FFB900; border-radius: 4mm;
-                font-size: 7.5pt; font-weight: bold; letter-spacing: 2pt; text-transform: uppercase; }
-
         .lead { font-size: 12pt; font-style: italic; color: #475569; }
         .lead-1 { top: 60mm; }
-        .academy .lead-1 { top: 66mm; }
         .name { top: 67mm; font-size: 32pt; font-weight: bold; color: #0a2540; }
-        .academy .name { top: 73mm; }
         .name-rule { position: absolute; top: 86mm; left: 83.5mm; width: 130mm; height: 0.4mm; background: #FFB900; }
-        .academy .name-rule { top: 92mm; }
         .achievement { position: absolute; top: 91mm; left: 53.5mm; width: 190mm; text-align: center;
                        font-size: 12.5pt; line-height: 1.5; color: #334155; }
-        .academy .achievement { top: 97mm; }
         .achievement strong { color: #1463ff; }
 
         /* Bottom row: signatory left, seal centre, ID and QR right. */
@@ -74,11 +63,7 @@
     </style>
 </head>
 <body>
-    @php
-        $isAcademy = $certificate->isAcademy();
-        $lessons = __tc('academy.common.lessons', $counts['lessons']);
-    @endphp
-    <div class="page {{ $isAcademy ? 'academy' : '' }}">
+    <div class="page">
         @if($background)
             <img class="bg" src="{{ $background }}">
         @else
@@ -95,11 +80,7 @@
         {{-- Rendered inside the student's locale (IssueCertificate::renderPdf):
              the wording, the course title where translated, and the date. --}}
         <div class="center sans issuer">{{ __t('mail.certificate_pdf.issuer') }}</div>
-        <div class="center title">{{ __t($isAcademy ? 'mail.certificate_pdf.title_academy' : 'mail.certificate_pdf.title') }}</div>
-
-        @if($isAcademy)
-            <div class="pill sans">{{ __t('mail.certificate_pdf.academy_badge') }}</div>
-        @endif
+        <div class="center title">{{ __t('mail.certificate_pdf.title') }}</div>
 
         <div class="center lead lead-1">{{ __t('mail.certificate_pdf.certifies') }}</div>
         <div class="center name">{{ $certificate->name }}</div>
@@ -107,20 +88,11 @@
 
         {{-- Built from escaped pieces: only the <strong> around the title is markup. --}}
         <div class="achievement">
-            @if($isAcademy)
-                {!! __t('mail.certificate_pdf.achievement_academy', [
-                    'academy' => '<strong>'.e(__t('mail.certificate_pdf.academy_name')).'</strong>',
-                    'courses' => e(__tc('academy.home.hero_courses', $counts['courses'])),
-                    'lessons' => e($lessons),
-                ]) !!}
-            @else
-                {{-- No study time on purpose (owner, 2026-11-24): lessons and score only. --}}
-                {!! __t('mail.certificate_pdf.achievement_course', [
-                    'course' => '<strong>'.e($certificate->title()).'</strong>',
-                    'lessons' => e($lessons),
-                    'score' => (int) $certificate->score_percent,
-                ]) !!}
-            @endif
+            {!! __t('mail.certificate_pdf.achievement_course', [
+                'course' => '<strong>'.e($certificate->course->translated('title', app()->getLocale())).'</strong>',
+                'lessons' => e(__tc('academy.common.lessons', $lessons)),
+                'score' => (int) $certificate->score_percent,
+            ]) !!}
         </div>
 
         {{-- Set under Settings → Certificate; with nobody set, nothing is printed here. --}}
@@ -142,13 +114,8 @@
         <div class="seal-o"></div>
         <div class="seal-i"></div>
         <div class="seal-t sans seal-1">PILOT ACADEMY</div>
-        @if($isAcademy)
-            <div class="seal-t sans seal-2">{{ $counts['courses'] }}/{{ $counts['courses'] }}</div>
-            <div class="seal-t sans seal-3">{{ __t('mail.certificate_pdf.all_courses') }}</div>
-        @else
-            <div class="seal-t sans seal-2">{{ $certificate->score_percent !== null ? $certificate->score_percent.'%' : '✓' }}</div>
-            <div class="seal-t sans seal-3">{{ $certificate->issued_at->format('Y') }}</div>
-        @endif
+        <div class="seal-t sans seal-2">{{ $certificate->score_percent }}%</div>
+        <div class="seal-t sans seal-3">{{ $certificate->issued_at->format('Y') }}</div>
 
         <div class="meta sans">
             <div class="label">{{ __t('mail.certificate_pdf.number') }}</div>

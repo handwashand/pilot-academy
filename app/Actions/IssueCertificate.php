@@ -37,7 +37,7 @@ class IssueCertificate
             'user_id' => $user->id,
             'course_id' => $course->id,
             'quiz_attempt_id' => $attempt->id,
-            'number' => $this->uniqueNumber((string) $course->id),
+            'number' => $this->uniqueNumber($course),
             'name' => $user->certificate_name ?: $user->name,
             'score_percent' => $attempt->scorePercent() ?? 0,
             'issued_at' => now(),
@@ -137,11 +137,11 @@ class IssueCertificate
         return is_file($path) ? 'data:image/png;base64,'.base64_encode((string) file_get_contents($path)) : null;
     }
 
-    /** A unique, human-readable certificate number: PA-<course id, or ALL>-<year>-<random>. */
-    public function uniqueNumber(string $subject): string
+    /** Generate a unique, human-readable certificate number. */
+    private function uniqueNumber(Course $course): string
     {
         do {
-            $number = sprintf('PA-%s-%s-%s', $subject, now()->year, strtoupper(Str::random(6)));
+            $number = sprintf('PA-%d-%s-%s', $course->id, now()->year, strtoupper(Str::random(6)));
         } while (Certificate::where('number', $number)->exists());
 
         return $number;
