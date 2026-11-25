@@ -33,6 +33,7 @@ return [
     'common' => [
         'all_courses' => 'Todos los cursos',
         'lesson_number' => 'Lección :number',
+        'lesson_label' => 'Lección',
         'course' => 'Curso',
         'for_audience' => 'Para :audience',
         'audience' => [
@@ -70,6 +71,10 @@ return [
 
     'home' => [
         'see_all_lessons' => 'Ver todas las lecciones (:count)',
+        'your_courses' => 'Tus cursos',
+        'explore_courses' => 'Explorar cursos',
+        'see_all_courses' => 'Ver todos los cursos (:count)',
+        'more_ways' => 'Más formas de aprender',
         'start_course' => 'Empezar el curso',
         'continue_course' => 'Continuar',
         'review_course' => 'Repasar el curso',

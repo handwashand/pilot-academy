@@ -24,7 +24,7 @@ La tarjeta superior de la página principal siempre muestra tu siguiente paso: e
 
 La búsqueda encuentra cursos y lecciones por nombre, y también palabras dichas en un video si tiene transcripción.
 
-Cada curso de la página de inicio tiene un botón: **Empezar el curso** antes de comenzar, **Continuar** para abrir la primera lección que no has terminado y **Repasar el curso** cuando terminas todas las lecciones.
+Debajo, la página de inicio agrupa tus cursos. **Tus cursos** son los que has empezado, cada uno con sus tres lecciones siguientes (en el móvil, desliza hacia el lado) y **Continuar** para abrir la primera lección que no has terminado. **Explorar cursos** reúne los que aún no has empezado: abre uno y pulsa **Empezar el curso**. **Completada** reúne los que terminaste, con **Repasar el curso** y, si obtuviste un certificado, **Mis certificados**.
 
 ## Usar casos prácticos
 

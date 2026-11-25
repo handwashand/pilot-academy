@@ -24,7 +24,7 @@ O cartão no topo da página inicial sempre mostra o próximo passo: começar, c
 
 A busca encontra cursos e aulas pelo nome, e também palavras faladas em um vídeo quando há transcrição.
 
-Cada curso na página inicial tem um botão: **Começar o curso** antes de iniciar, **Continuar** para abrir a primeira aula que você não terminou e **Revisar o curso** quando todas as aulas estiverem concluídas.
+Abaixo, a página inicial agrupa seus cursos. **Seus cursos** são os que você começou, cada um com as três próximas aulas (no celular, deslize para o lado) e **Continuar** para abrir a primeira aula que você não terminou. **Explorar cursos** reúne os que você ainda não começou: abra um e toque em **Começar o curso**. **Concluída** reúne os que você terminou, com **Revisar o curso** e, se você obteve um certificado, **Meus certificados**.
 
 ## Usar estudos de caso
 

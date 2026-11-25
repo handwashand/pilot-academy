@@ -46,6 +46,7 @@ return [
     'common' => [
         'all_courses' => 'كل الدورات',
         'lesson_number' => 'الدرس :number',
+        'lesson_label' => 'الدرس',
         'course' => 'الدورة',
         'for_audience' => 'لـ :audience',
         'audience' => [
@@ -86,6 +87,10 @@ return [
 
     'home' => [
         'see_all_lessons' => 'عرض كل الدروس (:count)',
+        'your_courses' => 'دوراتك',
+        'explore_courses' => 'استكشف الدورات',
+        'see_all_courses' => 'عرض كل الدورات (:count)',
+        'more_ways' => 'طرق أخرى للتعلّم',
         'start_course' => 'ابدأ الدورة',
         'continue_course' => 'تابع',
         'review_course' => 'راجع الدورة',

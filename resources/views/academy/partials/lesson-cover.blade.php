@@ -2,9 +2,11 @@
     One cover for every lesson card.
     - A cover the creator added is shown as it is, nothing drawn over it.
     - Otherwise the cover is made automatically from the course's theme (the
-      cover pattern and colour chosen on the course), with the lesson's place
-      in its course and a "Lesson 3" chip. The number comes from the course
-      order, never typed. A course banner, when there is one, sits faded under.
+      cover picture and colour chosen on the course), with the lesson's place
+      in its course on the left ("Lesson 03"). The number comes from the course
+      order, never typed. Each place moves the picture a little
+      (lesson-cover--shift-N), so three cards in a row are not three copies.
+      A course banner, when there is one, sits faded under.
     Styles are the .lesson-cover rules in partials/head, because these
     utilities are not all in the committed CSS bundle.
 
@@ -16,8 +18,9 @@
     $coverNumber = $number ?? null;
     $coverTheme = $coverCourse ? $coverCourse->coverTheme() : \App\Models\Course::coverThemeFor(null, null);
     $coverBanner = $coverCourse?->thumbnailUrl;
+    $coverShift = $coverNumber ? $coverNumber % 3 : 1;
 @endphp
-<div class="lesson-cover"
+<div class="lesson-cover lesson-cover--shift-{{ $coverShift }}"
      style="--cover-from: {{ $coverTheme['from'] }}; --cover-to: {{ $coverTheme['to'] }}; --cover-pattern: url('{{ $coverTheme['pattern'] }}');">
     @if($lesson->image_url)
         <img src="{{ $lesson->image_url }}" alt="" class="lesson-cover__image">
@@ -27,8 +30,11 @@
         @endif
         <span class="lesson-cover__pattern" aria-hidden="true"></span>
         @if($coverNumber)
-            <span class="lesson-cover__number" aria-hidden="true">{{ $coverNumber }}</span>
-            <span class="lesson-cover__chip">{{ __t('academy.common.lesson_number', ['number' => $coverNumber]) }}</span>
+            <span class="lesson-cover__number" aria-hidden="true">
+                <span class="lesson-cover__label">{{ __t('academy.common.lesson_label') }}</span>
+                <span class="lesson-cover__digits">{{ str_pad((string) $coverNumber, 2, '0', STR_PAD_LEFT) }}</span>
+            </span>
+            <span class="vh">{{ __t('academy.common.lesson_number', ['number' => $coverNumber]) }}</span>
         @else
             <span aria-hidden="true" class="relative flex h-11 w-11 items-center justify-center rounded-full bg-white text-navy">
                 <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

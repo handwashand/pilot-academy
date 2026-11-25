@@ -90,58 +90,114 @@
         .prose-lesson { overflow-wrap: anywhere; }
         .prose-lesson pre { max-width: 100%; overflow-x: auto; }
 
-        /* The lesson card cover (partials/lesson-cover). Colours and pattern
-           come from the course's cover theme through --cover-* variables; a
-           soft glow sits behind the number so it reads on every pattern. */
+        /* Covers (partials/lesson-cover, the home page cards). Colours and the
+           picture come from the course's cover theme through --cover-*
+           variables. The picture is one 400x160 drawing weighted to the right,
+           sized to cover; the box is a little larger than the cover so each
+           --shift-N can move it without showing an edge. Light falls from the
+           top left. */
         .lesson-cover {
             position: relative; height: 7rem; overflow: hidden;
             display: flex; align-items: center; justify-content: center;
-            background: linear-gradient(135deg, var(--cover-from, #1463ff), var(--cover-to, #0a2540));
+            background: radial-gradient(circle at 10% 0%, rgba(255, 255, 255, .18), transparent 55%),
+                        linear-gradient(135deg, var(--cover-from, #1463ff), var(--cover-to, #0a2540));
         }
         .lesson-cover__image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
         .lesson-cover__image--banner { opacity: .35; }
         .lesson-cover__pattern {
-            position: absolute; inset: 0;
-            background: radial-gradient(circle at center, rgba(0, 0, 0, .28), transparent 42%), var(--cover-pattern);
+            position: absolute; inset: -14%;
+            background: var(--cover-pattern) right center / cover no-repeat;
         }
+        .lesson-cover--shift-2 .lesson-cover__pattern { transform: translate(-6%, 5%); }
+        .lesson-cover--shift-0 .lesson-cover__pattern { transform: translate(-11%, -5%); }
+        [dir="rtl"] .lesson-cover__pattern { transform: scaleX(-1); }
+        [dir="rtl"] .lesson-cover--shift-2 .lesson-cover__pattern { transform: scaleX(-1) translate(-6%, 5%); }
+        [dir="rtl"] .lesson-cover--shift-0 .lesson-cover__pattern { transform: scaleX(-1) translate(-11%, -5%); }
         .lesson-cover__number {
-            position: relative; color: #fff; font-size: 2.75rem; font-weight: 800; line-height: 1;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, .35);
+            position: absolute; inset-inline-start: 1.25rem; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: .125rem; color: #fff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, .25);
         }
-        .lesson-cover__chip {
-            position: absolute; top: .75rem; inset-inline-start: .75rem;
-            padding: .2rem .55rem; border-radius: 999px;
-            background: rgba(255, 255, 255, .92); color: #0a2540;
-            font-size: .6875rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
-        }
+        .lesson-cover__label { font-size: .6875rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; opacity: .85; }
+        .lesson-cover__digits { font-size: 2.75rem; font-weight: 800; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
 
-        /* The home page course card: a cover panel in the course's own theme
-           (a band on a phone, a side column from 640px), then the text. Inline
-           for the same reason as .lesson-cover. */
-        .course-card { display: flex; flex-direction: column; overflow: hidden; }
-        .course-card__cover {
-            position: relative; flex-shrink: 0; height: 6.5rem; overflow: hidden;
-            display: flex; align-items: center; justify-content: center;
-            background: linear-gradient(135deg, var(--cover-from, #1463ff), var(--cover-to, #0a2540));
+        /* Home page (academy/home). Inline for the same reason as .lesson-cover.
+           .course-tile: a course in a grid, cover on top; on a phone a short
+           row with the cover at the side. .course-feature: the one wide card
+           ("Start here", "Continue where you left off"). */
+        .home-section { margin-bottom: 2.5rem; }
+        .home-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .5rem 1rem; margin-bottom: 1rem; }
+        .home-heading h2 { font-size: 1.375rem; font-weight: 800; color: #0a2540; }
+        .home-eyebrow { display: block; margin-bottom: .75rem; font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #1463ff; }
+        .home-grid { display: grid; gap: 1rem; grid-template-columns: minmax(0, 1fr); }
+        .course-tile {
+            position: relative; display: flex; overflow: hidden; min-height: 5.5rem;
+            background: #fff; border: 1px solid #e2e8f0; border-radius: 1rem;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, .04); transition: box-shadow .15s, transform .15s;
         }
-        .course-card__cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-        .course-card__icon {
-            position: relative; display: flex; align-items: center; justify-content: center;
-            width: 3.25rem; height: 3.25rem; border-radius: 999px;
-            background: rgba(255, 255, 255, .95); color: #0a2540; box-shadow: 0 6px 18px rgba(0, 0, 0, .25);
+        .course-tile:hover { box-shadow: 0 8px 24px rgba(15, 23, 42, .08); transform: translateY(-2px); }
+        .course-tile .lesson-cover { width: 6rem; height: auto; flex-shrink: 0; }
+        .course-tile__count {
+            position: absolute; bottom: .75rem; inset-inline-start: .75rem; display: none;
+            padding: .2rem .6rem; border-radius: 999px; background: rgba(10, 37, 64, .55); color: #fff;
+            font-size: .75rem; font-weight: 600;
         }
-        .course-card__count {
-            position: absolute; bottom: .75rem; inset-inline-start: .75rem;
-            padding: .2rem .6rem; border-radius: 999px; background: rgba(10, 37, 64, .72); color: #fff;
-            font-size: .75rem; font-weight: 700;
+        .course-tile__body { display: flex; flex: 1; min-width: 0; flex-direction: column; justify-content: center; gap: .25rem; padding: .75rem 1rem; }
+        .course-tile__title { font-size: .9375rem; font-weight: 700; line-height: 1.3; color: #0a2540; }
+        .course-tile__title a::after { content: ''; position: absolute; inset: 0; }
+        .course-tile__desc, .course-tile__cta, .course-tile__tag { display: none; }
+        .course-tile__tag { font-size: .6875rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #1463ff; }
+        .course-tile__meta { font-size: .8125rem; color: #64748b; }
+        .course-tile__cta { margin-top: auto; padding-top: .5rem; font-size: .875rem; font-weight: 700; color: #1463ff; }
+        .course-feature {
+            display: flex; flex-direction: column; overflow: hidden;
+            background: #fff; border: 1px solid #e2e8f0; border-radius: 1.125rem; box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
         }
-        .course-card__body { padding: 1.25rem 1.5rem 1.5rem; min-width: 0; flex: 1; }
-        .course-card__cta {
-            display: inline-flex; align-items: center; gap: .4rem; min-height: 2.75rem; padding: 0 1.25rem;
-            border-radius: .75rem; background: #1463ff; color: #fff; font-weight: 700;
-            box-shadow: 0 4px 12px rgba(20, 99, 255, .25); transition: background .15s, transform .15s;
+        .course-feature--next { border-color: #bfdbfe; box-shadow: 0 8px 24px rgba(20, 99, 255, .08); }
+        .course-feature .lesson-cover { height: 8.5rem; }
+        .course-feature__body { display: flex; flex-direction: column; justify-content: center; gap: .625rem; padding: 1.25rem 1.25rem 1.5rem; min-width: 0; }
+        .course-feature__title { font-size: 1.375rem; font-weight: 800; line-height: 1.25; color: #0a2540; }
+        .course-feature__cta {
+            display: inline-flex; align-items: center; justify-content: center; gap: .4rem; min-height: 2.875rem; padding: 0 1.375rem;
+            border-radius: .625rem; background: #1463ff; color: #fff; font-weight: 700; align-self: flex-start;
+            transition: background .15s;
         }
-        .course-card__cta:hover { background: #0a2540; transform: translateY(-1px); }
+        .course-feature__cta:hover { background: #0a2540; }
+        /* A started course: its next three lessons. They scroll sideways on a
+           phone, so each course takes one card's height; a grid from 640px. */
+        .lesson-row { display: flex; gap: .75rem; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -1rem; padding: 0 1rem .25rem; }
+        .lesson-row > * { flex: 0 0 15rem; scroll-snap-align: start; }
+        .course-progress { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; margin-bottom: .875rem; }
+        .course-progress .lesson-cover { width: 4.5rem; height: 3rem; border-radius: .625rem; flex-shrink: 0; }
+        .course-done { display: flex; align-items: center; gap: .875rem; padding: .625rem .875rem .625rem .625rem; background: #fff; border: 1px solid #e2e8f0; border-radius: .875rem; }
+        .course-done .lesson-cover { width: 4.5rem; height: 3rem; border-radius: .5rem; flex-shrink: 0; }
+        .more-tile { display: flex; gap: .875rem; align-items: flex-start; padding: 1.25rem; background: #fff; border: 1px solid #e2e8f0; border-radius: 1rem; transition: border-color .15s; }
+        .more-tile:hover { border-color: #93c5fd; }
+        .more-tile__icon { display: flex; flex-shrink: 0; align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem; border-radius: .75rem; background: #eff6ff; color: #1463ff; }
+        .hero-covers { display: none; }
+        @media (min-width: 640px) {
+            .home-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+            .course-tile { flex-direction: column; }
+            .course-tile .lesson-cover { width: auto; height: 8.75rem; }
+            .course-tile__count { display: inline-block; }
+            .course-tile__meta--count { display: none; }
+            .course-tile__body { justify-content: flex-start; gap: .5rem; padding: 1.125rem 1.25rem 1.25rem; }
+            .course-tile__title { font-size: 1.0625rem; }
+            .course-tile__desc { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: .875rem; line-height: 1.5; color: #475569; }
+            .course-tile__cta, .course-tile__tag { display: block; }
+            .lesson-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; overflow: visible; margin: 0; padding: 0; }
+            .course-feature { flex-direction: row; }
+            .course-feature .lesson-cover { width: 40%; height: auto; min-height: 12rem; flex-shrink: 0; }
+            .course-feature__body { padding: 1.75rem 2rem; }
+            .course-feature__title { font-size: 1.625rem; }
+        }
+        @media (min-width: 1024px) {
+            .home-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .lesson-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .hero-covers { display: flex; flex-direction: column; gap: .75rem; width: 20rem; flex-shrink: 0; }
+            .hero-covers .lesson-cover { height: 5.25rem; border-radius: .875rem; box-shadow: 0 12px 30px rgba(0, 0, 0, .25); }
+            .hero-covers .lesson-cover:nth-child(odd) { margin-inline-start: 1.5rem; }
+        }
         /* Visitor hero: what is on offer, and a way to look before signing in. */
         .hero-stats { display: flex; flex-wrap: wrap; gap: .25rem .6rem; font-size: .875rem; font-weight: 600; color: #fff; opacity: .95; }
         .hero-browse {
@@ -150,10 +206,6 @@
             transition: background .15s;
         }
         .hero-browse:hover, .hero-browse:focus-visible { background: rgba(255, 255, 255, .14); }
-        @media (min-width: 640px) {
-            .course-card { flex-direction: row; }
-            .course-card__cover { width: 13rem; height: auto; min-height: 11rem; }
-        }
 
         /* Transcripts are plain text with real line breaks. Tailwind's
            `whitespace-pre-line` is not in the committed bundle. */

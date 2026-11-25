@@ -9,9 +9,11 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * The signed-in home page shows three lesson cards per course, starting at the
- * student's first unfinished lesson, plus a link to the full list. Every card
- * of every course made the page 16,000px tall on a phone.
+ * The signed-in home page shows three lesson cards for each course the student
+ * has started, starting at their first unfinished lesson, plus a link to the
+ * full list. Every card of every course made the page 16,000px tall on a
+ * phone; since 2026-11-25 (owner's choice) a course not started yet is a
+ * compact tile instead.
  */
 class HomeLessonWindowTest extends TestCase
 {
@@ -31,10 +33,13 @@ class HomeLessonWindowTest extends TestCase
         return User::create(['name' => 'Partner Student', 'email' => 'student@partner.com', 'password' => bcrypt('secret'), 'role' => User::ROLE_LEARNER]);
     }
 
-    /** @return array<int, string> lesson URLs shown as cards for the seeded course */
+    /** @return array<int, string> lesson URLs shown as cards in the course's lesson row */
     private function cardLinks(string $html): array
     {
-        preg_match_all('#href="([^"]*/courses/'.preg_quote($this->course->slug, '#').'/lessons/[^"]+)"#', $html, $m);
+        if (! preg_match('#<div class="lesson-row">(.*?)</div>\s*(?:<a|</div>)#s', $html, $row)) {
+            return [];
+        }
+        preg_match_all('#href="([^"]*/courses/'.preg_quote($this->course->slug, '#').'/lessons/[^"]+)"#', $row[1], $m);
 
         return array_values(array_unique($m[1]));
     }
@@ -46,15 +51,13 @@ class HomeLessonWindowTest extends TestCase
         return route('academy.lesson', [$this->course, $lesson]);
     }
 
-    public function test_a_new_student_sees_the_first_three_lessons_and_a_link_to_all(): void
+    public function test_a_course_not_started_is_a_tile_without_lesson_cards(): void
     {
-        $total = $this->course->publishedLessons()->count();
-        $this->assertGreaterThan(3, $total, 'The seeded course needs more than three lessons.');
-
         $html = $this->actingAs($this->learner())->get('/')->assertOk()->getContent();
 
-        $this->assertSame([$this->lessonUrl(0), $this->lessonUrl(1), $this->lessonUrl(2)], $this->cardLinks($html));
-        $this->assertStringContainsString(__t('academy.home.see_all_lessons', ['count' => $total]), $html);
+        $this->assertSame([], $this->cardLinks($html));
+        $this->assertStringContainsString('class="course-tile"', $html);
+        $this->assertStringContainsString(__t('academy.home.explore_courses'), $html);
     }
 
     public function test_the_cards_start_at_the_first_unfinished_lesson(): void
@@ -66,10 +69,13 @@ class HomeLessonWindowTest extends TestCase
         $html = $this->actingAs($learner)->get('/')->assertOk()->getContent();
 
         $this->assertSame([$this->lessonUrl(2), $this->lessonUrl(3), $this->lessonUrl(4)], $this->cardLinks($html));
+        $this->assertStringContainsString(__t('academy.home.your_courses'), $html);
+        $this->assertStringContainsString(__t('academy.home.see_all_lessons', ['count' => $lessons->count()]), $html);
     }
 
-    public function test_a_finished_course_shows_its_last_three_lessons(): void
+    public function test_every_lesson_done_with_the_final_quiz_ahead_shows_the_last_three(): void
     {
+        $this->course->update(['final_quiz_enabled' => true]);
         $learner = $this->learner();
         $lessons = $this->course->publishedLessons()->get()->values();
         foreach ($lessons as $lesson) {

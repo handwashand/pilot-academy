@@ -34,6 +34,7 @@ return [
     'common' => [
         'all_courses' => 'Tous les cours',
         'lesson_number' => 'Leçon :number',
+        'lesson_label' => 'Leçon',
         'course' => 'Cours',
         'for_audience' => 'Pour :audience',
         'audience' => [
@@ -71,6 +72,10 @@ return [
 
     'home' => [
         'see_all_lessons' => 'Voir toutes les leçons (:count)',
+        'your_courses' => 'Vos cours',
+        'explore_courses' => 'Explorer les cours',
+        'see_all_courses' => 'Voir tous les cours (:count)',
+        'more_ways' => 'Plus de façons d\'apprendre',
         'start_course' => 'Commencer le cours',
         'continue_course' => 'Continuer',
         'review_course' => 'Revoir le cours',

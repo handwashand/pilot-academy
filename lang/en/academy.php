@@ -45,6 +45,7 @@ return [
     'common' => [
         'all_courses' => 'All courses',
         'lesson_number' => 'Lesson :number',
+        'lesson_label' => 'Lesson',
         'course' => 'Course',
         'for_audience' => 'For :audience',
         'audience' => [
@@ -82,6 +83,10 @@ return [
 
     'home' => [
         'see_all_lessons' => 'See all lessons (:count)',
+        'your_courses' => 'Your courses',
+        'explore_courses' => 'Explore courses',
+        'see_all_courses' => 'See all courses (:count)',
+        'more_ways' => 'More ways to learn',
         'start_course' => 'Start course',
         'continue_course' => 'Continue',
         'review_course' => 'Review course',

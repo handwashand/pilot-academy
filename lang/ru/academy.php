@@ -34,6 +34,7 @@ return [
     'common' => [
         'all_courses' => 'Все курсы',
         'lesson_number' => 'Урок :number',
+        'lesson_label' => 'Урок',
         'course' => 'Курс',
         'for_audience' => 'Для: :audience',
         'audience' => [
@@ -71,6 +72,10 @@ return [
 
     'home' => [
         'see_all_lessons' => 'Все уроки (:count)',
+        'your_courses' => 'Ваши курсы',
+        'explore_courses' => 'Другие курсы',
+        'see_all_courses' => 'Все курсы (:count)',
+        'more_ways' => 'Ещё способы учиться',
         'start_course' => 'Начать курс',
         'continue_course' => 'Продолжить',
         'review_course' => 'Повторить курс',

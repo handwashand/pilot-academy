@@ -4,6 +4,13 @@
 
 @php
     $metaDescription = __t('academy.meta.home_description');
+    // Visitors see one course to start with and the next few; the rest are on
+    // the Courses page. Students see their courses grouped by where they are.
+    $featured = $courses->first();
+    $visitorGrid = $courses->slice(1, 6);
+    $started = $courses->filter(fn ($c) => $states[$c->id] === 'started');
+    $notStarted = $courses->filter(fn ($c) => $states[$c->id] === 'new');
+    $finishedCourses = $courses->filter(fn ($c) => $states[$c->id] === 'finished');
 @endphp
 
 @section('content')
@@ -30,276 +37,341 @@
             </p>
         </div>
     @else
-        <div class="mb-8 rounded-2xl bg-gradient-to-br from-brand to-navy text-white p-7 sm:p-9">
-            <h1 class="text-2xl sm:text-3xl font-extrabold mb-1">{{ __t('academy.home.hero_title') }}</h1>
-            <p class="text-white mb-3">{{ __t('academy.home.hero_intro') }}</p>
-            @php
-                $heroLessons = $courses->flatMap(fn ($c) => $c->publishedLessons->pluck('id'))->unique()->count();
-            @endphp
-            {{-- What is on offer, at a glance, before anyone types a name. --}}
-            <p class="hero-stats mb-5">
-                <span>{{ __tc('academy.home.hero_courses', $courses->count()) }}</span>
-                <span aria-hidden="true">·</span>
-                <span>{{ __tc('academy.common.lessons', $heroLessons) }}</span>
-                <span aria-hidden="true">·</span>
-                <span>{{ __t('academy.home.hero_certificates') }}</span>
-            </p>
-            <form method="POST" action="{{ route('academy.name') }}" class="flex flex-col sm:flex-row gap-3 max-w-xl">
-                @csrf
-                {{-- bg-white is load-bearing: Tailwind's preflight makes form
-                     controls transparent, so without it the dark text sits
-                     straight on the gradient and all but vanishes at the navy
-                     end. text-slate-800 must stay too — the card sets
-                     text-white, so an unstyled input would be white on white.
-                     Both classes are already in the committed CSS bundle, so
-                     this reads correctly before CI rebuilds it. --}}
-                <input type="text" name="name" required placeholder="{{ __t('academy.home.your_name') }}" aria-label="{{ __t('academy.home.your_name') }}"
-                       class="flex-1 rounded-lg bg-white px-4 py-2.5 text-slate-800 focus:ring-2 focus:ring-white">
-                <button class="rounded-lg bg-white text-navy font-semibold px-5 py-2.5 whitespace-nowrap hover:bg-slate-100 focus:ring-2 focus:ring-white">
-                    {{ __t('academy.home.start_learning') }}
-                </button>
-                <a href="{{ route('academy.courses') }}" class="hero-browse">{{ __t('academy.home.browse_courses') }}</a>
-            </form>
-            {{-- Full white, not white/70: over the brand blue that was 3.2:1.
-                 The hierarchy comes from the smaller size instead. --}}
-            <p class="text-white text-sm mt-3">
-                {{ __t('academy.home.have_account') }} <a href="{{ route('login') }}" class="underline font-semibold">{{ __t('academy.signup.log_in') }}</a>
-                · <a href="{{ route('register') }}" class="underline font-semibold">{{ __t('academy.signup.register') }}</a>
-            </p>
+        <div class="mb-8 rounded-2xl bg-gradient-to-br from-brand to-navy text-white p-7 sm:p-9 flex items-center gap-6">
+            <div class="min-w-0 flex-1">
+                <h1 class="text-2xl sm:text-3xl font-extrabold mb-1">{{ __t('academy.home.hero_title') }}</h1>
+                <p class="text-white mb-3">{{ __t('academy.home.hero_intro') }}</p>
+                @php
+                    $heroLessons = $courses->flatMap(fn ($c) => $c->publishedLessons->pluck('id'))->unique()->count();
+                @endphp
+                {{-- What is on offer, at a glance, before anyone types a name. --}}
+                <p class="hero-stats mb-5">
+                    <span>{{ __tc('academy.home.hero_courses', $courses->count()) }}</span>
+                    <span aria-hidden="true">·</span>
+                    <span>{{ __tc('academy.common.lessons', $heroLessons) }}</span>
+                    <span aria-hidden="true">·</span>
+                    <span>{{ __t('academy.home.hero_certificates') }}</span>
+                </p>
+                <form method="POST" action="{{ route('academy.name') }}" class="flex flex-col sm:flex-row gap-3 max-w-xl">
+                    @csrf
+                    {{-- bg-white is load-bearing: Tailwind's preflight makes form
+                         controls transparent, so without it the dark text sits
+                         straight on the gradient and all but vanishes at the navy
+                         end. text-slate-800 must stay too — the card sets
+                         text-white, so an unstyled input would be white on white.
+                         Both classes are already in the committed CSS bundle, so
+                         this reads correctly before CI rebuilds it. --}}
+                    <input type="text" name="name" required placeholder="{{ __t('academy.home.your_name') }}" aria-label="{{ __t('academy.home.your_name') }}"
+                           class="flex-1 rounded-lg bg-white px-4 py-2.5 text-slate-800 focus:ring-2 focus:ring-white">
+                    <button class="rounded-lg bg-white text-navy font-semibold px-5 py-2.5 whitespace-nowrap hover:bg-slate-100 focus:ring-2 focus:ring-white">
+                        {{ __t('academy.home.start_learning') }}
+                    </button>
+                    <a href="{{ route('academy.courses') }}" class="hero-browse">{{ __t('academy.home.browse_courses') }}</a>
+                </form>
+                {{-- Full white, not white/70: over the brand blue that was 3.2:1.
+                     The hierarchy comes from the smaller size instead. --}}
+                <p class="text-white text-sm mt-3">
+                    {{ __t('academy.home.have_account') }} <a href="{{ route('login') }}" class="underline font-semibold">{{ __t('academy.signup.log_in') }}</a>
+                    · <a href="{{ route('register') }}" class="underline font-semibold">{{ __t('academy.signup.register') }}</a>
+                </p>
+            </div>
+            {{-- A glimpse of three courses, from 1024px up. Decoration: the
+                 same courses are listed below. --}}
+            <div class="hero-covers" aria-hidden="true">
+                @foreach($visitorGrid->take(3) as $peek)
+                    @include('academy.partials.course-cover', ['course' => $peek, 'chip' => $peek->translated('title'), 'shift' => $loop->index])
+                @endforeach
+            </div>
         </div>
     @endauth
 
     {{-- Scrolling the whole page was the only way to find a lesson. --}}
     <div class="mb-8">
         @include('academy.partials.search-form', ['inputId' => 'home-search'])
+        @guest
+            {{-- Who a course is for, straight into the filtered Courses page. --}}
+            @php
+                $audiences = $courses->pluck('audience')->filter()->unique()->values();
+            @endphp
+            @if($audiences->isNotEmpty())
+                <div class="mt-3 flex flex-wrap gap-2">
+                    <a href="{{ route('academy.courses') }}" class="inline-flex items-center min-h-11 rounded-full bg-navy px-4 text-sm font-semibold text-white">{{ __t('academy.common.all_courses') }}</a>
+                    @foreach($audiences as $audience)
+                        <a href="{{ route('academy.courses', ['audience' => $audience]) }}" class="inline-flex items-center min-h-11 rounded-full border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 hover:border-brand hover:text-brand">
+                            {{ __t('academy.common.for_audience', ['audience' => __t('academy.common.audience.'.$audience)]) }}
+                        </a>
+                    @endforeach
+                </div>
+            @endif
+        @endguest
     </div>
 
-    <a href="{{ route('academy.case-studies.index') }}"
-       class="group mb-8 block rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-brand/40 hover:shadow-md">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-                <span class="text-xs font-semibold uppercase tracking-wide text-brand">{{ __t('academy.case_studies.eyebrow') }}</span>
-                <h2 class="mt-1 text-lg font-extrabold text-navy group-hover:text-brand">{{ __t('academy.case_studies.title') }}</h2>
-                <p class="mt-1 text-sm text-slate-500">{{ __t('academy.case_studies.home_intro') }}</p>
-            </div>
-            <span class="inline-flex min-h-11 items-center rounded-lg bg-navy px-4 text-sm font-semibold text-white">{{ __t('academy.case_studies.browse') }}</span>
-        </div>
-    </a>
-
-    {{-- The next step: one card, one action. Which card depends on where the
-         student is — see AcademyController::nextStep(). --}}
-    @if($next)
-        @php
-            $nextPct = $next['total'] > 0 ? round($next['done'] / $next['total'] * 100) : 0;
-
-            if ($next['kind'] === 'final_quiz') {
-                $nextUrl = route('academy.final.show', $next['course']);
-                $nextEyebrow = __t('academy.home.next_final');
-                $nextTitle = $next['course']->translated('title');
-                $nextDetail = __tc('academy.home.next_final_detail', $next['total'], ['percent' => $next['course']->pass_percent])
-                    .($next['attemptsLeft'] !== null ? ' · '.__tc('academy.common.attempts_left', $next['attemptsLeft']) : '');
-                $nextButton = __t('academy.home.take_final');
-            } elseif ($next['kind'] === 'start') {
-                $nextUrl = route('academy.lesson', [$next['course'], $next['lesson']]);
-                $nextEyebrow = __t('academy.home.next_start');
-                $nextTitle = $next['lesson']->translated('title');
-                $nextDetail = $next['course']->translated('title');
-                $nextButton = __t('academy.home.begin');
-            } else {
-                $nextUrl = route('academy.lesson', [$next['course'], $next['lesson']]);
-                $nextEyebrow = __t('academy.home.next_continue');
-                $nextTitle = $next['lesson']->translated('title');
-                $nextDetail = $next['course']->translated('title');
-                $nextButton = __t('academy.home.resume');
-            }
-        @endphp
-        <a href="{{ $nextUrl }}"
-           class="group block mb-6 rounded-2xl border border-brand/30 bg-blue-50/60 p-5 sm:p-6 hover:border-brand hover:shadow-md transition">
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div class="min-w-0">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-brand">{{ $nextEyebrow }}</span>
-                    <h2 class="mt-1 text-lg sm:text-xl font-extrabold text-navy group-hover:text-brand transition">
-                        {{ $nextTitle }}
-                    </h2>
-                    <p class="text-sm text-slate-500">{{ $nextDetail }}</p>
-                </div>
-
-                <div class="shrink-0 sm:text-end">
-                    @if($next['kind'] === 'lesson')
-                        <div class="text-sm text-slate-500 mb-1">{{ __t('academy.common.lessons_done', ['done' => $next['done'], 'total' => $next['total']]) }}</div>
-                        <div class="w-full sm:w-44 h-2 rounded-full bg-white overflow-hidden"
-                             role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $nextPct }}"
-                             aria-label="{{ __t('academy.common.progress_aria', ['done' => $next['done'], 'total' => $next['total']]) }}">
-                            <div class="h-full bg-ok" style="width: {{ $nextPct }}%"></div>
-                        </div>
-                    @endif
-                    <span class="mt-3 inline-flex items-center min-h-11 rounded-lg bg-brand px-4 text-sm font-semibold text-white">
-                        {{ $nextButton }}
-                    </span>
-                </div>
-            </div>
-        </a>
-    @endif
-
-    {{-- A signed-in student's own numbers. One column on a phone, three from
-         sm: up. The last final quiz result lives here because it otherwise
-         showed once, straight after submitting, and was never seen again. --}}
-    @if($progress)
-        <section aria-labelledby="my-progress" class="mb-8 bg-white rounded-2xl border border-slate-200 shadow-sm">
-            <h2 id="my-progress" class="px-5 pt-4 text-sm font-semibold uppercase tracking-wide text-slate-500">{{ __t('academy.home.your_progress') }}</h2>
-
-            <dl class="divide-y divide-slate-100 sm:divide-y-0 sm:grid sm:grid-cols-3">
-                <div class="flex items-baseline justify-between gap-3 px-5 py-3 sm:block">
-                    <dt class="text-sm text-slate-500">{{ __t('academy.home.in_progress') }}</dt>
-                    <dd class="text-2xl font-extrabold text-navy">{{ $progress['inProgress'] }}</dd>
-                </div>
-                <div class="flex items-baseline justify-between gap-3 px-5 py-3 sm:block">
-                    <dt class="text-sm text-slate-500">{{ __t('academy.common.completed') }}</dt>
-                    <dd class="text-2xl font-extrabold text-navy">{{ $progress['finished'] }}</dd>
-                </div>
-                <div class="flex items-baseline justify-between gap-3 px-5 py-3 sm:block">
-                    <dt class="text-sm text-slate-500">{{ __t('academy.home.certificates') }}</dt>
-                    <dd class="text-2xl font-extrabold text-navy">
-                        @if($progress['certificates'] > 0)
-                            <a href="{{ route('certificates.index') }}" class="hover:text-brand">{{ $progress['certificates'] }}</a>
-                        @else
-                            0
-                        @endif
-                    </dd>
-                </div>
-            </dl>
-
-            @if($progress['lastFinal'])
-                @php
-                    $last = $progress['lastFinal'];
-                @endphp
-                <a href="{{ route('academy.final.show', $last['course']) }}"
-                   class="flex items-center gap-3 border-t border-slate-100 px-5 py-3 min-h-11 hover:bg-slate-50 active:bg-slate-100 rounded-b-2xl">
-                    <span class="min-w-0 flex-1 text-sm">
-                        <span class="block text-slate-500">{{ __t('academy.home.last_final', ['course' => $last['course']->translated('title')]) }}</span>
-                        <span class="block font-semibold {{ $last['passed'] ? 'text-green-700' : 'text-amber-700' }}">
-                            {{ $last['percent'] }}% · {{ $last['passed'] ? __t('academy.home.passed') : __t('academy.home.not_passed_yet') }}
-                            @if(! $last['passed'] && $last['attemptsLeft'] !== null)
-                                <span class="font-normal text-slate-500">
-                                    · {{ $last['attemptsLeft'] === 0 ? __t('academy.home.no_attempts_contact') : __tc('academy.common.attempts_left', $last['attemptsLeft']) }}
-                                </span>
-                            @endif
-                        </span>
-                    </span>
-                    <span aria-hidden="true" class="text-slate-400 flex-none"><span class="inline-block rtl:rotate-180">&rarr;</span></span>
-                </a>
-            @endif
-        </section>
-    @endif
-
-    @forelse($courses as $course)
-        @php
-            $total = $course->published_lessons_count;
-            $done = $course->publishedLessons->whereIn('id', $completed)->count();
-            $pct = $total > 0 ? round($done / $total * 100) : 0;
-            // One button that says where the student is: start, carry on at the
-            // first unfinished lesson, or look back once everything is done.
-            $firstOpenLesson = $course->publishedLessons->first(fn ($l) => ! in_array($l->id, $completed, true));
-            if ($done === 0) {
-                [$ctaLabel, $ctaUrl] = [__t('academy.home.start_course'), route('academy.course', $course)];
-            } elseif ($firstOpenLesson) {
-                [$ctaLabel, $ctaUrl] = [__t('academy.home.continue_course'), route('academy.lesson', [$course, $firstOpenLesson])];
-            } else {
-                [$ctaLabel, $ctaUrl] = [__t('academy.home.review_course'), route('academy.course', $course)];
-            }
-            $theme = $course->coverTheme();
-        @endphp
-
-        <section class="mb-10">
-            <div class="course-card bg-white rounded-2xl border border-slate-200 shadow-sm mb-6">
-                <a href="{{ route('academy.course', $course) }}" tabindex="-1" aria-hidden="true" class="course-card__cover"
-                   style="--cover-from: {{ $theme['from'] }}; --cover-to: {{ $theme['to'] }};">
-                    @if($course->thumbnail_url)
-                        <img src="{{ $course->thumbnail_url }}" alt="">
-                    @else
-                        <span class="lesson-cover__pattern" style="--cover-pattern: url('{{ $theme['pattern'] }}');"></span>
-                        <span class="course-card__icon">
-                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
-                            </svg>
-                        </span>
-                    @endif
-                    <span class="course-card__count">{{ __tc('academy.common.lessons', $total) }}</span>
-                </a>
-                <div class="course-card__body flex items-start justify-between gap-4 flex-wrap">
-                    <div class="min-w-0 flex-1">
-                        <div class="flex items-center gap-2 mb-1">
-                            <span class="text-xs font-semibold uppercase tracking-wide text-brand">{{ __t('academy.common.course') }}</span>
-                            @if($course->audience_label)
-                                <span class="text-[11px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full bg-blue-50 text-brand">{{ __t('academy.common.for_audience', ['audience' => __t('academy.common.audience.'.$course->audience)]) }}</span>
-                            @endif
-                        </div>
-                        <h2 class="text-xl font-extrabold text-navy"><a href="{{ route('academy.course', $course) }}" class="hover:text-brand transition">{{ $course->translated('title') }}</a></h2>
-                        <p class="text-slate-500 mt-1 max-w-2xl line-clamp-3">{{ $course->translated('description') }}</p>
-                        {{-- The lesson count is on the cover; only the duration is repeated here. --}}
-                        @if($course->durationLabel())
-                            <p class="mt-2 text-sm text-slate-500">{{ $course->durationLabel() }}</p>
-                        @endif
-                        <a href="{{ $ctaUrl }}" class="course-card__cta mt-4">
-                            {{ $ctaLabel }} <span aria-hidden="true" class="rtl:rotate-180">&rarr;</span>
-                        </a>
-                    </div>
-                    {{-- Progress means nothing to a visitor, who has none. --}}
-                    @auth
-                    <div class="text-end">
-                        <div class="text-sm text-slate-500 mb-1">{{ __t('academy.common.lessons_done', ['done' => $done, 'total' => $total]) }}</div>
-                        <div class="w-44 h-2 rounded-full bg-slate-100 overflow-hidden"
-                             role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $pct }}"
-                             aria-label="{{ __t('academy.common.course_progress_aria', ['course' => $course->translated('title'), 'done' => $done, 'total' => $total]) }}">
-                            <div class="h-full bg-ok" style="width: {{ $pct }}%"></div>
-                        </div>
-                    </div>
-                    @endauth
-                </div>
-            </div>
-
-            {{-- Visitors see the course and its lesson count; the lessons are on the course page.
-                 Students see three cards per course, starting at their first unfinished
-                 lesson (the last three once all are done), so the page stays short on a
-                 phone however many lessons a course has. The full list is on the course page. --}}
-            @auth
+    @auth
+        {{-- The next step: one card, one action. Which card depends on where the
+             student is — see AcademyController::nextStep(). --}}
+        @if($next)
             @php
-                $lessons = $course->publishedLessons->values();
-                $firstOpen = $lessons->search(fn ($l) => ! in_array($l->id, $completed, true));
-                $start = $firstOpen === false ? max(0, $lessons->count() - 3) : min($firstOpen, max(0, $lessons->count() - 3));
-                $shown = $lessons->slice($start, 3);
+                $nextPct = $next['total'] > 0 ? round($next['done'] / $next['total'] * 100) : 0;
+                $nextCourse = $next['course'];
+
+                if ($next['kind'] === 'final_quiz') {
+                    $nextUrl = route('academy.final.show', $nextCourse);
+                    $nextEyebrow = __t('academy.home.next_final');
+                    $nextTitle = $nextCourse->translated('title');
+                    $nextDetail = __tc('academy.home.next_final_detail', $next['total'], ['percent' => $nextCourse->pass_percent])
+                        .($next['attemptsLeft'] !== null ? ' · '.__tc('academy.common.attempts_left', $next['attemptsLeft']) : '');
+                    $nextButton = __t('academy.home.take_final');
+                } else {
+                    $nextUrl = route('academy.lesson', [$nextCourse, $next['lesson']]);
+                    $nextEyebrow = $next['kind'] === 'start' ? __t('academy.home.next_start') : __t('academy.home.next_continue');
+                    $nextTitle = $next['lesson']->translated('title');
+                    $nextDetail = $nextCourse->translated('title');
+                    $nextButton = $next['kind'] === 'start' ? __t('academy.home.begin') : __t('academy.home.resume');
+                    $nextNumber = $nextCourse->publishedLessons->search(fn ($l) => $l->id === $next['lesson']->id) + 1;
+                }
             @endphp
-            <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                @foreach($shown as $i => $lesson)
-                    @php($isDone = in_array($lesson->id, $completed, true))
-                    <a href="{{ route('academy.lesson', [$course, $lesson]) }}"
-                       class="group bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition">
-                        @include('academy.partials.lesson-cover', ['lesson' => $lesson, 'course' => $course, 'number' => $i + 1, 'isDone' => $isDone])
-                        <div class="p-5">
-                            <div class="flex items-center gap-2 mb-2">
-                                <span class="text-[11px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded bg-slate-100 text-slate-500">{{ $course->level ? __t('academy.common.level.'.$course->level) : '' }}</span>
-                                @if(! empty($lesson->videoEntries()))
-                                    <span class="text-[11px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded bg-blue-50 text-brand">{{ __t('academy.common.video') }}</span>
-                                @endif
-                                <span class="text-[11px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded bg-violet-50 text-violet-600">{{ __t('academy.common.quiz') }}</span>
+            <section class="home-section">
+                <span class="home-eyebrow">{{ $nextEyebrow }}</span>
+                <a href="{{ $nextUrl }}" class="course-feature course-feature--next group">
+                    @if($next['kind'] === 'final_quiz')
+                        @include('academy.partials.course-cover', ['course' => $nextCourse])
+                    @else
+                        @include('academy.partials.lesson-cover', ['lesson' => $next['lesson'], 'course' => $nextCourse, 'number' => $nextNumber])
+                    @endif
+                    <div class="course-feature__body">
+                        <span class="text-sm text-slate-500">{{ $nextDetail }}</span>
+                        <h2 class="course-feature__title group-hover:text-brand transition">{{ $nextTitle }}</h2>
+                        @if($next['kind'] === 'lesson')
+                            <div class="flex items-center gap-3">
+                                <div class="w-44 h-2 rounded-full bg-slate-100 overflow-hidden"
+                                     role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $nextPct }}"
+                                     aria-label="{{ __t('academy.common.progress_aria', ['done' => $next['done'], 'total' => $next['total']]) }}">
+                                    <div class="h-full bg-brand" style="width: {{ $nextPct }}%"></div>
+                                </div>
+                                <span class="text-sm text-slate-500">{{ __t('academy.common.lessons_done', ['done' => $next['done'], 'total' => $next['total']]) }}</span>
                             </div>
-                            <h3 class="font-bold text-navy group-hover:text-brand transition">{{ $lesson->translated('title') }}</h3>
-                            <p class="text-sm text-slate-500 mt-1 line-clamp-2">{{ $lesson->translated('summary') }}</p>
-                            @if($lesson->durationLabel())
-                                <p class="text-xs text-slate-400 mt-2">{{ $lesson->durationLabel() }}</p>
-                            @endif
-                        </div>
-                    </a>
-                @endforeach
-            </div>
-            @if($lessons->count() > 3)
-                <a href="{{ route('academy.course', $course) }}" class="mt-3 inline-flex items-center min-h-11 font-semibold text-brand hover:underline">
-                    {{ __t('academy.home.see_all_lessons', ['count' => $lessons->count()]) }} <span aria-hidden="true" class="ms-1 rtl:rotate-180">&rarr;</span>
+                        @endif
+                        <span class="course-feature__cta">{{ $nextButton }} <span aria-hidden="true" class="inline-block rtl:rotate-180">&rarr;</span></span>
+                    </div>
                 </a>
-            @endif
-            @endauth
-        </section>
-    @empty
-        <p class="text-slate-500">{{ __t('academy.home.no_courses') }}</p>
-    @endforelse
+            </section>
+        @endif
+
+        {{-- A signed-in student's own numbers. One column on a phone, three from
+             sm: up. The last final quiz result lives here because it otherwise
+             showed once, straight after submitting, and was never seen again. --}}
+        @if($progress)
+            <section aria-labelledby="my-progress" class="mb-10 bg-white rounded-2xl border border-slate-200 shadow-sm">
+                <h2 id="my-progress" class="px-5 pt-4 text-sm font-semibold uppercase tracking-wide text-slate-500">{{ __t('academy.home.your_progress') }}</h2>
+
+                <dl class="divide-y divide-slate-100 sm:divide-y-0 sm:grid sm:grid-cols-3">
+                    <div class="flex items-baseline justify-between gap-3 px-5 py-3 sm:block">
+                        <dt class="text-sm text-slate-500">{{ __t('academy.home.in_progress') }}</dt>
+                        <dd class="text-2xl font-extrabold text-navy">{{ $progress['inProgress'] }}</dd>
+                    </div>
+                    <div class="flex items-baseline justify-between gap-3 px-5 py-3 sm:block">
+                        <dt class="text-sm text-slate-500">{{ __t('academy.common.completed') }}</dt>
+                        <dd class="text-2xl font-extrabold text-navy">{{ $progress['finished'] }}</dd>
+                    </div>
+                    <div class="flex items-baseline justify-between gap-3 px-5 py-3 sm:block">
+                        <dt class="text-sm text-slate-500">{{ __t('academy.home.certificates') }}</dt>
+                        <dd class="text-2xl font-extrabold text-navy">
+                            @if($progress['certificates'] > 0)
+                                <a href="{{ route('certificates.index') }}" class="hover:text-brand">{{ $progress['certificates'] }}</a>
+                            @else
+                                0
+                            @endif
+                        </dd>
+                    </div>
+                </dl>
+
+                @if($progress['lastFinal'])
+                    @php
+                        $last = $progress['lastFinal'];
+                    @endphp
+                    <a href="{{ route('academy.final.show', $last['course']) }}"
+                       class="flex items-center gap-3 border-t border-slate-100 px-5 py-3 min-h-11 hover:bg-slate-50 active:bg-slate-100 rounded-b-2xl">
+                        <span class="min-w-0 flex-1 text-sm">
+                            <span class="block text-slate-500">{{ __t('academy.home.last_final', ['course' => $last['course']->translated('title')]) }}</span>
+                            <span class="block font-semibold {{ $last['passed'] ? 'text-green-700' : 'text-amber-700' }}">
+                                {{ $last['percent'] }}% · {{ $last['passed'] ? __t('academy.home.passed') : __t('academy.home.not_passed_yet') }}
+                                @if(! $last['passed'] && $last['attemptsLeft'] !== null)
+                                    <span class="font-normal text-slate-500">
+                                        · {{ $last['attemptsLeft'] === 0 ? __t('academy.home.no_attempts_contact') : __tc('academy.common.attempts_left', $last['attemptsLeft']) }}
+                                    </span>
+                                @endif
+                            </span>
+                        </span>
+                        <span aria-hidden="true" class="text-slate-400 flex-none"><span class="inline-block rtl:rotate-180">&rarr;</span></span>
+                    </a>
+                @endif
+            </section>
+        @endif
+
+        {{-- Courses the student has started: three lesson cards each, from
+             their first unfinished lesson (the last three once all are done),
+             so the page stays short however many lessons a course has. Courses
+             not started are compact tiles below; finished ones a short list. --}}
+        @if($started->isNotEmpty())
+            <section class="home-section" aria-labelledby="your-courses">
+                <div class="home-heading"><h2 id="your-courses">{{ __t('academy.home.your_courses') }}</h2></div>
+                @foreach($started as $course)
+                    @php
+                        $lessons = $course->publishedLessons->values();
+                        $total = $lessons->count();
+                        $done = $lessons->whereIn('id', $completed)->count();
+                        $pct = $total > 0 ? round($done / $total * 100) : 0;
+                        $firstOpen = $lessons->search(fn ($l) => ! in_array($l->id, $completed, true));
+                        $start = $firstOpen === false ? max(0, $total - 3) : min($firstOpen, max(0, $total - 3));
+                        $shown = $lessons->slice($start, 3);
+                        // Every lesson done but the final quiz still ahead: the card above points there.
+                        [$ctaLabel, $ctaUrl] = $firstOpen === false
+                            ? [__t('academy.home.review_course'), route('academy.course', $course)]
+                            : [__t('academy.home.continue_course'), route('academy.lesson', [$course, $lessons[$firstOpen]])];
+                    @endphp
+                    <div class="mb-8">
+                        <div class="course-progress">
+                            @include('academy.partials.course-cover', ['course' => $course])
+                            <div class="min-w-0 flex-1">
+                                <h3 class="font-bold text-navy"><a href="{{ route('academy.course', $course) }}" class="hover:text-brand">{{ $course->translated('title') }}</a></h3>
+                                <div class="mt-1 flex items-center gap-3">
+                                    <div class="w-44 h-2 rounded-full bg-slate-100 overflow-hidden"
+                                         role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $pct }}"
+                                         aria-label="{{ __t('academy.common.course_progress_aria', ['course' => $course->translated('title'), 'done' => $done, 'total' => $total]) }}">
+                                        <div class="h-full bg-ok" style="width: {{ $pct }}%"></div>
+                                    </div>
+                                    <span class="text-sm text-slate-500">{{ __t('academy.common.lessons_done', ['done' => $done, 'total' => $total]) }}</span>
+                                </div>
+                            </div>
+                            <a href="{{ $ctaUrl }}" class="course-continue inline-flex items-center min-h-11 font-semibold text-brand hover:underline">{{ $ctaLabel }} <span aria-hidden="true" class="ms-1 inline-block rtl:rotate-180">&rarr;</span></a>
+                        </div>
+                        <div class="lesson-row">
+                            @foreach($shown as $i => $lesson)
+                                @php
+                                    $isDone = in_array($lesson->id, $completed, true);
+                                @endphp
+                                <a href="{{ route('academy.lesson', [$course, $lesson]) }}"
+                                   class="group bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition">
+                                    @include('academy.partials.lesson-cover', ['lesson' => $lesson, 'course' => $course, 'number' => $i + 1, 'isDone' => $isDone])
+                                    <div class="p-5">
+                                        <div class="flex items-center gap-2 mb-2">
+                                            @if($course->level)
+                                                <span class="text-[11px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded bg-slate-100 text-slate-500">{{ __t('academy.common.level.'.$course->level) }}</span>
+                                            @endif
+                                            @if(! empty($lesson->videoEntries()))
+                                                <span class="text-[11px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded bg-blue-50 text-brand">{{ __t('academy.common.video') }}</span>
+                                            @endif
+                                            <span class="text-[11px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded bg-violet-50 text-violet-600">{{ __t('academy.common.quiz') }}</span>
+                                        </div>
+                                        <h3 class="font-bold text-navy group-hover:text-brand transition">{{ $lesson->translated('title') }}</h3>
+                                        <p class="text-sm text-slate-500 mt-1 line-clamp-2">{{ $lesson->translated('summary') }}</p>
+                                        @if($lesson->durationLabel())
+                                            <p class="text-xs text-slate-400 mt-2">{{ $lesson->durationLabel() }}</p>
+                                        @endif
+                                    </div>
+                                </a>
+                            @endforeach
+                        </div>
+                        @if($total > 3)
+                            <a href="{{ route('academy.course', $course) }}" class="mt-3 inline-flex items-center min-h-11 font-semibold text-brand hover:underline">
+                                {{ __t('academy.home.see_all_lessons', ['count' => $total]) }} <span aria-hidden="true" class="ms-1 inline-block rtl:rotate-180">&rarr;</span>
+                            </a>
+                        @endif
+                    </div>
+                @endforeach
+            </section>
+        @endif
+
+        @if($notStarted->isNotEmpty())
+            <section class="home-section" aria-labelledby="explore-courses">
+                <div class="home-heading"><h2 id="explore-courses">{{ __t('academy.home.explore_courses') }}</h2></div>
+                <div class="home-grid">
+                    @foreach($notStarted as $course)
+                        @include('academy.partials.course-tile', ['course' => $course, 'state' => 'new'])
+                    @endforeach
+                </div>
+            </section>
+        @endif
+
+        @if($finishedCourses->isNotEmpty())
+            <section class="home-section" aria-labelledby="finished-courses">
+                <div class="home-heading"><h2 id="finished-courses">{{ __t('academy.common.completed') }}</h2></div>
+                <div class="grid gap-3 sm:grid-cols-2">
+                    @foreach($finishedCourses as $course)
+                        <div class="course-done">
+                            @include('academy.partials.course-cover', ['course' => $course])
+                            <div class="min-w-0 flex-1">
+                                <h3 class="font-bold text-navy">{{ $course->translated('title') }}</h3>
+                                <div class="flex flex-wrap gap-x-3">
+                                    <a href="{{ route('academy.course', $course) }}" class="inline-flex items-center min-h-11 text-sm font-semibold text-brand hover:underline">{{ __t('academy.home.review_course') }}</a>
+                                    @if(in_array($course->id, $certified, true))
+                                        <a href="{{ route('certificates.index') }}" class="inline-flex items-center min-h-11 text-sm font-semibold text-brand hover:underline">{{ __t('academy.common.my_certificates') }}</a>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </section>
+        @endif
+    @else
+        {{-- Visitors: one course to begin with, then the next six. The whole
+             catalogue, with its filters, is the Courses page. --}}
+        @if($featured)
+            <section class="home-section">
+                <span class="home-eyebrow">{{ __t('academy.home.next_start') }}</span>
+                <article class="course-feature">
+                    @include('academy.partials.course-cover', ['course' => $featured, 'chip' => __tc('academy.common.lessons', $featured->published_lessons_count)])
+                    <div class="course-feature__body">
+                        @if($featured->audience)
+                            <span class="course-tile__tag" style="display: block">{{ __t('academy.common.for_audience', ['audience' => __t('academy.common.audience.'.$featured->audience)]) }}</span>
+                        @endif
+                        <h2 class="course-feature__title"><a href="{{ route('academy.course', $featured) }}" class="hover:text-brand">{{ $featured->translated('title') }}</a></h2>
+                        <p class="text-slate-500 line-clamp-3">{{ $featured->translated('description') }}</p>
+                        <a href="{{ route('academy.course', $featured) }}" class="course-feature__cta">{{ __t('academy.home.start_course') }} <span aria-hidden="true" class="inline-block rtl:rotate-180">&rarr;</span></a>
+                    </div>
+                </article>
+            </section>
+        @endif
+
+        @if($visitorGrid->isNotEmpty())
+            <section class="home-section" aria-labelledby="home-courses">
+                <div class="home-heading">
+                    <h2 id="home-courses">{{ __t('nav.courses') }}</h2>
+                    @if($courses->count() > $visitorGrid->count() + 1)
+                        <a href="{{ route('academy.courses') }}" class="inline-flex items-center min-h-11 text-sm font-semibold text-brand hover:underline">{{ __t('academy.home.see_all_courses', ['count' => $courses->count()]) }} <span aria-hidden="true" class="ms-1 inline-block rtl:rotate-180">&rarr;</span></a>
+                    @endif
+                </div>
+                <div class="home-grid">
+                    @foreach($visitorGrid as $course)
+                        @include('academy.partials.course-tile', ['course' => $course, 'state' => $states[$course->id]])
+                    @endforeach
+                </div>
+            </section>
+        @endif
+    @endauth
+
+    @if($courses->isEmpty())
+        <p class="mb-10 text-slate-500">{{ __t('academy.home.no_courses') }}</p>
+    @endif
+
+    {{-- The other ways in, for everyone: they replace the single Case Studies banner. --}}
+    <section class="home-section" aria-labelledby="more-ways">
+        <div class="home-heading"><h2 id="more-ways">{{ __t('academy.home.more_ways') }}</h2></div>
+        <div class="grid gap-4 sm:grid-cols-3">
+            @foreach([
+                ['case_studies', route('academy.case-studies.index'), __t('academy.case_studies.title'), __t('academy.case_studies.home_intro')],
+                ['tutorials', route('academy.tutorials'), __t('nav.tutorials'), __t('academy.tutorials.intro')],
+                ['webinars', route('academy.webinars'), __t('nav.webinars'), __t('academy.webinars.intro')],
+            ] as [$icon, $url, $label, $intro])
+                <a href="{{ $url }}" class="more-tile">
+                    <span class="more-tile__icon">@include('academy.partials.nav-icon', ['name' => $icon])</span>
+                    <span class="min-w-0">
+                        <span class="block font-bold text-navy">{{ $label }}</span>
+                        <span class="block mt-1 text-sm text-slate-500 line-clamp-2">{{ $intro }}</span>
+                    </span>
+                </a>
+            @endforeach
+        </div>
+    </section>
 @endsection

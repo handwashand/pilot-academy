@@ -9,8 +9,10 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * The home page course card: a cover in the course's theme, one button that
- * says where the student is, and no progress bar for a visitor.
+ * The home page groups courses (owner's choice, 2026-11-25): a visitor sees
+ * one course to start with and the next six as tiles, with the rest on the
+ * Courses page; a student sees courses started, courses to explore and
+ * courses completed, each with what to do next.
  */
 class HomeCourseCardTest extends TestCase
 {
@@ -30,21 +32,34 @@ class HomeCourseCardTest extends TestCase
         return User::create(['name' => 'Partner Student', 'email' => 'student@partner.com', 'password' => bcrypt('secret'), 'role' => User::ROLE_LEARNER]);
     }
 
-    /** The course card's button: [label, href]. */
-    private function cta(string $html): array
+    private function moreCourses(int $count): void
     {
-        preg_match('#<a href="([^"]+)" class="course-card__cta[^"]*">\s*([^<]+?)\s*<span#', $html, $m);
-
-        return [$m[2] ?? null, $m[1] ?? null];
+        for ($i = 1; $i <= $count; $i++) {
+            $course = Course::create(['title' => "Extra course {$i}", 'slug' => "extra-course-{$i}", 'level' => 'beginner', 'status' => Course::STATUS_PUBLISHED, 'sort_order' => 100 + $i]);
+            $course->lessons()->create(['title' => "Extra lesson {$i}", 'slug' => "extra-lesson-{$i}", 'status' => 'published']);
+        }
     }
 
-    public function test_a_visitor_gets_start_course_and_no_progress_bar(): void
+    public function test_a_visitor_gets_the_first_course_to_start_with_and_no_progress_bar(): void
     {
         $html = $this->get('/')->assertOk()->getContent();
 
-        $this->assertSame([__t('academy.home.start_course'), route('academy.course', $this->course)], $this->cta($html));
-        $this->assertStringContainsString('course-card__cover', $html);
-        $this->assertStringNotContainsString('aria-label="'.e(__t('academy.common.course_progress_aria', ['course' => $this->course->title, 'done' => 0, 'total' => $this->course->publishedLessons()->count()])), $html);
+        $this->assertStringContainsString('class="course-feature"', $html);
+        $this->assertStringContainsString('href="'.route('academy.course', $this->course).'" class="course-feature__cta"', $html);
+        $this->assertStringContainsString(__t('academy.home.start_course'), $html);
+        $this->assertStringNotContainsString('role="progressbar"', $html);
+    }
+
+    public function test_a_visitor_sees_six_more_courses_and_a_link_to_all_of_them(): void
+    {
+        $this->moreCourses(8);
+        $total = Course::published()->count();
+
+        $html = $this->get('/')->assertOk()->getContent();
+
+        $this->assertSame(6, substr_count($html, 'class="course-tile"'));
+        $this->assertStringContainsString(__t('academy.home.see_all_courses', ['count' => $total]), $html);
+        $this->assertStringContainsString('href="'.route('academy.courses').'"', $html);
     }
 
     public function test_the_visitor_hero_shows_what_is_on_offer_and_links_to_the_courses(): void
@@ -66,11 +81,24 @@ class HomeCourseCardTest extends TestCase
 
         $html = $this->actingAs($learner)->get('/')->assertOk()->getContent();
 
-        $this->assertSame([__t('academy.home.continue_course'), route('academy.lesson', [$this->course, $lessons[1]])], $this->cta($html));
+        $this->assertStringContainsString('href="'.route('academy.lesson', [$this->course, $lessons[1]]).'" class="course-continue', $html);
         $this->assertStringContainsString('role="progressbar"', $html);
     }
 
-    public function test_a_student_who_finished_every_lesson_reviews_the_course(): void
+    public function test_courses_not_started_are_tiles_while_a_started_one_keeps_its_lessons(): void
+    {
+        $this->moreCourses(2);
+        $learner = $this->learner();
+        $learner->completedLessons()->attach($this->course->publishedLessons()->first()->id, ['completed_at' => now()]);
+
+        $html = $this->actingAs($learner)->get('/')->assertOk()->getContent();
+
+        $this->assertSame(1, substr_count($html, 'class="lesson-row"'));
+        $this->assertSame(2, substr_count($html, 'class="course-tile"'));
+        $this->assertStringContainsString('Extra course 1', $html);
+    }
+
+    public function test_a_finished_course_is_listed_as_completed_with_a_review_link(): void
     {
         $learner = $this->learner();
         foreach ($this->course->publishedLessons()->pluck('lessons.id') as $id) {
@@ -79,6 +107,17 @@ class HomeCourseCardTest extends TestCase
 
         $html = $this->actingAs($learner)->get('/')->assertOk()->getContent();
 
-        $this->assertSame([__t('academy.home.review_course'), route('academy.course', $this->course)], $this->cta($html));
+        $this->assertStringContainsString('class="course-done"', $html);
+        $this->assertStringContainsString(__t('academy.home.review_course'), $html);
+        $this->assertStringNotContainsString('class="lesson-row"', $html);
+    }
+
+    public function test_more_ways_to_learn_links_case_studies_tutorials_and_webinars(): void
+    {
+        $this->get('/')->assertOk()
+            ->assertSee(__t('academy.home.more_ways'))
+            ->assertSee('href="'.route('academy.case-studies.index').'" class="more-tile"', false)
+            ->assertSee('href="'.route('academy.tutorials').'" class="more-tile"', false)
+            ->assertSee('href="'.route('academy.webinars').'" class="more-tile"', false);
     }
 }

@@ -43,7 +43,7 @@ class LessonCoverTest extends TestCase
     {
         $default = Course::coverThemeFor(null, null);
 
-        $this->assertStringEndsWith('img/patterns/dots.svg', $default['pattern']);
+        $this->assertStringEndsWith('img/patterns/dots.svg?v='.Course::COVER_PATTERNS_VERSION, $default['pattern']);
         $this->assertSame(Course::COVER_COLORS['pilot'], [$default['from'], $default['to']]);
         $this->assertSame($default, Course::coverThemeFor('../../etc/passwd', 'neon'));
     }

@@ -48,7 +48,7 @@ When you are logged in, **Your progress** on the home page shows the courses
 you have in progress and completed, your certificates, and the result of your
 last final quiz — including how many attempts you have left.
 
-Each course on the home page has one button: **Start course** before you begin, **Continue** to open the first lesson you have not finished, and **Review course** once every lesson is done.
+Under it, the home page groups your courses. **Your courses** are the ones you have started, each with its next three lessons (swipe sideways on a phone) and **Continue** to open the first lesson you have not finished. **Explore courses** lists the ones you have not started: open one and press **Start course**. **Completed** lists the ones you have finished, with **Review course** and, when you earned one, **My certificates**.
 
 Looking for something? **Search** finds courses and lessons by name, and also
 by words spoken in a video that has a transcript.

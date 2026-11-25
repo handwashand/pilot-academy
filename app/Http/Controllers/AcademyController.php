@@ -170,12 +170,37 @@ class AcademyController extends Controller
             ? $user->certificates()->whereNull('revoked_at')->pluck('course_id')->map(fn ($id): int => (int) $id)->unique()->values()->all()
             : [];
 
+        $states = $courses->mapWithKeys(fn (Course $course): array => [$course->id => $this->courseState($course, $completed, $certified)]);
+
         return view('academy.home', [
             'courses' => $courses,
             'completed' => $completed,
+            'certified' => $certified,
+            'states' => $states,
             'next' => $this->nextStep($courses, $completed, $certified, $user),
             'progress' => $user ? $this->progressSummary($courses, $completed, $certified, $user) : null,
         ]);
+    }
+
+    /**
+     * Where a student is in one course: 'new' (nothing done), 'started', or
+     * 'finished' — every lesson done, and the certificate too where the course
+     * has a final quiz (the course page's rule). The home page groups courses
+     * by it; the progress card counts by it.
+     */
+    private function courseState(Course $course, array $completed, array $certified): string
+    {
+        $total = $course->publishedLessons->count();
+        $done = $course->publishedLessons->whereIn('id', $completed)->count();
+
+        if ($done === 0) {
+            return 'new';
+        }
+
+        $finished = $done === $total
+            && (! $course->final_quiz_enabled || in_array($course->id, $certified, true));
+
+        return $finished ? 'finished' : 'started';
     }
 
     /**
@@ -253,17 +278,11 @@ class AcademyController extends Controller
         $finished = 0;
 
         foreach ($courses as $course) {
-            $total = $course->publishedLessons->count();
-            $done = $course->publishedLessons->whereIn('id', $completed)->count();
-
-            if ($done === 0) {
-                continue;
-            }
-
-            $isFinished = $done === $total
-                && (! $course->final_quiz_enabled || in_array($course->id, $certified, true));
-
-            $isFinished ? $finished++ : $inProgress++;
+            match ($this->courseState($course, $completed, $certified)) {
+                'started' => $inProgress++,
+                'finished' => $finished++,
+                default => null,
+            };
         }
 
         $lastFinal = QuizAttempt::where('user_id', $user->id)

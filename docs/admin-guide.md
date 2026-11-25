@@ -84,11 +84,14 @@ The path is always the same: **make a course → fill it with lessons → turn o
      filling in. If you leave the course duration empty, the academy adds up the
      durations of its lessons instead. If nothing has a duration, no time is shown.
    - The other fields (level) are optional.
-   - **Cover pattern** and **Cover colour** — optional. Every lesson card
-     without its own cover is drawn in this style, with the lesson's number in
-     the course (**Lesson 1**, **Lesson 2**…) worked out automatically. Each
-     option shows a small preview. A cover added to a lesson is always shown as
-     it is. Left empty, the cards use dots on Pilot blue.
+   - **Cover pattern** and **Cover colour** — optional. The course's cards on
+     the home page, and every lesson card without its own cover, are drawn in
+     this style: one picture (a route, radar rings, fuel drops…) on the colour,
+     with the lesson's number in the course (**Lesson 01**, **Lesson 02**…)
+     worked out automatically on the left. Each option shows a small preview.
+     Give neighbouring courses different colours so the home page is easy to
+     scan. A cover added to a lesson is always shown as it is. Left empty, the
+     cards use dots on Pilot blue.
    - **Lessons** — optional. If the lessons already exist, click **Select** under
      **Lessons** to open the lesson table, search or filter it, tick the ones you
      want and confirm. They join the course in the order you ticked them, and you

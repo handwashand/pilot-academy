@@ -94,9 +94,14 @@ class HomeNextStepTest extends TestCase
 
     public function test_a_guest_who_has_not_started_gets_no_card(): void
     {
+        // A visitor is shown a course to start with ("Start here", the course
+        // page), never a next-step card into a lesson.
+        $first = $this->course->publishedLessons()->first();
+
         $this->get('/')
             ->assertStatus(200)
-            ->assertDontSee('Start here')
+            ->assertDontSee(route('academy.lesson', [$this->course, $first]), false)
+            ->assertDontSee('course-feature--next', false)
             ->assertDontSee('Your progress');
     }
 

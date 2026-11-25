@@ -24,7 +24,7 @@ La carte en haut de l'accueil indique toujours la prochaine étape : commencer, 
 
 La recherche trouve les cours et les leçons par nom, ainsi que les mots prononcés dans une vidéo lorsqu'une transcription existe.
 
-Chaque cours de la page d’accueil a un bouton : **Commencer le cours** avant de débuter, **Continuer** pour ouvrir la première leçon non terminée, et **Revoir le cours** une fois toutes les leçons terminées.
+En dessous, la page d’accueil regroupe vos cours. **Vos cours** sont ceux que vous avez commencés, chacun avec ses trois leçons suivantes (sur un téléphone, faites glisser sur le côté) et **Continuer** pour ouvrir la première leçon non terminée. **Explorer les cours** liste ceux que vous n’avez pas commencés : ouvrez-en un et appuyez sur **Commencer le cours**. **Terminée** liste ceux que vous avez finis, avec **Revoir le cours** et, si vous avez obtenu un certificat, **Mes certificats**.
 
 ## Utiliser les études de cas
 
