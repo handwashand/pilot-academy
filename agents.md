@@ -459,6 +459,32 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-25 (latest) — Old course and lesson links keep working after a slug change (**schema change**)
+
+The introduction course's slug was changed on production
+(`pilot-monitoring` → `pilot-introduction`) and every shared link, bookmark
+and email link to it went to a 404. **Fixed twice:** the slug was set back on
+production at once (old links 200 again), and the lasting fix is here.
+
+- **Migration `2026_11_25_000003`:** `slug_redirects` (`model_type`
+  `course`/`lesson`, `model_id`, `slug`, unique on type + slug). It backfills
+  `pilot-introduction` → the `pilot-monitoring` course, so links handed out
+  while the new slug was live keep working. **Deploy runs migrate.**
+- **`RemembersOldSlugs`** (Course, Lesson): on update, a changed slug stores
+  the old one; a slug taken back clears its own row, so there is no loop.
+  `resolveRouteBinding` falls back to it and answers **301** to the same
+  address with the new slug and the query string kept, GET/HEAD only. A POST
+  (quiz submit) to an old address is served, not redirected.
+- **Nested lessons** go through `Course::resolveChildRouteBinding`, scoped to
+  that course's lessons (`course_lesson`), so an old lesson slug never jumps
+  into another course.
+- Admin guide (Step 1, Slug) and changelog updated. **Not done:** the five
+  translated admin guides.
+
+**Verified (run):** `SlugRedirectTest` (5) with `SharedLessonTest`,
+`CoursePublishingTest` and `LessonPublishingTest`: 53 passed, 262
+assertions. Pint clean on the 6 files. **Not run:** PostgreSQL, the full suite.
+
 ### 2026-11-25 (later) — Postgres-only production errors; Last login; a video per language; Integrations, certificate text
 
 **Sentry is live on production** (org `365-s3`, project `pilot-academy`). The

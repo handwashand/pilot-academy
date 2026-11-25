@@ -6,6 +6,7 @@ use App\Actions\NotifyContentOwners;
 use App\Models\Concerns\HasContentTranslations;
 use App\Models\Concerns\HasDuration;
 use App\Models\Concerns\HasPublishStatus;
+use App\Models\Concerns\RemembersOldSlugs;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -17,7 +18,12 @@ use Illuminate\Support\Facades\Storage;
 
 class Lesson extends Model
 {
-    use HasContentTranslations, HasDuration, HasPublishStatus, SoftDeletes;
+    use HasContentTranslations, HasDuration, HasPublishStatus, RemembersOldSlugs, SoftDeletes;
+
+    public static function slugRedirectType(): string
+    {
+        return 'lesson';
+    }
 
     protected array $translatable = ['title', 'summary', 'content', 'transcript'];
 

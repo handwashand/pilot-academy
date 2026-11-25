@@ -26,6 +26,7 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **Renaming a course or lesson no longer breaks its links.** Change a course's or lesson's slug and every old link — shared, bookmarked or in an email — is sent on to the new address, with the rest of the link kept. The introduction course's old address, used briefly today, forwards too.
 - **A lesson video in another language.** Each video in a lesson's **Videos** list has **Other languages**: add a language and its own video (an upload for an uploaded video, a YouTube link for a YouTube one). Students reading the academy in that language get it, with **Play original audio** one click away; everyone else gets the original. It is used before a Descript dub for the same language.
 - **Write the certificate's words yourself.** **Settings → General → Certificate** now has **Certificate text**: the top line, title, line above the name, achievement and bottom line, one tab per language, with placeholders such as `:course`, `:score` and `:verify_link`, and a live preview. An optional **Signature** (name, title, image) is printed only where a line uses `:signature`. The score circle is no longer drawn: the score is in the text.
 - **Claude translates too.** Claude joins DeepL, ChatGPT and DeepSeek under **Settings → Integrations → Text translation**, and drafts translations everywhere the academy has **Translate**.

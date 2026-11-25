@@ -6,6 +6,7 @@ use App\Actions\NotifyContentOwners;
 use App\Models\Concerns\HasContentTranslations;
 use App\Models\Concerns\HasDuration;
 use App\Models\Concerns\HasPublishStatus;
+use App\Models\Concerns\RemembersOldSlugs;
 use App\Models\Relations\CourseLessons;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -17,7 +18,25 @@ use Illuminate\Support\Facades\Storage;
 
 class Course extends Model
 {
-    use HasContentTranslations, HasDuration, HasPublishStatus, SoftDeletes;
+    use HasContentTranslations, HasDuration, HasPublishStatus, RemembersOldSlugs, SoftDeletes;
+
+    public static function slugRedirectType(): string
+    {
+        return 'course';
+    }
+
+    /**
+     * A lesson in this course's address (/courses/{course}/lessons/{lesson})
+     * is looked up through the course; a renamed lesson's old slug is followed
+     * here too, as long as the lesson is still in this course.
+     */
+    public function resolveChildRouteBinding($childType, $value, $field)
+    {
+        return parent::resolveChildRouteBinding($childType, $value, $field)
+            ?? ($childType === 'lesson'
+                ? Lesson::followOldSlug($value, $field, fn (Builder $query) => $query->whereHas('courses', fn (Builder $q) => $q->whereKey($this->getKey())))
+                : null);
+    }
 
     protected array $translatable = ['title', 'description'];
 

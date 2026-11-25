@@ -77,6 +77,9 @@ The path is always the same: **make a course → fill it with lessons → turn o
 3. Fill in the main fields:
    - **Course title** — the name, e.g. "Pilot Basics".
    - **Short description** — one or two sentences. Students see this on the course card.
+   - **Slug** — the course's web address, filled in from the title. You can
+     change it later: links that use the old address keep working and are sent
+     on to the new one. The same goes for a lesson's slug.
    - **Duration (minutes)** — optional, but **students now see it**, so it is worth
      filling in. If you leave the course duration empty, the academy adds up the
      durations of its lessons instead. If nothing has a duration, no time is shown.
