@@ -52,7 +52,9 @@ class AiProvider extends Model
         self::CHATGPT => [
             'label' => 'ChatGPT',
             'url' => 'https://api.openai.com/v1/chat/completions',
-            'model' => 'gpt-4o-mini',
+            // The middle of the list by price: the default every provider gets
+            // (owner's choice, 2026-11-25). A dearer model warns on Integrations.
+            'model' => 'gpt-4o',
             // Checked against OpenAI's pricing and model pages on 2026-11-24.
             // GPT-4 Turbo and GPT-3.5 Turbo were dropped: OpenAI no longer
             // prices them.
@@ -93,8 +95,8 @@ class AiProvider extends Model
                 'deepseek-v4-pro' => ['text' => true, 'json' => true, 'documents' => false, 'web_search' => false, 'context_tokens' => 1000000, 'max_output_tokens' => 384000, 'input_usd_per_million' => 1.32, 'output_usd_per_million' => 3.96],
             ],
         ],
-        // Messages API, not chat completions. Haiku's price is the short-prompt
-        // rate (at or under 100,000 input tokens).
+        // Messages API, not chat completions (LlmTranslator::askClaude). Haiku's
+        // price is the short-prompt rate (at or under 100,000 input tokens).
         self::CLAUDE => [
             'label' => 'Claude',
             'url' => 'https://api.anthropic.com/v1/messages',
@@ -288,6 +290,36 @@ class AiProvider extends Model
         $capabilities = self::PROVIDERS[$provider]['capabilities'][$model] ?? null;
 
         return is_array($capabilities) ? $capabilities : null;
+    }
+
+    /**
+     * How many times the provider's default model a chosen model costs, input
+     * and output prices together, rounded to a whole number; null when it is
+     * not dearer or a price is unknown. Integrations warns with it.
+     */
+    public static function costMultiple(string $provider, ?string $model): ?int
+    {
+        $default = self::PROVIDERS[$provider]['model'] ?? '';
+        $price = fn (?array $capabilities): float => (float) (($capabilities['input_usd_per_million'] ?? 0) + ($capabilities['output_usd_per_million'] ?? 0));
+
+        if (blank($model) || $model === $default) {
+            return null;
+        }
+
+        $base = $price(self::capabilitiesFor($provider, $default));
+        $chosen = $price(self::capabilitiesFor($provider, $model));
+
+        if ($base <= 0 || $chosen <= $base * 1.2) {
+            return null;
+        }
+
+        return max(2, (int) round($chosen / $base));
+    }
+
+    /** The display name of a provider's model, or its id when the app has none. */
+    public static function modelLabel(string $provider, string $model): string
+    {
+        return self::PROVIDERS[$provider]['model_options'][$model] ?? $model;
     }
 
     /**

@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Services\Descript\DescriptClient;
 use Database\Seeders\LanguageSeeder;
 use Database\Seeders\PilotQuickStartSeeder;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\DB;
@@ -46,6 +47,20 @@ class IntegrationsTest extends TestCase
                 return Http::response(['translations' => collect($request->data()['text'])->map(fn (string $text): array => [
                     'text' => '[deepl] '.$text,
                 ])->all()]);
+            }
+
+            // Claude's Messages API: the text is the one user message, the
+            // answer a text block after a (empty) thinking block.
+            if (str_contains($request->url(), 'anthropic.com')) {
+                $texts = json_decode($request->data()['messages'][0]['content'], true);
+
+                return Http::response([
+                    'stop_reason' => 'end_turn',
+                    'content' => [
+                        ['type' => 'thinking', 'thinking' => ''],
+                        ['type' => 'text', 'text' => json_encode(collect($texts)->map(fn (string $text): string => '[claude] '.$text)->all(), JSON_UNESCAPED_UNICODE)],
+                    ],
+                ]);
             }
 
             $texts = json_decode($request->data()['messages'][1]['content'], true);
@@ -203,12 +218,90 @@ class IntegrationsTest extends TestCase
 
         $this->assertSame('sk-secret-token', AiProvider::for('deepseek')->api_key);
 
+        // Remove, on the line under the token box, takes it away at once.
         Livewire::actingAs($this->admin())
             ->test(Integrations::class)
-            ->fillForm(['deepseek' => ['enabled' => false, 'clear_shared' => true]])
-            ->call('save');
+            ->assertSee(__t('admin_integrations.token_saved', ['ending' => 'oken']), false)
+            ->callAction(TestAction::make('remove_shared')->schemaComponent('form.deepseek.api_key'));
 
         $this->assertNull(AiProvider::for('deepseek')->api_key);
+    }
+
+    public function test_claude_drafts_with_its_own_api_and_a_schema_for_the_answer(): void
+    {
+        $this->enable('claude', 'sk-ant-token');
+        $lesson = Course::first()->lessons()->first();
+
+        Livewire::actingAs($this->admin(User::PERMISSION_AI_TRANSLATE))
+            ->test(EditLesson::class, ['record' => $lesson->getRouteKey()])
+            ->callAction('translateWithClaude')
+            ->assertHasNoActionErrors()
+            ->assertSet('mountedActions.0.data.fr.title', '[claude] '.$lesson->title);
+
+        Http::assertSent(function (Request $request): bool {
+            $body = $request->data();
+            $keys = array_keys(json_decode($body['messages'][0]['content'], true));
+
+            return $request->url() === 'https://api.anthropic.com/v1/messages'
+                && $request->hasHeader('x-api-key', 'sk-ant-token')
+                && $request->hasHeader('anthropic-version', '2026-10-21')
+                && ! $request->hasHeader('Authorization')
+                // The middle model by default, with no temperature.
+                && $body['model'] === 'claude-sonnet-5-5'
+                && ! array_key_exists('temperature', $body)
+                && $body['output_config']['format']['type'] === 'json_schema'
+                && $body['output_config']['format']['schema']['required'] === $keys
+                && $body['output_config']['format']['schema']['additionalProperties'] === false;
+        });
+        $this->assertSame(0, $lesson->contentTranslations()->count(), 'Drafting stores nothing.');
+    }
+
+    public function test_a_declined_claude_request_stores_nothing_and_says_so(): void
+    {
+        $this->enable('claude', 'sk-ant-token');
+        Http::fake(['*' => Http::response(['stop_reason' => 'refusal', 'content' => []])]);
+        $lesson = Course::first()->lessons()->first();
+
+        Livewire::actingAs($this->admin())
+            ->test(EditLesson::class, ['record' => $lesson->getRouteKey()])
+            ->callAction('translateWithClaude')
+            ->assertSet('mountedActions.0.data.fr.title', '');
+
+        $this->assertSame(0, $lesson->contentTranslations()->count());
+    }
+
+    public function test_every_ai_provider_is_offered_wherever_translate_is(): void
+    {
+        foreach (['chatgpt', 'deepseek', 'claude'] as $provider) {
+            $this->enable($provider);
+        }
+
+        Livewire::actingAs($this->admin())
+            ->test(EditLesson::class, ['record' => Course::first()->lessons()->first()->getRouteKey()])
+            ->assertActionVisible('translateWithChatgpt')
+            ->assertActionVisible('translateWithDeepseek')
+            ->assertActionVisible('translateWithClaude');
+    }
+
+    public function test_a_dearer_model_than_the_default_says_how_much_more_it_costs(): void
+    {
+        $this->assertNull(AiProvider::costMultiple('claude', null));
+        $this->assertNull(AiProvider::costMultiple('claude', 'claude-sonnet-5-5'));
+        $this->assertNull(AiProvider::costMultiple('claude', 'claude-haiku-5-5'));
+        $this->assertSame(2, AiProvider::costMultiple('claude', 'claude-opus-5-5'));
+        $this->assertSame(4, AiProvider::costMultiple('claude', 'claude-fable-5-2'));
+        $this->assertSame(4, AiProvider::costMultiple('chatgpt', 'gpt-6.2-astra'));
+        $this->assertNull(AiProvider::costMultiple('chatgpt', 'gpt-4o-mini'));
+
+        $warning = __t('admin_integrations.model_warning', ['model' => 'Claude Opus 5.5', 'times' => 2, 'default' => 'Claude Sonnet 5.5']);
+
+        Livewire::actingAs($this->admin())
+            ->test(Integrations::class)
+            ->assertDontSee($warning)
+            ->fillForm(['claude' => ['model' => 'claude-opus-5-5']])
+            ->assertSee($warning)
+            ->fillForm(['claude' => ['model' => 'claude-haiku-5-5']])
+            ->assertDontSee($warning);
     }
 
     public function test_a_provider_cannot_be_enabled_without_a_token(): void
@@ -276,7 +369,7 @@ class IntegrationsTest extends TestCase
 
         Http::assertSent(fn (Request $request): bool => $request->url() === 'https://api.openai.com/v1/chat/completions'
             && $request->hasHeader('Authorization', 'Bearer sk-secret-token')
-            && $request->data()['model'] === 'gpt-4o-mini');
+            && $request->data()['model'] === 'gpt-4o');
         $this->assertSame(0, $course->contentTranslations()->count(), 'Drafting stores nothing.');
     }
 

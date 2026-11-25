@@ -8,28 +8,34 @@ use App\Services\DeepL\DeepLClient;
 use App\Services\Descript\DescriptClient;
 use BackedEnum;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Icon;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Text;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
 /**
- * Settings → Integrations: Descript (lesson video translation) and the text
- * translation providers — DeepL, ChatGPT, DeepSeek — an admin can switch on.
+ * Settings → Integrations: the text translation providers — DeepL, ChatGPT,
+ * DeepSeek, Claude — and Descript (lesson video translation).
  *
- * An enabled text provider with a token adds a "Generate missing with …" button
- * to the Translate dialog for people given that right; Descript adds the
- * lesson's Translate video button the same way.
+ * Any text provider switched on here, with a token, drafts translations
+ * wherever the academy has Translate (TranslateContentAction::ENGINES), for
+ * admins and for people given its right; Descript adds the lesson's Translate
+ * video button the same way.
+ *
+ * One short card per provider: the switch in its header, one token box whose
+ * hint is the saved token's last four characters, one line saying who can use
+ * the saved token with a Remove link, who can use it, and the model.
  *
  * The token is write-only. It is stored encrypted, the form never loads it
  * back, and a blank box keeps what is saved. Providers have fixed official
@@ -87,14 +93,12 @@ class Integrations extends Page
             $row = AiProvider::for($provider);
 
             // The token is deliberately left out: it never comes back to the browser.
+            // Who can use it starts at the saved shared token's reach.
             $state[$provider] = [
                 'enabled' => (bool) $row->enabled,
                 'model' => $row->model,
                 'api_key' => '',
-                'scope' => AiProvider::SCOPE_EVERYONE,
-                'shared_scope' => $row->scope ?? AiProvider::SCOPE_EVERYONE,
-                'clear_shared' => false,
-                'clear_own' => false,
+                'scope' => filled($row->api_key) ? ($row->scope ?? AiProvider::SCOPE_EVERYONE) : AiProvider::SCOPE_EVERYONE,
             ];
         }
 
@@ -105,11 +109,10 @@ class Integrations extends Page
     {
         return $schema
             // Grouped by what they translate, each group headed by who may use
-            // it; the cards in a group sit in one even row.
+            // it; two cards to a row.
             ->components([
-                $this->group('text', [AiProvider::DEEPL, AiProvider::CHATGPT, AiProvider::DEEPSEEK]),
+                $this->group('text', [AiProvider::DEEPL, AiProvider::CHATGPT, AiProvider::DEEPSEEK, AiProvider::CLAUDE]),
                 $this->group('video', [AiProvider::DESCRIPT]),
-                $this->group('course', [AiProvider::CLAUDE]),
             ])
             ->statePath('data');
     }
@@ -121,7 +124,7 @@ class Integrations extends Page
             ->description(fn (): string => __t("admin_integrations.groups.{$name}_help"))
             ->contained(false)
             ->schema([
-                Grid::make(['default' => 1, 'md' => 2, 'xl' => 3])
+                Grid::make(['default' => 1, 'lg' => 2])
                     ->schema(array_map(fn (string $provider): Section => $this->providerSection($provider), $providers)),
             ]);
     }
@@ -174,22 +177,15 @@ class Integrations extends Page
             $token = trim((string) ($input['api_key'] ?? ''));
             $scope = $this->scopeFor($provider, $input['scope'] ?? null);
 
-            if (! empty($input['clear_shared'])) {
-                $row->api_key = null;
-            }
-
-            if (! empty($input['clear_own']) && $own->exists) {
-                $own->delete();
-                $own = AiProvider::personalFor($provider, $user);
-            }
-
-            // A new token goes where its owner chose: their own row, or the shared one.
+            // A new token goes where its owner chose: their own row, or the
+            // shared one. With the box empty, the choice is the shared token's
+            // reach (a shared token is never "just me").
             if ($token !== '' && $scope === AiProvider::SCOPE_PERSONAL) {
                 $own->fill(['api_key' => $token, 'scope' => AiProvider::SCOPE_PERSONAL, 'added_by' => $user->id])->save();
             } elseif ($token !== '') {
                 $row->fill(['api_key' => $token, 'scope' => $scope, 'added_by' => $user->id]);
-            } elseif (filled($row->api_key)) {
-                $row->scope = $this->scopeFor($provider, $input['shared_scope'] ?? null, shared: true);
+            } elseif (filled($row->api_key) && $scope !== AiProvider::SCOPE_PERSONAL) {
+                $row->scope = $scope;
             }
 
             $row->enabled = (bool) ($input['enabled'] ?? false);
@@ -222,60 +218,94 @@ class Integrations extends Page
 
     /**
      * A reach from the form, checked here because it arrives from the browser.
-     * Descript has no personal tokens, and a shared row is never personal.
+     * Descript has no personal tokens.
      */
-    private function scopeFor(string $provider, mixed $scope, bool $shared = false): string
+    private function scopeFor(string $provider, mixed $scope): string
     {
-        $allowed = array_keys($this->scopeOptions($provider, $shared));
-
-        return in_array($scope, $allowed, true) ? $scope : AiProvider::SCOPE_EVERYONE;
+        return in_array($scope, array_keys($this->scopeOptions($provider)), true) ? $scope : AiProvider::SCOPE_EVERYONE;
     }
 
     /** @return array<string, string> */
-    private function scopeOptions(string $provider, bool $shared = false): array
+    private function scopeOptions(string $provider): array
     {
         $scopes = [AiProvider::SCOPE_PERSONAL, AiProvider::SCOPE_ADMINS, AiProvider::SCOPE_EVERYONE];
 
-        if ($shared || in_array($provider, AiProvider::SHARED_ONLY, true)) {
+        if (in_array($provider, AiProvider::SHARED_ONLY, true)) {
             $scopes = array_slice($scopes, 1);
         }
 
         return collect($scopes)->mapWithKeys(fn (string $scope): array => [$scope => __t("admin_integrations.scopes.{$scope}")])->all();
     }
 
-    /** One line about the shared token: its ending, its reach and who added it. Never the token. */
-    private function sharedTokenLine(string $provider): string
+    /**
+     * Under the token box: who can use the saved shared token and who added
+     * it, and the admin's own token, each with a Remove link. Never the token.
+     *
+     * @return array<int, Text|Action>
+     */
+    private function savedTokenLines(string $provider): array
     {
+        $label = AiProvider::PROVIDERS[$provider]['label'];
         $row = AiProvider::for($provider);
+        $lines = [];
 
-        if (blank($row->api_key)) {
-            return __t('admin_integrations.shared_none');
+        if (filled($row->api_key)) {
+            $lines[] = Text::make(__t('admin_integrations.shared_line', [
+                'scope' => __t('admin_integrations.scopes.'.($row->scope ?? AiProvider::SCOPE_EVERYONE)),
+                'name' => $row->addedBy?->name ?? __t('admin_integrations.added_by_unknown'),
+            ]));
+            $lines[] = $this->removeAction('remove_shared', $provider, $label);
         }
 
-        return __t('admin_integrations.shared_value', [
-            'ending' => $row->tokenEnding(),
-            'scope' => __t('admin_integrations.scopes.'.($row->scope ?? AiProvider::SCOPE_EVERYONE)),
-            'name' => $row->addedBy?->name ?? __t('admin_integrations.added_by_unknown'),
-        ]);
+        if (! in_array($provider, AiProvider::SHARED_ONLY, true)) {
+            $own = AiProvider::personalFor($provider, auth()->user());
+
+            if (filled($own->api_key)) {
+                $lines[] = Text::make(__t('admin_integrations.own_line', ['ending' => $own->tokenEnding()]));
+                $lines[] = $this->removeAction('remove_own', $provider, $label);
+            }
+        }
+
+        return $lines;
     }
 
-    private function ownTokenLine(string $provider): string
+    /** Remove a saved token at once, after a confirmation: the shared one, or the admin's own. */
+    private function removeAction(string $name, string $provider, string $label): Action
     {
-        $own = AiProvider::personalFor($provider, auth()->user());
+        $shared = $name === 'remove_shared';
 
-        return filled($own->api_key)
-            ? __t('admin_integrations.own_value', ['ending' => $own->tokenEnding()])
-            : __t('admin_integrations.own_none');
+        return Action::make($name)
+            ->label(fn (): string => __t('admin_integrations.remove'))
+            ->link()
+            ->color('danger')
+            ->requiresConfirmation()
+            ->modalHeading(fn (): string => __t($shared ? 'admin_integrations.remove_shared_heading' : 'admin_integrations.remove_own_heading', ['provider' => $label]))
+            ->modalDescription(fn (): string => __t('admin_integrations.remove_description', ['provider' => $label]))
+            ->action(function () use ($shared, $provider): void {
+                if ($shared) {
+                    $row = AiProvider::for($provider);
+                    $row->api_key = null;
+                    $row->save();
+                } else {
+                    AiProvider::personalFor($provider, auth()->user())->delete();
+                }
+
+                $this->mount();
+
+                Notification::make()->title(__t('admin_integrations.removed'))->success()->send();
+            });
     }
 
     private function providerSection(string $provider): Section
     {
         $label = AiProvider::PROVIDERS[$provider]['label'];
         $saved = AiProvider::withToken($provider) !== null;
-        $sharedSaved = filled(AiProvider::for($provider)->api_key);
-        $ownSaved = ! in_array($provider, AiProvider::SHARED_ONLY, true)
-            && filled(AiProvider::personalFor($provider, auth()->user())->api_key);
+        $shared = AiProvider::for($provider);
+        $own = in_array($provider, AiProvider::SHARED_ONLY, true) ? null : AiProvider::personalFor($provider, auth()->user());
+        // The hint in the token box: the shared token's ending, else the admin's own.
+        $ending = filled($shared->api_key) ? $shared->tokenEnding() : (filled($own?->api_key) ? $own->tokenEnding() : null);
         $on = $this->isOn($provider);
+        $hasModel = AiProvider::PROVIDERS[$provider]['model'] !== '';
 
         return Section::make($label)
             // Its state at a glance, before reading any field.
@@ -290,57 +320,56 @@ class Integrations extends Page
             // Cards in a row stay the same height whatever fields they carry.
             ->extraAttributes(['class' => 'pa-fill-row'])
             ->statePath($provider)
-            ->schema([
+            // What it does, on demand, and the switch: the card itself stays short.
+            ->afterHeader([
+                Icon::make(Heroicon::OutlinedInformationCircle)
+                    ->color('gray')
+                    ->tooltip(fn (): string => __t("admin_integrations.description.{$provider}")),
                 Toggle::make('enabled')
-                    ->label(fn (): string => __t('admin_integrations.enabled', ['provider' => $label]))
-                    // What it does, on demand: the card itself stays short.
-                    ->hintIcon(Heroicon::OutlinedInformationCircle, tooltip: fn (): string => __t("admin_integrations.description.{$provider}")),
-
-                // What is saved, as lines of text: never the token, only its last four characters.
-                TextEntry::make('shared_token')
-                    ->label(fn (): string => __t('admin_integrations.shared_token'))
-                    ->state(fn (): string => $this->sharedTokenLine($provider)),
-
-                Select::make('shared_scope')
-                    ->label(fn (): string => __t('admin_integrations.shared_scope'))
-                    ->options(fn (): array => $this->scopeOptions($provider, shared: true))
-                    ->native(false)
-                    ->selectablePlaceholder(false)
-                    ->visible($sharedSaved),
-
-                Checkbox::make('clear_shared')
-                    ->label(fn (): string => __t('admin_integrations.clear_shared'))
-                    ->visible($sharedSaved),
-
-                TextEntry::make('own_token')
-                    ->label(fn (): string => __t('admin_integrations.own_token'))
-                    ->state(fn (): string => $this->ownTokenLine($provider))
-                    ->visible(! in_array($provider, AiProvider::SHARED_ONLY, true)),
-
-                Checkbox::make('clear_own')
-                    ->label(fn (): string => __t('admin_integrations.clear_own'))
-                    ->visible($ownSaved),
-
+                    ->label(fn (): string => __t('admin_integrations.on'))
+                    ->inline(),
+            ])
+            ->schema([
                 TextInput::make('api_key')
                     ->label(fn (): string => __t('admin_integrations.token'))
                     ->password()
                     ->autocomplete('new-password')
                     ->maxLength(300)
-                    ->placeholder(fn (): string => $saved ? __t('admin_integrations.token_saved') : __t('admin_integrations.token_empty')),
+                    ->placeholder(fn (): string => $ending !== null
+                        ? __t('admin_integrations.token_saved', ['ending' => $ending])
+                        : __t('admin_integrations.token_empty'))
+                    ->belowContent(fn (): array => $this->savedTokenLines($provider)),
 
-                Select::make('scope')
-                    ->label(fn (): string => __t('admin_integrations.scope'))
-                    ->helperText(fn (): string => __t('admin_integrations.scope_help'))
-                    ->options(fn (): array => $this->scopeOptions($provider))
-                    ->native(false)
-                    ->selectablePlaceholder(false),
+                Grid::make(['default' => 1, 'sm' => $hasModel ? 2 : 1])
+                    ->schema([
+                        Select::make('scope')
+                            ->label(fn (): string => __t('admin_integrations.scope'))
+                            ->hintIcon(Heroicon::OutlinedInformationCircle, tooltip: fn (): string => __t('admin_integrations.scope_help'))
+                            ->options(fn (): array => $this->scopeOptions($provider))
+                            ->native(false)
+                            ->selectablePlaceholder(false),
 
-                Select::make('model')
-                    ->visible(AiProvider::PROVIDERS[$provider]['model'] !== '')
-                    ->label(fn (): string => __t('admin_integrations.model'))
-                    ->options(AiProvider::PROVIDERS[$provider]['model_options'])
-                    ->native(false)
-                    ->placeholder(fn (): string => __t('admin_integrations.model_help', ['model' => AiProvider::PROVIDERS[$provider]['model']])),
+                        // Defaults to the provider's middle model; a dearer one
+                        // says how much more it costs as soon as it is picked.
+                        Select::make('model')
+                            ->visible($hasModel)
+                            ->label(fn (): string => __t('admin_integrations.model'))
+                            ->options(AiProvider::PROVIDERS[$provider]['model_options'])
+                            ->native(false)
+                            ->live()
+                            ->placeholder(fn (): string => __t('admin_integrations.model_help', [
+                                'model' => AiProvider::modelLabel($provider, AiProvider::PROVIDERS[$provider]['model']),
+                            ]))
+                            ->belowContent(fn (Get $get): array => ($times = AiProvider::costMultiple($provider, $get('model'))) === null ? [] : [
+                                Text::make(__t('admin_integrations.model_warning', [
+                                    'model' => AiProvider::modelLabel($provider, (string) $get('model')),
+                                    'times' => $times,
+                                    'default' => AiProvider::modelLabel($provider, AiProvider::PROVIDERS[$provider]['model']),
+                                ]))
+                                    ->color('warning')
+                                    ->icon(Heroicon::OutlinedExclamationTriangle),
+                            ]),
+                    ]),
             ]);
     }
 }

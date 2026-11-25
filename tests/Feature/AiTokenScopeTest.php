@@ -9,6 +9,7 @@ use App\Models\Course;
 use App\Models\User;
 use Database\Seeders\LanguageSeeder;
 use Database\Seeders\PilotQuickStartSeeder;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
@@ -108,12 +109,12 @@ class AiTokenScopeTest extends TestCase
 
         // Its owner sees the last four characters, never the token.
         Livewire::actingAs($owner)->test(Integrations::class)
-            ->assertSee(__t('admin_integrations.own_value', ['ending' => '1234']))
+            ->assertSee(__t('admin_integrations.own_line', ['ending' => '1234']))
             ->assertDontSee('sk-personal-1234');
 
         // Another admin sees nothing of it.
         Livewire::actingAs($this->person('other@pilot.local', User::ROLE_ADMIN))->test(Integrations::class)
-            ->assertDontSee(__t('admin_integrations.own_value', ['ending' => '1234']));
+            ->assertDontSee(__t('admin_integrations.own_line', ['ending' => '1234']));
     }
 
     public function test_a_shared_token_records_its_reach_and_who_added_it(): void
@@ -130,13 +131,16 @@ class AiTokenScopeTest extends TestCase
         $this->assertSame(AiProvider::SCOPE_ADMINS, $row->scope);
         $this->assertSame($admin->id, $row->added_by);
 
+        // The token box hints at its ending; the line under it says who can use it.
         Livewire::actingAs($admin)->test(Integrations::class)
-            ->assertSee(__t('admin_integrations.shared_value', [
-                'ending' => '9876',
+            ->assertSee(__t('admin_integrations.token_saved', ['ending' => '9876']), false)
+            ->assertSee(__t('admin_integrations.shared_line', [
                 'scope' => __t('admin_integrations.scopes.admins'),
                 'name' => $admin->name,
             ]))
-            ->fillForm(['deepseek' => ['shared_scope' => AiProvider::SCOPE_EVERYONE]])
+            ->assertSchemaStateSet(['deepseek.scope' => AiProvider::SCOPE_ADMINS])
+            // With the box empty, Who can use it changes the saved token's reach.
+            ->fillForm(['deepseek' => ['scope' => AiProvider::SCOPE_EVERYONE]])
             ->call('save');
 
         $this->assertSame(AiProvider::SCOPE_EVERYONE, AiProvider::for('deepseek')->scope);
@@ -155,8 +159,7 @@ class AiTokenScopeTest extends TestCase
         $this->assertTrue((bool) AiProvider::for('deepseek')->enabled);
 
         Livewire::actingAs($owner)->test(Integrations::class)
-            ->fillForm(['deepseek' => ['clear_own' => true]])
-            ->call('save');
+            ->callAction(TestAction::make('remove_own')->schemaComponent('form.deepseek.api_key'));
 
         $this->assertNull(AiProvider::personalFor('deepseek', $owner)->api_key);
     }

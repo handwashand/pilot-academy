@@ -49,6 +49,7 @@ class TranslateContentAction
         'translateWithDeepL' => ['label' => 'DeepL', 'permission' => User::PERMISSION_DEEPL_TRANSLATE, 'provider' => AiProvider::DEEPL],
         'translateWithChatgpt' => ['label' => 'ChatGPT', 'permission' => User::PERMISSION_AI_TRANSLATE, 'provider' => AiProvider::CHATGPT],
         'translateWithDeepseek' => ['label' => 'DeepSeek', 'permission' => User::PERMISSION_AI_TRANSLATE, 'provider' => AiProvider::DEEPSEEK],
+        'translateWithClaude' => ['label' => 'Claude', 'permission' => User::PERMISSION_AI_TRANSLATE, 'provider' => AiProvider::CLAUDE],
     ];
 
     /** The button: a plain Translate, or a menu of the ways to translate when an engine is available. */

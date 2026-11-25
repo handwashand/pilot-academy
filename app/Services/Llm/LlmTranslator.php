@@ -5,13 +5,16 @@ namespace App\Services\Llm;
 use App\Models\AiProvider;
 use App\Models\Language;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Text translation through ChatGPT or DeepSeek. Both speak the same chat
- * completions protocol, so one class serves both; the provider row supplies the
- * fixed address, the model and the token.
+ * Text translation through ChatGPT, DeepSeek or Claude. ChatGPT and DeepSeek
+ * speak the same chat completions protocol; Claude has its own Messages API.
+ * One class serves all three, so every place that translates with one of them
+ * can translate with any; the provider row supplies the fixed address, the
+ * model and the token.
  *
  * It offers the same two methods as DeepLClient (supports, translate), so the
  * Translate dialog drafts with either. The token is sent only to the
@@ -24,6 +27,9 @@ class LlmTranslator
 
     /** A group of texts per request when many are sent together. */
     private const GROUP_BYTES = 30 * 1024;
+
+    /** The Messages API version every Claude request is written for. */
+    private const CLAUDE_API_VERSION = '2026-10-21';
 
     public function __construct(private AiProvider $provider) {}
 
@@ -77,20 +83,114 @@ class LlmTranslator
             .'Keep product names, numbers, URLs and code unchanged. '
             .($html ? 'The values are HTML: keep every tag and attribute exactly as it is and translate only the text between tags.' : 'The values are plain text: keep line breaks.');
 
-        try {
-            $response = Http::withToken((string) $this->provider->api_key)
-                ->acceptJson()
-                ->asJson()
-                ->timeout(90)
-                ->post($this->provider->endpoint(), [
-                    'model' => $this->provider->modelName(),
-                    ...AiProvider::chatOptions($this->provider->provider, $this->provider->modelName(), 0),
-                    'response_format' => ['type' => 'json_object'],
-                    'messages' => [
-                        ['role' => 'system', 'content' => $system],
-                        ['role' => 'user', 'content' => $payload],
+        $answer = $this->provider->provider === AiProvider::CLAUDE
+            ? $this->askClaude($system, $payload, array_keys($texts))
+            : $this->askChat($system, $payload);
+
+        $translated = [];
+
+        foreach (array_keys($texts) as $key) {
+            if (! is_string($answer[$key] ?? null) || $answer[$key] === '') {
+                throw new LlmException($this->label().' returned an incomplete answer.', 502, 'invalid_response');
+            }
+
+            $translated[$key] = $answer[$key];
+        }
+
+        return $translated;
+    }
+
+    /**
+     * ChatGPT and DeepSeek: chat completions with a JSON answer.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function askChat(string $system, string $payload): ?array
+    {
+        $response = $this->send(fn () => Http::withToken((string) $this->provider->api_key)
+            ->acceptJson()
+            ->asJson()
+            ->timeout(90)
+            ->post($this->provider->endpoint(), [
+                'model' => $this->provider->modelName(),
+                ...AiProvider::chatOptions($this->provider->provider, $this->provider->modelName(), 0),
+                'response_format' => ['type' => 'json_object'],
+                'messages' => [
+                    ['role' => 'system', 'content' => $system],
+                    ['role' => 'user', 'content' => $payload],
+                ],
+            ]));
+
+        return $this->decode((string) $response->json('choices.0.message.content'));
+    }
+
+    /**
+     * Claude: the Messages API. The answer is held to a JSON schema with
+     * exactly the keys that were sent, so it cannot drop or invent one. No
+     * temperature (refused from API version 2026-10-21); low effort, since
+     * translation needs little reasoning. A declined request on the larger
+     * models is re-run on a fallback model by the API itself.
+     *
+     * @param  array<int, string>  $keys
+     * @return array<string, mixed>|null
+     */
+    private function askClaude(string $system, string $payload, array $keys): ?array
+    {
+        $model = $this->provider->modelName();
+        $withFallback = ! str_starts_with($model, 'claude-haiku');
+
+        $response = $this->send(fn () => Http::withHeaders(array_filter([
+            'x-api-key' => (string) $this->provider->api_key,
+            'anthropic-version' => self::CLAUDE_API_VERSION,
+            'anthropic-beta' => $withFallback ? 'server-side-fallback-2026-07-01' : null,
+        ]))
+            ->acceptJson()
+            ->asJson()
+            ->timeout(180)
+            ->post($this->provider->endpoint(), array_filter([
+                'model' => $model,
+                'max_tokens' => 32000,
+                'fallbacks' => $withFallback ? 'default' : null,
+                'output_config' => [
+                    'effort' => 'low',
+                    'format' => [
+                        'type' => 'json_schema',
+                        'schema' => [
+                            'type' => 'object',
+                            'properties' => (object) array_fill_keys($keys, ['type' => 'string']),
+                            'required' => $keys,
+                            'additionalProperties' => false,
+                        ],
                     ],
-                ]);
+                ],
+                'system' => $system,
+                'messages' => [
+                    ['role' => 'user', 'content' => $payload],
+                ],
+            ], fn ($value): bool => $value !== null)));
+
+        $stop = $response->json('stop_reason');
+
+        if ($stop === 'refusal') {
+            throw new LlmException($this->label().' declined to translate this text.', 422, 'refusal');
+        }
+
+        if ($stop === 'max_tokens') {
+            throw new LlmException($this->label().' returned an incomplete answer.', 502, 'max_tokens');
+        }
+
+        // Thinking blocks come first; the answer is the text block.
+        $text = collect((array) $response->json('content'))
+            ->first(fn ($block): bool => is_array($block) && ($block['type'] ?? null) === 'text');
+
+        return $this->decode((string) ($text['text'] ?? ''));
+    }
+
+    /** One request, with the same failure handling for every provider. */
+    private function send(callable $request): Response
+    {
+        try {
+            $response = $request();
         } catch (ConnectionException) {
             Log::warning('Translation provider unreachable', ['provider' => $this->provider->provider]);
 
@@ -113,23 +213,19 @@ class LlmTranslator
             );
         }
 
-        $answer = json_decode((string) $response->json('choices.0.message.content'), true);
+        return $response;
+    }
+
+    /** @return array<string, mixed> */
+    private function decode(string $json): array
+    {
+        $answer = json_decode($json, true);
 
         if (! is_array($answer)) {
             throw new LlmException($this->label().' returned an unreadable answer.', 502, 'invalid_response');
         }
 
-        $translated = [];
-
-        foreach (array_keys($texts) as $key) {
-            if (! is_string($answer[$key] ?? null) || $answer[$key] === '') {
-                throw new LlmException($this->label().' returned an incomplete answer.', 502, 'invalid_response');
-            }
-
-            $translated[$key] = $answer[$key];
-        }
-
-        return $translated;
+        return $answer;
     }
 
     /**

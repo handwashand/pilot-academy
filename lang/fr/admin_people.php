@@ -25,7 +25,7 @@ return [
         'check_mail' => 'Vérifier l’envoi des e-mails',
         'use_descript_translation' => 'Utiliser la traduction vidéo de Descript',
         'use_deepl_translation' => 'Générer des brouillons de traduction avec DeepL',
-        'use_ai_translation' => 'Générer des brouillons de traduction avec ChatGPT ou DeepSeek',
+        'use_ai_translation' => 'Générer des brouillons de traduction avec l’IA (ChatGPT, DeepSeek ou Claude)',
         'download_videos' => 'Télécharger les vidéos des leçons',
         'use_recycle_bin' => 'Ouvrir la corbeille et restaurer le contenu supprimé (administrateurs uniquement)',
         'delete_certificates' => 'Supprimer définitivement des certificats (administrateurs uniquement)',

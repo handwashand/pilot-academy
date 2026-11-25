@@ -29,7 +29,7 @@ return [
         'check_mail' => 'فحص تسليم البريد',
         'use_descript_translation' => 'استخدام ترجمة فيديو Descript',
         'use_deepl_translation' => 'توليد مسودات الترجمة عبر DeepL',
-        'use_ai_translation' => 'توليد مسودات الترجمة عبر ChatGPT أو DeepSeek',
+        'use_ai_translation' => 'توليد مسودات الترجمة بالذكاء الاصطناعي (ChatGPT أو DeepSeek أو Claude)',
         'download_videos' => 'تنزيل فيديوهات الدروس',
         'use_recycle_bin' => 'فتح سلة المحذوفات واستعادة المحتوى المحذوف (للمسؤولين فقط)',
         'delete_certificates' => 'حذف الشهادات نهائيًا (للمسؤولين فقط)',
