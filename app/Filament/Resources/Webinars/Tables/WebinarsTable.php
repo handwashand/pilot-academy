@@ -12,17 +12,20 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class WebinarsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->with('contentTranslations'))
             ->defaultSort('starts_at', 'desc')
             ->columns([
                 TextColumn::make('title')
                     ->label(__t('admin_common.title'))
-                    ->searchable()
+                    ->formatStateUsing(fn (Webinar $record): string => (string) $record->translated('title'))
+                    ->searchable(query: fn (Builder $query, string $search): Builder => $query->whereTranslatedLike('title', $search))
                     ->sortable()
                     ->weight('bold'),
 

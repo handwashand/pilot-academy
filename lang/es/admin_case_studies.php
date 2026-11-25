@@ -21,6 +21,7 @@ return [
         'remove_step' => 'Quitar este paso',
         'remove_step_confirm_heading' => '¿Quitar este paso?',
         'remove_step_confirm_description' => 'Ocultar conserva el texto e imágenes del paso — «Añadir paso» lo trae de vuelta tal como estaba. «Eliminar» los borra para siempre en su lugar — esto no se puede deshacer.',
+        'remove_step_confirm_description_translation' => 'Ocultar conserva el texto e imágenes del paso — «Añadir paso» lo trae de vuelta tal como estaba. Para eliminar un paso, abre el caso en el idioma en que se escribió.',
         'hide_step' => 'Ocultar',
         'delete_step' => 'Eliminar',
         'add_step' => 'Añadir paso',

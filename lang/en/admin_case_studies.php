@@ -26,6 +26,7 @@ return [
         'remove_step' => 'Remove this step',
         'remove_step_confirm_heading' => 'Remove this step?',
         'remove_step_confirm_description' => 'Hide keeps the step\'s text and pictures — Add step brings it back exactly as it was. Delete clears them for good instead; that cannot be undone.',
+        'remove_step_confirm_description_translation' => 'Hide keeps the step\'s text and pictures — Add step brings it back exactly as it was. To delete a step, open the study in the language it was written in.',
         'hide_step' => 'Hide',
         'delete_step' => 'Delete',
         'add_step' => 'Add step',

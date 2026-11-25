@@ -21,6 +21,7 @@ return [
         'remove_step' => 'Remover esta etapa',
         'remove_step_confirm_heading' => 'Remover esta etapa?',
         'remove_step_confirm_description' => 'Ocultar mantém o texto e as imagens da etapa — "Adicionar etapa" a traz de volta exatamente como estava. "Excluir" as apaga para sempre em vez disso — isso não pode ser desfeito.',
+        'remove_step_confirm_description_translation' => 'Ocultar mantém o texto e as imagens da etapa — "Adicionar etapa" a traz de volta exatamente como estava. Para excluir uma etapa, abra o estudo no idioma em que foi escrito.',
         'hide_step' => 'Ocultar',
         'delete_step' => 'Excluir',
         'add_step' => 'Adicionar etapa',

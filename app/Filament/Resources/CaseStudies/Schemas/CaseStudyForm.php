@@ -379,17 +379,23 @@ class CaseStudyForm
             ->link()
             ->requiresConfirmation()
             ->modalHeading(__t('admin_case_studies.form.remove_step_confirm_heading'))
-            ->modalDescription(__t('admin_case_studies.form.remove_step_confirm_description'))
+            ->modalDescription(fn (?CaseStudy $record): string => CaseStudy::showsTranslation($record)
+                ? __t('admin_case_studies.form.remove_step_confirm_description_translation')
+                : __t('admin_case_studies.form.remove_step_confirm_description'))
             ->modalSubmitActionLabel(__t('admin_case_studies.form.hide_step'))
             ->action(function (array $arguments, Get $get, Set $set, ?CaseStudy $record) use ($name, $section, $withGallery): void {
-                if ($arguments['delete'] ?? false) {
+                // Delete clears the original's own column, so it is never
+                // done from a translation — checked here too, because the
+                // argument comes from the browser.
+                if (($arguments['delete'] ?? false) && ! CaseStudy::showsTranslation($record)) {
                     static::clearStepContent($name, $section, $withGallery, $record, $set);
                 }
 
                 static::hideStep($get, $set, $section);
             });
 
-        $removeAction->extraModalFooterActions([
+        // While the study is shown in a translation, only Hide is offered.
+        $removeAction->extraModalFooterActions(fn (?CaseStudy $record): array => CaseStudy::showsTranslation($record) ? [] : [
             $removeAction->makeModalSubmitAction("remove_{$section}_delete", ['delete' => true])
                 ->label(__t('admin_case_studies.form.delete_step')),
         ]);

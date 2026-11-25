@@ -3,14 +3,29 @@
 namespace App\Filament\Resources\Tutorials\Pages;
 
 use App\Filament\Actions\TranslateContentAction;
+use App\Filament\Resources\Concerns\EditsInReadingLanguage;
 use App\Filament\Resources\Tutorials\TutorialResource;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Contracts\Support\Htmlable;
 
 class EditTutorial extends EditRecord
 {
+    use EditsInReadingLanguage;
+
     protected static string $resource = TutorialResource::class;
+
+    /** Shown and saved in the panel language, as a course or lesson is. */
+    public function getSubheading(): string|Htmlable|null
+    {
+        return $this->readingNotice();
+    }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        return $this->fillInReadingLanguage($data);
+    }
 
     protected function getHeaderActions(): array
     {

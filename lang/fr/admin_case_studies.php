@@ -21,6 +21,7 @@ return [
         'remove_step' => 'Retirer cette étape',
         'remove_step_confirm_heading' => 'Retirer cette étape ?',
         'remove_step_confirm_description' => 'Masquer conserve le texte et les images de l’étape — « Ajouter une étape » la ramène exactement comme elle était. « Supprimer » les efface définitivement à la place — c’est irréversible.',
+        'remove_step_confirm_description_translation' => 'Masquer conserve le texte et les images de l’étape — « Ajouter une étape » la ramène exactement comme elle était. Pour supprimer une étape, ouvrez l’étude dans la langue où elle a été écrite.',
         'hide_step' => 'Masquer',
         'delete_step' => 'Supprimer',
         'add_step' => 'Ajouter une étape',

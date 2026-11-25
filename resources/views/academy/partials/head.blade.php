@@ -9,7 +9,8 @@
 
     {{-- Versioned so browsers replace an old cached favicon after deploy. --}}
     <link rel="icon" type="image/svg+xml" href="{{ asset('img/pilot-mark.svg') }}?v={{ config('app.version') }}">
-    <link rel="apple-touch-icon" href="{{ asset('img/pilot-mark.svg') }}?v={{ config('app.version') }}">
+    {{-- iOS ignores an SVG here: a 180px PNG of the same mark, on white. --}}
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('img/apple-touch-icon.png') }}?v={{ config('app.version') }}">
     {{-- Navy, the brand's dark ink. This was #0284c7 — the blue the mark used
          before it turned amber — which is no longer in the palette at all. --}}
     <meta name="theme-color" content="#0a2540">
