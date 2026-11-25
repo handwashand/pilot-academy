@@ -121,7 +121,7 @@ class CertificateTextTest extends TestCase
             ->fillForm(['text' => ['en' => ['title' => '']]])
             ->call('save');
 
-        $this->assertSame(0, Translation::where('key', 'mail.certificate_pdf.title')->count());
+        $this->assertSame(0, Translation::where('key', 'mail.certificate_pdf.title')->whereNotNull('value')->count());
     }
 
     public function test_a_score_written_with_its_own_percent_sign_prints_it_once(): void
@@ -169,7 +169,10 @@ class CertificateTextTest extends TestCase
             ->assertSee(':signature_title')
             ->callAction(TestAction::make('resetText')->schemaComponent());
 
-        $this->assertSame(0, Translation::where('key', 'like', 'mail.certificate_pdf.%')->count());
+        // The five editable lines have no text of their own left; the
+        // certificate's other labels are not touched.
+        $lines = array_map(fn (string $line): string => "mail.certificate_pdf.{$line}", FillCertificateText::LINES);
+        $this->assertSame(0, Translation::whereIn('key', $lines)->whereNotNull('value')->count());
     }
 
     public function test_only_admins_can_open_it(): void

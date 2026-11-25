@@ -2,11 +2,14 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use App\Services\Translator;
 use Filament\Actions\AttachAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DetachBulkAction;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -26,6 +29,17 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->sentenceCaseModalHeadings();
+
+        // Every sign-in stamps Last login: the student site, magic links, the
+        // admin panel's own login page, and a remember-me cookie bringing
+        // someone back. Stamped here once rather than in each controller —
+        // the panel's login never went through them, so admins and creators
+        // had no Last login at all.
+        Event::listen(Login::class, function (Login $event): void {
+            if ($event->user instanceof User) {
+                $event->user->recordLogin();
+            }
+        });
 
         View::composer('*', function ($view): void {
             $translator = app(Translator::class);
