@@ -31,6 +31,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Storage;
 
@@ -336,7 +337,7 @@ class SettingsCertificate extends Page
             ->setRelation('user', new User(['name' => __t('admin_settings.certificate.sample_name')]));
     }
 
-    /** @return \Illuminate\Support\Collection<int, Language> */
+    /** @return Collection<int, Language> */
     private function languages()
     {
         return app(Translator::class)->activeLanguages();

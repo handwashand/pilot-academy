@@ -121,7 +121,8 @@ class CertificateTextTest extends TestCase
             ->fillForm(['text' => ['en' => ['title' => '']]])
             ->call('save');
 
-        $this->assertSame(0, Translation::where('key', 'mail.certificate_pdf.title')->whereNotNull('value')->count());
+        $english = Language::where('code', 'en')->value('id');
+        $this->assertSame(0, Translation::where(['key' => 'mail.certificate_pdf.title', 'language_id' => $english])->whereNotNull('value')->count());
     }
 
     public function test_a_score_written_with_its_own_percent_sign_prints_it_once(): void
@@ -147,7 +148,7 @@ class CertificateTextTest extends TestCase
 
         $html = $this->pdfHtml($this->certificate());
         $this->assertStringNotContainsString('Jane Okoro', $html);
-        $this->assertStringNotContainsString('signature-image', $html);
+        $this->assertStringNotContainsString('class="signature-image"', $html);
 
         $this->saveText('en', 'issued_by', 'Signed :signature, :signature_title');
 

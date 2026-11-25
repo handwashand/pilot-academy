@@ -32,3 +32,6 @@ Thumbs.db
 # Course-creator credentials and browser-automation scratch (never commit)
 /course-creator.local.md
 /.playwright-mcp/
+
+# Git Bash crash dumps
+*.stackdump

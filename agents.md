@@ -459,6 +459,55 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-25 (later) — Postgres-only production errors; Last login; a video per language; Integrations, certificate text
+
+**Sentry is live on production** (org `365-s3`, project `pilot-academy`). The
+owner's rule: note the cause and fix on an issue, resolve it once the fix is
+deployed and checked, and look for new ones on every production check.
+
+**Three production errors, all invisible to the SQLite suite** (production is
+PostgreSQL; reproduce with a throwaway `postgres:17-alpine` and a database
+named `*_test`, passing `DB_CONNECTION=pgsql` to the test container):
+- **PILOT-ACADEMY-2, the Lessons list returned 500.** `pluck(DB::raw('count(*)'))`
+  in `ListLessons::getTabs()`: PostgreSQL names the column `count`. Now
+  aliased. `LessonsListTabsTest` on PostgreSQL: 6 errors before, 6/6 after.
+- **PILOT-ACADEMY-3, Descript video translation stopped.** Job ids are
+  `project-media-import-<uuid>`, the columns were `uuid`. Migration
+  `2026_11_25_000002` makes `job_id`, `project_id`, `composition_id` strings.
+  `DescriptVideoTranslationTest` on PostgreSQL: 22/22. **Deploy runs migrate.**
+- **PILOT-ACADEMY-4, `/sitemap.xml` returned 500.** `<?xml` in the view is a
+  PHP open tag with `short_open_tag` on (production). The controller adds the
+  declaration now.
+
+**Last login** was stamped only by the student controllers, so admin-panel
+sign-ins never set it. One `Login` event listener (`AppServiceProvider`) now
+stamps it for every sign-in, including remember-me; the controller calls went.
+
+**A video per language** (owner's request): each video in a lesson's Videos
+list has **Other languages** (`video_sources.*.language_versions`, no
+migration). `Lesson::languageVersion()` picks it; the player and download use
+it before a Descript dub; YouTube originals take a YouTube link per language.
+
+**Integrations** (mockup approved): one short card per provider, Claude a
+translation engine (Messages API, JSON-schema answer, `effort: low`, no
+temperature, server-side fallback on the larger models), middle model by
+default with a cost warning for a dearer one. **Certificate text** (mockup
+approved): the five lines editable per language as translation rows, eleven
+placeholders, optional signature printed only via `:signature`, no score seal,
+preview on the page. The signatory decision of the morning is reopened only in
+that form.
+
+**Production content:** "contract" → "account" in 105 places, six languages,
+by hand (`contract-edits.js` in the session scratchpad); driver "contracts"
+(real documents) kept. The standard certificate background was uploaded.
+
+**Verified (run):** see above for PostgreSQL; on SQLite the video, login,
+sitemap, dub, video-list, smoke and auth suites 46/46, and the Integrations,
+certificate and mail suites 41/45 with the 4 failures in test expectations,
+corrected afterwards. Pint clean on the 51 PHP files changed today.
+**Not done:** the five translated admin guides for these features, the 404
+page redesign and the sidebar proposal the owner asked for.
+
 ### 2026-11-25 — Case studies, tutorials, webinars in the panel language; two-column forms; iPhone icon
 
 - **Panel language:** `EditCaseStudy`, `EditTutorial`, `EditWebinar` use

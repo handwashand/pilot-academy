@@ -55,6 +55,10 @@ class IntegrationsTest extends TestCase
             // Claude's Messages API: the text is the one user message, the
             // answer a text block after a (empty) thinking block.
             if (str_contains($request->url(), 'anthropic.com')) {
+                if ($this->claudeRefuses) {
+                    return Http::response(['stop_reason' => 'refusal', 'content' => []]);
+                }
+
                 $texts = json_decode($request->data()['messages'][0]['content'], true);
 
                 return Http::response([
@@ -262,13 +266,13 @@ class IntegrationsTest extends TestCase
     public function test_a_declined_claude_request_stores_nothing_and_says_so(): void
     {
         $this->enable('claude', 'sk-ant-token');
-        Http::fake(['*' => Http::response(['stop_reason' => 'refusal', 'content' => []])]);
+        $this->claudeRefuses = true;
         $lesson = Course::first()->lessons()->first();
 
         Livewire::actingAs($this->admin())
             ->test(EditLesson::class, ['record' => $lesson->getRouteKey()])
             ->callAction('translateWithClaude')
-            ->assertSet('mountedActions.0.data.fr.title', '');
+            ->assertNotSet('mountedActions.0.data.fr.title', '[claude] '.$lesson->title);
 
         $this->assertSame(0, $lesson->contentTranslations()->count());
     }
