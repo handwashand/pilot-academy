@@ -33,10 +33,14 @@ class ListLessons extends ListRecords
     {
         $visible = fn (): Builder => LessonResource::getEloquentQuery();
 
+        // The count is named: PostgreSQL calls an unnamed count(*) "count",
+        // SQLite "count(*)", so plucking the raw expression broke the whole
+        // page in production while every test passed.
         $perCourse = DB::table('course_lesson')
             ->whereIn('lesson_id', $visible()->select('lessons.id'))
             ->groupBy('course_id')
-            ->pluck(DB::raw('count(*)'), 'course_id');
+            ->select('course_id', DB::raw('count(*) as lessons_count'))
+            ->pluck('lessons_count', 'course_id');
 
         $tabs = [
             'all' => Tab::make(__t('admin_lessons.tabs.all'))
