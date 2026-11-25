@@ -92,12 +92,16 @@ class IssueCertificate
         // view is rendered here, so the locale has to be set around it.
         $translator = app(Translator::class);
 
+        // The signature, only drawn where a line uses :signature; embedded like the logo.
+        $signature = FillCertificateText::signatureImage();
+        $signatureSrc = $signature ? $this->embedPng(Storage::disk('public')->path($signature)) : null;
+
         $output = $translator->inLocale($translator->localeFor($certificate->user), fn (): string => Pdf::loadView('certificates.pdf', [
             'certificate' => $certificate,
             'qr' => base64_encode($qrSvg),
             'background' => $background,
             'logo' => $logo,
-            'lessons' => $lessons,
+            'lines' => app(FillCertificateText::class)->handle($certificate, $lessons, $signatureSrc),
         ])->setPaper('a4', 'landscape')->output());
 
         $path = "certificates/{$certificate->number}.pdf";
@@ -106,6 +110,27 @@ class IssueCertificate
         $certificate->forceFill(['pdf_path' => $path])->save();
 
         return $path;
+    }
+
+    /**
+     * The certificate as HTML for the preview on Settings → Certificate: the
+     * same view as the PDF, with the standard background and the signature as
+     * browser URLs, and the text the admin is typing before it is saved.
+     *
+     * @param  array<string, string|null>  $typed  See FillCertificateText::handle().
+     */
+    public function previewHtml(Certificate $certificate, array $typed = [], ?string $signatureUrl = null): string
+    {
+        $template = Certificate::standardTemplate();
+        $lessons = $certificate->course?->exists ? $certificate->course->publishedLessons()->count() : 8;
+
+        return view('certificates.pdf', [
+            'certificate' => $certificate,
+            'qr' => base64_encode(QrCode::format('svg')->size(220)->margin(0)->errorCorrection('M')->generate($certificate->verifyUrl())),
+            'background' => $template && Storage::disk('public')->exists($template) ? Storage::disk('public')->url($template) : null,
+            'logo' => $this->embedPng(public_path('img/pilot-telematics-logo-blue.png')),
+            'lines' => app(FillCertificateText::class)->handle($certificate, $lessons, $signatureUrl, $typed),
+        ])->render();
     }
 
     /** Email the certificate to the student. Failures never block issuance. */

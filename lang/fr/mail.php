@@ -42,7 +42,7 @@ return [
         'number' => 'Certificat n°',
         'issued' => 'Délivré le',
         'issuer' => 'PILOT Academy · Pilot Telematics',
-        'achievement_course' => 'a suivi avec succès le cours :course (:lessons) et réussi l’évaluation finale avec un score de :score %.',
+        'achievement_course' => 'a suivi avec succès le cours :course (:lessons) et réussi l’évaluation finale avec un score de :score.',
         'issued_by' => 'Délivré par Pilot Telematics (PTY) LTD via PILOT Academy',
     ],
     'password_reset' => [

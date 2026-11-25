@@ -222,7 +222,7 @@ class IntegrationsTest extends TestCase
         Livewire::actingAs($this->admin())
             ->test(Integrations::class)
             ->assertSee(__t('admin_integrations.token_saved', ['ending' => 'oken']), false)
-            ->callAction(TestAction::make('remove_shared')->schemaComponent('form.deepseek.api_key'));
+            ->callAction(TestAction::make('remove_shared')->schemaComponent());
 
         $this->assertNull(AiProvider::for('deepseek')->api_key);
     }

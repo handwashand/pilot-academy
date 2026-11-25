@@ -45,7 +45,7 @@ return [
         'number' => 'رقم الشهادة',
         'issued' => 'تاريخ الإصدار',
         'issuer' => 'PILOT Academy · Pilot Telematics',
-        'achievement_course' => 'أتمّ بنجاح دورة :course (:lessons) واجتاز التقييم النهائي بنتيجة :score%.',
+        'achievement_course' => 'أتمّ بنجاح دورة :course (:lessons) واجتاز التقييم النهائي بنتيجة :score.',
         'issued_by' => 'صادرة عن Pilot Telematics (PTY) LTD عبر PILOT Academy',
     ],
     'password_reset' => [

@@ -45,7 +45,7 @@ return [
         'number' => 'Certificate No.',
         'issued' => 'Issued',
         'issuer' => 'PILOT Academy · Pilot Telematics',
-        'achievement_course' => 'has successfully completed the course :course (:lessons) and passed the final assessment with a score of :score%.',
+        'achievement_course' => 'has successfully completed the course :course (:lessons) and passed the final assessment with a score of :score.',
         'issued_by' => 'Issued by Pilot Telematics (PTY) LTD through PILOT Academy',
     ],
     'password_reset' => [

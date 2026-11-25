@@ -159,7 +159,7 @@ class AiTokenScopeTest extends TestCase
         $this->assertTrue((bool) AiProvider::for('deepseek')->enabled);
 
         Livewire::actingAs($owner)->test(Integrations::class)
-            ->callAction(TestAction::make('remove_own')->schemaComponent('form.deepseek.api_key'));
+            ->callAction(TestAction::make('remove_own')->schemaComponent());
 
         $this->assertNull(AiProvider::personalFor('deepseek', $owner)->api_key);
     }

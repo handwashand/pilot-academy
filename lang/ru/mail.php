@@ -42,7 +42,7 @@ return [
         'number' => 'Сертификат №',
         'issued' => 'Дата выдачи',
         'issuer' => 'PILOT Academy · Pilot Telematics',
-        'achievement_course' => 'успешно прошёл(-ла) курс :course (:lessons) и сдал(а) итоговую аттестацию с результатом :score%.',
+        'achievement_course' => 'успешно прошёл(-ла) курс :course (:lessons) и сдал(а) итоговую аттестацию с результатом :score.',
         'issued_by' => 'Выдан Pilot Telematics (PTY) LTD через PILOT Academy',
     ],
     'password_reset' => [

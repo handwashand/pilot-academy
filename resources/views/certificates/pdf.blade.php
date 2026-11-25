@@ -6,8 +6,8 @@
         /* dompdf: absolute positioning in mm on an A4 landscape page (297x210).
            Brand palette only — navy #0a2540, Pilot blue #1463ff, amber #FFB900.
            Layout chosen on the design canvas, 2026-11-24: issuer and the
-           original PILOT logo, recipient, precise achievement, seal,
-           ID + QR. No study time (hours) is printed: the owner left it out. */
+           original PILOT logo, recipient, precise achievement, ID + QR.
+           No study time (hours) is printed: the owner left it out. */
         @page { margin: 0; }
         html, body { margin: 0; padding: 0; }
         body { font-family: 'DejaVu Serif', 'Times New Roman', serif; color: #0a2540; }
@@ -37,13 +37,12 @@
                        font-size: 12.5pt; line-height: 1.5; color: #334155; }
         .achievement strong { color: #1463ff; }
 
-        /* Bottom row: seal centre, ID and QR right. */
-        .seal-o { position: absolute; top: 143mm; left: 130.5mm; width: 36mm; height: 36mm; border-radius: 18mm; background: #0a2540; }
-        .seal-i { position: absolute; top: 145.4mm; left: 132.9mm; width: 30.4mm; height: 30.4mm; border-radius: 15.2mm; border: 0.4mm solid #FFB900; }
-        .seal-t { position: absolute; left: 130.5mm; width: 36mm; text-align: center; color: #ffffff; }
-        .seal-1 { top: 152mm; font-size: 6pt; letter-spacing: 1.5pt; }
-        .seal-2 { top: 156.5mm; font-size: 14pt; font-weight: bold; color: #FFB900; }
-        .seal-3 { top: 166mm; font-size: 6pt; letter-spacing: 1.5pt; }
+        /* A signature appears only where a line uses :signature. */
+        .signature { display: inline-block; text-align: center; }
+        .signature-image { height: 12mm; }
+
+        /* Bottom row: ID, issue date, the verification link and its QR on the
+           right. No score seal (owner, 2026-11-25): the score is in the text. */
 
         .meta { position: absolute; top: 149mm; left: 175mm; width: 58mm; text-align: right; font-size: 8pt; color: #64748b; }
         .meta .label { font-size: 6.5pt; letter-spacing: 1.2pt; text-transform: uppercase; color: #64748b; }
@@ -70,29 +69,18 @@
             <img class="logo" src="{{ $logo }}">
         @endif
 
-        {{-- Rendered inside the student's locale (IssueCertificate::renderPdf):
-             the wording, the course title where translated, and the date. --}}
-        <div class="center sans issuer">{{ __t('mail.certificate_pdf.issuer') }}</div>
-        <div class="center title">{{ __t('mail.certificate_pdf.title') }}</div>
+        {{-- Rendered inside the student's locale (IssueCertificate::renderPdf).
+             The five lines are the admin's text (Settings → Certificate) or the
+             shipped text, with placeholders filled and every value escaped by
+             FillCertificateText; only its own markup is HTML. --}}
+        <div class="center sans issuer">{{ $lines['issuer'] }}</div>
+        <div class="center title">{{ $lines['title'] }}</div>
 
-        <div class="center lead lead-1">{{ __t('mail.certificate_pdf.certifies') }}</div>
+        <div class="center lead lead-1">{{ $lines['certifies'] }}</div>
         <div class="center name">{{ $certificate->name }}</div>
         <div class="name-rule"></div>
 
-        {{-- Built from escaped pieces: only the <strong> around the title is markup. --}}
-        <div class="achievement">
-            {!! __t('mail.certificate_pdf.achievement_course', [
-                'course' => '<strong>'.e($certificate->course->translated('title', app()->getLocale())).'</strong>',
-                'lessons' => e(__tc('academy.common.lessons', $lessons)),
-                'score' => (int) $certificate->score_percent,
-            ]) !!}
-        </div>
-
-        <div class="seal-o"></div>
-        <div class="seal-i"></div>
-        <div class="seal-t sans seal-1">PILOT ACADEMY</div>
-        <div class="seal-t sans seal-2">{{ $certificate->score_percent }}%</div>
-        <div class="seal-t sans seal-3">{{ $certificate->issued_at->format('Y') }}</div>
+        <div class="achievement">{{ $lines['achievement_course'] }}</div>
 
         <div class="meta sans">
             <div class="label">{{ __t('mail.certificate_pdf.number') }}</div>
@@ -105,7 +93,7 @@
         <img class="qr" src="data:image/svg+xml;base64,{{ $qr }}">
         <div class="qr-caption sans">{{ __t('mail.certificate_pdf.scan') }}</div>
 
-        <div class="center sans issued-by">{{ __t('mail.certificate_pdf.issued_by') }}</div>
+        <div class="center sans issued-by">{{ $lines['issued_by'] }}</div>
     </div>
 </body>
 </html>

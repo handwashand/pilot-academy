@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Actions\FillCertificateText;
 use App\Actions\IssueCertificate;
 use App\Mail\CertificateIssued;
 use App\Mail\CourseReminder;
@@ -132,7 +133,7 @@ class MailTranslationTest extends TestCase
             'qr' => '',
             'background' => null,
             'logo' => null,
-            'lessons' => 3,
+            'lines' => app(FillCertificateText::class)->handle($certificate->fresh(['course']), 3),
         ])->render());
 
         $this->assertStringContainsString('Certificat de réussite', $html);
