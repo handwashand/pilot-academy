@@ -106,9 +106,9 @@
         @endguest
     </div>
 
-    @auth
         {{-- The next step: one card, one action. Which card depends on where the
-             student is — see AcademyController::nextStep(). --}}
+             student is — see AcademyController::nextStep(). A visitor with
+             progress in this browser gets it too, never the final quiz. --}}
         @if($next)
             @php
                 $nextPct = $next['total'] > 0 ? round($next['done'] / $next['total'] * 100) : 0;
@@ -157,6 +157,7 @@
             </section>
         @endif
 
+    @auth
         {{-- A signed-in student's own numbers. One column on a phone, three from
              sm: up. The last final quiz result lives here because it otherwise
              showed once, straight after submitting, and was never seen again. --}}
@@ -317,7 +318,7 @@
     @else
         {{-- Visitors: one course to begin with, then the next six. The whole
              catalogue, with its filters, is the Courses page. --}}
-        @if($featured)
+        @if($featured && ! $next)
             <section class="home-section">
                 <span class="home-eyebrow">{{ __t('academy.home.next_start') }}</span>
                 <article class="course-feature">

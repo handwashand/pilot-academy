@@ -124,7 +124,7 @@
         /* Home page (academy/home). Inline for the same reason as .lesson-cover.
            .course-tile: a course in a grid, cover on top; on a phone a short
            row with the cover at the side. .course-feature: the one wide card
-           ("Start here", "Continue where you left off"). */
+           (the course to start with, or the next step). */
         .home-section { margin-bottom: 2.5rem; }
         .home-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .5rem 1rem; margin-bottom: 1rem; }
         .home-heading h2 { font-size: 1.375rem; font-weight: 800; color: #0a2540; }

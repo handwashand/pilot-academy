@@ -101,7 +101,7 @@ class HomeNextStepTest extends TestCase
         $this->get('/')
             ->assertStatus(200)
             ->assertDontSee(route('academy.lesson', [$this->course, $first]), false)
-            ->assertDontSee('course-feature--next', false)
+            ->assertDontSee('class="course-feature course-feature--next', false)
             ->assertDontSee('Your progress');
     }
 
