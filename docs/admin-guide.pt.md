@@ -372,7 +372,7 @@ Abra o curso → **Teste final e certificado** → **Fundo do certificado (opcio
 
 **O certificado padrão** é o que cada curso imprime quando não tem fundo próprio. Os administradores o alteram em **Configurações → Geral → Certificado**: envie uma imagem A4 paisagem e salve. Remova a imagem e salve para voltar ao design embutido. Certificados já emitidos mantêm o PDF até você clicar em **Gerar PDF novamente**.
 
-O design embutido é emitido pela **Pilot Telematics**: traz o logotipo original da PILOT, a linha “Emitido pela Pilot Telematics (PTY) LTD através da PILOT Academy”, o curso concluído, quantas aulas ele tem e a nota final. Não mostra o tempo de estudo. Para incluir uma assinatura, preencha **Signatário** na mesma página: **Nome do signatário**, **Cargo** e, se quiser, uma **Imagem da assinatura** (um PNG com fundo transparente). Sem nome, nenhuma assinatura é impressa.
+O design embutido é emitido pela **Pilot Telematics**: traz o logotipo original da PILOT, a linha “Emitido pela Pilot Telematics (PTY) LTD através da PILOT Academy”, o curso concluído, quantas aulas ele tem e a nota final. Não mostra o tempo de estudo.
 
 ### Criar um curso a partir de outro
 
@@ -781,21 +781,6 @@ idiomas de uma vez** só aparece com um provedor: traduz cada idioma e salva na
 hora, só nas caixas vazias — a menos que você marque **Substituir** —, então abra
 **Traduzir** de novo para um idioma e leia o resultado. O texto do curso inteiro é
 enviado várias vezes, por isso custa mais.
-
-O pequeno ícone de brilho no topo de **Cursos** (**Gerar curso** ao passar o
-mouse; não fica no menu lateral) prepara um rascunho a partir de notas, com ChatGPT ou
-DeepSeek e o token já salvo nesta página. Escolha o provedor e um modelo, depois
-**Gerar rascunho**. O curso continua como rascunho até alguém publicá-lo. Um
-provedor desligado não pode ser escolhido. Nesta página, **Geração de cursos**
-define o provedor padrão, uma reserva opcional, um limite diário e um orçamento
-mensal. A reserva envia as mesmas notas ao outro provedor, e só quando está
-permitida aqui e marcada em Gerar curso. Cada rascunho vê dois cursos
-publicados, um par diferente à medida que mais rascunhos são feitos, e segue
-como eles são escritos. O texto deles não é copiado. Um criador só fornece
-cursos dos próprios produtos. **Gerar curso** fica oculto até um
-administrador marcar **Gerar rascunhos de cursos com ChatGPT, DeepSeek ou Claude**
-nessa conta, em **Pessoas → Usuários → Permissões extras**. Administradores
-não recebem isso automaticamente.
 
 ---
 

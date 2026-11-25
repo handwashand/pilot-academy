@@ -8,7 +8,7 @@
 
 @section('content')
     <div class="grid gap-6 lg:grid-cols-[1fr_280px] lg:gap-8">
-        <div>
+        <div class="min-w-0">
             <a href="{{ route('academy.case-studies.index') }}" class="text-sm font-semibold text-brand"><span class="inline-block rtl:rotate-180">&larr;</span> {{ __t('academy.case_studies.title') }}</a>
 
             @if(! $caseStudy->isPublished())
@@ -103,7 +103,7 @@
             </section>
         </div>
 
-        <aside class="lg:sticky lg:top-20 self-start">
+        <aside class="min-w-0 lg:sticky lg:top-20 self-start">
             <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
                 <div class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ __t('academy.case_studies.details') }}</div>
                 <dl class="mt-3 space-y-3 text-sm">

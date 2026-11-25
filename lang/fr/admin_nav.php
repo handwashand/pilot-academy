@@ -129,10 +129,6 @@ return [
         'badge' => 'Webinaires encore en brouillon — les partenaires ne les voient pas',
     ],
 
-    'course_generation' => [
-        'nav' => 'Générer un cours',
-    ],
-
     'case_studies' => [
         'nav' => 'Études de cas',
         'one' => 'étude de cas',

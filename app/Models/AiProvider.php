@@ -31,15 +31,6 @@ class AiProvider extends Model
 
     public const DESCRIPT = 'descript';
 
-    /**
-     * Chat providers the course generator may use. DeepL and Descript are not
-     * chat models, so they stay out of this list. Claude is generation only:
-     * it does not speak the translation client's protocol.
-     *
-     * @var array<int, string>
-     */
-    public const GENERATION = [self::CHATGPT, self::DEEPSEEK, self::CLAUDE];
-
     /** @var array<string, array{label: string, url: string, model: string, model_options: array<string, string>, capabilities?: array<string, array<string, mixed>>}> */
     public const PROVIDERS = [
         // Descript translates the speech in lesson videos, not text; it has no
@@ -72,7 +63,7 @@ class AiProvider extends Model
                 'gpt-4o-mini' => 'GPT-4o mini',
                 'gpt-4o' => 'GPT-4o',
             ],
-            // Estimates for the generation budget, not an invoice. Input then
+            // Price estimates, not an invoice. Input then
             // output, US dollars per million tokens. Documents and web search
             // stay off: the app reads source text itself. GPT-6 prices are the
             // rate up to 272,000 input tokens; OpenAI charges more above it.
@@ -284,7 +275,7 @@ class AiProvider extends Model
 
     /**
      * What the named model can do, or null when this app has no record of it.
-     * An unknown model is not offered for course generation.
+     * An unknown model gets the classic request shape.
      *
      * @return array<string, mixed>|null
      */
@@ -300,10 +291,9 @@ class AiProvider extends Model
     }
 
     /**
-     * The chat-completions settings for one request, shared by translation and
-     * course drafting. OpenAI's reasoning models take max_completion_tokens
-     * (max_tokens is deprecated and refused by them), a reasoning effort, and
-     * no temperature. Everything else keeps the classic fields.
+     * The chat-completions settings for one translation request. OpenAI's
+     * reasoning models take max_completion_tokens (max_tokens is deprecated
+     * and refused by them), a reasoning effort, and no temperature. Everything else keeps the classic fields.
      *
      * @return array<string, mixed>
      */
@@ -321,70 +311,5 @@ class AiProvider extends Model
             'temperature' => $temperature,
             'max_tokens' => $maxTokens,
         ], fn ($value): bool => $value !== null);
-    }
-
-    public static function modelSupportsJson(string $provider, string $model): bool
-    {
-        return (bool) (self::capabilitiesFor($provider, $model)['json'] ?? false);
-    }
-
-    /** Switched on, with a token, and at least one model that can return JSON. */
-    public static function availableForGeneration(string $provider, ?User $user = null): bool
-    {
-        return in_array($provider, self::GENERATION, true)
-            && self::usable($provider, $user) !== null
-            && self::modelsForGeneration($provider) !== [];
-    }
-
-    /**
-     * Models an instructor may pick for course generation.
-     *
-     * @return array<string, string>
-     */
-    public static function modelsForGeneration(string $provider): array
-    {
-        if (! isset(self::PROVIDERS[$provider])) {
-            return [];
-        }
-
-        $options = self::PROVIDERS[$provider]['model_options'] ?? [];
-
-        return array_filter(
-            $options,
-            fn (string $label, string $model): bool => self::modelSupportsJson($provider, $model),
-            ARRAY_FILTER_USE_BOTH,
-        );
-    }
-
-    /** The saved model when it can return JSON, otherwise the first that can. */
-    public static function preferredGenerationModel(string $provider): ?string
-    {
-        $models = array_keys(self::modelsForGeneration($provider));
-
-        if ($models === []) {
-            return null;
-        }
-
-        $saved = self::for($provider)->modelName();
-
-        return in_array($saved, $models, true) ? $saved : $models[0];
-    }
-
-    /**
-     * Providers an instructor can generate with right now.
-     *
-     * @return array<string, string>
-     */
-    public static function generationChoices(?User $user = null): array
-    {
-        $choices = [];
-
-        foreach (self::GENERATION as $provider) {
-            if (self::availableForGeneration($provider, $user)) {
-                $choices[$provider] = self::PROVIDERS[$provider]['label'];
-            }
-        }
-
-        return $choices;
     }
 }

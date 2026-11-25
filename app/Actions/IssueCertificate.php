@@ -84,14 +84,6 @@ class IssueCertificate
         // access — exactly as the QR does above.
         $logo = $this->embedPng(public_path('img/pilot-telematics-logo-blue.png'));
 
-        // Who signs, if anyone is set under Settings → Certificate.
-        $signatory = Certificate::signatory();
-        if ($signatory) {
-            $signatory['signature'] = $signatory['signature']
-                ? $this->embedPng(Storage::disk('public')->path($signatory['signature']))
-                : null;
-        }
-
         // What was achieved, counted when the PDF is drawn. No study time on
         // purpose (owner, 2026-11-24): lessons and score only.
         $lessons = $certificate->course->publishedLessons()->count();
@@ -105,7 +97,6 @@ class IssueCertificate
             'qr' => base64_encode($qrSvg),
             'background' => $background,
             'logo' => $logo,
-            'signatory' => $signatory,
             'lessons' => $lessons,
         ])->setPaper('a4', 'landscape')->output());
 

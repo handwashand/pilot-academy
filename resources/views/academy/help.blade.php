@@ -28,7 +28,7 @@
                  sections (no sidebar there to hold it); reordered to the
                  right and pinned in place from lg: up. Numbered the same way
                  the home page numbers its course list. --}}
-            <aside class="lg:order-2 lg:sticky lg:top-20 self-start">
+            <aside class="min-w-0 lg:order-2 lg:sticky lg:top-20 self-start">
                 <nav aria-label="{{ __t('help.contents_aria') }}" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
                     <div class="text-xs font-semibold uppercase tracking-wide text-slate-400 px-2 mb-2">{{ __t('help.contents_aria') }}</div>
                     <ol class="space-y-1">

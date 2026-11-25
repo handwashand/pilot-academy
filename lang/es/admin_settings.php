@@ -49,13 +49,6 @@ return [
         'subheading' => 'El certificado estándar que usan todos los cursos. Sube un fondo para reemplazar el diseño integrado; un curso con su propio fondo lo conserva. Quita la imagen para volver al diseño integrado.',
         'background' => 'Fondo estándar del certificado',
         'background_help' => 'Fondo a página completa A4 horizontal (≈3508×2480 px). Déjalo vacío para usar el diseño con marco integrado. El nombre, el curso, la fecha, el número y el QR se superponen automáticamente.',
-        'signatory' => 'Firmante',
-        'signatory_help' => 'Se imprime en cada certificado. Deja el nombre vacío para no imprimir la firma.',
-        'signatory_name' => 'Nombre del firmante',
-        'signatory_title' => 'Cargo',
-        'signatory_title_placeholder' => 'Responsable de formación, Pilot Telematics',
-        'signature' => 'Imagen de la firma',
-        'signature_help' => 'Un PNG con fondo transparente, de unos 600×200 px. Opcional.',
     ],
 
     'overlay' => [

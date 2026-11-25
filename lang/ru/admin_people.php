@@ -26,7 +26,6 @@ return [
         'use_descript_translation' => 'Использовать перевод видео Descript',
         'use_deepl_translation' => 'Создавать черновики переводов через DeepL',
         'use_ai_translation' => 'Создавать черновики переводов через ChatGPT или DeepSeek',
-        'use_ai_generation' => 'Создавать черновики курсов через ChatGPT, DeepSeek или Claude',
         'download_videos' => 'Скачивать видео уроков',
         'use_recycle_bin' => 'Открывать корзину и восстанавливать удалённый контент (только администраторы)',
         'delete_certificates' => 'Удалять сертификаты навсегда (только администраторы)',

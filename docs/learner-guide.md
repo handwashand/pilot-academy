@@ -24,7 +24,7 @@ computer and it is gone.
 to set a new one arrives by email; it lasts an hour and works once.
 
 **Log in to keep your progress everywhere** and to take the final quiz. Use
-**Log in** or **Register** in the top bar. If your company sent you a personal
+**Log in** or **Register** in the top bar; on a phone, they are behind the person icon in the top right. If your company sent you a personal
 link, open it — it signs you straight in, no password needed.
 
 **The academy follows your browser’s language:** English, Russian, Spanish,

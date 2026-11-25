@@ -52,13 +52,6 @@ return [
         'subheading' => 'The standard certificate every course uses. Upload a background to replace the built-in design; a course with its own background keeps it. Remove the upload to go back to the built-in design.',
         'background' => 'Standard certificate background',
         'background_help' => 'Full-page A4 landscape background (≈3508×2480 px). Leave empty to use the built-in framed layout. Name, course, date, number and QR are overlaid automatically.',
-        'signatory' => 'Signatory',
-        'signatory_help' => 'Printed on every certificate. Leave the name empty to print no signature block.',
-        'signatory_name' => 'Signatory name',
-        'signatory_title' => 'Title',
-        'signatory_title_placeholder' => 'Head of Training, Pilot Telematics',
-        'signature' => 'Signature image',
-        'signature_help' => 'A PNG with a transparent background, about 600×200 px. Optional.',
     ],
 
     // Settings → Profile (App\Filament\Pages\SettingsProfile), one of the

@@ -15,7 +15,7 @@
              leaves — Log in ran into the icons. Below md the nav takes the
              space left over instead, which is what fitted before. --}}
         <div class="max-w-7xl mx-auto px-4 sm:px-5 h-16 flex items-center gap-0.5 md:gap-2">
-            <a href="{{ route('academy.home') }}" class="flex min-w-0 md:flex-1 items-center">
+            <a href="{{ route('academy.home') }}" class="flex min-w-0 min-h-11 md:flex-1 items-center">
                 {{-- The same PILOT ACADEMY lockup as the admin panel, at the same
                      1.75rem, so both sides of the academy read as one product.
                      It replaced the mark plus HTML text on 2026-09-14 at the
@@ -128,8 +128,38 @@
                     @if($name)
                         <span class="hidden sm:block min-w-0 truncate text-sm text-slate-500">{{ $name }}</span>
                     @endif
-                    <a href="{{ route('login') }}" class="flex flex-none items-center h-11 px-1 sm:px-1.5 whitespace-nowrap text-sm text-slate-600 hover:text-brand font-medium">{{ __t('auth.login') }}</a>
-                    <a href="{{ route('register') }}" class="flex flex-none items-center h-10 whitespace-nowrap text-sm font-semibold rounded-lg bg-brand text-white px-3 sm:px-3.5 hover:bg-blue-700">{{ __t('auth.register') }}</a>
+                    {{-- On a phone, Log in and Register sit behind one account
+                         button, the same 44px circle a signed-in student has.
+                         Written out in full, the two left no room for the logo:
+                         in Spanish and Arabic it shrank to nothing at 375px
+                         (found on production, 2026-11-25). From sm: up there is
+                         room for both. sm:hidden and sm:block are in the
+                         committed bundle; sm:flex is not, hence the wrapper. --}}
+                    <details class="relative flex-none sm:hidden" data-account-menu>
+                        <summary class="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-full text-slate-600 hover:text-brand [&::-webkit-details-marker]:hidden"
+                                 aria-label="{{ __t('academy.nav.account') }}" title="{{ __t('academy.nav.account') }}">
+                            <svg aria-hidden="true" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                            </svg>
+                        </summary>
+
+                        <div class="absolute end-0 top-full z-30 mt-2 w-64 max-w-[calc(100vw-2rem)] rounded-xl border border-slate-200 bg-white p-1 shadow-lg">
+                            <a href="{{ route('login') }}"
+                               class="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-brand">
+                                {{ __t('auth.login') }}
+                            </a>
+                            <a href="{{ route('register') }}"
+                               class="flex min-h-11 items-center rounded-lg px-3 text-sm font-semibold text-brand hover:bg-slate-50">
+                                {{ __t('auth.register') }}
+                            </a>
+                        </div>
+                    </details>
+                    <div class="hidden sm:block">
+                        <div class="flex items-center gap-3">
+                            <a href="{{ route('login') }}" class="flex flex-none items-center h-11 px-1 sm:px-1.5 whitespace-nowrap text-sm text-slate-600 hover:text-brand font-medium">{{ __t('auth.login') }}</a>
+                            <a href="{{ route('register') }}" class="flex flex-none items-center h-10 whitespace-nowrap text-sm font-semibold rounded-lg bg-brand text-white px-3 sm:px-3.5 hover:bg-blue-700">{{ __t('auth.register') }}</a>
+                        </div>
+                    </div>
                 @endauth
                 {{-- The language button: last in the header, so it sits in the top
                      right corner at every width, as it does in the admin panel. A

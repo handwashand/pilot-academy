@@ -136,10 +136,6 @@ return [
         'badge' => 'Webinars still in draft — partners cannot see them yet',
     ],
 
-    'course_generation' => [
-        'nav' => 'Generate course',
-    ],
-
     'case_studies' => [
         'nav' => 'Case Studies',
         'one' => 'case study',

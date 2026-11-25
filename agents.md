@@ -438,6 +438,7 @@ Newest first.
 
 | Date | Decision |
 | --- | --- |
+| 2026-11-25 | **No AI course creator, no certificate signatory.** Both were built and then removed by the owner as not needed. Do not rebuild either without the owner reopening it. |
 | 2026-10-14 | **Deleted content is hidden, not removed** (`deleted_at`): courses, lessons, questions, case studies, tutorials, webinars, products, media items. **Users and partners are still deleted for real**, so a privacy erasure request is honoured. Restoring is the per-account right `recycle_bin.manage`, admins only and not automatic; **there is no permanent delete in the panel**. |
 | 2026-10-14 | **A lesson does not need a course**, at creation or after. `lessons.course_id` is nullable. A course-less lesson belongs to the creator who wrote it (`created_by`); one left by a deleted course is an admin's. Deleting a course never deletes its lessons. A final quiz file upload **adds** to the bank, never replaces it. The lesson-creation *flow* stays as it is; only the form's layout changed (owner asked for a side column). |
 | 2026-10-07 | **ChatGPT, DeepSeek and DeepL tokens are managed by admins under Settings → Integrations** and stored encrypted in the database, instead of the server `.env` — the owner's explicit request, unlike mail and Descript. Tokens are write-only in the UI; only fixed official provider addresses are used; the rights `deepl.translate` / `ai.translate` decide who may spend them. |
@@ -457,6 +458,70 @@ Newest first.
 ## Work log
 
 Newest first. Add to this every time.
+
+### 2026-11-25 — Production test of the student site, web and phone; three layout fixes
+
+The owner asked for production to be tested on web and phone, learner side
+first, and anything broken fixed. Done from the session scratchpad with
+puppeteer-core and the installed Chrome (`crawl.js`, `emulate.js`,
+`phoneflow.js`, `langphone.js`, `hdr.js`/`hdr2.js`); nothing added to the repo.
+
+**What was run:** every page a visitor can reach (about 160: home, courses,
+every published course and lesson, tutorials, case studies, webinars, help,
+privacy, search, sign-in pages, 404s) at 375px and 1280px, checking status,
+sideways scroll, broken images, video errors, key names shown as text, and
+small tap targets; the same signed in with the content account, plus one
+knowledge-check attempt at 375px (that account is staff, so it is not in
+learner reports); key pages in Arabic, French and Russian on a phone; the
+admin pages at 1440px. No 5xx, no broken images or videos, no key names.
+
+**Production still runs code from before 2026-10-23.** The visitor home page
+is 280KB and 45,000px tall on a phone and takes about 6s; `laravel` already
+fixes that (no lesson grid for visitors, three cards per course signed in).
+Most of what users see wrong there is fixed by deploying.
+
+**Fixed here, because `laravel` had them too:**
+- **Lesson pages scrolled sideways on a phone** (13px to 1,024px, on 117 of
+  the lessons in a course). The lesson-list `aside` uses `truncate`, so
+  without `min-w-0` its min-content is the longest title and it widens the
+  one-column grid. 2026-11-21 fixed only the main column. `min-w-0` added
+  to the aside, and to both columns of the Help and case study grids. Proven
+  on production by injecting the fix into all 117 pages: 0 still overflow.
+- **The header logo vanished on a phone** in Spanish and Arabic (0–4px wide
+  at 360–375px) and was 15–30px in French and Russian: the guest Log in and
+  Register took the room and the logo link is the only `min-w-0` item. Below
+  `sm:` they are now one 44px person button with a menu, the signed-in
+  pattern (`data-account-menu`, so the existing script closes it). The logo
+  is a full 89px in all six languages from 320px. Pinned by
+  `AccountMenuTest::test_a_guest_on_a_phone_gets_log_in_and_register_behind_one_button`.
+- **Small tap targets:** the logo link (28px) and **Remember me** (20px) are
+  `min-h-11`.
+
+Learner guides (six) now say where Log in and Register are on a phone; the
+Arabic one named the button التسجيل where the header says إنشاء حساب.
+
+### 2026-11-25 — AI course creator and certificate signatory removed (**schema change**)
+
+The owner said both were not needed.
+
+- **Generate course is gone:** the page, `GenerateCourseWithAi`,
+  `SampleCourseStyle`, `ChatClient`/`ChatReply`, the `AiUsage`,
+  `AiContentRevision` and `AiGenerationSetting` models, the Integrations
+  "Course generation" section, `User::PERMISSION_AI_GENERATE` /
+  `canGenerateCourses()`, `Course::revisions()`, the `AiProvider` generation
+  helpers, and their strings in six languages, guides and test.
+- **Migration `2026_11_25_000001`** drops `ai_usages`,
+  `ai_content_revisions` and `ai_generation_settings` and deletes the
+  `ai.generate_course` rights. `down()` recreates the tables empty. **Deploy
+  runs migrate.** Courses it drafted are untouched.
+- **The Claude card stays** on Integrations (owner's choice), now under
+  "Other providers": a saved token is kept, nothing uses it.
+  `AiProvider::chatOptions()` and the capability table stay; `LlmTranslator`
+  uses them.
+- **Signatory:** Settings → Certificate is back to the background upload
+  only; `Certificate::signatory()`, its constants and the PDF block are gone.
+  A `certificate-templates/signatory.json` or signature image left on a
+  server from the short time it existed is simply ignored.
 
 ### 2026-11-24 — Refined course certificate; the all-courses certificate dropped
 

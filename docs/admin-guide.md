@@ -396,7 +396,7 @@ Open the course → **Final quiz & certificate** → **Certificate background**.
 
 **The standard certificate** is the one every course prints unless it has its own background. Admins change it under **Settings → General → Certificate**: upload an A4 landscape image and save, and every course without its own background uses it from the next certificate on. Remove the image and save to go back to the built-in design. Already issued certificates keep their PDF until you press **Regenerate PDF**.
 
-The built-in design is issued by **Pilot Telematics**: it carries the original PILOT logo, the line "Issued by Pilot Telematics (PTY) LTD through PILOT Academy", and says which course was completed, how many lessons it has and the final score. It does not show study time. To add a signature, fill in **Signatory** on the same page: **Signatory name**, **Title** and, if you like, a **Signature image** (a PNG with a transparent background). With no name, no signature block is printed.
+The built-in design is issued by **Pilot Telematics**: it carries the original PILOT logo, the line "Issued by Pilot Telematics (PTY) LTD through PILOT Academy", and says which course was completed, how many lessons it has and the final score. It does not show study time.
 
 ### Build a course from an existing one
 
@@ -829,22 +829,6 @@ and quiz) and the language. One language goes to a review step before saving.
 language and saves straight away, into empty boxes only — unless you tick
 **Replace** — so open **Translate** again for one language to read the result.
 It sends a whole course's text several times over, so it costs more.
-
-The small sparkle icon at the top of **Courses** (**Generate course** on hover;
-it is not in the sidebar) drafts a whole course from notes, through ChatGPT,
-DeepSeek or Claude using a token saved on this page. Claude has its own card
-under **Course generation** and is not offered in **Translate**. Choose the provider and
-a model, then **Generate draft**. The course stays a draft until someone
-publishes it. A switched-off provider cannot be chosen. On this page, **Course
-generation** sets the default provider, an optional fallback, a daily limit and
-a monthly budget. Fallback sends the same notes to the other provider, and only
-when it is allowed here and ticked on Generate course. Each draft is shown two
-published courses already in the academy, a different pair as more drafts are
-made, and follows how those courses are written. It does not copy their
-wording. A creator only supplies courses from their own products. **Generate course**
-stays hidden until an admin ticks **Draft courses with ChatGPT, DeepSeek or Claude**
-on that account, under **People → Users → Extra permissions**. Admins do not
-receive it automatically.
 
 ---
 

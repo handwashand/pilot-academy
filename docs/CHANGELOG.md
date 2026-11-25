@@ -284,7 +284,8 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Changed
 
-- **A more professional certificate.** The built-in certificate now carries the original PILOT logo and says it is issued by Pilot Telematics (PTY) LTD through PILOT Academy. It names the course, its number of lessons and the final score, and no longer shows study time. Add a signatory under Settings → General → Certificate (a name, a title and, if you like, a signature image); with none set, no signature block is printed. Certificates already issued keep their PDF until someone presses Regenerate PDF.
+- **Generate course is gone.** The AI course creator on the Courses page was not needed and has been removed, with its settings on Settings → Integrations and its Extra permission on user accounts. Courses it drafted are ordinary courses and stay as they are. A saved Claude token stays on its card, under Other providers.
+- **A more professional certificate.** The built-in certificate now carries the original PILOT logo and says it is issued by Pilot Telematics (PTY) LTD through PILOT Academy. It names the course, its number of lessons and the final score, and no longer shows study time. Certificates already issued keep their PDF until someone presses Regenerate PDF.
 - **Choose who can use each AI token.** When you add a token under Settings → Integrations, pick **Just me**, **All admins** or **Everyone with the right**. Your own token is used for you before the shared one. Each card shows the last four characters of a token, who can use it and who added it. Tokens saved before stay available to everyone with the right, as they were.
 - **Current AI models under Settings → Integrations.** ChatGPT now offers GPT-6 Luna, GPT-6.2 Sol and GPT-6.2 Astra beside GPT-4o mini and GPT-4o; GPT-4 Turbo and GPT-3.5 Turbo are gone, as OpenAI no longer offers them. DeepSeek offers DeepSeek Flash and DeepSeek V4 Pro. Claude adds Claude Fable 5.2, its most capable model. A model saved before that a provider has since retired moves to a current one by itself.
 - **A warmer welcome for visitors.** The welcome box on the home page now says how many courses and lessons there are and that each course ends with a certificate, and has a **Browse courses** button beside **Start learning**.
@@ -374,8 +375,9 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Fixed
 
+- **The logo stays visible on a phone.** In Spanish and Arabic, and partly in French and Russian, the **Log in** and **Register** buttons left no room for the PILOT ACADEMY logo on a phone, and it shrank to nothing. On a phone they now sit behind one person icon in the top right, like the menu a signed-in student has. From tablet width up nothing changes.
+- **Lessons fit a phone screen.** On a phone, a lesson page in a course was wider than the screen whenever a lesson in its list had a long title, so the text ran off the right edge. It now fits. The Help and case study pages got the same fix, and on a phone the logo in the top bar and **Remember me** on the sign-in page are easier to tap.
 - **Translating with DeepSeek works again.** DeepSeek retired the model names the academy used on 24 July 2026, so its drafts failed. It now uses DeepSeek Flash.
-- **Drafting a course with Claude works.** Every request was refused because it sent a setting Claude no longer accepts.
 - **Tokens stay out of the page.** If saving the Integrations page was refused, tokens typed into other cards could stay in the page's data until a reload. They are cleared now.
 - **Lesson pages fit a phone screen.** A lesson containing a table made the
   whole page slightly wider than a phone, so it slid sideways. Long words and

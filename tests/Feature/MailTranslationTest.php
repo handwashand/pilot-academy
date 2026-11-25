@@ -132,7 +132,6 @@ class MailTranslationTest extends TestCase
             'qr' => '',
             'background' => null,
             'logo' => null,
-            'signatory' => null,
             'lessons' => 3,
         ])->render());
 

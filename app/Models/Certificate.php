@@ -18,35 +18,6 @@ class Certificate extends Model
             ->first(fn (string $file): bool => (bool) preg_match('/\.(png|jpe?g)$/i', $file));
     }
 
-    /** The signatory's name and title, on the private local disk (Settings → Certificate). */
-    public const SIGNATORY_FILE = 'certificate-templates/signatory.json';
-
-    /** Folder on the public disk holding the signature image, the only file there. */
-    public const SIGNATURE_DIR = 'certificate-templates/signature';
-
-    /**
-     * Who signs every certificate, or null when nobody is set: then no
-     * signature block is printed, rather than a placeholder.
-     *
-     * @return array{name: string, title: string, signature: ?string}|null
-     */
-    public static function signatory(): ?array
-    {
-        $saved = json_decode((string) (Storage::disk('local')->get(self::SIGNATORY_FILE) ?? ''), true);
-        $name = trim((string) ($saved['name'] ?? ''));
-
-        if ($name === '') {
-            return null;
-        }
-
-        return [
-            'name' => $name,
-            'title' => trim((string) ($saved['title'] ?? '')),
-            'signature' => collect(Storage::disk('public')->files(self::SIGNATURE_DIR))
-                ->first(fn (string $file): bool => (bool) preg_match('/\.png$/i', $file)),
-        ];
-    }
-
     protected $fillable = [
         'user_id',
         'course_id',

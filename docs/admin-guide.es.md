@@ -377,7 +377,7 @@ Abre el curso → **Examen final y certificado** → **Fondo del certificado (op
 
 **El certificado estándar** es el que imprime cada curso sin fondo propio. Los administradores lo cambian en **Ajustes → General → Certificado**: sube una imagen A4 horizontal y guarda. Quita la imagen y guarda para volver al diseño incorporado. Los certificados ya emitidos conservan su PDF hasta que pulses **Regenerar PDF**.
 
-El diseño incorporado lo emite **Pilot Telematics**: lleva el logotipo original de PILOT, la línea «Emitido por Pilot Telematics (PTY) LTD a través de PILOT Academy», el curso completado, cuántas lecciones tiene y la nota final. No muestra el tiempo de estudio. Para añadir una firma, rellena **Firmante** en la misma página: **Nombre del firmante**, **Cargo** y, si quieres, una **Imagen de la firma** (un PNG con fondo transparente). Sin nombre, no se imprime la firma.
+El diseño incorporado lo emite **Pilot Telematics**: lleva el logotipo original de PILOT, la línea «Emitido por Pilot Telematics (PTY) LTD a través de PILOT Academy», el curso completado, cuántas lecciones tiene y la nota final. No muestra el tiempo de estudio.
 
 ### Crear un curso a partir de otro
 
@@ -794,21 +794,6 @@ guardar. **Todos los idiomas a la vez** solo se ofrece con un proveedor: traduce
 cada idioma y guarda al momento, solo en las casillas vacías —salvo que marques
 **Reemplazar**—, así que abre **Traducir** de nuevo para un idioma y lee el
 resultado. Envía el texto de todo el curso varias veces, por lo que cuesta más.
-
-El pequeño icono de destellos arriba en **Cursos** (**Generar curso** al pasar
-el ratón; no está en el menú lateral) prepara un borrador a partir de notas, con ChatGPT
-o DeepSeek y el token ya guardado en esta página. Elige el proveedor y un modelo,
-luego **Generar borrador**. El curso sigue en borrador hasta que alguien lo
-publique. Un proveedor apagado no se puede elegir. En esta página, **Generación
-de cursos** fija el proveedor predeterminado, una reserva opcional, un límite
-diario y un presupuesto mensual. La reserva envía las mismas notas al otro
-proveedor, y solo si aquí está permitida y se marca en Generar curso. Cada
-borrador ve dos cursos publicados, un par distinto a medida que se hacen más
-borradores, y sigue cómo están escritos. No copia su texto. Un creador solo
-aporta cursos de sus propios productos. **Generar**
-curso** permanece oculto hasta que un administrador marque **Generar borradores
-de cursos con ChatGPT, DeepSeek o Claude** en esa cuenta, en **Personas → Usuarios →
-Permisos adicionales**. Los administradores no lo reciben automáticamente.
 
 ---
 

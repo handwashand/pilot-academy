@@ -30,7 +30,6 @@ return [
         'use_descript_translation' => 'Use Descript video translation',
         'use_deepl_translation' => 'Draft translations with DeepL',
         'use_ai_translation' => 'Draft translations with ChatGPT or DeepSeek',
-        'use_ai_generation' => 'Draft courses with ChatGPT, DeepSeek or Claude',
         'download_videos' => 'Download lesson videos',
         'use_recycle_bin' => 'Open the recycle bin and restore deleted content (admins only)',
         'delete_certificates' => 'Delete certificates for good (admins only)',

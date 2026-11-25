@@ -6,7 +6,7 @@
         /* dompdf: absolute positioning in mm on an A4 landscape page (297x210).
            Brand palette only — navy #0a2540, Pilot blue #1463ff, amber #FFB900.
            Layout chosen on the design canvas, 2026-11-24: issuer and the
-           original PILOT logo, recipient, precise achievement, signatory, seal,
+           original PILOT logo, recipient, precise achievement, seal,
            ID + QR. No study time (hours) is printed: the owner left it out. */
         @page { margin: 0; }
         html, body { margin: 0; padding: 0; }
@@ -37,14 +37,7 @@
                        font-size: 12.5pt; line-height: 1.5; color: #334155; }
         .achievement strong { color: #1463ff; }
 
-        /* Bottom row: signatory left, seal centre, ID and QR right. */
-        .sign { position: absolute; top: 146mm; left: 26mm; width: 75mm; }
-        .sign-image { height: 13mm; }
-        .sign-space { height: 13mm; }
-        .sign-line { width: 62mm; height: 0.3mm; background: #0a2540; margin-top: 1mm; }
-        .sign-name { margin-top: 2mm; font-size: 10.5pt; font-weight: bold; color: #0a2540; }
-        .sign-title { font-size: 8.5pt; color: #475569; }
-
+        /* Bottom row: seal centre, ID and QR right. */
         .seal-o { position: absolute; top: 143mm; left: 130.5mm; width: 36mm; height: 36mm; border-radius: 18mm; background: #0a2540; }
         .seal-i { position: absolute; top: 145.4mm; left: 132.9mm; width: 30.4mm; height: 30.4mm; border-radius: 15.2mm; border: 0.4mm solid #FFB900; }
         .seal-t { position: absolute; left: 130.5mm; width: 36mm; text-align: center; color: #ffffff; }
@@ -94,22 +87,6 @@
                 'score' => (int) $certificate->score_percent,
             ]) !!}
         </div>
-
-        {{-- Set under Settings → Certificate; with nobody set, nothing is printed here. --}}
-        @if($signatory)
-            <div class="sign sans">
-                @if($signatory['signature'])
-                    <img class="sign-image" src="{{ $signatory['signature'] }}">
-                @else
-                    <div class="sign-space"></div>
-                @endif
-                <div class="sign-line"></div>
-                <div class="sign-name">{{ $signatory['name'] }}</div>
-                @if($signatory['title'] !== '')
-                    <div class="sign-title">{{ $signatory['title'] }}</div>
-                @endif
-            </div>
-        @endif
 
         <div class="seal-o"></div>
         <div class="seal-i"></div>

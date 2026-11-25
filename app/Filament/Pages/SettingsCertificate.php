@@ -7,13 +7,11 @@ use App\Models\Certificate;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Storage;
@@ -25,10 +23,6 @@ use Illuminate\Support\Facades\Storage;
  *
  * Stored as the only file in Certificate::STANDARD_DIR, so no table or
  * setting row is needed; saving removes any older file there.
- *
- * The signatory follows the same idea: the name and title in a small file on
- * the private disk (Certificate::SIGNATORY_FILE), the signature image as the
- * only file in Certificate::SIGNATURE_DIR.
  */
 class SettingsCertificate extends Page
 {
@@ -62,13 +56,8 @@ class SettingsCertificate extends Page
 
     public function mount(): void
     {
-        $signatory = Certificate::signatory();
-
         $this->form->fill([
             'background' => Certificate::standardTemplate(),
-            'signatory_name' => $signatory['name'] ?? null,
-            'signatory_title' => $signatory['title'] ?? null,
-            'signature' => $signatory['signature'] ?? collect(Storage::disk('public')->files(Certificate::SIGNATURE_DIR))->first(),
         ]);
     }
 
@@ -85,31 +74,6 @@ class SettingsCertificate extends Page
                     ->directory(Certificate::STANDARD_DIR)
                     ->visibility('public')
                     ->maxSize(8192),
-
-                // Printed on every certificate, course and all-courses alike.
-                // With no name, no signature block is printed at all.
-                Section::make(fn (): string => __t('admin_settings.certificate.signatory'))
-                    ->description(fn (): string => __t('admin_settings.certificate.signatory_help'))
-                    ->columns(2)
-                    ->schema([
-                        TextInput::make('signatory_name')
-                            ->label(fn (): string => __t('admin_settings.certificate.signatory_name'))
-                            ->maxLength(80),
-                        TextInput::make('signatory_title')
-                            ->label(fn (): string => __t('admin_settings.certificate.signatory_title'))
-                            ->placeholder(fn (): string => __t('admin_settings.certificate.signatory_title_placeholder'))
-                            ->maxLength(80),
-                        FileUpload::make('signature')
-                            ->label(fn (): string => __t('admin_settings.certificate.signature'))
-                            ->helperText(fn (): string => __t('admin_settings.certificate.signature_help'))
-                            ->image()
-                            ->acceptedFileTypes(['image/png'])
-                            ->disk('public')
-                            ->directory(Certificate::SIGNATURE_DIR)
-                            ->visibility('public')
-                            ->maxSize(2048)
-                            ->columnSpanFull(),
-                    ]),
             ])
             ->statePath('data');
     }
@@ -132,19 +96,13 @@ class SettingsCertificate extends Page
     {
         $state = $this->form->getState();
 
-        // One file of each at a time: anything else in the folder goes.
-        foreach ([Certificate::STANDARD_DIR => $state['background'] ?? null, Certificate::SIGNATURE_DIR => $state['signature'] ?? null] as $dir => $kept) {
-            foreach (Storage::disk('public')->files($dir) as $file) {
-                if ($file !== $kept) {
-                    Storage::disk('public')->delete($file);
-                }
+        // One standard at a time: anything else in the folder goes.
+        $kept = $state['background'] ?? null;
+        foreach (Storage::disk('public')->files(Certificate::STANDARD_DIR) as $file) {
+            if ($file !== $kept) {
+                Storage::disk('public')->delete($file);
             }
         }
-
-        Storage::disk('local')->put(Certificate::SIGNATORY_FILE, (string) json_encode([
-            'name' => trim(strip_tags((string) ($state['signatory_name'] ?? ''))),
-            'title' => trim(strip_tags((string) ($state['signatory_title'] ?? ''))),
-        ], JSON_UNESCAPED_UNICODE));
 
         $this->mount();
 

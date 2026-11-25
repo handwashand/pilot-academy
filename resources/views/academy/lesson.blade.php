@@ -474,9 +474,11 @@
             @endif
         </div>
 
-        {{-- Sidebar: lesson list (course lessons only) --}}
+        {{-- Sidebar: lesson list (course lessons only). min-w-0 for the same
+             reason as the main column: its truncated titles would otherwise
+             widen the one-column grid on a phone to the longest title. --}}
         @if($course)
-            <aside class="lg:sticky lg:top-20 self-start">
+            <aside class="min-w-0 lg:sticky lg:top-20 self-start">
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
                     <div class="text-xs font-semibold uppercase tracking-wide text-slate-400 px-2 mb-2">{{ __t('academy.lesson.lessons') }}</div>
                     <ol class="space-y-1">

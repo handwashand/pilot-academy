@@ -379,7 +379,7 @@ Ouvrez le cours → **Quiz final et certificat** → **Fond du certificat (facul
 
 **Le certificat standard** est celui que chaque cours imprime s’il n’a pas son propre fond. Les administrateurs le changent dans **Paramètres → Général → Certificat** : importez une image A4 paysage et enregistrez. Retirez l’image et enregistrez pour revenir au modèle intégré. Les certificats déjà délivrés gardent leur PDF jusqu’à ce que vous cliquiez sur **Régénérer le PDF**.
 
-Le modèle intégré est délivré par **Pilot Telematics** : il porte le logo PILOT d’origine, la mention « Délivré par Pilot Telematics (PTY) LTD via PILOT Academy », le cours suivi, son nombre de leçons et le score final. Il n’indique pas la durée d’étude. Pour ajouter une signature, remplissez **Signataire** sur la même page : **Nom du signataire**, **Fonction** et, si vous le souhaitez, une **Image de la signature** (un PNG à fond transparent). Sans nom, aucune signature n’est imprimée.
+Le modèle intégré est délivré par **Pilot Telematics** : il porte le logo PILOT d’origine, la mention « Délivré par Pilot Telematics (PTY) LTD via PILOT Academy », le cours suivi, son nombre de leçons et le score final. Il n’indique pas la durée d’étude.
 
 ### Créer un cours à partir d’un cours existant
 
@@ -813,23 +813,6 @@ fournisseur : chaque langue est traduite et enregistrée aussitôt, dans les cas
 vides uniquement — sauf si vous cochez **Remplacer** —, rouvrez donc **Traduire**
 pour une langue afin de relire le résultat. Le texte de tout le cours est envoyé
 plusieurs fois, cela coûte donc plus cher.
-
-La petite icône étincelles en haut de **Cours** (**Générer un cours** au survol ;
-elle n’est pas dans le menu latéral) prépare un brouillon à partir de notes, avec
-ChatGPT ou DeepSeek et le jeton déjà enregistré sur cette page. Choisissez le
-fournisseur et un modèle, puis **Générer le brouillon**. Le cours reste un
-brouillon tant que personne ne le publie. Un fournisseur désactivé ne peut pas
-être choisi. Sur cette page, **Génération de cours** règle le fournisseur par
-défaut, un secours facultatif, une limite quotidienne et un budget mensuel. Le
-secours envoie les mêmes notes à l’autre fournisseur, et seulement s’il est
-autorisé ici et coché sur Générer un cours. Chaque brouillon voit deux cours
-publiés, une autre paire au fil des brouillons, et suit leur façon d’écrire.
-Leur texte n’est pas copié. Un créateur ne fournit que les cours de ses
-propres produits. **Générer un cours** reste caché
-jusqu’à ce qu’un administrateur coche **Générer des brouillons de cours avec
-ChatGPT, DeepSeek ou Claude** sur ce compte, dans **Personnes → Utilisateurs →
-Permissions supplémentaires**. Les administrateurs ne le reçoivent pas
-d’eux-mêmes.
 
 ---
 

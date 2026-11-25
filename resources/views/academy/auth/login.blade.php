@@ -36,7 +36,7 @@
                 @include('academy.partials.password-input', ['name' => 'password'])
             </div>
             <div class="flex flex-wrap items-center justify-between gap-2">
-                <label class="flex items-center gap-2 text-sm text-slate-600">
+                <label class="flex items-center gap-2 min-h-11 text-sm text-slate-600">
                     <input type="checkbox" name="remember" value="1"> {{ __t('auth.remember_me') }}
                 </label>
                 <a href="{{ route('password.request') }}" class="text-sm font-semibold text-brand">{{ __t('auth.forgot.link') }}</a>

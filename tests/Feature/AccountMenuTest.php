@@ -91,6 +91,23 @@ class AccountMenuTest extends TestCase
             ->assertSeeInOrder(['<header', 'href="'.route('register').'"', 'data-language-menu', 'name="locale" value="ru"', '</header>'], false);
     }
 
+    public function test_a_guest_on_a_phone_gets_log_in_and_register_behind_one_button(): void
+    {
+        // Written out, the two left the logo no room on a phone in Spanish
+        // and Arabic. Below sm they sit in a menu; from sm up, as buttons.
+        $this->get(route('academy.home'))
+            ->assertOk()
+            ->assertSeeInOrder([
+                '<details class="relative flex-none sm:hidden" data-account-menu>',
+                'href="'.route('login').'"',
+                'href="'.route('register').'"',
+                '<div class="hidden sm:block">',
+                'href="'.route('login').'"',
+                'href="'.route('register').'"',
+                'data-language-menu',
+            ], false);
+    }
+
     public function test_the_header_uses_the_same_logo_as_the_admin_panel(): void
     {
         $this->get(route('academy.home'))
