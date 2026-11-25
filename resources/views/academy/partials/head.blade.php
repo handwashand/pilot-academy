@@ -169,6 +169,7 @@
         .lesson-row > * { flex: 0 0 15rem; scroll-snap-align: start; }
         .course-progress { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; margin-bottom: .875rem; }
         .course-progress .lesson-cover { width: 4.5rem; height: 3rem; border-radius: .625rem; flex-shrink: 0; }
+        .course-progress__bar { width: 5rem; flex-shrink: 0; }
         .course-done { display: flex; align-items: center; gap: .875rem; padding: .625rem .875rem .625rem .625rem; background: #fff; border: 1px solid #e2e8f0; border-radius: .875rem; }
         .course-done .lesson-cover { width: 4.5rem; height: 3rem; border-radius: .5rem; flex-shrink: 0; }
         .more-tile { display: flex; gap: .875rem; align-items: flex-start; padding: 1.25rem; background: #fff; border: 1px solid #e2e8f0; border-radius: 1rem; transition: border-color .15s; }
@@ -178,6 +179,7 @@
         @media (min-width: 640px) {
             .home-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
             .course-tile { flex-direction: column; }
+            .course-progress__bar { width: 11rem; }
             .course-tile .lesson-cover { width: auto; height: 8.75rem; }
             .course-tile__count { display: inline-block; }
             .course-tile__meta--count { display: none; }

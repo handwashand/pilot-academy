@@ -236,12 +236,12 @@
                             <div class="min-w-0 flex-1">
                                 <h3 class="font-bold text-navy"><a href="{{ route('academy.course', $course) }}" class="hover:text-brand">{{ $course->translated('title') }}</a></h3>
                                 <div class="mt-1 flex items-center gap-3">
-                                    <div class="w-44 h-2 rounded-full bg-slate-100 overflow-hidden"
+                                    <div class="course-progress__bar h-2 rounded-full bg-slate-100 overflow-hidden"
                                          role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $pct }}"
                                          aria-label="{{ __t('academy.common.course_progress_aria', ['course' => $course->translated('title'), 'done' => $done, 'total' => $total]) }}">
                                         <div class="h-full bg-ok" style="width: {{ $pct }}%"></div>
                                     </div>
-                                    <span class="text-sm text-slate-500">{{ __t('academy.common.lessons_done', ['done' => $done, 'total' => $total]) }}</span>
+                                    <span class="text-sm text-slate-500 whitespace-nowrap">{{ __t('academy.common.lessons_done', ['done' => $done, 'total' => $total]) }}</span>
                                 </div>
                             </div>
                             <a href="{{ $ctaUrl }}" class="course-continue inline-flex items-center min-h-11 font-semibold text-brand hover:underline">{{ $ctaLabel }} <span aria-hidden="true" class="ms-1 inline-block rtl:rotate-180">&rarr;</span></a>

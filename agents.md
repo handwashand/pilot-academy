@@ -438,6 +438,7 @@ Newest first.
 
 | Date | Decision |
 | --- | --- |
+| 2026-11-25 | **Home page groups courses.** Only courses a student has started show 3 lesson cards (replaces "3 per course" of 2026-11-21); not started → compact tiles, finished → a short **Completed** list. Visitors see one course to start with, 6 more and **See all courses**. Each course has its own cover colour and picture. |
 | 2026-11-25 | **No AI course creator, no certificate signatory.** Both were built and then removed by the owner as not needed. Do not rebuild either without the owner reopening it. |
 | 2026-10-14 | **Deleted content is hidden, not removed** (`deleted_at`): courses, lessons, questions, case studies, tutorials, webinars, products, media items. **Users and partners are still deleted for real**, so a privacy erasure request is honoured. Restoring is the per-account right `recycle_bin.manage`, admins only and not automatic; **there is no permanent delete in the panel**. |
 | 2026-10-14 | **A lesson does not need a course**, at creation or after. `lessons.course_id` is nullable. A course-less lesson belongs to the creator who wrote it (`created_by`); one left by a deleted course is an admin's. Deleting a course never deletes its lessons. A final quiz file upload **adds** to the bank, never replaces it. The lesson-creation *flow* stays as it is; only the form's layout changed (owner asked for a side column). |
@@ -458,6 +459,44 @@ Newest first.
 ## Work log
 
 Newest first. Add to this every time.
+
+### 2026-11-25 (evening) — Home page regrouped; covers redrawn; every production course themed
+
+Mockup approved on a Claude design canvas ("Home page and cover refresh").
+The owner's choices: only **started** courses keep the 3 lesson cards (this
+replaces the 2026-11-21 "3 per course" rule); finished courses go in a compact
+**Completed** list; visitors see 6 courses plus **See all courses**, students
+see every course not started; themes applied on production now.
+
+- **Covers:** the 18 `public/img/patterns/*.svg` are now one composed 400x160
+  picture each (generator: `make-patterns.js` in the session scratchpad),
+  shapes on the right, drawn `right center / cover` in a box 14% larger than
+  the cover so `lesson-cover--shift-N` (place % 3) can move it; mirrored under
+  RTL. The number is "Lesson 01" on the left (`academy.common.lesson_label`,
+  six languages); the old chip is a `.vh` line so screen readers and tests
+  still read "Lesson 1". `Course::COVER_PATTERNS_VERSION` is a `?v=` on every
+  picture URL; **bump it whenever a picture is redrawn**.
+- **Home:** `AcademyController::courseState()` (new / started / finished) is
+  the one rule; `progressSummary()` uses it too. New partials
+  `course-cover` and `course-tile`; styles inline in `partials/head`
+  (`.course-tile`, `.course-feature`, `.lesson-row`, `.home-grid`…), because
+  several utilities are not in the committed bundle (`gap-8`, `leading-snug`,
+  `gap-x-4` were not). The next-step card shows for visitors with session
+  progress too (`ProgressToolsTest`). Case Studies, Tutorials, Webinars are
+  **More ways to learn** tiles. Four new `academy.home.*` keys, six languages.
+- **Production data:** all 18 courses got a pattern and colour through their
+  edit pages (`cover-themes.js`, scratchpad); none had one before.
+- **Trap:** a CSS comment in `partials/head` quoting UI text ("Continue where
+  you left off") made `assertDontSee` tests fail; keep UI strings out of
+  inline-style comments.
+
+**Verified (run):** Home, ProgressTools and LessonCover suites 41 passed;
+the wider run before the fixes was 199 tests with 7 failures, all from the two
+causes fixed above. Pint clean on 13 files. Local preview with 10 themed
+courses: visitor 1280/390, student 1280/390 and Arabic 390, no sideways scroll,
+every cover finds its picture. **Not run:** the full suite; tests after the
+last two class-only tweaks (bar width, `whitespace-nowrap`), checked in the
+preview instead.
 
 ### 2026-11-25 (latest) — Old course and lesson links keep working after a slug change (**schema change**)
 
