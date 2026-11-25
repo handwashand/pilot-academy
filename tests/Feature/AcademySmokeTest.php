@@ -408,6 +408,9 @@ class AcademySmokeTest extends TestCase
         $this->get('/sitemap.xml')
             ->assertStatus(200)
             ->assertHeader('Content-Type', 'application/xml')
+            // Added by the controller: in the view it broke on servers with
+            // short_open_tag on (Sentry PILOT-ACADEMY-4).
+            ->assertSee('<?xml version="1.0" encoding="UTF-8"?>', false)
             ->assertSee(route('academy.home'), false)
             ->assertSee(route('academy.course', $course), false)
             ->assertSee(route('academy.lesson', [$course, $lesson]), false);

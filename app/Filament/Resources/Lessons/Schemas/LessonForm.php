@@ -108,6 +108,50 @@ class LessonForm
                                         ->visible(fn ($get): bool => ($get('type') ?? 'youtube') === 'upload')
                                         ->required(fn ($get): bool => ($get('type') ?? 'youtube') === 'upload')
                                         ->helperText(__t('admin_lessons.form.video_file_help')),
+
+                                    // The same video made for another language, added by
+                                    // hand: students reading in that language get it,
+                                    // everyone else the original (Lesson::languageVersion).
+                                    // An upload for an uploaded video, a link for a YouTube one.
+                                    Repeater::make('language_versions')
+                                        ->label(__t('admin_lessons.form.language_versions'))
+                                        ->helperText(__t('admin_lessons.form.language_versions_help'))
+                                        ->defaultItems(0)
+                                        ->addActionLabel(__t('admin_lessons.form.add_language_version'))
+                                        ->columns(['default' => 1, 'md' => 3])
+                                        ->schema([
+                                            Select::make('language')
+                                                ->label(__t('admin_lessons.form.version_language'))
+                                                ->options(fn (): array => app(Translator::class)->activeLanguages()->pluck('native_name', 'code')->all())
+                                                ->required()
+                                                ->distinct()
+                                                ->columnSpan(1),
+
+                                            FileUpload::make('video_path')
+                                                ->label(__t('admin_lessons.form.video_file'))
+                                                ->disk('public')
+                                                ->directory('lesson-videos')
+                                                ->visibility('public')
+                                                ->acceptedFileTypes(['video/mp4', 'video/webm', 'video/quicktime'])
+                                                ->maxSize(204800)
+                                                ->visible(fn ($get): bool => ($get('../../type') ?? 'youtube') === 'upload')
+                                                ->required(fn ($get): bool => ($get('../../type') ?? 'youtube') === 'upload')
+                                                ->columnSpan(['default' => 1, 'md' => 2]),
+
+                                            TextInput::make('youtube_url')
+                                                ->label(__t('admin_lessons.form.youtube_link'))
+                                                ->url()
+                                                ->visible(fn ($get): bool => ($get('../../type') ?? 'youtube') === 'youtube')
+                                                ->required(fn ($get): bool => ($get('../../type') ?? 'youtube') === 'youtube')
+                                                ->rules([
+                                                    fn (): Closure => function (string $attribute, $value, Closure $fail): void {
+                                                        if (filled($value) && Lesson::youtubeIdFrom($value) === null) {
+                                                            $fail(__t('admin_lessons.form.youtube_invalid'));
+                                                        }
+                                                    },
+                                                ])
+                                                ->columnSpan(['default' => 1, 'md' => 2]),
+                                        ]),
                                 ]),
 
                             RichEditor::make('content')

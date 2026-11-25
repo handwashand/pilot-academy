@@ -195,7 +195,12 @@
                         </script>
                     @elseif($type === 'youtube' && filled($video['youtube_url'] ?? null))
                         @php
-                            $youtubeId = \App\Models\Lesson::youtubeIdFrom($video['youtube_url']);
+                            // The link added for the reader's language on the lesson form, if any;
+                            // ?audio=original goes back to the original, as for an uploaded video.
+                            $languageVersion = \App\Models\Lesson::languageVersion($video, app()->getLocale());
+                            $playsVersion = $languageVersion && request('audio') !== 'original';
+                            $youtubeId = \App\Models\Lesson::youtubeIdFrom($playsVersion ? $languageVersion['youtube_url'] : $video['youtube_url'])
+                                ?? \App\Models\Lesson::youtubeIdFrom($video['youtube_url']);
                         @endphp
                         @if($youtubeId)
                             <div class="mt-6 rounded-2xl overflow-hidden border border-slate-200 shadow-sm aspect-video bg-black">
@@ -206,6 +211,14 @@
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                         allowfullscreen></iframe>
                             </div>
+                            @if($languageVersion)
+                                <div class="mt-2 flex flex-wrap items-center gap-2">
+                                    <a href="{{ $playsVersion ? url()->current().'?audio=original' : url()->current() }}"
+                                       class="inline-flex items-center h-11 px-3 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 active:bg-slate-100">
+                                        {{ __t($playsVersion ? 'academy.lesson.original_audio' : 'academy.lesson.translated_audio') }}
+                                    </a>
+                                </div>
+                            @endif
                         @endif
                     @endif
                 @endforeach

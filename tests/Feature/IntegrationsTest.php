@@ -27,6 +27,9 @@ class IntegrationsTest extends TestCase
 {
     use RefreshDatabase;
 
+    /** Set by a test that wants Claude to decline: the fake below answers first. */
+    private bool $claudeRefuses = false;
+
     protected function setUp(): void
     {
         parent::setUp();

@@ -102,7 +102,7 @@ The path is always the same: **make a course → fill it with lessons → turn o
 
 1. In the left menu, click **Lessons**, then **New lesson**.
 2. Choose the **Courses** the lesson belongs in — one or more — and give it a title.
-3. Add videos under **Videos**: click **Add video**, then choose the **Source** — **YouTube** to paste a link, or **Upload** to add a video file. Click **Add video** again for another, up to five. Students see them in the order listed; drag to reorder, or remove one with its bin icon.
+3. Add videos under **Videos**: click **Add video**, then choose the **Source** — **YouTube** to paste a link, or **Upload** to add a video file. Click **Add video** again for another, up to five. Students see them in the order listed; drag to reorder, or remove one with its bin icon. **A version for another language:** inside a video, under **Other languages**, click **Add a language**, pick the **Language** and add that language's video — a file for an uploaded video, a YouTube link for a YouTube one. Students reading the academy in that language get it, with **Play original audio** to switch back; everyone else gets the original. It is used before a Descript dub for the same language.
    The link must be **one video** — open it on YouTube and copy the address bar.
    Normal, Shorts and live video links all work; a playlist or channel link is
    refused, because there would be no video to show.

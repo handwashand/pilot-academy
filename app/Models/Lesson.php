@@ -265,6 +265,28 @@ class Lesson extends Model
         return array_values(array_filter($entries, fn (mixed $entry): bool => is_array($entry) && (filled($entry['youtube_url'] ?? null) || filled($entry['video_path'] ?? null))));
     }
 
+    /**
+     * A video's own version for one language, added by hand on the lesson
+     * form (its "Other languages"): an uploaded file when the original is an
+     * upload, a YouTube link when it is on YouTube. Null when there is none, so
+     * the reader gets the original. Wins over a Descript dub: a person chose it.
+     *
+     * @param  array<string, mixed>  $entry  One of videoEntries().
+     * @return array{language: string, video_path?: string, youtube_url?: string}|null
+     */
+    public static function languageVersion(array $entry, ?string $language): ?array
+    {
+        $source = ($entry['type'] ?? 'youtube') === 'upload' ? 'video_path' : 'youtube_url';
+
+        foreach ((array) ($entry['language_versions'] ?? []) as $version) {
+            if (is_array($version) && ($version['language'] ?? null) === $language && is_string($version[$source] ?? null) && filled($version[$source])) {
+                return $version;
+            }
+        }
+
+        return null;
+    }
+
     /** A YouTube video in the list whose link is not one playable video. */
     public function hasUnplayableYoutubeLink(): bool
     {

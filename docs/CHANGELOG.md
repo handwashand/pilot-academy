@@ -26,6 +26,9 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **A lesson video in another language.** Each video in a lesson's **Videos** list has **Other languages**: add a language and its own video (an upload for an uploaded video, a YouTube link for a YouTube one). Students reading the academy in that language get it, with **Play original audio** one click away; everyone else gets the original. It is used before a Descript dub for the same language.
+- **Write the certificate's words yourself.** **Settings → General → Certificate** now has **Certificate text**: the top line, title, line above the name, achievement and bottom line, one tab per language, with placeholders such as `:course`, `:score` and `:verify_link`, and a live preview. An optional **Signature** (name, title, image) is printed only where a line uses `:signature`. The score circle is no longer drawn: the score is in the text.
+- **Claude translates too.** Claude joins DeepL, ChatGPT and DeepSeek under **Settings → Integrations → Text translation**, and drafts translations everywhere the academy has **Translate**.
 - **A new certificate design, and one standard you can change yourself.** Certificates
   now have a cleaner framed layout with the Pilot Academy logo, a seal showing the
   final score, and the verification QR code. Admins can replace this standard design
@@ -285,6 +288,7 @@ Add a new entry here whenever something visible to admins or students changes.
 ### Changed
 
 - **Case studies, tutorials and webinars in your panel language.** Like courses and lessons, their lists and edit pages now show the translation for your panel language, with a line saying which language they were written in, and **Save changes** updates only that translation. From a translation, **Remove this step** on a case study only hides a step; delete it from the study's own language.
+- **A shorter card per provider on Integrations.** The switch sits in the card's header; one token box shows the saved token's last four characters, with who can use it, who added it and **Remove** under it; one **Who can use it**; and **Model**, which starts on each provider's middle model and says in amber how much more a dearer one costs per translation.
 - **Tutorial and webinar forms in two columns.** The writing, video, date and links are on the left and **Settings** (status, address, language, duration) beside them, as on a course or lesson.
 - **Generate course is gone.** The AI course creator on the Courses page was not needed and has been removed, with its settings on Settings → Integrations and its Extra permission on user accounts. Courses it drafted are ordinary courses and stay as they are. A saved Claude token stays on its card, under Other providers.
 - **A more professional certificate.** The built-in certificate now carries the original PILOT logo and says it is issued by Pilot Telematics (PTY) LTD through PILOT Academy. It names the course, its number of lessons and the final score, and no longer shows study time. Certificates already issued keep their PDF until someone presses Regenerate PDF.
@@ -377,6 +381,10 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Fixed
 
+- **The Lessons list opens again.** It showed an error page on the live site (its per-course tab counts were written in a way only the test database accepted).
+- **Translating lesson videos with Descript works on the live site.** Starting a translation stopped with an error, because Descript's job references did not fit the database. Ask for the language again: the attempt that failed is cleared by **Check progress**.
+- **Last login is recorded for every sign-in**, including the admin panel's own login page; admins and creators showed none before.
+- **The sitemap** (`/sitemap.xml`) loads again on the live site.
 - **The academy on an iPhone home screen.** **Add to Home Screen** now shows the PILOT mark instead of a picture of the page.
 - **The logo stays visible on a phone.** In Spanish and Arabic, and partly in French and Russian, the **Log in** and **Register** buttons left no room for the PILOT ACADEMY logo on a phone, and it shrank to nothing. On a phone they now sit behind one person icon in the top right, like the menu a signed-in student has. From tablet width up nothing changes.
 - **Lessons fit a phone screen.** On a phone, a lesson page in a course was wider than the screen whenever a lesson in its list had a long title, so the text ran off the right edge. It now fits. The Help and case study pages got the same fix, and on a phone the logo in the top bar and **Remember me** on the sign-in page are easier to tap.

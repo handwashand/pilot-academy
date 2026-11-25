@@ -414,7 +414,10 @@ class AcademyController extends Controller
      * being read in — by position in the lesson's video list. A French reader
      * hears French where Descript has dubbed it; everyone else, the original.
      *
-     * @return array<int, VideoTranslation>
+     * A video uploaded by hand for the reader's language (the lesson form's
+     * "Other languages") comes first, as an object with the same dub_path.
+     *
+     * @return array<int, VideoTranslation|object{dub_path: string, manual: bool}>
      */
     private function dubs(Lesson $lesson): array
     {
@@ -431,6 +434,14 @@ class AcademyController extends Controller
         $dubs = [];
 
         foreach ($lesson->videoEntries() as $index => $entry) {
+            // A version uploaded by hand for this language comes first; it is
+            // played, switched off and downloaded exactly like a dub.
+            if (($entry['type'] ?? null) === 'upload' && ($version = Lesson::languageVersion($entry, app()->getLocale()))) {
+                $dubs[$index] = (object) ['dub_path' => $version['video_path'], 'manual' => true];
+
+                continue;
+            }
+
             if ($dub = $byPath->get((string) ($entry['video_path'] ?? ''))) {
                 $dubs[$index] = $dub;
             }
@@ -1027,8 +1038,10 @@ class AcademyController extends Controller
             ->orderBy('sort_order')
             ->get();
 
-        return response()
-            ->view('sitemap', ['courses' => $courses])
+        // The XML declaration is added here, not in the view: with PHP's
+        // short_open_tag on (as on production), "<?xml" inside a compiled view
+        // is read as PHP and the page fails (Sentry PILOT-ACADEMY-4).
+        return response('<?xml version="1.0" encoding="UTF-8"?>'."\n".view('sitemap', ['courses' => $courses])->render())
             ->header('Content-Type', 'application/xml');
     }
 
