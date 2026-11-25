@@ -30,7 +30,7 @@ the left takes you to every part of the academy.
 
 **Review a translation in the panel.** The panel shows courses and lessons in your own panel language (the language button, top right). With the panel in Spanish, the **Courses** and **Lessons** lists, a course's **Lessons** and **Final questions** tabs, and the edit pages show the Spanish title, description, lesson text, transcript, quiz questions and answers. A line under the page title says which language the course was originally written in. Change any of the text and **Save changes**: that updates the Spanish only, and the original stays exactly as it was. A box with no Spanish yet shows the original, as Spanish students would see it, and is not copied into the Spanish when you save. Adding, removing or reordering quiz questions and answers is done in the original's language: switch the panel back to it. Other settings (status, address, videos, quiz rules) are the same in every language. Case studies, tutorials and webinars read the same way: their lists and edit pages show your panel language, and a save changes only that language. On a case study shown in a translation, **Remove this step** only hides a step; to delete one, switch the panel to the study’s own language.
 
-**Translate a lesson's quiz, or a course's final quiz**, with **Translate quiz** (the clipboard icon) — on the lesson's edit page for its own knowledge check, or on the course's **Final questions** tab for its final-quiz bank. **The whole course** on a course's **Translate** includes both. Pick a language, review each question and its answer options (drafted for you if DeepL, ChatGPT or DeepSeek is switched on), and press **Save translations**. A question used in several courses' final quizzes translates once and reads correctly in every one of them.
+**Translate a lesson's quiz, or a course's final quiz**, with **Translate quiz** (the clipboard icon) — on the lesson's edit page for its own knowledge check, or on the course's **Final questions** tab for its final-quiz bank. **The whole course** on a course's **Translate** includes both. Pick a language, review each question and its answer options (drafted for you if a translation provider is switched on), and press **Save translations**. A question used in several courses' final quizzes translates once and reads correctly in every one of them.
 
 ---
 
@@ -60,7 +60,7 @@ doing: building the training (**Content**), looking after the people taking it
 | **Results → Student feedback** | What students said about every course, in one list. Admins only. |
 | **Docs → Guide** | This guide, with a contents list and a search box. |
 | **Docs → What's new** | Everything that has changed in the academy, newest first. Search it, filter it by category, or open it as a PDF. |
-| **Settings → General** | The academy's own setup: **Profile**, **Integrations**, **Mail**, **Translations**, **Languages** and **Recycle bin** (restore deleted content — needs its own permission), as tabs across the top of the page rather than separate menu items. Profile: your own name, email and password. Integrations: add the API token for Descript, DeepL, ChatGPT or DeepSeek and switch each on (admins only). People you grant **Draft translations with DeepL** or **… with ChatGPT or DeepSeek** (under **People → Users → Extra permissions**) then find **Translate** turned into a menu — **Translate by hand** or **Translate with …** for each provider that is on. After a confirmation the Translate window opens with the empty boxes drafted for you to review; nothing is saved until you press **Save translations**. Mail: are emails arriving? Admins, and anyone given **Check mail delivery**. Translations: the wording students see, in every language — correct any of it without waiting for a developer. Admins only. Languages: add a language or change which ones are offered — needs its own permission. |
+| **Settings → General** | The academy's own setup: **Profile**, **Integrations**, **Mail**, **Translations**, **Languages** and **Recycle bin** (restore deleted content — needs its own permission), as tabs across the top of the page rather than separate menu items. Profile: your own name, email and password. Integrations: add the API token for Descript, DeepL, ChatGPT, DeepSeek or Claude and switch each on (admins only). People you grant **Draft translations with DeepL** or **Draft translations with AI (ChatGPT, DeepSeek or Claude)** (under **People → Users → Extra permissions**) then find **Translate** turned into a menu — **Translate by hand** or **Translate with …** for each provider that is on. After a confirmation the Translate window opens with the empty boxes drafted for you to review; nothing is saved until you press **Save translations**. Mail: are emails arriving? Admins, and anyone given **Check mail delivery**. Translations: the wording students see, in every language — correct any of it without waiting for a developer. Admins only. Languages: add a language or change which ones are offered — needs its own permission. |
 
 Students have their own guide on the public site: **Help**, in the account menu and at the foot of every page. Point a stuck student there first — it covers what finishes a lesson, when the final quiz unlocks, and where certificates are.
 
@@ -395,6 +395,24 @@ The questions are added to the bank as course-only questions, written in the cou
 Open the course → **Final quiz & certificate** → **Certificate background**. Upload a full-page image (A4, landscape). The name, course, date, number, and QR code are placed on top automatically. Leave it empty to use the standard certificate.
 
 **The standard certificate** is the one every course prints unless it has its own background. Admins change it under **Settings → General → Certificate**: upload an A4 landscape image and save, and every course without its own background uses it from the next certificate on. Remove the image and save to go back to the built-in design. Already issued certificates keep their PDF until you press **Regenerate PDF**.
+
+**The certificate's words** are on the same page, under **Certificate text**: **Top line**, **Title**, **Line above the name**, **Achievement** and **Bottom line**, with one tab per language — each student gets their own. An empty box uses the standard text shown in it. Click a placeholder to copy it and paste it into a line:
+
+| Placeholder | Printed as |
+| --- | --- |
+| `:learner` | the student's name (it is always printed large in the middle too) |
+| `:course` | the course title, in the student's language |
+| `:lessons` | the number of lessons, e.g. "8 lessons" |
+| `:score` | the final quiz score with its % sign |
+| `:date` | the issue date |
+| `:number` | the certificate number |
+| `:verify_link` | the link that checks the certificate |
+| `:partner` | the student's partner company |
+| `:product` | the course's product |
+| `:signature` | the signature image and the signer's name |
+| `:signature_title` | the signer's title |
+
+**Signature (optional)** holds the signer's name, title and a PNG of the signature. It is not on the certificate until a line uses `:signature` or `:signature_title`. **Preview** beside the form shows the certificate as you type, in your panel language. **Reset to the standard text** clears every language's own words. The verification link and QR code are always printed, bottom right.
 
 The built-in design is issued by **Pilot Telematics**: it carries the original PILOT logo, the line "Issued by Pilot Telematics (PTY) LTD through PILOT Academy", and says which course was completed, how many lessons it has and the final score. It does not show study time.
 
@@ -794,20 +812,30 @@ tutorial, webinar or product also keeps its web address (slug) reserved, so a
 new one cannot reuse it until the old one is restored or removed from the
 database.
 
-## Translating text with DeepL, ChatGPT or DeepSeek
+## Translating text with DeepL, ChatGPT, DeepSeek or Claude
 
 An admin adds each provider's API token under **Settings → Integrations** and
-switches it on. The page groups them under **Text translation** (DeepL, ChatGPT,
-DeepSeek) and **Video translation** (Descript), and each card says where it
-stands: **On**, **Off — token saved**, or **Not connected**. Admins can use them straight away; anyone else needs the
-matching right (**Draft translations with DeepL**, or **… with ChatGPT or
-DeepSeek**, under **People → Users → Extra permissions**). They then see **Translate** on a lesson, case study, tutorial
-or webinar become a menu: **Translate by hand**, or **Translate with …** for each
-provider that is on. After a confirmation the Translate window opens with the
-empty boxes drafted; read and correct them, then **Save translations**. Nothing
-is saved before that, and text already written is never replaced.
+switches it **On** in the top corner of its card. The page groups them under
+**Text translation** (DeepL, ChatGPT, DeepSeek, Claude) and **Video
+translation** (Descript), and each card says where it stands: **On**, **Off —
+token saved**, or **Not connected**; the **ⓘ** says what it does.
 
-When you paste a token, **Who can use this token** decides where it goes:
+Every text provider that is on drafts translations wherever the academy has
+**Translate**: courses, lessons, quizzes, case studies, tutorials and webinars.
+Admins can use them straight away; anyone else needs the matching right
+(**Draft translations with DeepL**, or **Draft translations with AI (ChatGPT,
+DeepSeek or Claude)**, under **People → Users → Extra permissions**). They then
+see **Translate** become a menu: **Translate by hand**, or **Translate with …**
+for each provider that is on. After a confirmation the Translate window opens
+with the empty boxes drafted; read and correct them, then **Save
+translations**. Nothing is saved before that, and text already written is never
+replaced.
+
+Each card has one **Token** box. When a token is saved, the box shows its last
+four characters (**••••4f2a saved**) — never the token — and the line under it
+says who can use it and who added it, with **Remove**. Paste a new token to
+replace it; leave the box empty to keep it. **Who can use it** decides where a
+token you paste goes:
 
 | Choice | Who it serves |
 | --- | --- |
@@ -815,12 +843,15 @@ When you paste a token, **Who can use this token** decides where it goes:
 | **All admins** | Every admin. Creators with the right do not get it. |
 | **Everyone with the right** | Admins, and anyone given the matching right. |
 
-A provider has one **Shared token** (all admins, or everyone with the right),
-and each admin may add **Your own token** beside it. The card shows each
-token's last four characters, who can use it and who added it, never the token
-itself. The switch and the model are set once for everyone, your own token
-included. Descript has no **Just me**: its translations carry on in the
-background with nobody signed in.
+With the box empty, **Who can use it** changes the reach of the saved shared
+token. Your own token, if you added one, has its own line (**Your own token
+••••…, used for you first**) and **Remove**. The switch and the model are set
+once for everyone, your own token included. Descript has no **Just me**: its
+translations carry on in the background with nobody signed in.
+
+**Model.** ChatGPT, DeepSeek and Claude start on their middle model (marked
+**(default)**). Pick a dearer one and the card says, in amber, how many times
+more each translation costs — translating a whole course uses many tokens.
 
 On a **course**, **Translate** asks for the provider in its first step, next to
 what to translate (**This course** or **The whole course**, with every lesson
