@@ -459,6 +459,38 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-25 — Case studies, tutorials, webinars in the panel language; two-column forms; iPhone icon
+
+- **Panel language:** `EditCaseStudy`, `EditTutorial`, `EditWebinar` use
+  `EditsInReadingLanguage` (fill, save as the translation, heading, notice),
+  and their lists show `translated('title')` and search translations
+  (`whereTranslatedLike`), as courses and lessons do. **Remove this step →
+  Delete** on a case study writes the original's column, so it is not offered
+  while a translation is shown, and a forged `delete` argument only hides
+  (`admin_case_studies.form.remove_step_confirm_description_translation`,
+  six languages).
+- **Two columns:** `TutorialForm` and `WebinarForm` use the course layout
+  (`columns(['lg' => 3])`, Settings side column). Fields were moved whole.
+  **The case study form was left as it is**: its single full-width layout
+  was the owner's explicit choice on 2026-10-15.
+- **iPhone icon:** `public/img/apple-touch-icon.png`, 180×180, is the
+  existing `pilot-mark.svg` rendered by Chrome at 132px, centred on white
+  (iOS fills transparency with black and rounds the corners). The artwork is
+  unchanged. `partials/head` links it.
+- **PR #34:** `origin/feature/admin-dashboard` held only a September CI CSS
+  rebuild (`41dbaf95`), older than the current bundle. Branch deleted locally
+  and on the remote, on the owner's word.
+- **Production, whole-course Translate (course 1 → Spanish, DeepL):** DeepL
+  drafted 21 boxes in 8–18s; **Save translations** answered 500. The error
+  page is now the plain one, so `APP_DEBUG` appears to be off. Sentry gets
+  nothing from production (no DSN there). This is the nesting-limit-10 failure
+  reproduced on the same course on 2026-11-24; `laravel` has 30. Deploy fixes it.
+
+**Verified (run):** `ContentReadingLanguageTest` (8) with case study,
+tutorials, webinar, reading-language, translation and account-menu suites: 81
+passed. Pint clean on 25 files. **Not run:** the new forms in a browser (the
+local preview server was too slow to load panel pages on mounted folders).
+
 ### 2026-11-25 — Production test of the student site, web and phone; three layout fixes
 
 The owner asked for production to be tested on web and phone, learner side
