@@ -308,9 +308,9 @@ class CourseForm
     public static function coverSwatch(array $theme, string $label): string
     {
         return '<span style="display:inline-flex;align-items:center;gap:.6rem">'
-            .'<span style="flex:none;width:72px;height:34px;border-radius:6px;'
-            // Centred, so a large tile (route, transit) shows its motif, not a corner.
-            .'background:url('.e($theme['pattern']).') center,linear-gradient(135deg,'.e($theme['from']).','.e($theme['to']).')"></span>'
+            .'<span style="flex:none;width:88px;height:36px;border-radius:6px;'
+            // Each pattern is one picture weighted to the right, drawn the way the cover draws it.
+            .'background:url('.e($theme['pattern']).') right center/cover no-repeat,linear-gradient(135deg,'.e($theme['from']).','.e($theme['to']).')"></span>'
             .e($label).'</span>';
     }
 }

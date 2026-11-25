@@ -101,9 +101,13 @@ class Course extends Model
     }
 
     /**
-     * Patterns for the automatic lesson cover: tiling SVGs in
-     * public/img/patterns, drawn white at low opacity so any colour works.
+     * Patterns for the automatic lesson cover: one composed 400x160 picture
+     * each in public/img/patterns (not a repeating tile), white at low opacity
+     * so any colour works, with the shapes on the right so the lesson number
+     * has the left side.
      */
+    public const COVER_PATTERNS_VERSION = 2;
+
     public const COVER_PATTERNS = [
         'dots', 'grid', 'diagonal', 'waves', 'hexagons', 'chevrons',
         'route', 'contour', 'radar', 'pins', 'transit', 'pulse',
@@ -147,7 +151,8 @@ class Course extends Model
         $pattern = in_array($pattern, self::COVER_PATTERNS, true) ? $pattern : 'dots';
         [$from, $to] = self::COVER_COLORS[$color] ?? self::COVER_COLORS['pilot'];
 
-        return ['pattern' => asset("img/patterns/{$pattern}.svg"), 'from' => $from, 'to' => $to];
+        // ?v= changes whenever the pictures are redrawn, so browsers drop the old ones.
+        return ['pattern' => asset("img/patterns/{$pattern}.svg").'?v='.self::COVER_PATTERNS_VERSION, 'from' => $from, 'to' => $to];
     }
 
     /** @return array{pattern: string, from: string, to: string} */
