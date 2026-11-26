@@ -724,6 +724,11 @@ siguientes. Un idioma cancelado aparece con error y se puede volver a pedir más
 tarde. Para ir de un idioma en uno, cancela los demás y pídelos cuando el primero
 haya terminado.
 
+**Rehacer** (la flecha curva, en la lección) vuelve a hacer un doblaje terminado,
+por ejemplo tras corregir la redacción. Se elimina la versión terminada, los
+alumnos ven el vídeo original hasta que la nueva esté lista y ese idioma se paga
+de nuevo.
+
 **Voz y subtítulos a la vez.** **Traducir vídeo** siempre hace las dos cosas:
 Descript traduce el vídeo, lo locuta en ese idioma (con la propia voz del orador
 cuando puede copiarla; si no, con una voz estándar) y la academia guarda el vídeo

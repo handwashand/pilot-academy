@@ -738,6 +738,11 @@ aucune étape suivante n’est lancée. Une langue annulée apparaît en échec 
 être redemandée plus tard. Pour traiter une langue à la fois, annulez les autres
 et redemandez-les une fois la première terminée.
 
+**Refaire** (la flèche courbe, sur la leçon) refait un doublage terminé, par
+exemple après une correction de formulation. La version terminée est supprimée,
+les apprenants voient la vidéo d’origine jusqu’à ce que la nouvelle soit prête,
+et cette langue est payée à nouveau.
+
 **Voix et sous-titres ensemble.** **Traduire la vidéo** produit toujours les
 deux : Descript traduit la vidéo, la fait parler dans cette langue (avec la voix
 de l’intervenant lui-même quand il peut la copier, sinon avec une voix standard)

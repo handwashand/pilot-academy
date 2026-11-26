@@ -72,4 +72,12 @@ return [
         'done_body' => ':count tradução cancelada.|:count traduções canceladas.',
         'cancelled_by' => 'Cancelada por :name.',
     ],
+
+    'remake' => [
+        'button' => 'Refazer',
+        'heading' => 'Refazer uma tradução concluída',
+        'description' => 'Para uma dublagem concluída que precisa ser refeita, por exemplo depois de corrigir a redação. A versão concluída é removida, os alunos veem o vídeo original até a nova ficar pronta, e a Descript é paga de novo por cada idioma marcado.',
+        'submit' => 'Refazer',
+        'done' => 'Refazendo',
+    ],
 ];

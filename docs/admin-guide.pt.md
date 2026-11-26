@@ -712,6 +712,10 @@ que a Descript já começou não é retirada, mas nenhuma etapa seguinte é inic
 Um idioma cancelado aparece com erro e pode ser pedido de novo depois. Para fazer
 um idioma por vez, cancele os outros e peça-os quando o primeiro terminar.
 
+**Refazer** (a seta curva, na aula) refaz uma dublagem concluída, por exemplo
+depois de corrigir a redação. A versão concluída é removida, os alunos veem o
+vídeo original até a nova ficar pronta, e esse idioma é pago de novo.
+
 **Voz e legendas juntas.** **Traduzir vídeo** sempre faz as duas coisas: o
 Descript traduz o vídeo, narra nesse idioma (com a voz do próprio palestrante
 quando consegue copiá-la; caso contrário, com uma voz padrão) e a academia guarda o

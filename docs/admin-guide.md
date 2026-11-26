@@ -772,6 +772,10 @@ nothing after it is started. A cancelled language shows as failed and can be
 asked for again later. To do one language at a time, cancel the others and ask
 for them once the first is finished.
 
+**Make again** (the curved arrow, on a lesson) redoes a finished dub, for
+example after a wording fix. The finished version is removed, students see the
+original video until the new one is done, and that language is paid for again.
+
 **Voice and subtitles together.** **Translate video** always makes both:
 Descript translates the video, speaks it in that language (the speaker's own
 voice when it can copy one, otherwise a stock voice) and the academy keeps the

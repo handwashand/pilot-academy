@@ -76,6 +76,8 @@ class LlmTranslator
 
         $source = $this->languageName($sourceCode) ?? throw new LlmException('Unsupported source language.', 400, 'unsupported_language_pair');
         $target = $this->languageName($targetCode) ?? throw new LlmException('Unsupported target language.', 400, 'unsupported_language_pair');
+        // Where the plain name is not enough (Portuguese is Brazilian here).
+        $target = config('services.translation.language_names.'.strtolower($targetCode)) ?? $target;
 
         $system = "You translate training material for a vehicle-telematics academy from {$source} to {$target}. "
             .'You receive a JSON object. Translate each value and answer with a JSON object that has exactly the same keys and nothing else. '

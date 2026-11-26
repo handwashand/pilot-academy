@@ -63,11 +63,17 @@ return [
             'DESCRIPT_DUB_PROMPT',
             'Dub the speech of the composition named "{name}" into {language} with an AI voice, keeping the original speaker\'s voice if you can. Change only that composition. Do not change the composition named "{source}". Do not ask me any questions; choose sensible defaults.',
         ),
-        // How {language} is written in both instructions, where the plain name
-        // is not enough. The academy's Portuguese is Brazilian; asked for
-        // "Portuguese (Brazil)", Descript wrote European Portuguese
-        // ("utilizador", "por favor") on 2026-11-26. Other codes use the
-        // language's English name.
+    ],
+
+    /*
+     * How a language is named to a translating AI (Descript's video prompts,
+     * ChatGPT, DeepSeek and Claude for text), where the plain name is not
+     * enough. The academy's Portuguese is Brazilian; asked for "Portuguese
+     * (Brazil)", Descript wrote European Portuguese ("utilizador", "por
+     * favor") on 2026-11-26. Other codes use the language's English name.
+     * DeepL takes a code instead and already asks for pt-BR.
+     */
+    'translation' => [
         'language_names' => [
             'pt' => 'Brazilian Portuguese (pt-BR), with Brazilian vocabulary, spelling and accent, not European Portuguese',
         ],

@@ -497,12 +497,25 @@ admin guides and the changelog say how to do one language at a time.
 **Brazilian Portuguese.** Lesson 2's Portuguese dub (the first, done in about
 4 minutes) came back in European Portuguese ("Configure a conta do
 utilizador", "por favor") although the prompt said "Portuguese (Brazil)".
-`services.descript.language_names` now names a language in both prompts where
-the plain name is not enough: `pt` → "Brazilian Portuguese (pt-BR) … not
-European Portuguese". Pinned by
-`test_portuguese_is_asked_for_as_brazilian_in_both_instructions`. Lesson 2's
-dub keeps its European wording until it is made again (no "discard a finished
-dub" button exists yet).
+`services.translation.language_names` now names a language where the plain
+name is not enough, read by Descript's two prompts and by `LlmTranslator`
+(ChatGPT, DeepSeek, Claude): `pt` → "Brazilian Portuguese (pt-BR) … not
+European Portuguese". DeepL already sent `pt-BR`. Pinned by
+`test_portuguese_is_asked_for_as_brazilian_in_both_instructions` and
+`test_portuguese_is_asked_for_as_brazilian_by_the_ai_engines`. A scan of all
+147 public pages as a Portuguese visitor found no European words in the text
+translations (only 11 of 129 lessons have Portuguese text); the only European
+Portuguese is lesson 2's dub transcript.
+
+**Make again** (owner's request): `TranslateLessonVideo::remake()` removes a
+video's finished requests for the ticked languages (and their dub and subtitle
+files) and requests a fresh dub; the lesson button `remakeDescriptTranslation`
+has the same right and credit acknowledgement as Translate video. Every
+translation composition is now named "Pilot Academy — <code> #<request id>",
+so a remade language's prompts name the new composition, never the old one
+with the same language; `findComposition()` looks at what appeared since the
+request started before matching by name. Lesson 2's European dub is to be
+remade with it after the deploy.
 
 **Verified (run):** `CourseTranslationTest` (4 new: course cancel of one
 language, re-request after cancel, lesson cancel leaving other lessons, hidden

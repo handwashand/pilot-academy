@@ -72,4 +72,12 @@ return [
         'done_body' => ':count traduction annulée.|:count traductions annulées.',
         'cancelled_by' => 'Annulée par :name.',
     ],
+
+    'remake' => [
+        'button' => 'Refaire',
+        'heading' => 'Refaire une traduction terminée',
+        'description' => 'Pour un doublage terminé à refaire, par exemple après une correction de formulation. La version terminée est supprimée, les apprenants voient la vidéo d\'origine jusqu\'à ce que la nouvelle soit prête, et Descript est payé à nouveau pour chaque langue cochée.',
+        'submit' => 'Refaire',
+        'done' => 'En cours de réalisation',
+    ],
 ];

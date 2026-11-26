@@ -380,6 +380,26 @@ class IntegrationsTest extends TestCase
         $this->assertSame(0, $course->contentTranslations()->count(), 'Drafting stores nothing.');
     }
 
+    public function test_portuguese_is_asked_for_as_brazilian_by_the_ai_engines(): void
+    {
+        $this->enable('chatgpt');
+
+        Livewire::actingAs($this->admin(User::PERMISSION_AI_TRANSLATE))
+            ->test(EditLesson::class, ['record' => Course::first()->lessons()->first()->getRouteKey()])
+            ->callAction('translateWithChatgpt')
+            ->assertHasNoActionErrors();
+
+        $systemPrompts = collect(Http::recorded())
+            ->map(fn (array $pair): Request => $pair[0])
+            ->filter(fn (Request $request): bool => str_ends_with($request->url(), 'chat/completions'))
+            ->map(fn (Request $request): string => (string) ($request->data()['messages'][0]['content'] ?? ''));
+
+        $this->assertTrue(
+            $systemPrompts->contains(fn (string $prompt): bool => str_contains($prompt, 'to Brazilian Portuguese (pt-BR)') && str_contains($prompt, 'not European Portuguese')),
+            'The Portuguese request names Brazilian Portuguese.',
+        );
+    }
+
     public function test_deepseek_uses_its_own_address(): void
     {
         $this->enable('deepseek', 'ds-token');

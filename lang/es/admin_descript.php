@@ -72,4 +72,12 @@ return [
         'done_body' => ':count traducción cancelada.|:count traducciones canceladas.',
         'cancelled_by' => 'Cancelada por :name.',
     ],
+
+    'remake' => [
+        'button' => 'Rehacer',
+        'heading' => 'Rehacer una traducción terminada',
+        'description' => 'Para un doblaje terminado que hay que rehacer, por ejemplo tras corregir la redacción. Se elimina la versión terminada, los alumnos ven el vídeo original hasta que la nueva esté lista y se vuelve a pagar a Descript por cada idioma que marques.',
+        'submit' => 'Rehacer',
+        'done' => 'Rehaciéndola',
+    ],
 ];

@@ -225,6 +225,80 @@ class TranslateVideoWithDescriptAction
         );
     }
 
+    /**
+     * Make a finished dub again — after a wording fix, or a voice nobody liked.
+     * The only way to spend credits twice on one language, so it has its own
+     * button and the same acknowledgement as Translate video.
+     */
+    public static function remake(): Action
+    {
+        return Action::make('remakeDescriptTranslation')
+            ->label(fn (): string => __t('admin_descript.remake.button'))
+            ->tooltip(fn (): string => __t('admin_descript.remake.button'))
+            ->icon(Heroicon::OutlinedArrowUturnLeft)
+            ->iconButton()
+            ->color('gray')
+            ->modalHeading(fn (): string => __t('admin_descript.remake.heading'))
+            ->modalDescription(fn (): string => __t('admin_descript.remake.description'))
+            ->modalSubmitActionLabel(fn (): string => __t('admin_descript.remake.submit'))
+            ->authorize(fn (): bool => (bool) auth()->user()?->hasPermission(User::PERMISSION_DESCRIPT_TRANSLATE))
+            ->visible(fn (Lesson $record): bool => app(TranslateLessonVideo::class)->enabled()
+                && static::finishedVideos($record) !== [])
+            ->fillForm(fn (Lesson $record): array => [
+                'video' => array_key_first(static::finishedVideos($record)),
+                'languages' => [],
+                'confirmed' => false,
+            ])
+            ->schema(fn (Lesson $record): array => [
+                Select::make('video')
+                    ->label(fn (): string => __t('admin_descript.action.video'))
+                    ->options(static::finishedVideos($record))
+                    ->required()
+                    ->live(),
+                CheckboxList::make('languages')
+                    ->label(fn (): string => __t('admin_descript.action.languages'))
+                    ->options(fn (Get $get): array => static::finishedLanguages($record, (string) $get('video')))
+                    ->required(),
+                Checkbox::make('confirmed')
+                    ->label(fn (): string => __t('admin_descript.action.confirmation'))
+                    ->accepted()
+                    ->validationMessages(['accepted' => __t('admin_descript.action.confirmation_required')]),
+            ])
+            ->action(function (Lesson $record, array $data): void {
+                $video = (string) $data['video'];
+                $languages = array_values(array_intersect((array) ($data['languages'] ?? []), array_keys(static::finishedLanguages($record, $video))));
+                $outcome = app(TranslateLessonVideo::class)->remake($record, $video, $languages, auth()->user());
+                $names = TranslateLessonVideo::targetLanguages($record);
+
+                Notification::make()
+                    ->title(__t('admin_descript.remake.done'))
+                    ->body(__t('admin_descript.action.requested_body', [
+                        'languages' => collect($outcome['requested'])->map(fn (string $code): string => $names[$code] ?? $code)->implode(', '),
+                    ]))
+                    ->success()
+                    ->send();
+            });
+    }
+
+    /** @return array<string, string> path => name, for uploaded videos with at least one finished dub */
+    private static function finishedVideos(Lesson $record): array
+    {
+        return collect(TranslateLessonVideo::uploadedVideos($record))
+            ->filter(fn (string $name, string $path): bool => static::finishedLanguages($record, $path) !== [])
+            ->all();
+    }
+
+    /** @return array<string, string> code => native name, for this video's finished dubs */
+    private static function finishedLanguages(Lesson $record, string $videoPath): array
+    {
+        $names = TranslateLessonVideo::targetLanguages($record);
+
+        return static::rowsFor($record, $videoPath)
+            ->filter(fn (VideoTranslation $row): bool => $row->isDone())
+            ->mapWithKeys(fn (VideoTranslation $row, string $code): array => [$code => $names[$code] ?? $code])
+            ->all();
+    }
+
     /** The same for every lesson video in a course: one language at a time, or several. */
     public static function cancelCourse(): Action
     {

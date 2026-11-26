@@ -37,6 +37,7 @@ class EditLesson extends EditRecord
             TranslateVideoWithDescriptAction::make(),
             TranslateVideoWithDescriptAction::check(),
             TranslateVideoWithDescriptAction::cancel(),
+            TranslateVideoWithDescriptAction::remake(),
             DeleteAction::make(),
         ];
     }

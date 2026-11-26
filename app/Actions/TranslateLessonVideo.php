@@ -184,6 +184,36 @@ class TranslateLessonVideo
         ]);
     }
 
+    /**
+     * Make finished languages of one video again: their finished requests and
+     * the files they saved are removed, and each language is asked for afresh
+     * as a dub. This is the one way to spend credits twice on a language, so
+     * it is a separate, deliberate action. Students get the original video
+     * until the new dub is done.
+     *
+     * @param  array<int, string>  $languages
+     * @return array{requested: array<int, string>, done: array<int, string>, running: array<int, string>}
+     */
+    public function remake(Lesson $lesson, string $videoPath, array $languages, ?User $by = null): array
+    {
+        $finished = VideoTranslation::query()
+            ->where('lesson_id', $lesson->id)
+            ->whereIn('language', $languages)
+            ->where('status', VideoTranslation::STATUS_DONE)
+            ->whereHas('descriptImport', fn ($query) => $query->where('video_path', $videoPath))
+            ->get();
+
+        foreach ($finished as $row) {
+            foreach (array_filter([$row->dub_path, $row->subtitle_path]) as $path) {
+                Storage::disk('public')->delete($path);
+            }
+
+            $row->delete();
+        }
+
+        return $this->request($lesson, $videoPath, $finished->pluck('language')->unique()->values()->all(), $by, kind: VideoTranslation::KIND_DUB);
+    }
+
     /** Move everything still in progress for one lesson along by a step. */
     public function advanceLesson(Lesson $lesson): void
     {
@@ -733,10 +763,10 @@ class TranslateLessonVideo
     }
 
     /** Descript is told the language in English, e.g. "Portuguese (Brazil)". */
-    /** The language as the instructions to Descript name it (services.descript.language_names first). */
+    /** The language as the instructions to Descript name it (services.translation.language_names first). */
     private function englishName(string $code): string
     {
-        return config("services.descript.language_names.{$code}")
+        return config("services.translation.language_names.{$code}")
             ?? app(Translator::class)->activeLanguage($code)?->name
             ?? strtoupper($code);
     }

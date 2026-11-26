@@ -45,6 +45,12 @@ class DescriptVideoTranslationTest extends TestCase
     /** @var array<string, string> agent job id => language */
     private array $agentJobs = [];
 
+    /** @var array<string, string> agent job id => the composition name it was asked to create */
+    private array $agentNames = [];
+
+    /** @var array<string, bool> agent jobs whose composition already exists */
+    private array $agentDone = [];
+
     /** Status the next agent call answers with; 201 is a normal start. */
     private int $agentStatus = 201;
 
@@ -421,6 +427,54 @@ class DescriptVideoTranslationTest extends TestCase
         $prompts->each(fn (string $prompt) => $this->assertStringContainsString('not European Portuguese', $prompt));
     }
 
+    public function test_make_again_replaces_a_finished_dub_with_a_new_one(): void
+    {
+        $lesson = $this->lesson();
+        $this->translator()->request($lesson, self::VIDEO, ['pt'], kind: VideoTranslation::KIND_DUB);
+        $this->settle($lesson);
+        $old = VideoTranslation::where('language', 'pt')->sole();
+        $this->assertSame(VideoTranslation::STATUS_DONE, $old->status, (string) $old->error);
+        $this->assertSame('comp-pt', $old->composition_id);
+
+        $outcome = $this->translator()->remake($lesson, self::VIDEO, ['pt']);
+        $this->assertSame(['pt'], $outcome['requested']);
+        $this->assertNull(VideoTranslation::find($old->id), 'The finished request is gone.');
+        $this->settle($lesson);
+
+        $new = VideoTranslation::where('language', 'pt')->sole();
+        $this->assertSame(VideoTranslation::STATUS_DONE, $new->status, (string) $new->error);
+        $this->assertSame('comp-pt-v2', $new->composition_id, 'The new translation, never the old one with the same language.');
+        $this->assertTrue(Storage::disk('public')->exists($new->dub_path));
+        $this->assertSame(4, $this->callsTo('POST', 'jobs/agent'), 'Translate and dub, twice.');
+
+        // Both instructions for the new one name its own composition.
+        $prompts = collect(Http::recorded())->map(fn (array $pair): Request => $pair[0])
+            ->filter(fn (Request $request): bool => Str::endsWith($request->url(), 'jobs/agent'))
+            ->map(fn (Request $request): string => (string) $request->data()['prompt'])
+            ->values();
+        $this->assertStringContainsString('"Pilot Academy — pt #'.$new->id.'"', $prompts[2]);
+        $this->assertStringContainsString('"Pilot Academy — pt #'.$new->id.'"', $prompts[3]);
+    }
+
+    public function test_make_again_needs_a_finished_dub_and_the_acknowledgement(): void
+    {
+        $lesson = $this->lesson();
+        $editor = $this->descriptEditor();
+
+        Livewire::actingAs($editor)->test(EditLesson::class, ['record' => $lesson->getRouteKey()])
+            ->assertActionHidden('remakeDescriptTranslation');
+
+        $this->translator()->request($lesson, self::VIDEO, ['pt'], kind: VideoTranslation::KIND_DUB);
+        $this->settle($lesson);
+
+        Livewire::actingAs($editor)->test(EditLesson::class, ['record' => $lesson->getRouteKey()])
+            ->assertActionVisible('remakeDescriptTranslation')
+            ->callAction('remakeDescriptTranslation', data: ['video' => self::VIDEO, 'languages' => ['pt'], 'confirmed' => false])
+            ->assertHasActionErrors(['confirmed']);
+
+        $this->assertSame(VideoTranslation::STATUS_DONE, VideoTranslation::where('language', 'pt')->value('status'), 'Nothing was undone.');
+    }
+
     public function test_a_dub_is_translated_voiced_published_and_its_file_kept(): void
     {
         $lesson = $this->lesson();
@@ -537,8 +591,12 @@ class DescriptVideoTranslationTest extends TestCase
                     return Http::response(['job_id' => 'job-dub-'.($m[1] ?? 'x'), 'project_id' => 'proj-1'], 201);
                 }
 
-                $jobId = 'job-agent-'.($m[1] ?? 'x');
+                // Each translation is its own job, and Descript names the new
+                // composition as asked (a language made again gets a second one).
+                $jobId = 'job-agent-'.($m[1] ?? 'x').'-'.(count($this->agentJobs) + 1);
                 $this->agentJobs[$jobId] = $m[1] ?? 'x';
+                preg_match('/new composition named "([^"]+)"/u', (string) $request->data()['prompt'], $named);
+                $this->agentNames[$jobId] = $named[1] ?? 'Pilot Academy — '.($m[1] ?? 'x');
 
                 return Http::response(['job_id' => $jobId, 'project_id' => 'proj-1', 'conversation_id' => 'c1'], 201);
             }
@@ -551,11 +609,15 @@ class DescriptVideoTranslationTest extends TestCase
             }
 
             if ($method === 'GET' && Str::startsWith($path, 'jobs/job-agent-')) {
-                $language = $this->agentJobs[Str::after($path, 'jobs/')] ?? 'x';
+                $jobId = Str::after($path, 'jobs/');
+                $language = $this->agentJobs[$jobId] ?? 'x';
 
-                // The translation's composition exists from the moment it finishes.
-                if (! collect($this->compositions)->contains('id', 'comp-'.$language)) {
-                    $this->compositions[] = ['id' => 'comp-'.$language, 'name' => 'Pilot Academy — '.$language];
+                // The translation's composition exists from the moment it finishes:
+                // one per job, the first for a language as "comp-<code>".
+                if (! isset($this->agentDone[$jobId])) {
+                    $earlier = collect($this->compositions)->filter(fn (array $c): bool => Str::startsWith($c['id'], 'comp-'.$language))->count();
+                    $this->compositions[] = ['id' => 'comp-'.$language.($earlier ? '-v'.($earlier + 1) : ''), 'name' => $this->agentNames[$jobId] ?? 'Pilot Academy — '.$language];
+                    $this->agentDone[$jobId] = true;
                 }
 
                 return Http::response([
@@ -567,7 +629,7 @@ class DescriptVideoTranslationTest extends TestCase
             // The translated words are only on a published page's subtitles —
             // the transcript export returns the original script (live run).
             if ($method === 'POST' && $path === 'jobs/publish') {
-                $language = Str::after((string) $request->data()['composition_id'], 'comp-');
+                $language = Str::before(Str::after((string) $request->data()['composition_id'], 'comp-'), '-');
 
                 return Http::response(['job_id' => 'job-publish-'.$language, 'project_id' => 'proj-1'], 201);
             }

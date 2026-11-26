@@ -72,4 +72,12 @@ return [
         'done_body' => ':count translation cancelled.|:count translations cancelled.',
         'cancelled_by' => 'Cancelled by :name.',
     ],
+
+    'remake' => [
+        'button' => 'Make again',
+        'heading' => 'Make a finished translation again',
+        'description' => 'For a finished dub that needs redoing, for example after a wording fix. The finished version is removed, students get the original video until the new one is done, and Descript is paid again for each language you tick.',
+        'submit' => 'Make again',
+        'done' => 'Making it again',
+    ],
 ];

@@ -26,6 +26,7 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Added
 
+- **Make a finished video translation again.** On a lesson, **Make again** redoes a finished Descript dub, for example after a wording fix. Students see the original video until the new one is done, and that language is paid for again.
 - **Cancel a video translation that is still under way.** On a lesson or a course, **Cancel translations** stops the Descript languages you tick, so you can do one language at a time. What Descript has already started is not recalled, but nothing after it starts; a cancelled language can be asked for again later.
 - **Renaming a course or lesson no longer breaks its links.** Change a course's or lesson's slug and every old link — shared, bookmarked or in an email — is sent on to the new address, with the rest of the link kept. The introduction course's old address, used briefly today, forwards too.
 - **A lesson video in another language.** Each video in a lesson's **Videos** list has **Other languages**: add a language and its own video (an upload for an uploaded video, a YouTube link for a YouTube one). Students reading the academy in that language get it, with **Play original audio** one click away; everyone else gets the original. It is used before a Descript dub for the same language.
@@ -385,7 +386,7 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Fixed
 
-- **Portuguese video translations are Brazilian.** Descript was asked for "Portuguese (Brazil)" and wrote European Portuguese ("utilizador", "por favor"). It is now asked for Brazilian Portuguese by name, for both the words and the voice. Dubs made before this keep their European wording until they are made again.
+- **Portuguese translations are Brazilian.** Descript was asked for "Portuguese (Brazil)" and wrote European Portuguese ("utilizador", "por favor"). Descript, ChatGPT, DeepSeek and Claude are now all asked for Brazilian Portuguese by name (for a dub, the words and the voice); DeepL already was. A dub made before this keeps its European wording until it is made again.
 - **The Lessons list opens again.** It showed an error page on the live site (its per-course tab counts were written in a way only the test database accepted).
 - **Translating lesson videos with Descript works on the live site.** Starting a translation stopped with an error, because Descript's job references did not fit the database. Ask for the language again: the attempt that failed is cleared by **Check progress**.
 - **Last login is recorded for every sign-in**, including the admin panel's own login page; admins and creators showed none before.
