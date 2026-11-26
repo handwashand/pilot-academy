@@ -404,6 +404,23 @@ class DescriptVideoTranslationTest extends TestCase
      * finishes, an agent job adds its composition to the project, an export
      * returns that composition's words.
      */
+    public function test_portuguese_is_asked_for_as_brazilian_in_both_instructions(): void
+    {
+        $lesson = $this->lesson();
+
+        $this->translator()->request($lesson, self::VIDEO, ['pt'], kind: VideoTranslation::KIND_DUB);
+        $this->settle($lesson);
+
+        $prompts = collect(Http::recorded())
+            ->map(fn (array $pair): Request => $pair[0])
+            ->filter(fn (Request $request): bool => Str::endsWith($request->url(), 'jobs/agent'))
+            ->map(fn (Request $request): string => (string) $request->data()['prompt']);
+
+        $this->assertCount(2, $prompts, 'Translate, then dub.');
+        $prompts->each(fn (string $prompt) => $this->assertStringContainsString('Brazilian Portuguese (pt-BR)', $prompt));
+        $prompts->each(fn (string $prompt) => $this->assertStringContainsString('not European Portuguese', $prompt));
+    }
+
     public function test_a_dub_is_translated_voiced_published_and_its_file_kept(): void
     {
         $lesson = $this->lesson();

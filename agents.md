@@ -494,6 +494,16 @@ failure). `TranslateVideoWithDescriptAction::cancel()` (lesson) and
 Translate video. Strings `admin_descript.cancel.*` in six languages; the six
 admin guides and the changelog say how to do one language at a time.
 
+**Brazilian Portuguese.** Lesson 2's Portuguese dub (the first, done in about
+4 minutes) came back in European Portuguese ("Configure a conta do
+utilizador", "por favor") although the prompt said "Portuguese (Brazil)".
+`services.descript.language_names` now names a language in both prompts where
+the plain name is not enough: `pt` → "Brazilian Portuguese (pt-BR) … not
+European Portuguese". Pinned by
+`test_portuguese_is_asked_for_as_brazilian_in_both_instructions`. Lesson 2's
+dub keeps its European wording until it is made again (no "discard a finished
+dub" button exists yet).
+
 **Verified (run):** `CourseTranslationTest` (4 new: course cancel of one
 language, re-request after cancel, lesson cancel leaving other lessons, hidden
 without the right or anything under way), `DescriptVideoTranslationTest`,

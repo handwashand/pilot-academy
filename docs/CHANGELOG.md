@@ -385,6 +385,7 @@ Add a new entry here whenever something visible to admins or students changes.
 
 ### Fixed
 
+- **Portuguese video translations are Brazilian.** Descript was asked for "Portuguese (Brazil)" and wrote European Portuguese ("utilizador", "por favor"). It is now asked for Brazilian Portuguese by name, for both the words and the voice. Dubs made before this keep their European wording until they are made again.
 - **The Lessons list opens again.** It showed an error page on the live site (its per-course tab counts were written in a way only the test database accepted).
 - **Translating lesson videos with Descript works on the live site.** Starting a translation stopped with an error, because Descript's job references did not fit the database. Ask for the language again: the attempt that failed is cleared by **Check progress**.
 - **Last login is recorded for every sign-in**, including the admin panel's own login page; admins and creators showed none before.

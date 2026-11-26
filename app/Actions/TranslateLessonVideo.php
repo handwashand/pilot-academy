@@ -311,7 +311,7 @@ class TranslateLessonVideo
         $prompt = strtr((string) config('services.descript.translate_prompt'), [
             '{source}' => DescriptClient::ORIGINAL_COMPOSITION,
             '{language}' => $this->englishName($translation->language),
-            '{name}' => $this->compositionName($translation->language),
+            '{name}' => $this->compositionName($translation),
         ]);
 
         try {
@@ -430,7 +430,7 @@ class TranslateLessonVideo
             $prompt = strtr((string) config('services.descript.dub_prompt'), [
                 '{source}' => DescriptClient::ORIGINAL_COMPOSITION,
                 '{language}' => $this->englishName($translation->language),
-                '{name}' => $this->compositionName($translation->language),
+                '{name}' => $this->compositionName($translation),
             ]);
 
             try {
@@ -681,17 +681,26 @@ class TranslateLessonVideo
     private function findComposition(VideoTranslation $translation): ?string
     {
         $compositions = $this->compositions($translation->descriptImport->project_id);
-        $wanted = Str::lower($this->compositionName($translation->language));
+        $wanted = Str::lower($this->compositionName($translation));
+        $isNamed = fn (array $c): bool => Str::lower(trim((string) ($c['name'] ?? ''))) === $wanted;
 
-        $named = $compositions->filter(fn (array $c): bool => Str::lower(trim((string) ($c['name'] ?? ''))) === $wanted);
+        // What appeared since the request started comes first: an older
+        // translation of the same language must never be taken for this one.
+        if ($translation->compositions_before !== null) {
+            $new = $compositions->reject(fn (array $c): bool => in_array($c['id'] ?? null, $translation->compositions_before, true));
 
-        if ($named->count() === 1) {
-            return (string) $named->first()['id'];
+            if ($new->filter($isNamed)->count() === 1) {
+                return (string) $new->filter($isNamed)->first()['id'];
+            }
+
+            if ($new->count() === 1) {
+                return (string) $new->first()['id'];
+            }
         }
 
-        $new = $compositions->reject(fn (array $c): bool => in_array($c['id'] ?? null, $translation->compositions_before ?? [], true));
+        $named = $compositions->filter($isNamed);
 
-        return $new->count() === 1 ? (string) $new->first()['id'] : null;
+        return $named->count() === 1 ? (string) $named->first()['id'] : null;
     }
 
     /** @return Collection<int, array{id: string, name?: string}> */
@@ -712,15 +721,24 @@ class TranslateLessonVideo
         return $this->compositions($projectId)->pluck('id')->map(fn ($id): string => (string) $id)->all();
     }
 
-    private function compositionName(string $code): string
+    /**
+     * The name the translated composition is given, and later looked up by.
+     * It carries the request's id: a language made again would otherwise share
+     * the old composition's name, and the voice instruction, which names it,
+     * could dub the old one.
+     */
+    private function compositionName(VideoTranslation $translation): string
     {
-        return 'Pilot Academy — '.$code;
+        return 'Pilot Academy — '.$translation->language.' #'.$translation->id;
     }
 
     /** Descript is told the language in English, e.g. "Portuguese (Brazil)". */
+    /** The language as the instructions to Descript name it (services.descript.language_names first). */
     private function englishName(string $code): string
     {
-        return app(Translator::class)->activeLanguage($code)?->name ?? strtoupper($code);
+        return config("services.descript.language_names.{$code}")
+            ?? app(Translator::class)->activeLanguage($code)?->name
+            ?? strtoupper($code);
     }
 
     private function canFetchFromUrl(): bool
