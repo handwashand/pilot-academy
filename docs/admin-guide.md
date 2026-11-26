@@ -765,6 +765,13 @@ already translated or under way are skipped and cost nothing. A finished
 translation also gives the lesson's player subtitles in that language (the
 **CC** button).
 
+**Changed your mind?** While something is still under way, **Cancel
+translations** (the crossed circle, on the lesson or the course) stops the
+languages you tick. A step Descript has already started is not recalled, but
+nothing after it is started. A cancelled language shows as failed and can be
+asked for again later. To do one language at a time, cancel the others and ask
+for them once the first is finished.
+
 **Voice and subtitles together.** **Translate video** always makes both:
 Descript translates the video, speaks it in that language (the speaker's own
 voice when it can copy one, otherwise a stock voice) and the academy keeps the

@@ -61,4 +61,15 @@ return [
         'queued' => 'Traduções na fila',
         'queued_body' => ':count traduções na fila. Clique em Verificar andamento para iniciá-las — cada uma leva alguns minutos.',
     ],
+
+    'cancel' => [
+        'button' => 'Cancelar traduções',
+        'heading' => 'Cancelar as traduções em andamento',
+        'description' => 'Marque os idiomas que deseja parar. Uma etapa que a Descript já começou não é retirada, mas nenhuma etapa seguinte é iniciada. Um idioma cancelado aparece com erro e pode ser traduzido de novo depois com Traduzir vídeo.',
+        'submit' => 'Cancelar',
+        'option' => ':language — :count em andamento',
+        'done' => 'Traduções canceladas',
+        'done_body' => ':count tradução cancelada.|:count traduções canceladas.',
+        'cancelled_by' => 'Cancelada por :name.',
+    ],
 ];

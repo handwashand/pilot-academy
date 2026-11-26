@@ -17,6 +17,7 @@ use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 /**
@@ -209,6 +210,80 @@ class TranslateVideoWithDescriptAction
                     ->info()
                     ->send();
             });
+    }
+
+    /**
+     * Cancel translations still under way for this lesson, by language. They
+     * become "failed — tick to try again", so Translate video can start them
+     * afresh later. Nothing is recalled that Descript is already doing.
+     */
+    public static function cancel(): Action
+    {
+        return static::cancelAction(
+            'cancelDescriptTranslations',
+            fn (Lesson $record) => VideoTranslation::query()->where('lesson_id', $record->id),
+        );
+    }
+
+    /** The same for every lesson video in a course: one language at a time, or several. */
+    public static function cancelCourse(): Action
+    {
+        return static::cancelAction(
+            'cancelDescriptCourseTranslations',
+            fn (Course $record) => static::courseRows($record),
+        );
+    }
+
+    /** @param  callable(Lesson|Course): Builder<VideoTranslation>  $rows */
+    private static function cancelAction(string $name, callable $rows): Action
+    {
+        return Action::make($name)
+            ->label(fn (): string => __t('admin_descript.cancel.button'))
+            ->tooltip(fn (): string => __t('admin_descript.cancel.button'))
+            ->icon(Heroicon::OutlinedXCircle)
+            ->iconButton()
+            ->color('gray')
+            ->modalHeading(fn (): string => __t('admin_descript.cancel.heading'))
+            ->modalDescription(fn (): string => __t('admin_descript.cancel.description'))
+            ->modalSubmitActionLabel(fn (): string => __t('admin_descript.cancel.submit'))
+            ->authorize(fn (): bool => (bool) auth()->user()?->hasPermission(User::PERMISSION_DESCRIPT_TRANSLATE))
+            ->visible(fn (Lesson|Course $record): bool => $rows($record)->inFlight()->exists())
+            ->fillForm(['languages' => []])
+            ->schema(fn (Lesson|Course $record): array => [
+                CheckboxList::make('languages')
+                    ->label(fn (): string => __t('admin_descript.action.languages'))
+                    ->options(static::runningLanguages($rows($record)))
+                    ->required(),
+            ])
+            ->action(function (Lesson|Course $record, array $data) use ($rows): void {
+                $languages = array_values(array_intersect((array) ($data['languages'] ?? []), array_keys(static::runningLanguages($rows($record)))));
+                $cancelled = app(TranslateLessonVideo::class)->cancel($rows($record)->whereIn('language', $languages), auth()->user());
+
+                Notification::make()
+                    ->title(__t('admin_descript.cancel.done'))
+                    ->body(__tc('admin_descript.cancel.done_body', $cancelled))
+                    ->success()
+                    ->send();
+            });
+    }
+
+    /**
+     * Languages with something still under way, with how many and where they got to.
+     *
+     * @param  Builder<VideoTranslation>  $rows
+     * @return array<string, string> code => "Español — 7 waiting"
+     */
+    private static function runningLanguages($rows): array
+    {
+        $names = app(Translator::class)->activeLanguages()->pluck('native_name', 'code');
+
+        return (clone $rows)->inFlight()->get()
+            ->groupBy('language')
+            ->map(fn (Collection $group, string $code): string => __t('admin_descript.cancel.option', [
+                'language' => $names[$code] ?? $code,
+                'count' => $group->count(),
+            ]))
+            ->all();
     }
 
     /** Every active language except the one the course is written in. */

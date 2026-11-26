@@ -717,6 +717,13 @@ Los vídeos o idiomas ya traducidos o en curso se omiten y no cuestan nada. Una
 traducción terminada también da al reproductor de la lección subtítulos en ese
 idioma (el botón **CC**).
 
+**¿Cambiaste de idea?** Mientras algo siga en curso, **Cancelar traducciones**
+(el círculo tachado, en la lección o en el curso) detiene los idiomas que marques.
+Un paso que Descript ya empezó no se retira, pero no se inicia ninguno de los
+siguientes. Un idioma cancelado aparece con error y se puede volver a pedir más
+tarde. Para ir de un idioma en uno, cancela los demás y pídelos cuando el primero
+haya terminado.
+
 **Voz y subtítulos a la vez.** **Traducir vídeo** siempre hace las dos cosas:
 Descript traduce el vídeo, lo locuta en ese idioma (con la propia voz del orador
 cuando puede copiarla; si no, con una voz estándar) y la academia guarda el vídeo

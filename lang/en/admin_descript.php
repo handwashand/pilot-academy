@@ -61,4 +61,15 @@ return [
         'queued' => 'Translations queued',
         'queued_body' => ':count translations queued. Press Check progress to start them — each takes a few minutes.',
     ],
+
+    'cancel' => [
+        'button' => 'Cancel translations',
+        'heading' => 'Cancel translations still under way',
+        'description' => 'Tick the languages to stop. A step Descript has already started is not recalled, but nothing after it is started. A cancelled language shows as failed and can be translated again later with Translate video.',
+        'submit' => 'Cancel them',
+        'option' => ':language — :count under way',
+        'done' => 'Translations cancelled',
+        'done_body' => ':count translation cancelled.|:count translations cancelled.',
+        'cancelled_by' => 'Cancelled by :name.',
+    ],
 ];

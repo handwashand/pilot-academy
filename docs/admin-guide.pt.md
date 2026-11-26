@@ -706,6 +706,12 @@ agendada do servidor) as faça avançar algumas por vez. Vídeos ou idiomas já
 traduzidos ou em andamento são pulados e não custam nada. Uma tradução concluída
 também dá ao player da aula legendas nesse idioma (o botão **CC**).
 
+**Mudou de ideia?** Enquanto algo estiver em andamento, **Cancelar traduções** (o
+círculo riscado, na aula ou no curso) para os idiomas que você marcar. Uma etapa
+que a Descript já começou não é retirada, mas nenhuma etapa seguinte é iniciada.
+Um idioma cancelado aparece com erro e pode ser pedido de novo depois. Para fazer
+um idioma por vez, cancele os outros e peça-os quando o primeiro terminar.
+
 **Voz e legendas juntas.** **Traduzir vídeo** sempre faz as duas coisas: o
 Descript traduz o vídeo, narra nesse idioma (com a voz do próprio palestrante
 quando consegue copiá-la; caso contrário, com uma voz padrão) e a academia guarda o

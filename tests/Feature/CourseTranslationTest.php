@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Filament\Resources\Courses\Pages\EditCourse;
+use App\Filament\Resources\Lessons\Pages\EditLesson;
 use App\Models\AiProvider;
 use App\Models\Course;
 use App\Models\DescriptImport;
@@ -147,6 +148,81 @@ class CourseTranslationTest extends TestCase
             ->assertHasActionErrors(['confirmed']);
 
         $this->assertSame(0, VideoTranslation::count());
+    }
+
+    // --- Cancelling (owner's request, 2026-11-26: one language first, the rest later) ---
+
+    private function queue(Course $course, User $editor, array $languages): void
+    {
+        Livewire::actingAs($editor)->test(EditCourse::class, ['record' => $course->getRouteKey()])
+            ->callAction('translateCourseVideosWithDescript', data: ['languages' => $languages, 'confirmed' => true])
+            ->assertHasNoActionErrors();
+    }
+
+    public function test_cancelling_a_language_on_the_course_stops_only_that_language(): void
+    {
+        $this->descriptOn();
+        $course = $this->courseWithVideos();
+        $editor = $this->admin(User::PERMISSION_DESCRIPT_TRANSLATE);
+        $this->queue($course, $editor, ['pt', 'es']);
+
+        Livewire::actingAs($editor)->test(EditCourse::class, ['record' => $course->getRouteKey()])
+            ->assertActionVisible('cancelDescriptCourseTranslations')
+            ->callAction('cancelDescriptCourseTranslations', data: ['languages' => ['es']])
+            ->assertHasNoActionErrors();
+
+        $this->assertSame(2, VideoTranslation::where('language', 'es')->where('status', VideoTranslation::STATUS_FAILED)->count());
+        $this->assertStringContainsString('Pilot Admin', (string) VideoTranslation::where('language', 'es')->value('error'));
+        $this->assertSame(2, VideoTranslation::where('language', 'pt')->where('status', VideoTranslation::STATUS_PENDING)->count());
+        Http::assertNothingSent();
+    }
+
+    public function test_a_cancelled_language_can_be_asked_for_again_later(): void
+    {
+        $this->descriptOn();
+        $course = $this->courseWithVideos();
+        $editor = $this->admin(User::PERMISSION_DESCRIPT_TRANSLATE);
+        $this->queue($course, $editor, ['es']);
+        Livewire::actingAs($editor)->test(EditCourse::class, ['record' => $course->getRouteKey()])
+            ->callAction('cancelDescriptCourseTranslations', data: ['languages' => ['es']]);
+
+        $this->queue($course, $editor, ['es']);
+
+        $this->assertSame(2, VideoTranslation::where('language', 'es')->where('status', VideoTranslation::STATUS_PENDING)->count());
+        $this->assertSame(2, VideoTranslation::count(), 'The same rows start again; nothing is duplicated.');
+    }
+
+    public function test_one_lesson_can_cancel_its_own_and_leaves_other_lessons_alone(): void
+    {
+        $this->descriptOn();
+        $course = $this->courseWithVideos();
+        $editor = $this->admin(User::PERMISSION_DESCRIPT_TRANSLATE);
+        $this->queue($course, $editor, ['es']);
+        $lesson = $course->lessons()->first();
+
+        Livewire::actingAs($editor)->test(EditLesson::class, ['record' => $lesson->getRouteKey()])
+            ->callAction('cancelDescriptTranslations', data: ['languages' => ['es']])
+            ->assertHasNoActionErrors();
+
+        $this->assertSame(VideoTranslation::STATUS_FAILED, VideoTranslation::where('lesson_id', $lesson->id)->value('status'));
+        $this->assertSame(1, VideoTranslation::where('status', VideoTranslation::STATUS_PENDING)->count());
+    }
+
+    public function test_cancel_needs_the_right_and_something_under_way(): void
+    {
+        $this->descriptOn();
+        $course = $this->courseWithVideos();
+
+        Livewire::actingAs($this->admin(User::PERMISSION_DESCRIPT_TRANSLATE))
+            ->test(EditCourse::class, ['record' => $course->getRouteKey()])
+            ->assertActionHidden('cancelDescriptCourseTranslations');
+
+        $this->queue($course, $this->admin(User::PERMISSION_DESCRIPT_TRANSLATE), ['es']);
+        $plain = User::create(['name' => 'Other Admin', 'email' => 'other@pilot.local', 'password' => 'password', 'role' => User::ROLE_ADMIN]);
+
+        Livewire::actingAs($plain)
+            ->test(EditCourse::class, ['record' => $course->getRouteKey()])
+            ->assertActionHidden('cancelDescriptCourseTranslations');
     }
 
     public function test_the_course_button_needs_the_right_and_a_video(): void

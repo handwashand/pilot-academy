@@ -36,6 +36,7 @@ class EditCourse extends EditRecord
             TranslateCourseAction::make(),
             TranslateVideoWithDescriptAction::course(),
             TranslateVideoWithDescriptAction::checkCourse(),
+            TranslateVideoWithDescriptAction::cancelCourse(),
             DeleteAction::make(),
         ];
     }

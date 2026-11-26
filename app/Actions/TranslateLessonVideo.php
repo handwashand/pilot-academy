@@ -11,6 +11,7 @@ use App\Models\VideoTranslation;
 use App\Services\Descript\DescriptClient;
 use App\Services\Descript\DescriptException;
 use App\Services\Translator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -162,6 +163,25 @@ class TranslateLessonVideo
         }
 
         return $outcome;
+    }
+
+    /**
+     * Stop requests still under way. They are marked failed, saying who
+     * cancelled them, so nothing more is asked of Descript for them, and
+     * asking for that language again starts it afresh (see request()). A step
+     * Descript is already running is not recalled; only the steps after it
+     * are never started, which is where the dub's credits go.
+     *
+     * @param  Builder<VideoTranslation>  $rows  narrowed to the lesson or course and languages
+     * @return int how many were cancelled
+     */
+    public function cancel(Builder $rows, ?User $by): int
+    {
+        return (clone $rows)->inFlight()->update([
+            'status' => VideoTranslation::STATUS_FAILED,
+            'error' => __t('admin_descript.cancel.cancelled_by', ['name' => $by?->name ?? '—']),
+            'updated_at' => now(),
+        ]);
     }
 
     /** Move everything still in progress for one lesson along by a step. */

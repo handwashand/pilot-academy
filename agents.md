@@ -460,6 +460,45 @@ Newest first.
 
 Newest first. Add to this every time.
 
+### 2026-11-26 — Deploy checked; Sentry cleared; Descript Cancel; production fixes
+
+**Deploy.** The server had a local edit to `AppServiceProvider.php` since
+2026-10-01 (dropped the Translator singleton, required the helpers by hand),
+so every `git stash`/`pull`/`pop` deploy conflicted. Fixed on the server with
+`git restore`; report for the system admin in the owner's Downloads
+(`pilot-academy-server-fix.txt`). After the pull: sitemap 200, the old
+`/courses/pilot-introduction` redirects, Lessons list loads, new home page live.
+Sentry PILOT-ACADEMY-2, -3, -4 resolved with notes; -5 was caused by one of my
+scripts (Livewire `tableSearch` set on the Topbar) and resolved as such.
+
+**Production data (owner's go-ahead):**
+- Lesson 1's second video (the owner's Portuguese upload) is now video 1's
+  Portuguese **Other languages** version; a pt reader gets it, others the original.
+- **Mistake, corrected:** on 2026-11-25 a script gave `descript.translate` to
+  `/admin/users/3`, assumed to be the content account. User 3 is Alexander
+  Borisov. Removed from him; given to the content account, **user 39**
+  ("Mathie creator"). Never address a production user by a guessed id: look it
+  up by email.
+- The missing Descript buttons on the content account were that missing right,
+  not code (a test of the production setup showed the button).
+- Spanish dubs were requested for lessons 2–8 of course 1 before the owner
+  asked for one at a time and Portuguese first; **they are to be cancelled with
+  the new action after this deploy**, then Portuguese one lesson at a time.
+- Collins's certificate download: certificate, PDF and route all fine on
+  production; he confirmed it works.
+
+**Cancel translations (code).** `TranslateLessonVideo::cancel()` marks in-flight
+rows failed with "Cancelled by :name" (re-requesting restarts them, as for any
+failure). `TranslateVideoWithDescriptAction::cancel()` (lesson) and
+`cancelCourse()` (course): pick languages still under way; same right as
+Translate video. Strings `admin_descript.cancel.*` in six languages; the six
+admin guides and the changelog say how to do one language at a time.
+
+**Verified (run):** `CourseTranslationTest` (4 new: course cancel of one
+language, re-request after cancel, lesson cancel leaving other lessons, hidden
+without the right or anything under way), `DescriptVideoTranslationTest`,
+`StudentSiteTranslationTest`, `AdminPanelTranslationTest`: 56 passed. Pint clean.
+
 ### 2026-11-25 (evening) — Home page regrouped; covers redrawn; every production course themed
 
 Mockup approved on a Claude design canvas ("Home page and cover refresh").

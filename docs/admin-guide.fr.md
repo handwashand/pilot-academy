@@ -731,6 +731,13 @@ fasse avancer quelques-unes à la fois. Les vidéos ou langues déjà traduites 
 cours sont ignorées et ne coûtent rien. Une traduction terminée donne aussi au
 lecteur de la leçon des sous-titres dans cette langue (le bouton **CC**).
 
+**Vous avez changé d’avis ?** Tant qu’une traduction est en cours, **Annuler les
+traductions** (le cercle barré, sur la leçon ou le cours) arrête les langues que
+vous cochez. Une étape que Descript a déjà commencée n’est pas rappelée, mais
+aucune étape suivante n’est lancée. Une langue annulée apparaît en échec et peut
+être redemandée plus tard. Pour traiter une langue à la fois, annulez les autres
+et redemandez-les une fois la première terminée.
+
 **Voix et sous-titres ensemble.** **Traduire la vidéo** produit toujours les
 deux : Descript traduit la vidéo, la fait parler dans cette langue (avec la voix
 de l’intervenant lui-même quand il peut la copier, sinon avec une voix standard)

@@ -36,6 +36,7 @@ class EditLesson extends EditRecord
             // is configured and the lesson has an uploaded video.
             TranslateVideoWithDescriptAction::make(),
             TranslateVideoWithDescriptAction::check(),
+            TranslateVideoWithDescriptAction::cancel(),
             DeleteAction::make(),
         ];
     }

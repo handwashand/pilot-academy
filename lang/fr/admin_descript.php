@@ -61,4 +61,15 @@ return [
         'queued' => 'Traductions mises en file',
         'queued_body' => ':count traductions mises en file. Cliquez sur Vérifier l’avancement pour les lancer — chacune prend quelques minutes.',
     ],
+
+    'cancel' => [
+        'button' => 'Annuler les traductions',
+        'heading' => 'Annuler les traductions en cours',
+        'description' => 'Cochez les langues à arrêter. Une étape que Descript a déjà commencée n\'est pas rappelée, mais aucune étape suivante n\'est lancée. Une langue annulée apparaît en échec et pourra être traduite plus tard avec Traduire la vidéo.',
+        'submit' => 'Les annuler',
+        'option' => ':language — :count en cours',
+        'done' => 'Traductions annulées',
+        'done_body' => ':count traduction annulée.|:count traductions annulées.',
+        'cancelled_by' => 'Annulée par :name.',
+    ],
 ];
